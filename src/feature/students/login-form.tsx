@@ -1,10 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthFormPayload, authSchema } from "./schema";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BaseInput } from "~/components/data-inputs/text-input";
 import { Validator } from "~/utils/packages/validators";
 import { BaseButton } from "~/components/buttons/BaseButton";
+import { ROUTES } from "~/components/constants/routes";
 // import { useAuth } from "~/context/auth_provider";
 // import { ROUTES } from "~/components/constants/routes";
 
@@ -25,6 +26,7 @@ const fields = [
 
 // Login form
 const LoginForm = () => {
+  const navigate = useNavigate();
   //   const { login } = useAuth();
   const form = useForm<AuthFormPayload>({
     resolver: zodResolver(authSchema),
@@ -35,6 +37,7 @@ const LoginForm = () => {
 
   // Handle Login and MFA pop up
   const handleLogin = form.handleSubmit(async (data: AuthFormPayload) => {
+    navigate(ROUTES.DASHBOARD);
     console.log(data);
   });
 
