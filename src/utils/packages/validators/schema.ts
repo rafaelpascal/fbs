@@ -30,7 +30,7 @@ export const genericStringSchema = (
       message: `${fieldName} cannot be blank`,
     })
     .refine(
-      (arg) => {
+      (arg: string) => {
         return disAllowNumbers ? !arg.match(numberRegex) : true;
       },
       { message: noNumberErrorMessage(fieldName) }
@@ -43,7 +43,7 @@ export const stringNumberSchema = (fieldName: string) =>
       invalid_type_error: invalidErrorMessage(fieldName),
     })
     .refine(
-      (arg) => {
+      (arg: string) => {
         if (!Number(arg)) return false;
         return true;
       },
