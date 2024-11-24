@@ -19,7 +19,7 @@ const Collapsible = ({
   };
 
   return (
-    <div className="bg-[#fff] shadow-sm rounded-[8px] collapse">
+    <div className="bg-[#fff] mt-4 shadow-sm rounded-[8px] collapse">
       <input
         type="checkbox"
         className="peer"
