@@ -6,6 +6,8 @@ import Fee from "./CourseContent.tsx/Fee";
 import CourseContents from "./CourseContents";
 import Description from "./Description";
 import MbaList from "../list/mba";
+import { ROUTES } from "../constants/routes";
+import { useNavigate } from "react-router-dom";
 
 type FacilitatorsProps = {
   items: string[];
@@ -34,6 +36,12 @@ const FooterbtnItem: FacilitatorsProps[] = [
 ];
 
 const Contents = () => {
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate(ROUTES.APPLICATION);
+  };
+
   return (
     <div className="flex justify-center  mb-[10%] font-DMSans items-center px-4">
       <div className="w-full lg:w-[80%] flex flex-col lg:flex-row justify-between items-start">
@@ -116,6 +124,7 @@ const Contents = () => {
               hoverScale={1.01}
               hoverOpacity={0.8}
               tapScale={0.9}
+              onClick={handleNavigate}
             >
               <p>Apply Now</p>
             </BaseButton>

@@ -13,11 +13,13 @@ import {
   CheckMarkCircle,
 } from "react-huge-icons/outline";
 import { cn } from "~/utils/helpers";
+import { FaAsterisk } from "react-icons/fa";
 
 interface BaseInputProps {
   label?: string;
   placeholder?: string;
   containerClassname?: string;
+  compulsory?: boolean;
   inputContainerStyle?: CSSProperties;
   type?: string;
   inputContainerClassName?: string;
@@ -41,6 +43,7 @@ export const BaseInput = forwardRef<
       label,
       placeholder,
       containerClassname,
+      compulsory,
       type,
       inputContainerClassName,
       inputClassName,
@@ -61,13 +64,18 @@ export const BaseInput = forwardRef<
     return (
       <div className={cn(containerClassname)}>
         {label && (
-          <h1
-            dangerouslySetInnerHTML={{ __html: label }}
-            className={cn(
-              "text-blackColor font-darkerGrotesque-bold mb-2 w-full text-left text-[28px] font-medium leading-[25px]",
-              labelClassName
+          <div className="flex justify-start gap-2 items-center">
+            <h1
+              dangerouslySetInnerHTML={{ __html: label }}
+              className={cn(
+                "text-blackColor font-darkerGrotesque-bold mb-2 text-left text-[28px] font-medium leading-[25px]",
+                labelClassName
+              )}
+            />
+            {compulsory && (
+              <FaAsterisk className="text-[#F01E00] mb-2 text-[12px]" />
             )}
-          />
+          </div>
         )}
 
         <div

@@ -5,12 +5,17 @@ import Home from "~/pages/Courses/Courses.tsx";
 import { AppLayout } from "~/layouts/AppLayout.tsx";
 import Payment from "~/pages/Courses/Payment.tsx";
 import NewCourse from "~/pages/Courses/NewCourse.tsx";
+import Application from "~/pages/Courses/Application.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter([
   {
     path: ROUTES.NEW_COURSE,
     element: <NewCourse />,
+  },
+  {
+    path: ROUTES.APPLICATION,
+    element: <Application />,
   },
   {
     path: ROUTES.HOME,

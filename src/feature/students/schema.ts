@@ -7,6 +7,21 @@ export const authSchema = Validator.object({
 });
 export type AuthFormPayload = z.infer<typeof authSchema>;
 
+export const applicationSchema = Validator.object({
+  firstname: Validator.string("First Name"),
+  lastname: Validator.string("Last Name"),
+  email: Validator.email("Email"),
+});
+export type ApplicationFormPayload = z.infer<typeof applicationSchema>;
+
+export const otherinfoSchema = Validator.object({
+  phone: Validator.string("phone"),
+  whatsapp: Validator.string("whatsapp"),
+  address: Validator.string("address"),
+  dateofbirth: Validator.string("dateofbirth"),
+});
+export type OtherInfoFormPayload = z.infer<typeof otherinfoSchema>;
+
 export const registerSchema = Validator.object({
   email: Validator.email("Email"),
   firstName: Validator.string("First Name"),
