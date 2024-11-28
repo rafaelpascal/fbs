@@ -8,6 +8,9 @@ import { useCallback, useState } from "react";
 // import { useSelector } from "react-redux";
 // import { RootState } from "../../redux-store/store";
 import { FBSlogo } from "~/assets";
+import { useTheme } from "~/context/theme-provider";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../constants/routes";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -19,9 +22,10 @@ export interface SideNavProps {
 
 // Sidebar Component
 export const Sidebar = () => {
-  // const user = useSelector((state: RootState) => state.user);
+  const { theme } = useTheme();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false); // New state for desktop collapse
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Toggle side bar on mobile view
   const toggleSidebar = useCallback(() => {
@@ -32,8 +36,9 @@ export const Sidebar = () => {
   const toggleCollapse = useCallback(() => {
     setIsCollapsed((prevState) => !prevState);
   }, []);
-
-  // const computedClassName = useMemo(() => style, [style]);
+  const handleLogout = () => {
+    navigate(ROUTES.HOME);
+  };
 
   return (
     <>
@@ -56,15 +61,16 @@ export const Sidebar = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 h-screen lg:flex lg:flex-col justify-between bg-[#EEF2F6] z-40 transition-transform transform",
+          "fixed top-0 left-0 h-screen lg:flex lg:flex-col justify-between z-40 transition-transform transform",
           isSidebarOpen ? "translate-x-0 w-[200px]" : "-translate-x-full",
           "lg:translate-x-0 lg:relative",
-          isCollapsed ? "lg:w-[80px]" : "lg:min-w-[200px]"
+          isCollapsed ? "lg:w-[80px]" : "lg:min-w-[230px]",
+          theme === "light" ? "bg-[#EEF2F6]" : "bg-[#424141]"
         )}
       >
         <div
           className={cn(
-            "flex flex-col h-full bg-[#EEF2F6] w-full",
+            "flex flex-col h-full w-full",
             "items-start lg:mx-0 justify-start max-lg:py-10 lg:items-start",
             isSidebarOpen ? "mx-4" : ""
           )}
@@ -114,14 +120,13 @@ export const Sidebar = () => {
 
           {/* Bottom Settings and Logout */}
           <div className="absolute bottom-0 p-[20px] w-full bg-transparent">
-            <button className="flex py-4 flex-row items-center gap-4">
-              <LogoutOpen
-                width={24}
-                height={24}
-                className="bg-transparent text-[#757575]"
-              />
+            <button
+              onClick={handleLogout}
+              className="flex py-4 flex-row items-center gap-4"
+            >
+              <LogoutOpen width={24} height={24} className="bg-transparent" />
               {!isCollapsed && (
-                <h2 className="text-[14px] bg-transparent text-[#757575] font-normal font-DMSans">
+                <h2 className="text-[14px] bg-transparent font-normal font-DMSans">
                   Logout
                 </h2>
               )}

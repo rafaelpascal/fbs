@@ -7,17 +7,25 @@ import { motion, AnimatePresence } from "framer-motion";
 const Courseform = () => {
   const { theme } = useTheme();
   const [isEmailVerified, setEmail] = useState(false);
+  const [submitting, isSubmitted] = useState(false);
 
   const handleOTPComplete = (otp: string) => {
-    console.log("Complete OTP:", otp);
-    setEmail(true);
+    isSubmitted(true);
+    setTimeout(() => {
+      console.log(otp);
+      setEmail(true);
+      isSubmitted(false);
+    }, 4000);
   };
 
   return (
     <div
       className={`p-4 lg:p-10 ${theme === "dark" ? "bg-[#333]" : "bg-[#fff]"}`}
     >
-      <PersonalInfo handleOTPComplete={handleOTPComplete} />
+      <PersonalInfo
+        handleOTPComplete={handleOTPComplete}
+        submitting={submitting}
+      />
 
       {/* Animate the dropdown using Framer Motion */}
       <AnimatePresence>

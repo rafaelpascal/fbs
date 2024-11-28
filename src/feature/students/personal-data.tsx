@@ -4,6 +4,9 @@ import { ApplicationFormPayload, applicationSchema } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Validator } from "~/utils/packages/validators";
 import OTPInput from "~/components/data-inputs/OTPInput";
+import { BaseButton } from "~/components/buttons/BaseButton";
+import { useEffect, useState } from "react";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
 const fields = [
   {
@@ -31,14 +34,24 @@ const fields = [
 
 type PersonalInfoProp = {
   handleOTPComplete: (otp: string) => void;
+  submitting: boolean;
 };
 
-const PersonalInfo = ({ handleOTPComplete }: PersonalInfoProp) => {
+const PersonalInfo = ({ handleOTPComplete, submitting }: PersonalInfoProp) => {
   const form = useForm<ApplicationFormPayload>({
     resolver: zodResolver(applicationSchema),
     mode: "onChange",
   });
   const { unWrapErrors } = Validator.reactHookHandler(form.formState);
+  const [isCodeSent, setisCodeSent] = useState(false);
+
+  const handleEmailverification = () => {
+    setisCodeSent(true);
+  };
+
+  useEffect(() => {
+    console.log(submitting);
+  }, [submitting]);
 
   return (
     <div>
@@ -67,13 +80,42 @@ const PersonalInfo = ({ handleOTPComplete }: PersonalInfoProp) => {
             error={unWrapErrors(field.name)}
           />
         ))}
-        <div className="">
-          <h2 className=" text-[18px] font-bold font-DMSans mb-2">
-            Email verification code
-          </h2>
-          <OTPInput length={4} onComplete={handleOTPComplete} />
-        </div>
+        {isCodeSent && (
+          <div className="">
+            <h2 className=" text-[18px] font-bold font-DMSans mb-2">
+              Email verification code
+            </h2>
+            <OTPInput length={4} onComplete={handleOTPComplete} />
+            {submitting ? (
+              <div className="flex mt-4 justify-start items-center gap-2">
+                <p className=" text-[18px] italic font-normal font-DMSans ">
+                  Verifying code...
+                </p>
+                <LoadingSpinner />
+              </div>
+            ) : (
+              <h2 className=" text-[18px] italic font-normal font-DMSans mb-2">
+                Put the verification code sent to your email
+              </h2>
+            )}
+          </div>
+        )}
       </div>
+      <BaseButton
+        containerCLassName={`mt-4 h-[46px] w-auto rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
+          !form.formState.isValid || form.formState.isSubmitting
+            ? "cursor-not-allowed opacity-50"
+            : ""
+        }`}
+        hoverScale={1.01}
+        hoverOpacity={0.8}
+        tapScale={0.9}
+        disabled={!form.formState.isValid || form.formState.isSubmitting}
+        loading={form.formState.isSubmitting}
+        onClick={handleEmailverification}
+      >
+        <p>Verify Email</p>
+      </BaseButton>
     </div>
   );
 };

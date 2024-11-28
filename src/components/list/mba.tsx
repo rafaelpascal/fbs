@@ -1,13 +1,10 @@
-import { GoDotFill } from "react-icons/go";
-
 type FacilitatorsProps = {
-  items: string[];
+  items: { text: string; icon: JSX.Element; count?: string }[];
   ordered: boolean;
   customClass: string;
 };
 
 const MbaList = ({ items, ordered, customClass }: FacilitatorsProps) => {
-  // Choose the list type based on the `ordered` prop
   const ListTag = ordered ? "ol" : "ul";
 
   return (
@@ -16,10 +13,19 @@ const MbaList = ({ items, ordered, customClass }: FacilitatorsProps) => {
         {items.map((item, index) => (
           <li
             key={index}
-            className="flex justify-start border-b border-[#ddd] px-6 items-center gap-4 py-2"
+            className="flex justify-between border-b border-[#ddd] px-6 items-center gap-4 py-2"
           >
-            <GoDotFill />
-            <p>{item}</p>
+            <div className="flex justify-start items-center gap-4">
+              <p className="text-[20px] font-DMSans font-semibold">
+                {item.icon}
+              </p>
+              <p className="text-[20px] font-DMSans font-semibold">
+                {item.text}
+              </p>
+            </div>
+            <p className="text-[20px] font-DMSans font-semibold">
+              {item.count}
+            </p>
           </li>
         ))}
       </ListTag>

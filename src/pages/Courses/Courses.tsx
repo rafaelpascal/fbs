@@ -3,7 +3,7 @@
 import { DashboardArea } from "~/layouts/DashboardArea";
 import Collapsible from "~/components/Collapsible/Collapsible";
 import { BaseButton } from "~/components/buttons/BaseButton";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "~/components/constants/routes";
 import { IoMdUnlock } from "react-icons/io";
 import CourseCard from "~/components/cards/CourseCard";
@@ -11,6 +11,8 @@ import { MdLock } from "react-icons/md";
 import Carousel from "~/components/Carousel/Carousel";
 import LessonsCard from "~/components/cards/LessonsCard";
 import ForumsCard from "~/components/cards/ForumsCard";
+import { useState } from "react";
+import { useTheme } from "~/context/theme-provider";
 
 const programSpecifications = [
   {
@@ -154,14 +156,18 @@ const Lessons = [
   },
 ];
 const Dashboard = () => {
+  const { theme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [enrolled] = useState(location.state?.enrolled || false);
 
   const handlePayment = () => {
     navigate(ROUTES.PAYMENT);
   };
+
   return (
     <DashboardArea>
-      <Collapsible title="My Enrollments" initialState={true}>
+      <Collapsible title="My Enrollments" initialState={false}>
         <div className="w-full flex justify-center items-center">
           <div className=" lg:w-[90%]">
             <p className="text-left font-DMSans text-[20px] font-semibold">
@@ -174,10 +180,10 @@ const Dashboard = () => {
                     key={index}
                     className="flex justify-start items-center gap-2"
                   >
-                    <p className="text-[#5D5C5D] text-[18px] font-semibold font-DMSans">
+                    <p className="text-[18px] font-semibold font-DMSans">
                       {specifications.title}
                     </p>
-                    <p className="text-[#5D5C5D] text-[18px] font-normal font-DMSans">
+                    <p className="text-[18px] font-normal font-DMSans">
                       {specifications.duration}
                     </p>
                   </div>
@@ -206,68 +212,91 @@ const Dashboard = () => {
           </div>
         </div>
       </Collapsible>
-      <Collapsible title="My Courses" initialState={true}>
-        <Carousel>
-          <div className="bg-[#EBEDF0] flex justify-center items-center w-full p-4 lg:p-10 rounded-[16px]">
-            <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
-              {courses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  title={course.title}
-                  description={course.description}
-                  lessonsInfo={course.lessonsInfo}
-                  buttonText={course.buttonText}
-                  progress={course.progress}
-                  icon={course.icon}
-                  courseStarted={course.courseStarted}
-                  onButtonClick={() => console.log(`${course.title} resumed!`)}
-                />
-              ))}
+      {enrolled ? (
+        <>
+          <Collapsible title="My Courses" initialState={true}>
+            <Carousel>
+              <div className="bg-[#EBEDF0] flex justify-center items-center w-full p-4 lg:p-10 rounded-[16px]">
+                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                  {courses.map((course) => (
+                    <CourseCard
+                      key={course.id}
+                      title={course.title}
+                      description={course.description}
+                      lessonsInfo={course.lessonsInfo}
+                      buttonText={course.buttonText}
+                      progress={course.progress}
+                      icon={course.icon}
+                      courseStarted={course.courseStarted}
+                      onButtonClick={() =>
+                        console.log(`${course.title} resumed!`)
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="bg-[#EBEDF0] flex justify-center items-center w-full p-4 lg:p-10 rounded-[16px]">
+                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                  {secondcourses.map((course) => (
+                    <CourseCard
+                      key={course.id}
+                      title={course.title}
+                      description={course.description}
+                      lessonsInfo={course.lessonsInfo}
+                      buttonText={course.buttonText}
+                      progress={course.progress}
+                      icon={course.icon}
+                      courseStarted={course.status}
+                      onButtonClick={() =>
+                        console.log(`${course.title} resumed!`)
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+            </Carousel>
+          </Collapsible>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <Collapsible
+                title="Completed Lessons & Scores"
+                initialState={true}
+              >
+                {Lessons.map((lessons) => (
+                  <LessonsCard
+                    key={lessons.id}
+                    image={lessons.image}
+                    title={lessons.title}
+                  />
+                ))}
+              </Collapsible>
+            </div>
+            <div>
+              <Collapsible title="Forum & Conversations" initialState={true}>
+                {Lessons.map((lessons) => (
+                  <ForumsCard
+                    key={lessons.id}
+                    image={lessons.image}
+                    title={lessons.title}
+                  />
+                ))}
+              </Collapsible>
             </div>
           </div>
-          <div className="bg-[#EBEDF0] flex justify-center items-center w-full p-4 lg:p-10 rounded-[16px]">
-            <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
-              {secondcourses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  title={course.title}
-                  description={course.description}
-                  lessonsInfo={course.lessonsInfo}
-                  buttonText={course.buttonText}
-                  progress={course.progress}
-                  icon={course.icon}
-                  courseStarted={course.status}
-                  onButtonClick={() => console.log(`${course.title} resumed!`)}
-                />
-              ))}
-            </div>
-          </div>
-        </Carousel>
-      </Collapsible>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div>
-          <Collapsible title="Completed Lessons & Scores" initialState={true}>
-            {Lessons.map((lessons) => (
-              <LessonsCard
-                key={lessons.id}
-                image={lessons.image}
-                title={lessons.title}
-              />
-            ))}
-          </Collapsible>
+        </>
+      ) : (
+        <div
+          className={`w-full py-6 rounded-md px-2 shadow-md mt-2 ${
+            theme === "light" ? "bg-[#fff]" : ""
+          }`}
+        >
+          <h2 className="font-DMSans text-[24px] font-semibold">My Courses </h2>
+          <p className="text-left font-DMSans text-[18px] text-[#E61A1A] font-semibold">
+            You do not have active courses yet. Once your enrollment is
+            complete, your courses will appear here...
+          </p>
         </div>
-        <div>
-          <Collapsible title="Forum & Conversations" initialState={true}>
-            {Lessons.map((lessons) => (
-              <ForumsCard
-                key={lessons.id}
-                image={lessons.image}
-                title={lessons.title}
-              />
-            ))}
-          </Collapsible>
-        </div>
-      </div>
+      )}
     </DashboardArea>
   );
 };

@@ -19,6 +19,7 @@ export const otherinfoSchema = Validator.object({
   whatsapp: Validator.string("whatsapp"),
   address: Validator.string("address"),
   dateofbirth: Validator.string("dateofbirth"),
+  password: Validator.string("Password"),
 });
 export type OtherInfoFormPayload = z.infer<typeof otherinfoSchema>;
 

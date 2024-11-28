@@ -1,5 +1,6 @@
 import { ReactNode, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useTheme } from "~/context/theme-provider";
 
 type CollapseProps = {
   title: string;
@@ -13,28 +14,28 @@ const Collapsible = ({
   initialState = false,
 }: CollapseProps) => {
   const [isOpen, setIsOpen] = useState(initialState);
-
+  const { theme } = useTheme();
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
 
   return (
-    <div className="bg-[#fff] mt-4 shadow-sm rounded-[8px] collapse">
+    <div
+      className={`shadow-md mt-4 rounded-[8px] collapse ${
+        theme === "dark" ? "bg-[#424141]" : ""
+      }`}
+    >
       <input
         type="checkbox"
         className="peer"
         onChange={handleToggle}
         checked={isOpen}
       />
-      <div className="collapse-title flex justify-between items-center bg-[#fff] text-primary-content peer-checked:bg-[#fff] peer-checked:text-secondary-content py-8">
-        <p className="text-[#140342] font-DMSans text-[24px] font-semibold">
-          {title}
-        </p>
+      <div className="collapse-title flex justify-between items-center py-8">
+        <p className="font-DMSans text-[24px] font-semibold">{title}</p>
         {isOpen ? <FaChevronUp /> : <FaChevronDown />}
       </div>
-      <div className="collapse-content bg-[#fff] text-primary-content peer-checked:bg-[#fff] peer-checked:text-secondary-content">
-        {children}
-      </div>
+      <div className="collapse-content">{children}</div>
     </div>
   );
 };

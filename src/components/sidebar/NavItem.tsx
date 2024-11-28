@@ -52,7 +52,7 @@ export const SideNav = (props: SideNavProps) => {
   // style
   const style = ({ isActive }: ActiveClass) => {
     const baseStyles = cn(
-      "relative flex flex-row w-full items-center px-2 text-[#757575] gap-4 py-3 bg-transparent",
+      "relative flex flex-row w-full items-center px-2 gap-4 py-3 bg-transparent",
       isActive && "rounded-[8px] w-full text-[#FFFFFF] bg-[#FF3B30]"
     );
 
@@ -70,12 +70,10 @@ export const SideNav = (props: SideNavProps) => {
             onClick={handleDropdownClick}
           >
             <div className="flex gap-5 justify-start items-center">
-              <Icon
-                className={cn("bg-transparent text-[#757575] text-[24px]")}
-              />
+              <Icon className={cn("bg-transparent text-[24px]")} />
               {/* Show text if sidebar is expanded or in mobile mode */}
               {(isMobile || isSidebarExpanded) && (
-                <span className="text-[14px] text-[#757575] pr-6 bg-transparent font-normal font-DMSans">
+                <span className="text-[14px] pr-6 bg-transparent font-normal font-DMSans">
                   {text}
                 </span>
               )}
@@ -83,9 +81,9 @@ export const SideNav = (props: SideNavProps) => {
             {dropdown && (
               <div className="bg-inherit">
                 {isClicked ? (
-                  <IoIosArrowUp className="bg-inherit text-[#757575]" />
+                  <IoIosArrowUp className="bg-inherit" />
                 ) : (
-                  <IoIosArrowDown className="bg-inherit text-[#757575]" />
+                  <IoIosArrowDown className="bg-inherit" />
                 )}
               </div>
             )}

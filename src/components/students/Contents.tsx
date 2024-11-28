@@ -8,10 +8,17 @@ import Description from "./Description";
 import MbaList from "../list/mba";
 import { ROUTES } from "../constants/routes";
 import { useNavigate } from "react-router-dom";
-
-type FacilitatorsProps = {
-  items: string[];
-};
+import { CiClock1 } from "react-icons/ci";
+import { LuMonitorPlay } from "react-icons/lu";
+import { IoExtensionPuzzleOutline } from "react-icons/io5";
+import { MdBarChart } from "react-icons/md";
+import { BsAward } from "react-icons/bs";
+import {
+  FaFacebookF,
+  FaInstagramSquare,
+  FaLinkedin,
+  FaTwitter,
+} from "react-icons/fa";
 
 const tabsData = [
   { title: "Overview" },
@@ -21,17 +28,22 @@ const tabsData = [
   { title: "Tuition" },
 ];
 
-const FooterbtnItem: FacilitatorsProps[] = [
+const FooterbtnItem: {
+  items: { text: string; icon: JSX.Element; count?: string }[];
+  ordered: boolean;
+  customClass: string;
+}[] = [
   {
     items: [
-      "9 March, 2025 - 10 July 2025",
-      "Modules",
-      "Lessons",
-      "Duration",
-      "Case Study",
-      "Case Study",
-      "Certificate",
+      { text: "9 March, 2025 - 10 July 2025", icon: <CiClock1 /> },
+      { text: "Modules", icon: <LuMonitorPlay />, count: "12" },
+      { text: "Lessons", icon: <IoExtensionPuzzleOutline />, count: "12" },
+      { text: "Duration", icon: <CiClock1 />, count: "4 Months" },
+      { text: "Case Study", icon: <MdBarChart />, count: "9" },
+      { text: "Certificate", icon: <BsAward />, count: "Yes" },
     ],
+    ordered: false,
+    customClass: "",
   },
 ];
 
@@ -44,7 +56,7 @@ const Contents = () => {
 
   return (
     <div className="flex justify-center  mb-[10%] font-DMSans items-center px-4">
-      <div className="w-full lg:w-[80%] flex flex-col lg:flex-row justify-between items-start">
+      <div className="w-full lg:w-[80%] flex flex-wrap lg:flex-row justify-center gap-20 items-start">
         <div className="w-full lg:w-[819px]">
           <h2 className="text-[40px] my-3">
             Executive Diploma in Business Communication & Public Relations
@@ -69,26 +81,12 @@ const Contents = () => {
             <div>
               <Description />
             </div>
-            <div className="">Course content goes here.</div>
-            <div className="">Facilitators content goes here.</div>
-            <div className="">Course structure content goes here.</div>
-            <div className="">Tuition content goes here.</div>
-          </Tabs>
-          <Tabs tabs={tabsData}>
             <div>
               <CourseContents />
             </div>
-            <div className="">Course content goes here.</div>
-            <div className="">Facilitators content goes here.</div>
-            <div className="">Course structure content goes here.</div>
-            <div className="">Tuition content goes here.</div>
-          </Tabs>
-          <Tabs tabs={tabsData}>
             <div>
               <Facilitators />
             </div>
-            <div className="">Course content goes here.</div>
-            <div className="">Facilitators content goes here.</div>
             <div className="">Course structure content goes here.</div>
             <div className="">Tuition content goes here.</div>
           </Tabs>
@@ -141,13 +139,29 @@ const Contents = () => {
             <MbaList
               key={index}
               items={facilitator.items}
-              ordered={false}
-              customClass=""
+              ordered={facilitator.ordered}
+              customClass={facilitator.customClass}
             />
           ))}
-          <p className="text-[#FF3B30] font-DMSans font-semibold text-[18px] w-full text-center py-10">
-            Instalment Plan Available
-          </p>
+          <div className="w-full flex justify-center items-center flex-col">
+            <p className="text-[#FF3B30] font-DMSans font-semibold text-[18px] w-full text-center py-10">
+              Instalment Plan Available
+            </p>
+            <div className="flex justify-center items-center">
+              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full hover:bg-[#EEF2F6]">
+                <FaFacebookF />
+              </button>
+              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full hover:bg-[#EEF2F6]">
+                <FaTwitter />
+              </button>
+              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full hover:bg-[#EEF2F6]">
+                <FaInstagramSquare />
+              </button>
+              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full hover:bg-[#EEF2F6]">
+                <FaLinkedin />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

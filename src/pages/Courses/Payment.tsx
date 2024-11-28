@@ -1,5 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { BaseButton } from "~/components/buttons/BaseButton";
 import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
+import { ROUTES } from "~/components/constants/routes";
+import { useTheme } from "~/context/theme-provider";
 import { DashboardArea } from "~/layouts/DashboardArea";
 
 const programSpecifications = [
@@ -36,18 +39,22 @@ const options = [
 ];
 
 const Payment = () => {
+  const { theme } = useTheme();
+  const navigate = useNavigate();
   const handleSelect = (option: { label: string; value: string | number }) => {
     console.log("Selected option:", option);
   };
+
+  const handlePayment = () => {
+    navigate(ROUTES.DASHBOARD, { state: { enrolled: true } });
+  };
   return (
     <DashboardArea>
-      <div className="bg-[#fff] flex justify-center items-center rounded-[12px] w-full h-full py-12">
+      <div className="shadow-md flex justify-center items-center rounded-[12px] w-full h-full py-12">
         <div className="w-full lg:w-[80%] ">
-          <p className="text-[#140342] mb-6 font-DMSans text-[24px] font-semibold">
-            Payment
-          </p>
+          <p className=" mb-6 font-DMSans text-[24px] font-semibold">Payment</p>
           <div className=" lg:w-[90%]">
-            <p className="text-[#000000] text-left font-DMSans text-[20px] font-semibold">
+            <p className="text-left font-DMSans text-[20px] font-semibold">
               Professional Certificate in Communication And Public Relations
             </p>
             <div className="w-full border-b-2 border-[#7F7F7F] py-10 flex justify-center items-center">
@@ -57,10 +64,10 @@ const Payment = () => {
                     key={index}
                     className="flex justify-start items-center gap-2"
                   >
-                    <p className="text-[#5D5C5D] text-[18px] font-semibold font-DMSans">
+                    <p className="text-[18px] font-semibold font-DMSans">
                       {specifications.title}
                     </p>
-                    <p className="text-[#5D5C5D] text-[18px] font-normal font-DMSans">
+                    <p className="text-[18px] font-normal font-DMSans">
                       {specifications.duration}
                     </p>
                   </div>
@@ -68,14 +75,20 @@ const Payment = () => {
               </div>
             </div>
             <div className="py-8">
-              <p className="text-[#140342] mb-6 font-DMSans text-[24px] font-semibold">
+              <p className="mb-6 font-DMSans text-[24px] font-semibold">
                 Chose A Payment Plan
               </p>
               <div className="w-full lg:w-[399px]">
                 <SelectionDropdown options={options} onSelect={handleSelect} />
               </div>
               <div className="overflow-x-auto mt-6 w-full lg:w-[717px]">
-                <table className="table border-[1px] text-[#000] border-[#000000]">
+                <table
+                  className={`table ${
+                    theme === "light"
+                      ? "border-[1px] border-[#000000]"
+                      : "border-[1px] border-[#fff]"
+                  } `}
+                >
                   {/* head */}
                   <thead>
                     <tr className="bg-[#757575] text-[#fff]">
@@ -147,6 +160,7 @@ const Payment = () => {
                 hoverScale={1.01}
                 hoverOpacity={0.8}
                 tapScale={0.9}
+                onClick={handlePayment}
               >
                 <p>Proceed with payment</p>
               </BaseButton>

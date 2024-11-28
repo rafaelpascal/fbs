@@ -1,11 +1,8 @@
-// import { defineConfig } from "vite";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
-// export default defineConfig({
-//   plugins: [],
-// });
+// Export the Vite configuration
 export default defineConfig({
     plugins: [
         tsconfigPaths(),
@@ -15,8 +12,31 @@ export default defineConfig({
             srcDir: "src",
             filename: "manifest.json",
             workbox: {
-                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB limit
+                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
             },
         }),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: function (id) {
+                    if (id.includes("node_modules")) {
+                        return "vendor";
+                    }
+                    if (id.includes("node_modules/react")) {
+                        return "react-vendor";
+                    }
+                    if (id.includes("node_modules/lodash")) {
+                        return "lodash-vendor";
+                    }
+                    if (id.includes("/src/pages/auth/")) {
+                        return "auth-chunk";
+                    }
+                    if (id.includes("/src/pages/Courses/")) {
+                        return "courses-chunk";
+                    }
+                },
+            },
+        },
+    },
 });

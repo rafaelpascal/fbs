@@ -1,7 +1,8 @@
 export const ROUTES = {
   NEW_COURSE: "/",
   APPLICATION: "/application",
-  HOME: "/home",
-  DASHBOARD: "dashboard",
-  PAYMENT: "payment",
+  FORM_SUBMITTED: "/submitted",
+  HOME: "/login",
+  DASHBOARD: "/dashboard",
+  PAYMENT: "/payment",
 };

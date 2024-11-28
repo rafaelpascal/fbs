@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useTheme } from "~/context/theme-provider";
 
 // Define the type for a single option
 interface Option {
@@ -19,6 +20,7 @@ const SelectionDropdown: React.FC<SelectionDropdownProps> = ({
   placeholder = "Select an option",
   onSelect,
 }) => {
+  const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
 
@@ -31,14 +33,18 @@ const SelectionDropdown: React.FC<SelectionDropdownProps> = ({
   const handleSelect = (option: Option) => {
     setSelectedOption(option);
     setIsOpen(false);
-    onSelect(option); // Callback to parent component
+    onSelect(option);
   };
 
   return (
     <div className="relative w-full rounded-[8px]">
       {/* Dropdown Button */}
       <div
-        className="flex justify-between items-center bg-white border border-gray-300 rounded-md p-3 cursor-pointer shadow-sm"
+        className={`flex justify-between items-center  rounded-md p-3 cursor-pointer shadow-sm ${
+          theme === "light"
+            ? "bg-white border border-gray-300"
+            : "bg-[#424141] border-gray-300"
+        }`}
         onClick={handleToggle}
       >
         <span>{selectedOption ? selectedOption.label : placeholder}</span>
@@ -51,7 +57,7 @@ const SelectionDropdown: React.FC<SelectionDropdownProps> = ({
           {options.map((option) => (
             <li
               key={option.value}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              className="px-4 py-2 text-[#000] font-DMSans text-[16px] font-normal hover:bg-gray-100 cursor-pointer"
               onClick={() => handleSelect(option)}
             >
               {option.label}
