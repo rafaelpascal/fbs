@@ -24,6 +24,7 @@ export interface SideNavProps {
 export const Sidebar = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
+  // const user = useSelector((state: RootState) => state.user);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 

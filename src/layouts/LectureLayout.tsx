@@ -1,9 +1,11 @@
 import { cn } from "~/utils/helpers";
 import { Outlet } from "react-router-dom";
-import { Sidebar } from "~/components/sidebar/SideNav";
+import { LectureSidebar } from "~/components/lecturesidebar/LectureSidebar";
 
 // app layout
 const AppLayout = () => {
+  // const { loading } = useAuth();
+
   return (
     <div
       className={cn(
@@ -11,7 +13,7 @@ const AppLayout = () => {
       )}
     >
       <div className="flex max-sm:min-h-screen max-sm:pb-50">
-        <Sidebar />
+        <LectureSidebar />
         <Outlet />
       </div>
     </div>

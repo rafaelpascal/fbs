@@ -1,16 +1,24 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ROUTES } from "../components/constants/routes";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { LoadingSpinner } from "~/components/ui/loading-spinner.tsx";
+import LectureLayout from "~/layouts/LectureLayout.tsx";
+import { lazyLoad } from "~/utils/lazyLoad";
+import Quiz from "~/pages/lecture/Quiz.tsx";
+import WordLecture from "~/pages/lecture/wordLecture.tsx";
+import Assignment from "~/pages/lecture/Assignment.tsx";
 
 // Lazy load the components
-const Login = lazy(() => import("../pages/auth/Login.tsx"));
-const Home = lazy(() => import("~/pages/Courses/Courses.tsx"));
-const AppLayout = lazy(() => import("~/layouts/AppLayout.tsx"));
-const Payment = lazy(() => import("~/pages/Courses/Payment.tsx"));
-const NewCourse = lazy(() => import("~/pages/Courses/NewCourse.tsx"));
-const Application = lazy(() => import("~/pages/Courses/Application.tsx"));
-const FormSubmitted = lazy(() => import("~/pages/Courses/FormSubmitted.tsx"));
+const Lecture = lazyLoad(() => import("~/pages/lecture/Lecture.tsx"));
+const Login = lazyLoad(() => import("../pages/auth/Login.tsx"));
+const Home = lazyLoad(() => import("~/pages/Courses/Courses.tsx"));
+const AppLayout = lazyLoad(() => import("~/layouts/AppLayout.tsx"));
+const Payment = lazyLoad(() => import("~/pages/Courses/Payment.tsx"));
+const NewCourse = lazyLoad(() => import("~/pages/Courses/NewCourse.tsx"));
+const Application = lazyLoad(() => import("~/pages/Courses/Application.tsx"));
+const FormSubmitted = lazyLoad(
+  () => import("~/pages/Courses/FormSubmitted.tsx")
+);
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter([
@@ -40,6 +48,27 @@ const router = createBrowserRouter([
       {
         path: ROUTES.PAYMENT,
         element: <Payment />,
+      },
+    ],
+  },
+  {
+    element: <LectureLayout />,
+    children: [
+      {
+        path: ROUTES.LECTURE,
+        element: <Lecture />,
+      },
+      {
+        path: ROUTES.QUIZ,
+        element: <Quiz />,
+      },
+      {
+        path: ROUTES.WORD,
+        element: <WordLecture />,
+      },
+      {
+        path: ROUTES.ASSIGNMENT,
+        element: <Assignment />,
       },
     ],
   },

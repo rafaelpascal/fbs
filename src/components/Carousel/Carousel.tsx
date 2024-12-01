@@ -2,18 +2,37 @@ import React, { useState, ReactNode } from "react";
 
 interface CarouselProps {
   children: ReactNode[];
+  activeIndex?: number; // Optional external index control
+  onChange?: (index: number) => void; // Optional callback to update the current slide
 }
 
-const Carousel: React.FC<CarouselProps> = ({ children }) => {
-  const [currentSlide, setCurrentSlide] = useState(1);
+const Carousel: React.FC<CarouselProps> = ({
+  children,
+  activeIndex,
+  onChange,
+}) => {
   const totalSlides = children.length;
 
+  // Internal state for activeIndex if not controlled externally
+  const [internalIndex, setInternalIndex] = useState(0);
+  const currentIndex = activeIndex !== undefined ? activeIndex : internalIndex;
+
+  const changeIndex = (newIndex: number) => {
+    if (onChange) {
+      onChange(newIndex); // Call external handler if provided
+    } else {
+      setInternalIndex(newIndex); // Update internal state
+    }
+  };
+
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === totalSlides ? 1 : prev + 1));
+    const newIndex = currentIndex === totalSlides - 1 ? 0 : currentIndex + 1;
+    changeIndex(newIndex);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 1 ? totalSlides : prev - 1));
+    const newIndex = currentIndex === 0 ? totalSlides - 1 : currentIndex - 1;
+    changeIndex(newIndex);
   };
 
   return (
@@ -21,10 +40,10 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
       <div
         className="carousel-slide"
         style={{
-          transform: `translateX(-${(currentSlide - 1) * 100}%)`,
-          transition: "transform 0.3s ease-in-out", // Smooth slide transition
+          transform: `translateX(-${currentIndex * 100}%)`,
+          transition: "transform 0.3s ease-in-out",
           display: "flex",
-          width: "100%", // Ensure the carousel takes up only 100% of the container width
+          width: "100%",
         }}
       >
         {children.map((child, index) => (
@@ -45,9 +64,9 @@ const Carousel: React.FC<CarouselProps> = ({ children }) => {
           {children.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentSlide(index + 1)}
-              className={` font-DMSans font-semibold ${
-                currentSlide === index + 1 ? "text-[#FF3B30] underline" : ""
+              onClick={() => changeIndex(index)}
+              className={`font-DMSans font-semibold ${
+                currentIndex === index ? "text-[#FF3B30] underline" : ""
               }`}
             >
               {index + 1}

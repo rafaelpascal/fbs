@@ -5,4 +5,8 @@ export const ROUTES = {
   HOME: "/login",
   DASHBOARD: "/dashboard",
   PAYMENT: "/payment",
+  LECTURE: "/lecture/:id",
+  QUIZ: "/assignment",
+  WORD: "/word",
+  ASSIGNMENT: "/module/assignment",
 };

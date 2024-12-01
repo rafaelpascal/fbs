@@ -7,6 +7,8 @@ import OTPInput from "~/components/data-inputs/OTPInput";
 import { BaseButton } from "~/components/buttons/BaseButton";
 import { useEffect, useState } from "react";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { FaAsterisk } from "react-icons/fa";
+import PhoneInput from "react-phone-number-input";
 
 const fields = [
   {
@@ -38,6 +40,7 @@ type PersonalInfoProp = {
 };
 
 const PersonalInfo = ({ handleOTPComplete, submitting }: PersonalInfoProp) => {
+  const [value, setValue] = useState<string | undefined>(undefined);
   const form = useForm<ApplicationFormPayload>({
     resolver: zodResolver(applicationSchema),
     mode: "onChange",
@@ -80,6 +83,22 @@ const PersonalInfo = ({ handleOTPComplete, submitting }: PersonalInfoProp) => {
             error={unWrapErrors(field.name)}
           />
         ))}
+        <div className="w-full h-[66px] mx-auto">
+          <div className="flex justify-start gap-2 items-center">
+            <label htmlFor="phone" className="text-[18px] font-semibold">
+              Call phone line
+            </label>
+            <FaAsterisk className="text-[#F01E00] text-[12px]" />
+          </div>
+          <PhoneInput
+            id="phone"
+            international
+            defaultCountry="NG"
+            value={value}
+            onChange={setValue}
+            className="w-full h-full px-4 py-2 no-outline mt-2 border border-gray-300 rounded-md"
+          />
+        </div>
         {isCodeSent && (
           <div className="">
             <h2 className=" text-[18px] font-bold font-DMSans mb-2">

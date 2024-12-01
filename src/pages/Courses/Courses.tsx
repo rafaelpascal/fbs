@@ -13,6 +13,8 @@ import LessonsCard from "~/components/cards/LessonsCard";
 import ForumsCard from "~/components/cards/ForumsCard";
 import { useState } from "react";
 import { useTheme } from "~/context/theme-provider";
+import { FaChevronDown } from "react-icons/fa6";
+import ModuleCards from "~/components/cards/ModuleCards";
 
 const programSpecifications = [
   {
@@ -43,6 +45,8 @@ const programSpecifications = [
 
 const courses = [
   {
+    type: "word",
+    lesson: "1",
     id: 1,
     title: "LEADERSHIP & STRATEGIC MANAGEMENT",
     description:
@@ -55,6 +59,8 @@ const courses = [
   },
   {
     id: 2,
+    type: "video",
+    lesson: "2",
     title: "BUSINESS COMMUNICATION SKILLS",
     description:
       "Mastering communication techniques, effective presentations, and team collaboration....",
@@ -66,6 +72,8 @@ const courses = [
   },
   {
     id: 3,
+    type: "video",
+    lesson: "3",
     title: "BUSINESS COMMUNICATION SKILLS",
     description:
       "Mastering communication techniques, effective presentations, and team collaboration....",
@@ -77,6 +85,8 @@ const courses = [
   },
   {
     id: 4,
+    type: "video",
+    lesson: "4",
     title: "DATA ANALYTICS FUNDAMENTALS",
     description:
       "Understanding data analytics, tools, and case studies to drive data-driven decision making....",
@@ -91,6 +101,8 @@ const courses = [
 const secondcourses = [
   {
     id: 1,
+    type: "video",
+    lesson: "1",
     title: "LEADERSHIP & STRATEGIC MANAGEMENT",
     description:
       "Distinguishing leadership from management, exploring roles, functions, achieving balance, and understanding the evolution through case....",
@@ -102,6 +114,8 @@ const secondcourses = [
   },
   {
     id: 2,
+    type: "video",
+    lesson: "2",
     title: "BUSINESS COMMUNICATION SKILLS",
     description:
       "Mastering communication techniques, effective presentations, and team collaboration....",
@@ -113,6 +127,8 @@ const secondcourses = [
   },
   {
     id: 3,
+    type: "video",
+    lesson: "3",
     title: "BUSINESS COMMUNICATION SKILLS",
     description:
       "Mastering communication techniques, effective presentations, and team collaboration....",
@@ -124,6 +140,8 @@ const secondcourses = [
   },
   {
     id: 4,
+    type: "video",
+    lesson: "4",
     title: "DATA ANALYTICS FUNDAMENTALS",
     description:
       "Understanding data analytics, tools, and case studies to drive data-driven decision making....",
@@ -160,14 +178,31 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [enrolled] = useState(location.state?.enrolled || false);
+  const [selectedOption, setSelectedOption] = useState<string | null>(
+    "MODULES"
+  );
+
+  const handleOptionSelect = (option: string) => {
+    setSelectedOption(option);
+    console.log(`Selected option: ${option}`);
+  };
 
   const handlePayment = () => {
     navigate(ROUTES.PAYMENT);
   };
+  const handleStartCourse = (type: string, courseId: number) => {
+    if (type === "word") {
+      navigate(`/word-course/${courseId}`);
+    } else if (type === "video") {
+      navigate(`/lecture/${courseId}`);
+    } else {
+      console.error("Unknown course type");
+    }
+  };
 
   return (
     <DashboardArea>
-      <Collapsible title="My Enrollments" initialState={false}>
+      <Collapsible title="My Enrollments" initialState={true}>
         <div className="w-full flex justify-center items-center">
           <div className=" lg:w-[90%]">
             <p className="text-left font-DMSans text-[20px] font-semibold">
@@ -199,15 +234,17 @@ const Dashboard = () => {
                   Accepted
                 </span>
               </div>
-              <BaseButton
-                containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] `}
-                hoverScale={1.01}
-                hoverOpacity={0.8}
-                tapScale={0.9}
-                onClick={handlePayment}
-              >
-                <p>Proceed with payment</p>
-              </BaseButton>
+              {!enrolled && (
+                <BaseButton
+                  containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] `}
+                  hoverScale={1.01}
+                  hoverOpacity={0.8}
+                  tapScale={0.9}
+                  onClick={handlePayment}
+                >
+                  <p>Proceed with payment</p>
+                </BaseButton>
+              )}
             </div>
           </div>
         </div>
@@ -215,46 +252,118 @@ const Dashboard = () => {
       {enrolled ? (
         <>
           <Collapsible title="My Courses" initialState={true}>
-            <Carousel>
-              <div className="bg-[#EBEDF0] flex justify-center items-center w-full p-4 lg:p-10 rounded-[16px]">
-                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
-                  {courses.map((course) => (
-                    <CourseCard
-                      key={course.id}
-                      title={course.title}
-                      description={course.description}
-                      lessonsInfo={course.lessonsInfo}
-                      buttonText={course.buttonText}
-                      progress={course.progress}
-                      icon={course.icon}
-                      courseStarted={course.courseStarted}
-                      onButtonClick={() =>
-                        console.log(`${course.title} resumed!`)
-                      }
-                    />
-                  ))}
+            <div className="bg-[#EBEDF0] flex flex-col justify-center items-center w-full p-4 lg:p-10 rounded-[16px]">
+              <div className="flex justify-between items-center w-full">
+                <div className="dropdown">
+                  <div tabIndex={0} role="button" className="btn m-1">
+                    <p className="text-left font-DMSans text-[14px] font-semibold">
+                      MODULES
+                    </p>
+                    <FaChevronDown />
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                  >
+                    <li className="text-left font-DMSans text-[14px] font-semibold">
+                      <a onClick={() => handleOptionSelect("MODULES")}>
+                        MODULES
+                      </a>
+                    </li>
+                    <li className="text-left font-DMSans text-[14px] font-semibold">
+                      <a onClick={() => handleOptionSelect("LESSONS")}>
+                        LESSONS
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div className="dropdown">
+                  <div tabIndex={0} role="button" className="btn m-1">
+                    <p className="text-left font-DMSans text-[14px] font-semibold uppercase">
+                      Course Status
+                    </p>
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                  >
+                    <li className="text-left font-DMSans text-[14px] font-semibold">
+                      <a>Item 1</a>
+                    </li>
+                    <li className="text-left font-DMSans text-[14px] font-semibold">
+                      <a>Item 2</a>
+                    </li>
+                  </ul>
                 </div>
               </div>
-              <div className="bg-[#EBEDF0] flex justify-center items-center w-full p-4 lg:p-10 rounded-[16px]">
-                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
-                  {secondcourses.map((course) => (
-                    <CourseCard
-                      key={course.id}
-                      title={course.title}
-                      description={course.description}
-                      lessonsInfo={course.lessonsInfo}
-                      buttonText={course.buttonText}
-                      progress={course.progress}
-                      icon={course.icon}
-                      courseStarted={course.status}
-                      onButtonClick={() =>
-                        console.log(`${course.title} resumed!`)
-                      }
-                    />
-                  ))}
-                </div>
-              </div>
-            </Carousel>
+              {selectedOption === "MODULES" && (
+                <Carousel>
+                  <div className="grid grid-cols-1 gap-x-60 gap-y-10 sm:grid-cols-2">
+                    {courses.map((course) => (
+                      <CourseCard
+                        key={course.id}
+                        title={course.title}
+                        description={course.description}
+                        lessonsInfo={course.lessonsInfo}
+                        buttonText={course.buttonText}
+                        progress={course.progress}
+                        icon={course.icon}
+                        courseStarted={course.courseStarted}
+                        onButtonClick={() =>
+                          handleStartCourse(course.type, course.id)
+                        }
+                      />
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                    {secondcourses.map((course) => (
+                      <CourseCard
+                        key={course.id}
+                        title={course.title}
+                        description={course.description}
+                        lessonsInfo={course.lessonsInfo}
+                        buttonText={course.buttonText}
+                        progress={course.progress}
+                        icon={course.icon}
+                        courseStarted={course.status}
+                        onButtonClick={() =>
+                          console.log(`${course.title} resumed!`)
+                        }
+                      />
+                    ))}
+                  </div>
+                </Carousel>
+              )}
+              {selectedOption === "LESSONS" && (
+                <Carousel>
+                  <div className="grid grid-cols-1 mt-8 gap-x-60 sm:grid-cols-2">
+                    <div className="h-[89px] w-full flex justify-start items-center px-4 bg-[#FF1515]">
+                      <h2 className="text-left font-DMSans text-[20px] text-[#fff] font-semibold">
+                        MODULE 1: LEADERSHIP & STRATEGIC MANAGEMENT
+                      </h2>
+                    </div>
+                    <div className="h-[89px] w-full flex justify-start items-center px-4 bg-[#FF1515]">
+                      <h2 className="text-left font-DMSans text-[20px] text-[#fff] font-semibold">
+                        MODULE 1: LEADERSHIP & STRATEGIC MANAGEMENT
+                      </h2>
+                    </div>
+                    {courses.map((course) => (
+                      <ModuleCards
+                        key={course.id}
+                        courseStarted={course.courseStarted}
+                        lesson={course.lesson}
+                        title={course.title}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                    Lessons View
+                  </div>
+                </Carousel>
+              )}
+            </div>
           </Collapsible>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
