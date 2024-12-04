@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { GrLinkPrevious } from "react-icons/gr";
+import { HiDotsHorizontal } from "react-icons/hi";
 import { HiOutlineHandThumbDown, HiOutlineHandThumbUp } from "react-icons/hi2";
 import PDFUploader from "~/components/data-inputs/UploadPDF";
 import { useTheme } from "~/context/theme-provider";
@@ -88,6 +89,9 @@ const Assignment = () => {
             </button>
             <button>
               <HiOutlineHandThumbDown className="hover:text-[#FF1515] text-[22px]" />
+            </button>
+            <button>
+              <HiDotsHorizontal className="text-[#1B1919] text-[22px]" />
             </button>
           </div>
         </div>

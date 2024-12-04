@@ -6,6 +6,7 @@ import { FBSlogo } from "~/assets";
 import { useTheme } from "~/context/theme-provider";
 import Collapsible from "../Collapsible/Collapsible";
 import { LectureItems } from "./LectureItems";
+import { RiHome2Line } from "react-icons/ri";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -70,6 +71,12 @@ export const LectureSidebar = () => {
               className={cn(isCollapsed && "mx-auto")}
             />
           </div>
+          <div className="w-full flex mt-4 flex-row justify-start gap-6 items-center">
+            <RiHome2Line className="text-[35px]" />
+            <h2 className="text-[20px] font-DMSans font-semibold">
+              <span className="text-[#1CB503]">Week 2</span> / 12 weeks
+            </h2>
+          </div>
           {/* <button
             className="absolute top-16 shadow-md right-[-18px] hidden lg:flex items-center p-2 rounded-full bg-[#EEF2F6] text-[#FF3B30]"
             onClick={toggleCollapse}
@@ -107,6 +114,25 @@ export const LectureSidebar = () => {
                   iconOnly={isCollapsed}
                 />
               ))}
+            </ul>
+          </Collapsible>
+          <Collapsible
+            title="My Notes"
+            initialState={false}
+            headerClassName="text-[14px] h-[20px]"
+          >
+            <ul>
+              <li>My Notes</li>
+            </ul>
+          </Collapsible>
+          <Collapsible
+            title="Support/Help"
+            initialState={false}
+            headerClassName="text-[14px] text-[#fff] h-[20px]"
+            containerClassname="bg-[#3D85F9]"
+          >
+            <ul>
+              <li>My Notes</li>
             </ul>
           </Collapsible>
         </div>

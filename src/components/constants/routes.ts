@@ -10,4 +10,5 @@ export const ROUTES = {
   WORD: "/word",
   ASSIGNMENT: "/module/assignment",
   BANKTRANSFER: "/banktransfer",
+  CONGRATULATIONS: "/success",
 };

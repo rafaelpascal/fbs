@@ -81,7 +81,7 @@ export const Sidebar = () => {
             <img
               src={FBSlogo}
               alt="biopaylogo"
-              width={isCollapsed ? 50 : 100} // Adjust logo size based on collapsed state
+              width={isCollapsed ? 50 : 100}
               className={cn(isCollapsed && "mx-auto")}
             />
             {/* Toggle Collapse Button for Desktop */}
@@ -112,9 +112,9 @@ export const Sidebar = () => {
                 {...data}
                 textStyles={cn(
                   "hidden bg-transparent text-md my-3 lg:block",
-                  isCollapsed && "hidden" // Hide text when collapsed
+                  isCollapsed && "hidden"
                 )}
-                iconOnly={isCollapsed} // Use this prop to control icon-only display
+                iconOnly={isCollapsed}
               />
             ))}
           </ul>

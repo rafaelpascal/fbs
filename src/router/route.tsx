@@ -8,6 +8,7 @@ import Quiz from "~/pages/lecture/Quiz.tsx";
 import WordLecture from "~/pages/lecture/wordLecture.tsx";
 import Assignment from "~/pages/lecture/Assignment.tsx";
 import BankTransfer from "~/pages/Courses/BankTransfer.tsx";
+import Congratulations from "~/pages/lecture/Congratulations.tsx";
 
 // Lazy load the components
 const Lecture = lazyLoad(() => import("~/pages/lecture/Lecture.tsx"));
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: ROUTES.ASSIGNMENT,
         element: <Assignment />,
+      },
+      {
+        path: ROUTES.CONGRATULATIONS,
+        element: <Congratulations />,
       },
     ],
   },

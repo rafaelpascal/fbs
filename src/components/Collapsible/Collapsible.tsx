@@ -8,6 +8,7 @@ type CollapseProps = {
   children: ReactNode;
   initialState: boolean;
   headerClassName?: string;
+  containerClassname?: string;
 };
 
 const Collapsible = ({
@@ -15,6 +16,7 @@ const Collapsible = ({
   children,
   initialState = false,
   headerClassName,
+  containerClassname,
 }: CollapseProps) => {
   const [isOpen, setIsOpen] = useState(initialState);
   const { theme } = useTheme();
@@ -34,7 +36,12 @@ const Collapsible = ({
         onChange={handleToggle}
         checked={isOpen}
       />
-      <div className="collapse-title flex justify-between items-center py-8">
+      <div
+        className={cn(
+          "collapse-title flex justify-between items-center py-4",
+          containerClassname
+        )}
+      >
         <p
           className={cn(
             "font-DMSans text-[24px] font-semibold",

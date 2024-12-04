@@ -1,6 +1,7 @@
 import { DashboardArea } from "~/layouts/DashboardArea";
 import { GrLinkPrevious, GrLinkNext } from "react-icons/gr";
 import { HiOutlineHandThumbUp, HiOutlineHandThumbDown } from "react-icons/hi2";
+import { HiDotsHorizontal } from "react-icons/hi";
 const lectureItems = {
   title: "Introduction to Business consulting And Strategy",
   videoSrc: "https://www.w3schools.com/html/mov_bbb.mp4",
@@ -23,6 +24,9 @@ const Lecture = () => {
             </button>
             <button>
               <HiOutlineHandThumbDown className="hover:text-[#FF1515] text-[22px]" />
+            </button>
+            <button>
+              <HiDotsHorizontal className="text-[#1B1919] text-[22px]" />
             </button>
           </div>
         </div>
