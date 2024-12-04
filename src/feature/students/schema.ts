@@ -7,6 +7,13 @@ export const authSchema = Validator.object({
 });
 export type AuthFormPayload = z.infer<typeof authSchema>;
 
+export const transferSchema = Validator.object({
+  bankName: Validator.string("Bank Name"),
+  bankAccount: Validator.string("Bank Account"),
+  amount: Validator.string("Amount"),
+});
+export type TransferFormPayload = z.infer<typeof transferSchema>;
+
 export const applicationSchema = Validator.object({
   firstname: Validator.string("First Name"),
   lastname: Validator.string("Last Name"),

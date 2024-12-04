@@ -24,7 +24,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
   onButtonClick,
 }) => {
   return (
-    <div className="relative w-full lg:w-[550px] mt-4 h-[325px] bg-[#fff]">
+    <div className="relative w-full mt-4 h-[325px] bg-[#fff]">
       <div className="p-6 h-[240px] flex justify-between items-start flex-col">
         <div className="flex justify-between w-full gap-6 items-center">
           <h2 className="text-[20px] font-DMSans font-bold text-[#000000] w-[60%]">

@@ -9,4 +9,5 @@ export const ROUTES = {
   QUIZ: "/assignment",
   WORD: "/word",
   ASSIGNMENT: "/module/assignment",
+  BANKTRANSFER: "/banktransfer",
 };

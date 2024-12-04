@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { BaseButton } from "~/components/buttons/BaseButton";
 import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
-import { ROUTES } from "~/components/constants/routes";
+import { NewPaymentModal } from "~/components/Modal/NewPaymentModal";
 import { useTheme } from "~/context/theme-provider";
 import { DashboardArea } from "~/layouts/DashboardArea";
 
@@ -40,14 +40,20 @@ const options = [
 
 const Payment = () => {
   const { theme } = useTheme();
-  const navigate = useNavigate();
+  const [newPayment, setPayment] = useState(false);
+  // const navigate = useNavigate();
   const handleSelect = (option: { label: string; value: string | number }) => {
     console.log("Selected option:", option);
   };
 
   const handlePayment = () => {
-    navigate(ROUTES.DASHBOARD, { state: { enrolled: true } });
+    setPayment(true);
   };
+
+  const handleClose = () => {
+    setPayment(false);
+  };
+
   return (
     <DashboardArea>
       <div className="shadow-md flex justify-center items-center rounded-[12px] w-full h-full py-12">
@@ -168,6 +174,7 @@ const Payment = () => {
           </div>
         </div>
       </div>
+      <NewPaymentModal isOpen={newPayment} closeModal={handleClose} />
     </DashboardArea>
   );
 };
