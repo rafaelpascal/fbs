@@ -9,6 +9,8 @@ import WordLecture from "~/pages/lecture/wordLecture.tsx";
 import Assignment from "~/pages/lecture/Assignment.tsx";
 import BankTransfer from "~/pages/Courses/BankTransfer.tsx";
 import Congratulations from "~/pages/lecture/Congratulations.tsx";
+import LectureComplete from "~/pages/lecture/LectureComplete.tsx";
+import Events from "~/pages/Home/Events.tsx";
 
 // Lazy load the components
 const Lecture = lazyLoad(() => import("~/pages/lecture/Lecture.tsx"));
@@ -27,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: ROUTES.NEW_COURSE,
     element: <NewCourse />,
+  },
+  {
+    path: ROUTES.EVENTS,
+    element: <Events />,
   },
   {
     path: ROUTES.APPLICATION,
@@ -79,6 +85,10 @@ const router = createBrowserRouter([
       {
         path: ROUTES.CONGRATULATIONS,
         element: <Congratulations />,
+      },
+      {
+        path: ROUTES.LECTURECOMPLETE,
+        element: <LectureComplete />,
       },
     ],
   },

@@ -5,6 +5,8 @@ import Carousel from "~/components/Carousel/Carousel";
 import { useTheme } from "~/context/theme-provider";
 import { cn } from "~/utils/helpers";
 import useCountdown from "~/hooks/useCountdown";
+import { ROUTES } from "~/components/constants/routes";
+import { useNavigate } from "react-router-dom";
 
 const module1quiz = [
   {
@@ -28,6 +30,7 @@ const module1quiz = [
 ];
 
 const Quiz = () => {
+  const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
   const { theme } = useTheme();
   const [selectedOptions, setSelectedOptions] = useState<
@@ -57,6 +60,10 @@ const Quiz = () => {
       resetCountdown();
     }
   }, [minutes, seconds, resetCountdown, module1quiz.length]);
+
+  const handlesubmit = () => {
+    navigate(ROUTES.CONGRATULATIONS);
+  };
 
   return (
     <DashboardArea>
@@ -133,7 +140,10 @@ const Quiz = () => {
               PREVIOUS{" "}
             </p>
           </button>
-          <button className="w-[160px] bg-[#FF1515] rounded-md p-2">
+          <button
+            onClick={handlesubmit}
+            className="w-[160px] bg-[#FF1515] rounded-md p-2"
+          >
             <p className="text-[20px] font-DMSans font-semibold text-[#fff]">
               SUBMIT
             </p>

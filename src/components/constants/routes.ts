@@ -11,4 +11,6 @@ export const ROUTES = {
   ASSIGNMENT: "/module/assignment",
   BANKTRANSFER: "/banktransfer",
   CONGRATULATIONS: "/success",
+  LECTURECOMPLETE: "/lecture-success",
+  EVENTS: "/events",
 };

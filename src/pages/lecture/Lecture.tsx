@@ -2,11 +2,18 @@ import { DashboardArea } from "~/layouts/DashboardArea";
 import { GrLinkPrevious, GrLinkNext } from "react-icons/gr";
 import { HiOutlineHandThumbUp, HiOutlineHandThumbDown } from "react-icons/hi2";
 import { HiDotsHorizontal } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "~/components/constants/routes";
 const lectureItems = {
   title: "Introduction to Business consulting And Strategy",
   videoSrc: "https://www.w3schools.com/html/mov_bbb.mp4",
 };
 const Lecture = () => {
+  const navigate = useNavigate();
+
+  const handlesubmit = () => {
+    navigate(ROUTES.LECTURECOMPLETE);
+  };
   return (
     <DashboardArea>
       <div>
@@ -37,7 +44,10 @@ const Lecture = () => {
               PREVIOUS{" "}
             </p>
           </button>
-          <button className="bg-[#FF1515] rounded-md flex justify-center gap-8 items-center p-2">
+          <button
+            onClick={handlesubmit}
+            className="bg-[#FF1515] rounded-md flex justify-center gap-8 items-center p-2"
+          >
             <p className="text-[20px] font-DMSans font-semibold text-[#fff]">
               NEXT{" "}
             </p>

@@ -6,8 +6,11 @@ import { CiLinkedin, CiYoutube } from "react-icons/ci";
 import { FBSlogo } from "~/assets";
 import { useTheme } from "~/context/theme-provider";
 import ThemeToggle from "../buttons/ThemeController";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../constants/routes";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false); // State to track scrolling
   const { theme } = useTheme();
@@ -36,6 +39,10 @@ const Header = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleNavigateEvents = () => {
+    navigate(ROUTES.EVENTS);
   };
 
   return (
@@ -70,7 +77,8 @@ const Header = () => {
           <button>Home</button>
           <button>About</button>
           <button>Programs</button>
-          <button>Blog</button>
+          <button onClick={handleNavigateEvents}>Events</button>
+          <button onClick={handleNavigateEvents}>Blog</button>
           <button>Resources</button>
           <button>Contact</button>
         </nav>
@@ -126,6 +134,7 @@ const Header = () => {
               <button>Home</button>
               <button>About</button>
               <button>Programs</button>
+              <button onClick={handleNavigateEvents}>Events</button>
               <button>Blog</button>
               <button>Resources</button>
               <button>Contact</button>
