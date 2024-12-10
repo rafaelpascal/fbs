@@ -2,19 +2,23 @@ import { CiCalendarDate } from "react-icons/ci";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
 type EventCardProps = {
+  id: string;
   title: string;
   time: string;
   location: string;
   newevent: boolean;
   type: string;
+  handleNavigation: (id: string) => void;
 };
 
 const EventCard = ({
+  id,
   title,
   time,
   location,
   newevent,
   type,
+  handleNavigation,
 }: EventCardProps) => {
   return (
     <div className="w-full rounded-md shadow-lg">
@@ -44,7 +48,10 @@ const EventCard = ({
         </div>
         <div className="flex justify-end items-center gap-4">
           <h2 className="font-DMSans text-[14px] font-semibold">{type}</h2>
-          <button className="w-[140px] py-2 bg-[#FF3B30] rounded-md text-white font-DMSans font-semibold">
+          <button
+            onClick={() => handleNavigation(id)}
+            className="w-[140px] py-2 bg-[#FF3B30] rounded-md text-white font-DMSans font-semibold"
+          >
             Register Now
           </button>
         </div>

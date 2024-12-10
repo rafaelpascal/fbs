@@ -8,6 +8,7 @@ interface AvatarProps {
   avatarClassName?: string;
   textClassName?: string;
   wrapperClassName?: string;
+  color?: string;
   avatarTextContainerClassName?: string;
   rounded?: boolean;
 }
@@ -20,6 +21,7 @@ export const Avatar = (props: AvatarProps) => {
     textClassName,
     wrapperClassName,
     rounded,
+    color,
   } = props;
 
   const cnFn = (...inputs: ClassArray) =>
@@ -27,12 +29,16 @@ export const Avatar = (props: AvatarProps) => {
       "h-10 w-10 rounded-md",
       rounded && "rounded-full",
       inputs,
-      avatarClassName
+      avatarClassName,
+      textClassName
     );
 
   return (
     <div
-      className={cn("flex items-center rounded-[12px] gap-2", wrapperClassName)}
+      className={cn(
+        "flex items-center rounded-[12px] text-white gap-2",
+        wrapperClassName
+      )}
     >
       {img ? (
         <img src={img} className={cnFn("rounded-[12px]")} alt={name} />
@@ -43,6 +49,7 @@ export const Avatar = (props: AvatarProps) => {
               avatarUrl: name,
               additionalParams: {
                 background: "A2A1A833",
+                color: color || "",
               },
             })})`,
           }}

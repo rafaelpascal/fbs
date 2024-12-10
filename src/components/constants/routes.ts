@@ -13,4 +13,5 @@ export const ROUTES = {
   CONGRATULATIONS: "/success",
   LECTURECOMPLETE: "/lecture-success",
   EVENTS: "/events",
+  SINGLE_EVENT: "/event/:id",
 };

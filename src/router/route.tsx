@@ -11,6 +11,7 @@ import BankTransfer from "~/pages/Courses/BankTransfer.tsx";
 import Congratulations from "~/pages/lecture/Congratulations.tsx";
 import LectureComplete from "~/pages/lecture/LectureComplete.tsx";
 import Events from "~/pages/Home/Events.tsx";
+import SingleEvent from "~/pages/Home/SingleEvent.tsx";
 
 // Lazy load the components
 const Lecture = lazyLoad(() => import("~/pages/lecture/Lecture.tsx"));
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: ROUTES.EVENTS,
     element: <Events />,
+  },
+  {
+    path: ROUTES.SINGLE_EVENT,
+    element: <SingleEvent />,
   },
   {
     path: ROUTES.APPLICATION,

@@ -73,8 +73,9 @@ const Contents = () => {
             <span className="">Format:</span> Hybrid{" "}
           </p>
           <img
-            src="https://s3-alpha-sig.figma.com/img/fca1/b527/3dc913d6a517b22891c56fc7d0adbaf0?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=ONW8A23I~6CcWgzr1HJbjqvEoW3bwT1i55H2QsLoX6DrCNuXcpV5ifNj0SVdmpBroZDrl6Knu0Xzjnh25apBeE9SZpiSH~wKajVVh1ffBoWfbVyCEQj20nzVCsFB6PcSPa9LscnJZgX9XytwfcxmVXGsledYyk1MoXOZpVHrxxzdkvoavhJD5eJ0tgAKoIlWX6V0yuMtpOB6Gj01gDY7dZf8bXWb0Cu7ailML3gouHAbAejeo81EnY7BXRE1Bb5rd7DYS2K7PEv4T9CmKuj4SFzBHYa9~F~ocKgS4btoEtez8xPfN-epO6bOFU0GJEM5S2XG8BPexaksN1XJJfrxIQ__"
+            src="https://s3-alpha-sig.figma.com/img/fca1/b527/3dc913d6a517b22891c56fc7d0adbaf0?Expires=1734912000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qXgucmHSHij69aFdeUw7gmInmfaj4dCuyZOA9W4M-303RiQYpXTwTxpLS5vofvJFZa14mTvogxDdAqNtDQasTbrfvQLtMB4C0jcGu~4g7a6z5x94rbTVBcMXiW3BiD~LrLWLaNA~7qGNQInnU6erTL9gGaXka~Q8DKKfLkzZnlM7vrc1Ji85DWBkxns3C5b7CRDOxUF8RvdPFbMDmZXsb4GicnYwcPxxjM-KPndiJtX4ozieSNAphQ42ERNz8~9xHIyjyFI4V9x2~YYQSlcoNcoMj~EZk61ybQwCv2iZwLWedr2stlR9tdgXocQkqzbc-PetPcKMRK31DvfUegE9nw__"
             alt="Video"
+            className="rounded-lg"
           />
 
           <Tabs tabs={tabsData}>

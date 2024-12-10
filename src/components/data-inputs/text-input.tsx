@@ -81,12 +81,12 @@ export const BaseInput = forwardRef<
         <div
           style={{ opacity: readOnly ? ".5" : 1 }}
           className={cn(
-            "relative flex w-auto flex-row items-center justify-between gap-1 h-[66px] rounded-[8px] px-3 text-[16px] font-normal font-DMSans text-[#03435F] outline-none border-[1px] border-[#E6E6E6]",
+            "relative flex w-auto flex-row items-center justify-between gap-1 h-[66px] rounded-[8px] px-3 text-[16px] font-normal font-DMSans outline-none border-[1px] border-[#E6E6E6]",
             readOnly ? "opacity-[.5]" : "opacity-[1]",
             inputContainerClassName
           )}
         >
-          {type === "text-area" ? (
+          {type === "textarea" ? (
             <textarea
               placeholder={placeholder}
               readOnly={readOnly}
@@ -94,6 +94,10 @@ export const BaseInput = forwardRef<
               rows={4}
               cols={6}
               {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
+              className={cn(
+                "h-full w-full cursor-pointer bg-transparent outline-none focus:outline-none",
+                inputClassName
+              )}
             />
           ) : (
             <input

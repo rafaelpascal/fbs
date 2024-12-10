@@ -4,9 +4,11 @@ import Carousel from "../Carousel/Carousel";
 import RecentEventsCard from "../cards/RecentEventsCard";
 import { cn } from "~/utils/helpers";
 import { useTheme } from "~/context/theme-provider";
+import { useNavigate } from "react-router-dom";
 
 const Events = [
   {
+    id: "sjahsjashjshj",
     title: "Eco-Education in Our Lives: We Can Change the Future",
     time: "09:00pm, 6 April, 2025 - 7 April 2025",
     location: "Event Mall, Abuja Nigeria",
@@ -14,6 +16,7 @@ const Events = [
     type: "Exclusive",
   },
   {
+    id: "sjahsashjjasjashjshj",
     title: "Eco-Education in Our Lives: We Can Change the Future",
     time: "09:00pm, 6 April, 2025 - 7 April 2025",
     location: "Event Mall, Abuja Nigeria",
@@ -21,6 +24,7 @@ const Events = [
     type: "Open",
   },
   {
+    id: "sjahslskajashjshj",
     title: "Eco-Education in Our Lives: We Can Change the Future",
     time: "09:00pm, 6 April, 2025 - 7 April 2025",
     location: "Event Mall, Abuja Nigeria",
@@ -28,6 +32,7 @@ const Events = [
     type: "Open",
   },
   {
+    id: "sjahsjuajjashjshj",
     title: "Eco-Education in Our Lives: We Can Change the Future",
     time: "09:00pm, 6 April, 2025 - 7 April 2025",
     location: "Event Mall, Abuja Nigeria",
@@ -38,6 +43,13 @@ const Events = [
 
 const EventsContents = () => {
   const { theme } = useTheme();
+  const navigate = useNavigate();
+
+  const registerevent = (id: string) => {
+    console.log("SINGLE EVENT", id);
+    navigate(`/event/${id}`);
+  };
+
   return (
     <div className="w-full flex justify-center items-center">
       <div className="w-full lg:w-[80%]">
@@ -209,23 +221,27 @@ const EventsContents = () => {
                 {Events.map((event, index) => (
                   <EventCard
                     key={index}
+                    id={event.id}
                     title={event.title}
                     time={event.time}
                     location={event.location}
                     newevent={event.newevent}
                     type={event.type}
+                    handleNavigation={registerevent}
                   />
                 ))}
               </div>
               <div className="w-full grid grid-cols-1 gap-8 sm:grid-cols-2">
                 {Events.map((event, index) => (
                   <EventCard
+                    id={event.id}
                     key={index}
                     title={event.title}
                     time={event.time}
                     location={event.location}
                     newevent={event.newevent}
                     type={event.type}
+                    handleNavigation={registerevent}
                   />
                 ))}
               </div>
