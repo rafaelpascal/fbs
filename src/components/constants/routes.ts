@@ -4,6 +4,7 @@ export const ROUTES = {
   FORM_SUBMITTED: "/submitted",
   HOME: "/login",
   DASHBOARD: "/dashboard",
+  ADMINDASHBOARD: "/admin/dashboard",
   PAYMENT: "/payment",
   LECTURE: "/lecture/:id",
   QUIZ: "/assignment",
@@ -14,4 +15,9 @@ export const ROUTES = {
   LECTURECOMPLETE: "/lecture-success",
   EVENTS: "/events",
   SINGLE_EVENT: "/event/:id",
+  PAYMENTTABLE: "/admin/dashboard/payment",
+  APPLICATIONTABLE: "/admin/dashboard/application",
+  FACULTYTABLE: "/admin/dashboard/faculty",
+  COURSEAPPLICATION: "/admin/dashboard/application/:applicationId",
+  COURSES: "/admin/courses",
 };

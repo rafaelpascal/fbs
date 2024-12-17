@@ -14,7 +14,7 @@ export const DashboardArea = (props: DashboardAreaProps) => {
     <main className="fixed flex w-full h-[100vh] flex-col overflow-y-hidden sm:relative sm:overflow-y-auto">
       <TopNav />
       <div
-        className={`max-h-[calc(100vh)] h-[90vh] overflow-y-auto overflow-x-hidden p-2 lg:px-10 py-6 ${
+        className={`max-h-[calc(100vh)] h-[90vh] scrollbar-style overflow-y-auto overflow-x-hidden p-2 lg:px-10 py-6 ${
           theme === "light" ? "bg-[#F7F8FB]" : ""
         }`}
       >

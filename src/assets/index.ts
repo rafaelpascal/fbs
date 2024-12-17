@@ -7,7 +7,8 @@ import FordaxAcre from "./image/Fordax-ACcre-2.svg";
 import FordaxAcre2 from "./image/Fordax-ACcre-3.svg";
 import FordaxAcre3 from "./image/Fordax-ACcre.svg";
 import mbaimage from "./image/mbaimage.svg";
-
+import coupon from "./icon/coupon 1.svg";
+import playbtn from "./icon/play-button.svg";
 export {
   loginprogress,
   FBSlogo,
@@ -18,4 +19,6 @@ export {
   FordaxAcre2,
   FordaxAcre3,
   mbaimage,
+  coupon,
+  playbtn,
 };

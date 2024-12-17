@@ -26,7 +26,7 @@ export const BaseModal = ({ children, isOpen }: IBaseModal) => {
           <div
             ref={tooltipRef as React.RefObject<HTMLDivElement>}
             className={cn(
-              "h-auto max-h-[800px] pb-4 w-auto rounded-[8px] overflow-y-auto shadow-md [@media(max-width:1200px)]:w-[50%] [@media(max-width:700px)]:w-[90%] ",
+              "h-auto max-h-[800px]  w-auto rounded-[8px] overflow-y-auto shadow-md [@media(max-width:1200px)]:w-[50%] [@media(max-width:700px)]:w-[90%] ",
               theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
             )}
           >

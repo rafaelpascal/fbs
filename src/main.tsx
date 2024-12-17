@@ -1,4 +1,3 @@
-import "./styles/index.css";
 import { createRoot } from "react-dom/client";
 import AppRouter from "./router/route.tsx";
 import { Provider } from "react-redux";
@@ -8,6 +7,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { AuthProvider } from "./context/auth_provider/index.tsx";
 import { ThemeProvider } from "./context/theme-provider/index.tsx";
+import "./styles/index.css";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {

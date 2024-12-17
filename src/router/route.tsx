@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import { ROUTES } from "../components/constants/routes";
 import { Suspense } from "react";
 import { LoadingSpinner } from "~/components/ui/loading-spinner.tsx";
@@ -12,6 +16,13 @@ import Congratulations from "~/pages/lecture/Congratulations.tsx";
 import LectureComplete from "~/pages/lecture/LectureComplete.tsx";
 import Events from "~/pages/Home/Events.tsx";
 import SingleEvent from "~/pages/Home/SingleEvent.tsx";
+import AdminAppLayout from "~/layouts/AdminLayout.tsx";
+import Dashboard from "~/pages/Admin/Dashboard.tsx";
+import FacultiesTable from "~/pages/Admin/Tables/FacultiesTable.tsx";
+import ApplicationTable from "~/pages/Admin/Tables/ApplicationTable.tsx";
+import PaymentsTable from "~/pages/Admin/Tables/PaymentsTable.tsx";
+import CourseApplications from "~/pages/Admin/Students/CourseApplications.tsx";
+import AdminCourses from "~/pages/Admin/Courses/AdminCourses.tsx";
 
 // Lazy load the components
 const Lecture = lazyLoad(() => import("~/pages/lecture/Lecture.tsx"));
@@ -65,6 +76,41 @@ const router = createBrowserRouter([
       {
         path: ROUTES.BANKTRANSFER,
         element: <BankTransfer />,
+      },
+    ],
+  },
+  {
+    element: <AdminAppLayout />,
+    children: [
+      {
+        path: ROUTES.ADMINDASHBOARD,
+        element: <Dashboard />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to={ROUTES.PAYMENTTABLE} />,
+          },
+          {
+            path: ROUTES.PAYMENTTABLE,
+            element: <PaymentsTable />,
+          },
+          {
+            path: ROUTES.APPLICATIONTABLE,
+            element: <ApplicationTable />,
+          },
+          {
+            path: ROUTES.FACULTYTABLE,
+            element: <FacultiesTable />,
+          },
+        ],
+      },
+      {
+        path: ROUTES.COURSEAPPLICATION,
+        element: <CourseApplications />,
+      },
+      {
+        path: ROUTES.COURSES,
+        element: <AdminCourses />,
       },
     ],
   },

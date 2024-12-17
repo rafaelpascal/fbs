@@ -8,6 +8,11 @@ module.exports = {
       },
     },
   },
+  safelist: [
+    "::-webkit-scrollbar",
+    "::-webkit-scrollbar-track",
+    "::-webkit-scrollbar-thumb",
+  ],
   plugins: [require("daisyui")],
   daisyui: {
     themes: [

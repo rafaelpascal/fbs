@@ -53,7 +53,7 @@ export const Avatar = (props: AvatarProps) => {
               },
             })})`,
           }}
-          className={cnFn`bg-cover font-bold rounded-[12px] ${textClassName}`}
+          className={cnFn`bg-cover font-normal text-sm rounded-[12px] ${textClassName}`}
         />
       )}
     </div>
