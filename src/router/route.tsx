@@ -23,6 +23,11 @@ import ApplicationTable from "~/pages/Admin/Tables/ApplicationTable.tsx";
 import PaymentsTable from "~/pages/Admin/Tables/PaymentsTable.tsx";
 import CourseApplications from "~/pages/Admin/Students/CourseApplications.tsx";
 import AdminCourses from "~/pages/Admin/Courses/AdminCourses.tsx";
+import CourseAssignmentTable from "~/pages/Admin/Courses/CourseTable/CourseAssignmentTable.tsx";
+import CapstonesTable from "~/pages/Admin/Courses/CourseTable/CapstonesTable.tsx";
+import PollsTable from "~/pages/Admin/Courses/CourseTable/PollsTable.tsx";
+import QuizzesTable from "~/pages/Admin/Courses/CourseTable/QuizzesTable.tsx";
+import CreateCourse from "~/pages/Admin/Courses/CreateCourse.tsx";
 
 // Lazy load the components
 const Lecture = lazyLoad(() => import("~/pages/lecture/Lecture.tsx"));
@@ -111,6 +116,32 @@ const router = createBrowserRouter([
       {
         path: ROUTES.COURSES,
         element: <AdminCourses />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to={ROUTES.ASSIGNMENTSTABLE} />,
+          },
+          {
+            path: ROUTES.ASSIGNMENTSTABLE,
+            element: <CourseAssignmentTable />,
+          },
+          {
+            path: ROUTES.CAPSTONESTABLE,
+            element: <CapstonesTable />,
+          },
+          {
+            path: ROUTES.POLLSTABLE,
+            element: <PollsTable />,
+          },
+          {
+            path: ROUTES.QUIZZESTABLE,
+            element: <QuizzesTable />,
+          },
+        ],
+      },
+      {
+        path: ROUTES.NEWCOURSE,
+        element: <CreateCourse />,
       },
     ],
   },

@@ -30,7 +30,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ actions }) => {
     <div>
       <div ref={targetRef} className="relative items-center">
         <button type="button" onClick={openModal}>
-          <FaEllipsisH className="text-[24px]" />
+          <FaEllipsisH className="text-[16px]" />
         </button>
       </div>
       {isModalOpen && (

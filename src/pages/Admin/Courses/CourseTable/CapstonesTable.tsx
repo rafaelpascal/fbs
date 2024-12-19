@@ -1,5 +1,6 @@
 // import ApiTable from "~/components/table/ApiTable";
 import { TableColumn } from "react-data-table-component";
+import { Avatar } from "~/components/dashboard/Avatar";
 import { useNavigate } from "react-router-dom";
 // import { useCallback, useState } from "react";
 import moment from "moment";
@@ -7,26 +8,25 @@ import { Status } from "~/components/ui/Badge";
 import { statColorCode } from "~/utils/helpers";
 // import TableFilter from "~/components/table/TableFilter";
 import InDataTable from "~/components/table/InDataTable";
-import { courseData } from "~/components/constants/data";
+import { paymentData } from "~/components/constants/data";
 import ActionMenu from "~/components/table/ActionMenu";
 import { useState } from "react";
-// import { ContactModal } from "~/components/Modal/ContactModal";
+import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
   id: string;
   avatar: string;
   sn: number;
-  title: string;
-  starting: string;
-  ending: string;
-  application: string;
-  creator: string;
+  name: string;
+  email: string;
+  amount: string;
+  program: string;
   createdAt: string;
   status: string;
 }
 
-const CourseTable = () => {
-  const [, setIscontact] = useState(false);
+const CapstonesTable = () => {
+  const [isContact, setIscontact] = useState(false);
   const navigate = useNavigate();
   // const [filters, setFilters] = useState({
   //   dateFrom: "",
@@ -83,20 +83,41 @@ const CourseTable = () => {
       width: "60px",
     },
     {
-      name: "Title",
-      selector: (row: { title: string }) => row.title,
+      name: "Full name",
+      selector: (row: { name: string }) => row.name,
       sortable: true,
       cell: (row) => (
         <div className="flex justify-start gap-2 items-center">
+          <Avatar
+            img={row.avatar ?? ""}
+            name={row.name}
+            avatarClassName="md:h-8 h-8 w-8 md:w-8 rounded-full"
+            textClassName="font-medium text-sm max-md:hidden"
+            wrapperClassName="max-md:gap-0"
+          />
           <h2 className="text-[12px] font-semibold font-CircularStd text-[#515F76]">
-            {row.title}
+            {row.name}
           </h2>
         </div>
       ),
-      width: "250px",
     },
     {
-      name: "Date created",
+      name: "Program",
+      selector: (row: { program: string }) => row.program,
+      sortable: true,
+    },
+    {
+      name: "Email Address",
+      selector: (row: { email: string }) => row.email,
+      sortable: true,
+    },
+    {
+      name: "Amount",
+      selector: (row: { amount: string }) => row.amount,
+      sortable: true,
+    },
+    {
+      name: "Application Date",
       selector: (row: { createdAt: string }) => row.createdAt,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
@@ -105,7 +126,7 @@ const CourseTable = () => {
       ),
     },
     {
-      name: "Status",
+      name: "Admission Status",
       selector: (row: { status: string }) => row.status,
       cell: (row) => (
         <Status
@@ -113,45 +134,15 @@ const CourseTable = () => {
           text={row?.status?.toString() || ""}
         />
       ),
-    },
-    {
-      name: "Creator",
-      selector: (row: { creator: string }) => row.creator,
-      sortable: true,
-    },
-    {
-      name: "Starting",
-      selector: (row: { starting: string }) => row.starting,
-      cell: (row) => (
-        <div className="flex justify-center items-center rounded-[4px]">
-          {moment(row.starting).format("MM/DD/YYYY")}
-        </div>
-      ),
-    },
-    {
-      name: "Ending",
-      selector: (row: { ending: string }) => row.ending,
-      cell: (row) => (
-        <div className="flex justify-center items-center rounded-[4px]">
-          {moment(row.ending).format("MM/DD/YYYY")}
-        </div>
-      ),
-    },
-    {
-      name: "No. Applications",
-      selector: (row: { application: string }) => row.application,
-      sortable: true,
+      width: "160px",
     },
     {
       name: "Actions",
       cell: (row) => (
         <ActionMenu
           actions={[
-            { label: "Edit", action: () => handleView(row.id) },
-            { label: "Delete", action: () => handlecontact(row.id) },
-            { label: "Add Cohort", action: () => handlecontact(row.id) },
-            { label: "Suspend", action: () => handlecontact(row.id) },
-            { label: "Copy link", action: () => handlecontact(row.id) },
+            { label: "View", action: () => handleView(row.id) },
+            { label: "Contact Student", action: () => handlecontact(row.id) },
           ]}
         />
       ),
@@ -160,24 +151,24 @@ const CourseTable = () => {
     },
   ];
 
-  //   const handleClose = () => {
-  //     setIscontact(false);
-  //   };
+  const handleClose = () => {
+    setIscontact(false);
+  };
 
   return (
     <div className="w-full pb-4 flex justify-center items-center bg-[#fff]">
       <div className="w-[99%]">
         <InDataTable<MerchantTableRow>
           columns={columns}
-          data={courseData}
+          data={paymentData}
           paginatable={false}
           searchable={false}
           // pagination={false}
         />
       </div>
-      {/* <ContactModal isOpen={isContact} closeModal={handleClose} /> */}
+      <ContactModal isOpen={isContact} closeModal={handleClose} />
     </div>
   );
 };
 
-export default CourseTable;
+export default CapstonesTable;

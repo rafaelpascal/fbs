@@ -123,6 +123,21 @@ export const paymentData = [
     status: "Completed",
   },
 ];
+
+export const AssignmentData = [
+  {
+    id: "sksjkakas",
+    avatar: "",
+    sn: 1,
+    name: "Heather Reyes",
+    submitted: "12/03/2025. 10:15pm",
+    assignments: "johnobidi@fordax.com",
+    feedback: "Comment",
+    score: "0/100",
+    status: "Completed",
+  },
+];
+
 export const courseData = [
   {
     id: "sksjkakas",

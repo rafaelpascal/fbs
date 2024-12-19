@@ -20,4 +20,9 @@ export const ROUTES = {
   FACULTYTABLE: "/admin/dashboard/faculty",
   COURSEAPPLICATION: "/admin/dashboard/application/:applicationId",
   COURSES: "/admin/courses",
+  ASSIGNMENTSTABLE: "/admin/courses/assignments",
+  CAPSTONESTABLE: "/admin/courses/capstone",
+  POLLSTABLE: "/admin/courses/pollstable",
+  QUIZZESTABLE: "/admin/courses/quizes",
+  NEWCOURSE: "/admin/courses/newcourse",
 };
