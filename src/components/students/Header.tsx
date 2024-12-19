@@ -136,6 +136,7 @@ const Header = () => {
           <div className="flex justify-start gap-10 items-center w-full lg:w-[50%]">
             <img src={FBSlogo} alt="biopaylogo" width={100} />
             <div className="hidden lg:flex gap-4">
+              <button onClick={handleCreateCourse}>Admin</button>
               <button>Home</button>
               <button>About</button>
               <button>Programs</button>
