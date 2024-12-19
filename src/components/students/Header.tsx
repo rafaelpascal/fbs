@@ -45,6 +45,10 @@ const Header = () => {
     navigate(ROUTES.EVENTS);
   };
 
+  const handleCreateCourse = () => {
+    navigate(ROUTES.ADMINDASHBOARD);
+  };
+
   return (
     <div className="relative h-[193px] w-full">
       {/* Mobile Menu Icon */}
@@ -74,6 +78,7 @@ const Header = () => {
             theme === "dark" ? "bg-[#333]" : "bg-white"
           }`}
         >
+          <button onClick={handleCreateCourse}>Admin</button>
           <button>Home</button>
           <button>About</button>
           <button>Programs</button>
