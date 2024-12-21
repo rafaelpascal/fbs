@@ -53,11 +53,12 @@ const FacilitatorsItem: FacilitatorsProps[] = [
   {
     Title: "",
     items: [
-      "Five O'level credit passes including English Language and Mathematics.",
-      "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
-      "HND graduates with a minimum of upper credit may be considered.",
-      "Candidates are required to have a minimum of one year post-graduation work experience.",
-      "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
+      "No boring lectures, no tedious textbooks - you can read, listen to or watch lessons at your convenience.",
+      "Enjoy delightful interactive instruction designed to make learning easier and faster.",
+      "Digest core business principles and best practices without getting overwhelmed.",
+      "Access additional materials and study resources, including e-books, videos, and audio books.",
+      "Get a modern, valuable, relevant and accredited business education from a government approved business school.",
+      "Work on real world business projects and build your portfolio with our business case projects.",
     ],
   },
 ];
@@ -113,19 +114,23 @@ const Footer = () => {
             ABOUT FORDAX
           </h2>
           <p className="text-center text-white font-DMSans font-normal w-full lg:w-[816px]">
-            where business education meets flexibility, adaptability, and
-            real-world engagement. Our story revolves around empowering
-            individuals, regardless of their circumstances, to master the art
-            and science of business administration.
+            Fordax Business School, located in Abuja, is a prestigious private
+            graduate business school that offers accelerated business programs
+            to visionary founders, entrepreneurs and ambitious professionals.
+            What sets Fordax apart is its innovative approach to learning, which
+            seamlessly combines online and on-site experiences. This unique
+            blend of learning ensures that students can easily fit their studies
+            around their busy lives, without sacrificing the quality of their
+            education.
           </p>
         </div>
         <div className="mb-10">
           <h2 className="text-[30px] mb-4 font-DMSans text-[#fff] font-semibold text-center">
             WHY FORDAX?
           </h2>
-          <p className="text-center text-white font-DMSans font-normal w-full lg:w-[816px]">
+          {/* <p className="text-center text-white font-DMSans font-normal w-full lg:w-[816px]">
             Lorem ipsum dolor sit amet, consectetur.
-          </p>
+          </p> */}
         </div>
         <div className="w-full grid grid-cols-1 sm:grid-cols-3">
           {FooterItems.map((items, index) => (
@@ -141,12 +146,8 @@ const Footer = () => {
       <div className="p-4 lg:py-16 lg:px-[10%] flex flex-col gap-6 lg:flex-row justify-center items-center">
         <div className="w-full lg:w-[700px]">
           <h2 className="text-[45px] font-DMSans font-semibold w-full lg:w-[479px]">
-            Learn Business Management.
+            WHY STUDENTS LOVE FORDAX:
           </h2>
-          <p className="text-[15px] font-DMSans font-semibold w-full lg:w-[479px]">
-            Use the list below to bring attention to your product’s key
-            differentiator.
-          </p>
           {FacilitatorsItem.map((facilitator, index) => (
             <FooterList
               key={index}
@@ -193,10 +194,10 @@ const Footer = () => {
         <div className="w-full  flex justify-between items-center flex-col lg:flex-row lg:w-[1218px] ">
           <div className="text-[#fff]">
             <h2>Call us</h2>
-            <p>234 00 388 80 90</p>
+            <p>07017695596</p>
             <div className="mt-8">
-              <h2>234 lorem ipsum </h2>
-              <p>hi@fordax.com</p>
+              {/* <h2>234 lorem ipsum </h2> */}
+              <p>admin@fordaxbschool.com</p>
             </div>
           </div>
           {FooterbtnItem.map((facilitator, index) => (

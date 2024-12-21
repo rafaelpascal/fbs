@@ -109,16 +109,18 @@ const QuizzesTable = () => {
       selector: (row: { score: string }) => row.score,
       cell: (row) => (
         <div className="flex justify-between items-center rounded-[4px]">
-          <h2 className="border-[1px] border-[#333] p-2 font-DMSans font-semibold">
-            {row.score}
-          </h2>
-          <button className="bg-[#F01E00] p-2 text-[#fff] font-DMSans font-semibold ml-2">
+          <div className="border-[1px] w-[50%] p-2 gap-1 flex justify-between items-center border-[#333]">
+            <input type="text" className="w-[50%] text-right outline-none " />
+            <p className="font-DMSans font-semibold">/</p>
+            <h2 className="w-[50%] font-DMSans font-semibold">{row.score}</h2>
+          </div>
+          <button className="bg-[#F01E00] w-[50%] p-2 text-[#fff] font-DMSans font-semibold ml-2">
             Submit
           </button>
         </div>
       ),
       sortable: true,
-      width: "160px",
+      width: "200px",
     },
   ];
 

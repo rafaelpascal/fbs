@@ -133,7 +133,7 @@ export const AssignmentData = [
     submitted: "12/03/2025. 10:15pm",
     assignments: "johnobidi@fordax.com",
     feedback: "Comment",
-    score: "0/100",
+    score: "100",
     status: "Completed",
   },
 ];

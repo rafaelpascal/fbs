@@ -23,7 +23,7 @@ import {
 const tabsData = [
   { title: "Overview" },
   { title: "Course Content" },
-  { title: "Facilitators" },
+  { title: "Faculties" },
   { title: "Course Structure" },
   { title: "Tuition" },
 ];
@@ -67,10 +67,14 @@ const Contents = () => {
             justo. In libero urna s, eleifend euismod pellentesque vel, sagittis
             vel justo. In libero urna...
           </p>
-          <p className="text-[20px] my-3">Cohort 1/Dec 2024 </p>
+          <p className="text-[20px]">
+            <span className="text-[#FF3B30]">Cohort</span> 1/Dec 2024{" "}
+          </p>
           <p className="text-[20px] my-3">
-            <span className="">Program:</span> MBA Course{" "}
-            <span className="">Format:</span> Hybrid{" "}
+            <span className="text-[#FF3B30]">Program:</span> MBA Course{" "}
+          </p>
+          <p className="text-[20px] mb-3">
+            <span className="text-[#FF3B30]">Format:</span> Hybrid{" "}
           </p>
           <img
             src="https://s3-alpha-sig.figma.com/img/fca1/b527/3dc913d6a517b22891c56fc7d0adbaf0?Expires=1734912000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qXgucmHSHij69aFdeUw7gmInmfaj4dCuyZOA9W4M-303RiQYpXTwTxpLS5vofvJFZa14mTvogxDdAqNtDQasTbrfvQLtMB4C0jcGu~4g7a6z5x94rbTVBcMXiW3BiD~LrLWLaNA~7qGNQInnU6erTL9gGaXka~Q8DKKfLkzZnlM7vrc1Ji85DWBkxns3C5b7CRDOxUF8RvdPFbMDmZXsb4GicnYwcPxxjM-KPndiJtX4ozieSNAphQ42ERNz8~9xHIyjyFI4V9x2~YYQSlcoNcoMj~EZk61ybQwCv2iZwLWedr2stlR9tdgXocQkqzbc-PetPcKMRK31DvfUegE9nw__"
@@ -148,17 +152,17 @@ const Contents = () => {
             <p className="text-[#FF3B30] font-DMSans font-semibold text-[18px] w-full text-center py-10">
               Instalment Plan Available
             </p>
-            <div className="flex justify-center items-center">
-              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full hover:bg-[#EEF2F6]">
+            <div className="flex justify-center gap-2 items-center">
+              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200">
                 <FaFacebookF />
               </button>
-              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full hover:bg-[#EEF2F6]">
+              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200">
                 <FaTwitter />
               </button>
-              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full hover:bg-[#EEF2F6]">
+              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200">
                 <FaInstagramSquare />
               </button>
-              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full hover:bg-[#EEF2F6]">
+              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200">
                 <FaLinkedin />
               </button>
             </div>

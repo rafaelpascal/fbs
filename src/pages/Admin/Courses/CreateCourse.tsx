@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Createcourseform from "~/feature/admin/Createcourseform";
 import { DashboardArea } from "~/layouts/DashboardArea";
 
 const CreateCourse = () => {
@@ -42,6 +43,9 @@ const CreateCourse = () => {
           ></progress>
         </div>
         <div>
+          <div>
+            <Createcourseform />
+          </div>
           {/* <button
             onClick={() => handleChangeWidth(40)}
             className="btn btn-primary"
