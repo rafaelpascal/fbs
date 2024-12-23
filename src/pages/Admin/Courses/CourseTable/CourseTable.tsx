@@ -88,12 +88,12 @@ const CourseTable = () => {
       sortable: true,
       cell: (row) => (
         <div className="flex justify-start gap-2 items-center">
-          <h2 className="text-[12px] font-semibold font-CircularStd text-[#515F76]">
+          <h2 className="text-[16px] font-semibold font-CircularStd text-[#515F76]">
             {row.title}
           </h2>
         </div>
       ),
-      width: "250px",
+      width: "350px",
     },
     {
       name: "Date created",
@@ -155,7 +155,7 @@ const CourseTable = () => {
           ]}
         />
       ),
-      width: "100px",
+      width: "80px",
       ignoreRowClick: true,
     },
   ];

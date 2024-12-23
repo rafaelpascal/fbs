@@ -45,14 +45,12 @@ const SelectionDropdown: React.FC<SelectionDropdownProps> = ({
     <div className="relative w-full rounded-[8px]">
       {label && <label className={labelClassName}>{label}</label>}
       <div
-        className={`flex justify-between mt-2 items-center  rounded-md p-3 cursor-pointer shadow-sm ${
-          theme === "light"
-            ? "bg-white border border-gray-300"
-            : "bg-[#424141] border-gray-300"
-        }`}
+        className={`flex justify-between border-[0.5px] border-[#ddd] mt-2 items-center  rounded-md p-3 cursor-pointer shadow-sm bg-transparent`}
         onClick={handleToggle}
       >
-        <span>{selectedOption ? selectedOption.label : placeholder}</span>
+        <span className="font-DMSans font-semibold text-[16px]">
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
         {isOpen ? <FaChevronUp /> : <FaChevronDown />}
       </div>
 
