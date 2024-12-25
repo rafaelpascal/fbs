@@ -8,32 +8,25 @@ interface OTPInputProps {
 
 const OTPInput: React.FC<OTPInputProps> = ({ length, onComplete }) => {
   const { theme } = useTheme();
-  // State to store the OTP digits
   const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
 
-  // Handle input change
   const handleChange = (value: string, index: number) => {
-    // Only accept numeric input
     if (!/^\d*$/.test(value)) return;
 
-    // Update OTP digit
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Automatically move to the next input
     if (value !== "" && index < length - 1) {
       const nextInput = document.getElementById(`otp-input-${index + 1}`);
       nextInput?.focus();
     }
 
-    // Call the onComplete function when OTP is filled
     if (newOtp.every((digit) => digit !== "")) {
       onComplete(newOtp.join(""));
     }
   };
 
-  // Handle key press for backspace navigation
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number
@@ -44,8 +37,29 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, onComplete }) => {
     }
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("Text").slice(0, length);
+    if (!/^\d+$/.test(pasteData)) return;
+
+    const newOtp = Array(length).fill("");
+    pasteData.split("").forEach((char, i) => {
+      newOtp[i] = char;
+    });
+
+    setOtp(newOtp);
+
+    const nextEmptyIndex = newOtp.findIndex((digit) => digit === "");
+    if (nextEmptyIndex === -1) {
+      onComplete(newOtp.join(""));
+    } else {
+      const nextInput = document.getElementById(`otp-input-${nextEmptyIndex}`);
+      nextInput?.focus();
+    }
+  };
+
   return (
-    <div className="flex space-x-2">
+    <div className="flex space-x-2" onPaste={handlePaste}>
       {otp.map((digit, index) => (
         <input
           key={index}

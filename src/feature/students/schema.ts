@@ -15,18 +15,29 @@ export const transferSchema = Validator.object({
 export type TransferFormPayload = z.infer<typeof transferSchema>;
 
 export const applicationSchema = Validator.object({
+  programmeid: Validator.number("Programme Id"),
   firstname: Validator.string("First Name"),
   lastname: Validator.string("Last Name"),
   email: Validator.email("Email"),
 });
+
 export type ApplicationFormPayload = z.infer<typeof applicationSchema>;
+
+export const validateApplicationOTP = Validator.object({
+  userid: Validator.number("userid"),
+  otp: Validator.string("OTP"),
+  email: Validator.email("Email"),
+});
+
+export type ApplicationOTPFormPayload = z.infer<typeof validateApplicationOTP>;
 
 export const otherinfoSchema = Validator.object({
   phone: Validator.string("phone"),
   whatsapp: Validator.string("whatsapp"),
   address: Validator.string("address"),
-  dateofbirth: Validator.string("dateofbirth"),
+  dob: Validator.string("dateofbirth"),
   password: Validator.string("Password"),
+  confirm_password: Validator.string("confirm_password"),
 });
 export type OtherInfoFormPayload = z.infer<typeof otherinfoSchema>;
 

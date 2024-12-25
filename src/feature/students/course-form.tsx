@@ -3,19 +3,28 @@ import PersonalInfo from "./personal-data";
 import Otherinfo from "./otherInfo";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { AuthService } from "~/api/auth";
 
 const Courseform = () => {
   const { theme } = useTheme();
   const [isEmailVerified, setEmail] = useState(false);
   const [submitting, isSubmitted] = useState(false);
 
-  const handleOTPComplete = (otp: string) => {
+  const handleOTPComplete = async (otp: string) => {
     isSubmitted(true);
-    setTimeout(() => {
-      console.log(otp);
+    try {
+      const payload = {
+        otp: otp,
+        email: "rafaelpascal234@gmail.com",
+        userid: "23",
+      };
+      const res = await AuthService.validateOTP(payload);
+      console.log(res);
       setEmail(true);
       isSubmitted(false);
-    }, 4000);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

@@ -2,21 +2,28 @@ import React, { useState, useCallback } from "react";
 import { MdOutlineCloudUpload } from "react-icons/md";
 
 interface FileUploadProps {
-  onFilesSelected: (files: FileList | null) => void;
+  onFilesSelected: (file: File) => void; // Pass single File or array of Files
+  multiple?: boolean; // Allow multiple files if true
+  label?: string; // Add label for individual uploads
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ onFilesSelected }) => {
+const FileUpload: React.FC<FileUploadProps> = ({
+  onFilesSelected,
+  multiple = false,
+  label,
+}) => {
   const [dragging, setDragging] = useState<boolean>(false);
-  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
-  // Handle file selection
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    setSelectedFiles(files);
-    onFilesSelected(files);
+    if (files) {
+      const newFiles = Array.from(files);
+      setSelectedFiles(newFiles);
+      onFilesSelected(newFiles[0]);
+    }
   };
 
-  // Handle drag and drop events
   const handleDragOver = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
       event.preventDefault();
@@ -34,10 +41,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFilesSelected }) => {
       event.preventDefault();
       const files = event.dataTransfer.files;
       setDragging(false);
-      setSelectedFiles(files);
-      onFilesSelected(files);
+
+      const newFiles = Array.from(files);
+      setSelectedFiles(newFiles);
+      onFilesSelected(newFiles[0]);
     },
-    [onFilesSelected]
+    [multiple, onFilesSelected]
   );
 
   return (
@@ -54,35 +63,21 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFilesSelected }) => {
       >
         <input
           type="file"
-          multiple
+          multiple={multiple}
           onChange={handleFileChange}
           className="hidden"
-          id="file-upload-input"
+          id={`file-upload-input-${label}`}
         />
         <label
-          htmlFor="file-upload-input"
+          htmlFor={`file-upload-input-${label}`}
           className="flex justify-between items-center text-[16px] text-left text-gray-600"
         >
-          {selectedFiles && selectedFiles.length > 0
+          {selectedFiles.length > 0
             ? `Selected ${selectedFiles.length} file(s)`
-            : "Drag and drop files here OR Browse Files Max File Size: 50MB"}
+            : label}
           <MdOutlineCloudUpload className="text-[34px]" />
         </label>
       </div>
-
-      {/* Optional: Display the selected files */}
-      {selectedFiles && selectedFiles.length > 0 && (
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Selected Files:</h3>
-          <ul className="list-disc list-inside">
-            {Array.from(selectedFiles).map((file, index) => (
-              <li key={index} className="text-gray-700">
-                {file.name}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 };

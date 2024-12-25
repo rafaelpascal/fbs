@@ -23,6 +23,20 @@ const facilitator = [
   { label: "James Kuka", value: 3 },
 ];
 
+const deficultyLevel = [
+  { label: "Beginner", value: 1 },
+  { label: "Advanced", value: 2 },
+];
+
+const courseType = [
+  { label: "Instructor-led", value: 1 },
+  { label: "Advanced", value: 2 },
+];
+const courseFormat = [
+  { label: "Hybrid (online + on-site)", value: 1 },
+  { label: "Advanced", value: 2 },
+];
+
 const Createcourseform = () => {
   const { theme } = useTheme();
   const [isSelectDateChecked, setIsSelectDateChecked] = useState(false);
@@ -140,8 +154,9 @@ const Createcourseform = () => {
             handlescheduleChange={handlescheduleChange}
             setIsSelectDateChecked={setIsSelectDateChecked}
             setIsScheduleDateChecked={setIsScheduleDateChecked}
-            options={options}
-            facilitator={facilitator}
+            options={deficultyLevel}
+            facilitator={courseType}
+            courseformat={courseFormat}
             handleSelect={handleSelect}
           />
           <div>

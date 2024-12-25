@@ -14,6 +14,7 @@ interface SettingsProps {
   setIsScheduleDateChecked: (value: boolean) => void;
   options: { label: string; value: number }[];
   facilitator: { label: string; value: number }[];
+  courseformat: { label: string; value: number }[];
   handleSelect: (option: { label: string; value: string | number }) => void;
 }
 
@@ -27,6 +28,7 @@ const Settings: React.FC<SettingsProps> = ({
   setIsScheduleDateChecked,
   options,
   facilitator,
+  courseformat,
   handleSelect,
 }) => {
   return (
@@ -74,6 +76,7 @@ const Settings: React.FC<SettingsProps> = ({
           theme={theme}
           options={options}
           facilitator={facilitator}
+          courseformat={courseformat}
           handleSelect={handleSelect}
         />
       </div>
@@ -197,7 +200,13 @@ const DateFields = ({ theme }: any) => (
   </div>
 );
 
-const Dropdowns = ({ options, theme, facilitator, handleSelect }: any) => (
+const Dropdowns = ({
+  options,
+  theme,
+  facilitator,
+  courseformat,
+  handleSelect,
+}: any) => (
   <>
     <div className="my-4 w-full lg:w-[70%] flex flex-col lg:flex-row flex-wrap justify-between items-center">
       <div className="w-full lg:w-[48%] mb-4">
@@ -224,7 +233,7 @@ const Dropdowns = ({ options, theme, facilitator, handleSelect }: any) => (
         <SelectionDropdown
           label="Course Format"
           labelClassName="text-[14px] font-DMSans font-semibold mb-2"
-          options={options}
+          options={courseformat}
           onSelect={handleSelect}
           placeholder="Select Course Format"
         />

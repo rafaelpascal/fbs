@@ -5,12 +5,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Validator } from "~/utils/packages/validators";
 import OTPInput from "~/components/data-inputs/OTPInput";
 import { BaseButton } from "~/components/buttons/BaseButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { FaAsterisk } from "react-icons/fa";
 import PhoneInput from "react-phone-number-input";
+import { AuthService } from "~/api/auth";
+import { showAlert } from "~/utils/sweetAlert";
 
 const fields = [
+  {
+    name: "programmeid" as const,
+    placeholder: "programmeid",
+    label: "programmeid",
+    value: `12`,
+    type: "hidden",
+  },
   {
     name: "firstname" as const,
     placeholder: "First name",
@@ -48,13 +57,26 @@ const PersonalInfo = ({ handleOTPComplete, submitting }: PersonalInfoProp) => {
   const { unWrapErrors } = Validator.reactHookHandler(form.formState);
   const [isCodeSent, setisCodeSent] = useState(false);
 
-  const handleEmailverification = () => {
-    setisCodeSent(true);
+  const handleEmailverification = async (data: ApplicationFormPayload) => {
+    try {
+      const res = await AuthService.verificationcode(data);
+      console.log(res);
+      await showAlert(
+        "success",
+        "Successful!",
+        "OTP has been sent to your email!",
+        "Ok",
+        "#03435F",
+        () => {
+          setisCodeSent(true);
+        }
+      );
+    } catch (error) {
+      form.reset();
+      // setisCodeSent(false);
+      console.log(error);
+    }
   };
-
-  useEffect(() => {
-    console.log(submitting);
-  }, [submitting]);
 
   return (
     <div>
@@ -72,69 +94,83 @@ const PersonalInfo = ({ handleOTPComplete, submitting }: PersonalInfoProp) => {
           Login Now
         </button>
       </div>
-      <div className="w-full mt-4 lg:mt-[6%] grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {fields.map((field) => (
-          <BaseInput
-            key={field.name}
-            {...field}
-            labelClassName="text-[18px] font-bold font-DMSans"
-            containerClassname="w-full"
-            {...form.register(field.name)}
-            error={unWrapErrors(field.name)}
-          />
-        ))}
-        <div className="w-full h-[66px] mx-auto">
-          <div className="flex justify-start gap-2 items-center">
-            <label htmlFor="phone" className="text-[18px] font-semibold">
-              Call phone line
-            </label>
-            <FaAsterisk className="text-[#F01E00] text-[12px]" />
+      <form onSubmit={form.handleSubmit(handleEmailverification)}>
+        <div className="w-full mt-4 lg:mt-[6%] grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {fields.map((field) => {
+            if (field.type === "hidden") {
+              return (
+                <input
+                  key={field.name}
+                  type="hidden"
+                  value={field.value || ""}
+                  {...form.register(field.name)}
+                />
+              );
+            }
+            return (
+              <BaseInput
+                key={field.name}
+                {...field}
+                labelClassName="text-[18px] font-bold font-DMSans"
+                containerClassname="w-full"
+                {...form.register(field.name)}
+                error={unWrapErrors(field.name)}
+              />
+            );
+          })}
+          <div className="w-full h-[66px] mx-auto">
+            <div className="flex justify-start gap-2 items-center">
+              <label htmlFor="phone" className="text-[18px] font-semibold">
+                Call phone line
+              </label>
+              <FaAsterisk className="text-[#F01E00] text-[12px]" />
+            </div>
+            <PhoneInput
+              id="phone"
+              international
+              defaultCountry="NG"
+              value={value}
+              onChange={setValue}
+              className="w-full h-full px-4 py-2 no-outline mt-2 border border-gray-300 rounded-md"
+            />
           </div>
-          <PhoneInput
-            id="phone"
-            international
-            defaultCountry="NG"
-            value={value}
-            onChange={setValue}
-            className="w-full h-full px-4 py-2 no-outline mt-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        {isCodeSent && (
-          <div className="">
-            <h2 className=" text-[18px] font-bold font-DMSans mb-2">
-              Email verification code
-            </h2>
-            <OTPInput length={4} onComplete={handleOTPComplete} />
-            {submitting ? (
-              <div className="flex mt-4 justify-start items-center gap-2">
-                <p className=" text-[18px] italic font-normal font-DMSans ">
-                  Verifying code...
-                </p>
-                <LoadingSpinner />
-              </div>
-            ) : (
-              <h2 className=" text-[18px] italic font-normal font-DMSans mb-2">
-                Put the verification code sent to your email
+          {isCodeSent && (
+            <div className="">
+              <h2 className=" text-[18px] font-bold font-DMSans mb-2">
+                Email verification code
               </h2>
-            )}
-          </div>
-        )}
-      </div>
-      <BaseButton
-        containerCLassName={`mt-4 h-[46px] w-auto rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
-          !form.formState.isValid || form.formState.isSubmitting
-            ? "cursor-not-allowed opacity-50"
-            : ""
-        }`}
-        hoverScale={1.01}
-        hoverOpacity={0.8}
-        tapScale={0.9}
-        disabled={!form.formState.isValid || form.formState.isSubmitting}
-        loading={form.formState.isSubmitting}
-        onClick={handleEmailverification}
-      >
-        <p>Verify Email</p>
-      </BaseButton>
+              <OTPInput length={4} onComplete={handleOTPComplete} />
+              {submitting ? (
+                <div className="flex mt-4 justify-start items-center gap-2">
+                  <p className=" text-[18px] italic font-normal font-DMSans ">
+                    Verifying code...
+                  </p>
+                  <LoadingSpinner size="xs" />
+                </div>
+              ) : (
+                <h2 className=" text-[18px] italic font-normal font-DMSans mb-2">
+                  Put the verification code sent to your email
+                </h2>
+              )}
+            </div>
+          )}
+        </div>
+        <BaseButton
+          containerCLassName={`mt-4 h-[46px] w-auto rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
+            !form.formState.isValid || form.formState.isSubmitting
+              ? "cursor-not-allowed opacity-50"
+              : ""
+          }`}
+          hoverScale={1.01}
+          hoverOpacity={0.8}
+          tapScale={0.9}
+          disabled={!form.formState.isValid || form.formState.isSubmitting}
+          loading={form.formState.isSubmitting}
+          type="submit"
+        >
+          <p>Verify Email</p>
+        </BaseButton>
+      </form>
     </div>
   );
 };

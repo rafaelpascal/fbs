@@ -64,7 +64,7 @@ export const BaseButton = (props: BaseButtonProps) => {
       {...rest}
     >
       {children}
-      {loading && <LoadingSpinner />}
+      {loading && <LoadingSpinner size="xs" />}
       {Icon && <Icon className={cn("bg-transparent text-[24px]")} />}
     </motion.button>
   );

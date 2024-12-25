@@ -3,16 +3,17 @@ import { otherinfoSchema, OtherInfoFormPayload } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Validator } from "~/utils/packages/validators";
 import { BaseInput } from "~/components/data-inputs/text-input";
-import FileUpload from "~/components/data-inputs/FileUpload";
+// import FileUpload from "~/components/data-inputs/FileUpload";
 import { BaseButton } from "~/components/buttons/BaseButton";
 import ReferalCode from "~/components/data-inputs/ReferalCode";
 import { FaAsterisk } from "react-icons/fa";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import countryList from "react-select-country-list";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "~/components/constants/routes";
+import FileUpload from "~/components/data-inputs/Document";
 
 const fields = [
   {
@@ -23,7 +24,7 @@ const fields = [
     type: "text",
   },
   {
-    name: "dateofbirth" as const,
+    name: "dob" as const,
     placeholder: "Date of birth",
     label: "Date of birth",
     compulsory: true,
@@ -39,7 +40,7 @@ const Passwordfields = [
     type: "password",
   },
   {
-    name: "password" as const,
+    name: "confirm_password" as const,
     placeholder: "Comfirm Password",
     label: "Comfirm password",
     compulsory: true,
@@ -50,6 +51,7 @@ const Passwordfields = [
 const Otherinfo = () => {
   const navigate = useNavigate();
   const [value, setValue] = useState<string | undefined>(undefined);
+  const [referralCode, setreferralCode] = useState("");
   const [whatappvalue, setWhatsappValue] = useState<string | undefined>(
     undefined
   );
@@ -57,6 +59,10 @@ const Otherinfo = () => {
   const [selectedState, setSelectedState] = useState<string | undefined>(
     undefined
   );
+  const [levelCertificate, setLevelCertificate] = useState<File | null>(null);
+  const [cv, setCv] = useState<File | null>(null);
+  const [degreeCertificate, setDegreeCertificate] = useState<File | null>(null);
+  const [resume, setResume] = useState<File | null>(null);
 
   useEffect(() => {
     fetch("https://nga-states-lga.onrender.com/fetch")
@@ -88,19 +94,120 @@ const Otherinfo = () => {
   });
   const { unWrapErrors } = Validator.reactHookHandler(form.formState);
 
-  const handleFilesSelected = (files: FileList | null) => {
-    if (files) {
-      console.log("Selected files:", files);
-    }
+  // Handler for handling files selected for O'Level Certificate
+  const handleLevelCertificateSelected = (file: File | null) => {
+    setLevelCertificate(file);
   };
 
-  const handlecodeComplete = (otp: string) => {
+  const handleCvSelected = (file: File | null) => {
+    setCv(file);
+  };
+
+  // Handler for handling files selected for Degree Certificate
+  const handleDegreeCertificateSelected = (file: File | null) => {
+    setDegreeCertificate(file);
+  };
+
+  // Handler for handling files selected for Resume
+  const handleResumeSelected = (file: File | null) => {
+    setResume(file);
+  };
+  const handleReferalCodeComplete = (otp: string) => {
     console.log("Complete OTP:", otp);
+    setreferralCode(otp);
   };
 
-  const handleNavigate = () => {
-    navigate(ROUTES.FORM_SUBMITTED);
+  // const handleNavigate = () => {
+  //   navigate(ROUTES.FORM_SUBMITTED);
+  // };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+    // Add phone and WhatsApp values
+    if (value) formData.append("phone", value);
+    if (whatappvalue) formData.append("whatsapp", whatappvalue);
+
+    // Add other form fields
+    fields.forEach((field) => {
+      const fieldValue = form.getValues(field.name);
+      if (fieldValue) {
+        formData.append(field.name, fieldValue);
+      }
+    });
+
+    Passwordfields.forEach((field) => {
+      const fieldValue = form.getValues(field.name);
+      if (fieldValue) {
+        formData.append(field.name, fieldValue);
+      }
+    });
+
+    // Add state and country
+    if (selectedState) formData.append("state", selectedState);
+    const selectedCountry = document.querySelector<HTMLSelectElement>(
+      "select[name='country']"
+    )?.value;
+    if (selectedCountry) formData.append("country", selectedCountry);
+
+    // Add gender (radio button)
+    const selectedGender = document.querySelector<HTMLInputElement>(
+      "input[name='radio-1']:checked"
+    )?.value;
+    if (selectedGender) formData.append("gender", selectedGender);
+
+    // Add files (O'Level Certificate, CV, Degree Certificate, Resume)
+    if (levelCertificate) {
+      formData.append("olevel_certificate", levelCertificate);
+    }
+    if (cv) {
+      formData.append("cv", cv);
+    }
+    if (degreeCertificate) {
+      formData.append("degree_certificate", degreeCertificate);
+    }
+    if (resume) {
+      formData.append("resume", resume);
+    }
+
+    // Add referral code
+    // const referralCode = form.getValues("referralCode");
+    if (referralCode) formData.append("referralCode", referralCode);
+
+    // Add source information
+    const howDidYouHear = document.querySelector<HTMLSelectElement>(
+      "select[name='source']"
+    )?.value;
+    if (howDidYouHear) formData.append("source", howDidYouHear);
+
+    // Log the FormData for debugging
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
+    // Submit FormData to the API
+    fetch("https://your-api-endpoint.com/submit", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Form submitted successfully");
+          navigate(ROUTES.FORM_SUBMITTED);
+        } else {
+          console.error("Form submission failed");
+        }
+      })
+      .catch((error) => {
+        console.error("Error during form submission:", error);
+      });
   };
+
+  const handleClearOtp = useCallback(() => {
+    setreferralCode("");
+  }, [setreferralCode]);
 
   return (
     <div>
@@ -204,15 +311,17 @@ const Otherinfo = () => {
             </h2>
             <FaAsterisk className="text-[#F01E00] mb-4 text-[12px]" />
           </div>
-          <FileUpload onFilesSelected={handleFilesSelected} />
+          <FileUpload onFileUpload={handleLevelCertificateSelected} />
         </div>
+
         <div className="py-2 w-full">
           <div className="flex justify-start gap-2 items-center">
             <h2 className="text-2xl font-semibold mb-4">Upload your CV</h2>
             <FaAsterisk className="text-[#F01E00] mb-4 text-[12px]" />
           </div>
-          <FileUpload onFilesSelected={handleFilesSelected} />
+          <FileUpload onFileUpload={handleCvSelected} />
         </div>
+
         <div className="py-2 w-full">
           <div className="flex justify-start gap-2 items-center">
             <h2 className="text-2xl font-semibold mb-4">
@@ -220,20 +329,25 @@ const Otherinfo = () => {
             </h2>
             <FaAsterisk className="text-[#F01E00] mb-4 text-[12px]" />
           </div>
-          <FileUpload onFilesSelected={handleFilesSelected} />
+          <FileUpload onFileUpload={handleDegreeCertificateSelected} />
         </div>
+
         <div className="py-2 w-full">
           <div className="flex justify-start gap-2 items-center">
             <h2 className="text-2xl mb-12 font-semibold">Upload Your Resume</h2>
             <FaAsterisk className="text-[#F01E00] mb-12 text-[12px]" />
           </div>
-          <FileUpload onFilesSelected={handleFilesSelected} />
+          <FileUpload onFileUpload={handleResumeSelected} />
         </div>
         <div className="">
           <h2 className=" text-[18px] font-bold font-DMSans mb-2">
             Referral code
           </h2>
-          <ReferalCode length={4} onComplete={handlecodeComplete} />
+          <ReferalCode
+            length={4}
+            onComplete={handleReferalCodeComplete}
+            onClear={handleClearOtp}
+          />
         </div>
         <div className="w-full">
           <p className="mb-2 text-[18px] font-bold font-DMSans">
@@ -273,7 +387,7 @@ const Otherinfo = () => {
         hoverScale={1.01}
         hoverOpacity={0.8}
         tapScale={0.9}
-        onClick={handleNavigate}
+        onClick={handleSubmit}
       >
         <p>APPLY FOR THE PROGRAM NOW</p>
       </BaseButton>

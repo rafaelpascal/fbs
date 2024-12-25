@@ -20,7 +20,12 @@ export const Api = axios.create({
   paramsSerializer: (params) => qs.stringify(params, { encode: false }),
 });
 
-Api.interceptors.request.use();
+Api.interceptors.request.use((config) => {
+  // const user = AuthService.getSession();
+  // if (user) config.headers["x-access-token"] = user.token["access-token"];
+
+  return config;
+});
 
 Api.interceptors.response.use(
   (response) => {
@@ -28,7 +33,7 @@ Api.interceptors.response.use(
   },
   (error) => {
     const errorMessage = handleAxiosError(error);
-    const AUTH_ERROR_CODES = [400, 401, 422];
+    const AUTH_ERROR_CODES = [400, 401, 422, "E001"];
     const status = error?.response?.status;
 
     if (status && AUTH_ERROR_CODES.includes(status)) {
