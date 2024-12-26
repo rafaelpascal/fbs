@@ -19,11 +19,11 @@ const Login = () => {
     adaptiveHeight: false,
     lazyLoad: "ondemand" as "ondemand",
     afterChange: (current: any) => {
-      setActiveSlide(current); // Update the active slide index
+      setActiveSlide(current);
     },
   };
   return (
-    <div className="bg-black flex flex-wrap lg:flex-row justify-between items-center lg:h-[100vh]">
+    <div className="bg-black flex flex-col flex-wrap lg:flex-row justify-between items-center lg:h-[100vh]">
       <div className="w-full lg:w-[70%] gap-10 p-4 lg:pl-[5%] bg-[#fff] h-full">
         <img src={FBSlogo} alt="FBSlogo" className="py-4" />
         <div className="w-full lg:w-[526px] flex flex-col h-[70%] justify-center items-start">

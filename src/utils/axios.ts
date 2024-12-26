@@ -33,7 +33,7 @@ Api.interceptors.response.use(
   },
   (error) => {
     const errorMessage = handleAxiosError(error);
-    const AUTH_ERROR_CODES = [400, 401, 422, "E001"];
+    const AUTH_ERROR_CODES = [400, 401, 422, 404, "E001"];
     const status = error?.response?.status;
 
     if (status && AUTH_ERROR_CODES.includes(status)) {

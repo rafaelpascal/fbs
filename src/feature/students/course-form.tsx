@@ -4,22 +4,34 @@ import Otherinfo from "./otherInfo";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthService } from "~/api/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
+import { setUser } from "~/redux-store/slice/user.Slice";
 
 const Courseform = () => {
   const { theme } = useTheme();
   const [isEmailVerified, setEmail] = useState(false);
   const [submitting, isSubmitted] = useState(false);
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user);
 
   const handleOTPComplete = async (otp: string) => {
     isSubmitted(true);
     try {
       const payload = {
         otp: otp,
-        email: "rafaelpascal234@gmail.com",
-        userid: "23",
+        email: user.email,
+        userid: JSON.stringify(user.userid),
       };
       const res = await AuthService.validateOTP(payload);
-      console.log(res);
+      dispatch(
+        setUser({
+          userid: res?.data?.data[0]?.userid,
+          firstname: res?.data?.data[0]?.firstname,
+          lastname: res?.data?.data[0]?.lastname,
+          email: res?.data?.data[0]?.email,
+        })
+      );
       setEmail(true);
       isSubmitted(false);
     } catch (error) {

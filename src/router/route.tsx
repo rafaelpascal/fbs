@@ -28,6 +28,7 @@ import CapstonesTable from "~/pages/Admin/Courses/CourseTable/CapstonesTable.tsx
 import PollsTable from "~/pages/Admin/Courses/CourseTable/PollsTable.tsx";
 import QuizzesTable from "~/pages/Admin/Courses/CourseTable/QuizzesTable.tsx";
 import CreateCourse from "~/pages/Admin/Courses/CreateCourse.tsx";
+import { TanstackProvider } from "~/context/tanstack-query/index.tsx";
 
 // Lazy load the components
 const Lecture = lazyLoad(() => import("~/pages/lecture/Lecture.tsx"));
@@ -178,15 +179,17 @@ const router = createBrowserRouter([
 
 // App router component
 const AppRouter = () => (
-  <Suspense
-    fallback={
-      <div className="w-full h-[100vh] flex justify-center items-center">
-        <LoadingSpinner />
-      </div>
-    }
-  >
-    <RouterProvider router={router} />
-  </Suspense>
+  <TanstackProvider>
+    <Suspense
+      fallback={
+        <div className="w-full h-[100vh] flex justify-center items-center">
+          <LoadingSpinner />
+        </div>
+      }
+    >
+      <RouterProvider router={router} />
+    </Suspense>
+  </TanstackProvider>
 );
 
 export default AppRouter;

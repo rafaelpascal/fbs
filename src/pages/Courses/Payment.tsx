@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { fetchPaymentPlans } from "~/api/course/hooks";
 import { BaseButton } from "~/components/buttons/BaseButton";
 import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
 import { NewPaymentModal } from "~/components/Modal/NewPaymentModal";
@@ -32,13 +33,8 @@ const programSpecifications = [
   },
 ];
 
-const options = [
-  { label: "Option 1", value: 1 },
-  { label: "Option 2", value: 2 },
-  { label: "Option 3", value: 3 },
-];
-
 const Payment = () => {
+  const { data } = fetchPaymentPlans();
   const { theme } = useTheme();
   const [newPayment, setPayment] = useState(false);
   // const navigate = useNavigate();
@@ -53,6 +49,11 @@ const Payment = () => {
   const handleClose = () => {
     setPayment(false);
   };
+
+  const mappedOptions = data?.payment_plan.map((plan: any) => ({
+    label: plan.category,
+    value: plan.payment_planid,
+  }));
 
   return (
     <DashboardArea>
@@ -85,7 +86,10 @@ const Payment = () => {
                 Chose A Payment Plan
               </p>
               <div className="w-full lg:w-[399px]">
-                <SelectionDropdown options={options} onSelect={handleSelect} />
+                <SelectionDropdown
+                  options={mappedOptions}
+                  onSelect={handleSelect}
+                />
               </div>
               <div className="overflow-x-auto mt-6 w-full lg:w-[717px]">
                 <table

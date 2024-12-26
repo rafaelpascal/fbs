@@ -4,36 +4,20 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // Define the user state to match the user response structure
 // Define the user state to match the user response structure
 interface UserState {
-  id: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  email: string | null;
-  phone: string | null;
-  MFAType: string[];
-  isActive: boolean;
-  isMFAEnabled: boolean;
-  lastLogin: string | null;
-  permissions: Array<{ id: string; name: string }>;
-  role: { roleName: string; slug: string } | null;
+  userid: number;
+  firstname: string;
+  lastname: string;
+  email: string;
   loading: boolean;
-  image: string | null;
 }
 
 // Initialize with default values
 const initialState: UserState = {
-  id: null,
-  firstName: null,
-  lastName: null,
-  email: null,
-  phone: null,
-  MFAType: [],
-  isActive: false,
-  isMFAEnabled: false,
-  lastLogin: null,
-  permissions: [],
-  role: null,
+  userid: 0,
+  firstname: "",
+  lastname: "",
+  email: "",
   loading: false,
-  image: null,
 };
 
 // Define the slice

@@ -10,23 +10,14 @@ export const AuthResponseSchema = z.object({
     .optional(),
 });
 
-export const TokenSchema = z.object({
-  "access-token": z.string(),
-  "access-token-expiry": z.string(),
-  "refresh-token": z.string().optional(),
-  "refresh-token-expiry": z.string().optional(),
-});
+export const LoginResponse = z.string();
 
 export const SessionSchema = z.object({
-  user: AuthResponseSchema,
-  token: TokenSchema,
+  user: LoginResponse,
 });
 
-export type SessionToken = z.infer<typeof TokenSchema>;
-
-export type SessionUser = z.infer<typeof AuthResponseSchema>;
+export type SessionUser = z.infer<typeof LoginResponse>;
 
 export type Session = {
   user: SessionUser;
-  token: SessionToken;
 };

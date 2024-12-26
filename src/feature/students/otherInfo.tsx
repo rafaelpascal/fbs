@@ -14,6 +14,10 @@ import countryList from "react-select-country-list";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "~/components/constants/routes";
 import FileUpload from "~/components/data-inputs/Document";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
+import { AuthService } from "~/api/auth";
+import { showAlert } from "~/utils/sweetAlert";
 
 const fields = [
   {
@@ -63,6 +67,18 @@ const Otherinfo = () => {
   const [cv, setCv] = useState<File | null>(null);
   const [degreeCertificate, setDegreeCertificate] = useState<File | null>(null);
   const [resume, setResume] = useState<File | null>(null);
+  const [isAccepted, setIsAccepted] = useState(false);
+  const [selectedGender, setSelectedGender] = useState("Male");
+  const user = useSelector((state: RootState) => state.user);
+
+  // Handle checkbox change
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsAccepted(event.target.checked);
+  };
+
+  const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedGender(event.target.value);
+  };
 
   useEffect(() => {
     fetch("https://nga-states-lga.onrender.com/fetch")
@@ -117,92 +133,97 @@ const Otherinfo = () => {
     setreferralCode(otp);
   };
 
-  // const handleNavigate = () => {
-  //   navigate(ROUTES.FORM_SUBMITTED);
-  // };
+  const handleNavigate = () => {
+    navigate(ROUTES.FORM_SUBMITTED);
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault();
 
-    const formData = new FormData();
+      const formData = new FormData();
 
-    // Add phone and WhatsApp values
-    if (value) formData.append("phone", value);
-    if (whatappvalue) formData.append("whatsapp", whatappvalue);
-
-    // Add other form fields
-    fields.forEach((field) => {
-      const fieldValue = form.getValues(field.name);
-      if (fieldValue) {
-        formData.append(field.name, fieldValue);
+      if (user) {
+        formData.append("email", user.email);
+        formData.append("firstname", user.firstname);
+        formData.append("lastname", user.lastname);
+        formData.append("userid", JSON.stringify(user.userid));
       }
-    });
 
-    Passwordfields.forEach((field) => {
-      const fieldValue = form.getValues(field.name);
-      if (fieldValue) {
-        formData.append(field.name, fieldValue);
-      }
-    });
+      // Add phone and WhatsApp values
+      if (value) formData.append("phone", value);
+      if (whatappvalue) formData.append("whatsapp_phone", whatappvalue);
 
-    // Add state and country
-    if (selectedState) formData.append("state", selectedState);
-    const selectedCountry = document.querySelector<HTMLSelectElement>(
-      "select[name='country']"
-    )?.value;
-    if (selectedCountry) formData.append("country", selectedCountry);
-
-    // Add gender (radio button)
-    const selectedGender = document.querySelector<HTMLInputElement>(
-      "input[name='radio-1']:checked"
-    )?.value;
-    if (selectedGender) formData.append("gender", selectedGender);
-
-    // Add files (O'Level Certificate, CV, Degree Certificate, Resume)
-    if (levelCertificate) {
-      formData.append("olevel_certificate", levelCertificate);
-    }
-    if (cv) {
-      formData.append("cv", cv);
-    }
-    if (degreeCertificate) {
-      formData.append("degree_certificate", degreeCertificate);
-    }
-    if (resume) {
-      formData.append("resume", resume);
-    }
-
-    // Add referral code
-    // const referralCode = form.getValues("referralCode");
-    if (referralCode) formData.append("referralCode", referralCode);
-
-    // Add source information
-    const howDidYouHear = document.querySelector<HTMLSelectElement>(
-      "select[name='source']"
-    )?.value;
-    if (howDidYouHear) formData.append("source", howDidYouHear);
-
-    // Log the FormData for debugging
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
-
-    // Submit FormData to the API
-    fetch("https://your-api-endpoint.com/submit", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log("Form submitted successfully");
-          navigate(ROUTES.FORM_SUBMITTED);
-        } else {
-          console.error("Form submission failed");
+      // Add other form fields
+      fields.forEach((field) => {
+        const fieldValue = form.getValues(field.name);
+        if (fieldValue) {
+          formData.append(field.name, fieldValue);
         }
-      })
-      .catch((error) => {
-        console.error("Error during form submission:", error);
       });
+
+      Passwordfields.forEach((field) => {
+        const fieldValue = form.getValues(field.name);
+        if (fieldValue) {
+          formData.append(field.name, fieldValue);
+        }
+      });
+
+      // Add state and country
+      if (selectedState) formData.append("state", selectedState);
+      const selectedCountry = document.querySelector<HTMLSelectElement>(
+        "select[name='country']"
+      )?.value;
+      if (selectedCountry) formData.append("country", selectedCountry);
+
+      // Add gender (radio button)
+      if (selectedGender) formData.append("gender", selectedGender);
+
+      // Add files (O'Level Certificate, CV, Degree Certificate, Resume)
+      if (levelCertificate) {
+        formData.append("olevel_certificate", levelCertificate);
+      }
+      if (cv) {
+        formData.append("cv", cv);
+      }
+      if (degreeCertificate) {
+        formData.append("degree_certificate", degreeCertificate);
+      }
+      if (resume) {
+        formData.append("resume", resume);
+      }
+
+      // Add referral code
+      // const referralCode = form.getValues("referralCode");
+      if (referralCode) formData.append("referral_code", referralCode);
+
+      // Add source information
+      const howDidYouHear = document.querySelector<HTMLSelectElement>(
+        "select[name='source']"
+      )?.value;
+      if (howDidYouHear) formData.append("hear_aboutus", howDidYouHear);
+      if (isAccepted) formData.append("iagree", isAccepted ? "1" : "0");
+
+      // Log the FormData for debugging
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+      const res = await AuthService.continueApplication(formData);
+      console.log(res);
+      await showAlert(
+        "success",
+        "Successful!",
+        "Account Successfully cretaed!",
+        "Ok",
+        "#03435F",
+        () => {
+          handleNavigate();
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleClearOtp = useCallback(() => {
@@ -293,13 +314,22 @@ const Otherinfo = () => {
               <input
                 type="radio"
                 name="radio-1"
+                value="Male"
                 className="radio mt-2"
-                defaultChecked
+                checked={selectedGender === "Male"}
+                onChange={handleGenderChange}
               />
               <p className="mt-2 text-[18px] font-bold font-DMSans">Male</p>
             </div>
             <div className="flex justify-start items-center gap-2">
-              <input type="radio" name="radio-1" className="radio mt-2" />
+              <input
+                type="radio"
+                name="radio-1"
+                value="Female"
+                className="radio mt-2"
+                checked={selectedGender === "Female"}
+                onChange={handleGenderChange}
+              />
               <p className="mt-2 text-[18px] font-bold font-DMSans">Female</p>
             </div>
           </div>
@@ -376,8 +406,13 @@ const Otherinfo = () => {
       </div>
       <div className="form-control mt-4 w-full lg:w-[30%]">
         <label className="label cursor-pointer">
-          <input type="checkbox" className="checkbox" />
-          <span className="label-text  text-[15px] font-normal font-DMSans">
+          <input
+            type="checkbox"
+            className="checkbox"
+            checked={isAccepted}
+            onChange={handleCheckboxChange}
+          />
+          <span className="text-[15px] font-normal font-DMSans">
             Accept the Terms and Privacy Policy of Fordax
           </span>
         </label>

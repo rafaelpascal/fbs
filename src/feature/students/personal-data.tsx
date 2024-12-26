@@ -11,6 +11,8 @@ import { FaAsterisk } from "react-icons/fa";
 import PhoneInput from "react-phone-number-input";
 import { AuthService } from "~/api/auth";
 import { showAlert } from "~/utils/sweetAlert";
+import { useDispatch } from "react-redux";
+import { setUser } from "~/redux-store/slice/user.Slice";
 
 const fields = [
   {
@@ -56,11 +58,17 @@ const PersonalInfo = ({ handleOTPComplete, submitting }: PersonalInfoProp) => {
   });
   const { unWrapErrors } = Validator.reactHookHandler(form.formState);
   const [isCodeSent, setisCodeSent] = useState(false);
+  const dispatch = useDispatch();
 
   const handleEmailverification = async (data: ApplicationFormPayload) => {
     try {
       const res = await AuthService.verificationcode(data);
-      console.log(res);
+      dispatch(
+        setUser({
+          userid: res?.data?.userid,
+          email: res?.data?.email,
+        })
+      );
       await showAlert(
         "success",
         "Successful!",

@@ -6,6 +6,8 @@ import { BaseInput } from "~/components/data-inputs/text-input";
 import { Validator } from "~/utils/packages/validators";
 import { BaseButton } from "~/components/buttons/BaseButton";
 import { ROUTES } from "~/components/constants/routes";
+import { AuthService } from "~/api/auth";
+import { showAlert } from "~/utils/sweetAlert";
 // import { useAuth } from "~/context/auth_provider";
 // import { ROUTES } from "~/components/constants/routes";
 
@@ -37,8 +39,21 @@ const LoginForm = () => {
 
   // Handle Login and MFA pop up
   const handleLogin = form.handleSubmit(async (data: AuthFormPayload) => {
-    navigate(ROUTES.DASHBOARD);
-    console.log(data);
+    try {
+      await AuthService.login(data);
+      await showAlert(
+        "success",
+        "Successful!",
+        "Continue to dashboard!",
+        "Ok",
+        "#03435F"
+      );
+      navigate(ROUTES.DASHBOARD);
+      form.reset();
+    } catch (error) {
+      form.reset();
+      console.log(error);
+    }
   });
 
   return (

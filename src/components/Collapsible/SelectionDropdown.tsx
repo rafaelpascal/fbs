@@ -12,7 +12,7 @@ interface Option {
 // Define the props for the SelectionDropdown component
 interface SelectionDropdownProps {
   label?: string;
-  options: Option[];
+  options: Option[] | undefined;
   labelClassName?: string;
   placeholder?: string;
   onSelect: (option: Option) => void;
@@ -62,7 +62,7 @@ const SelectionDropdown: React.FC<SelectionDropdownProps> = ({
             theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
           )}
         >
-          {options.map((option) => (
+          {options?.map((option) => (
             <li
               key={option.value}
               className={cn(
