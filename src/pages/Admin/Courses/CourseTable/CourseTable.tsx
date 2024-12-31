@@ -93,7 +93,7 @@ const CourseTable = () => {
           </h2>
         </div>
       ),
-      width: "350px",
+      width: "450px",
     },
     {
       name: "Date created",

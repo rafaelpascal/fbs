@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CourseBuilder from "~/feature/admin/CourseBuilder";
 import Createcourseform from "~/feature/admin/Createcourseform";
 import CredentialsForms from "~/feature/admin/CredentialsForms";
 import { DashboardArea } from "~/layouts/DashboardArea";
@@ -7,6 +8,7 @@ const CreateCourse = () => {
   const [width, setWidth] = useState(10);
   const [iscreateForm, setiscreateForm] = useState(true);
   const [isCredentials, setisCredentials] = useState(false);
+  const [ismodule, setModule] = useState(false);
 
   const handleChangeWidth = (newWidth: number) => {
     setWidth(newWidth);
@@ -29,21 +31,30 @@ const CreateCourse = () => {
     setisCredentials(true);
   };
 
+  const handleIsModule = () => {
+    handleChangeWidth(70);
+    setiscreateForm(false);
+    setisCredentials(false);
+    setModule(true);
+  };
+
   return (
     <DashboardArea>
       <div className="relative">
         <div className="w-full">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="font-DMSans font-semibold text-[18px]">
+          <div className="flex w-full overflow-x-auto justify-between items-center mb-2">
+            <h2 className="font-DMSans font-semibold min-w-[200px] text-[18px]">
               CREATE COURSE
             </h2>
-            <h2 className="font-DMSans font-semibold text-[18px]">
+            <h2 className="font-DMSans font-semibold min-w-[200px] text-[18px]">
               CREDENTIALS/FORM
             </h2>
-            <h2 className="font-DMSans font-semibold text-[18px]">
+            <h2 className="font-DMSans font-semibold min-w-[200px] text-[18px]">
               COURSE BUILDER
             </h2>
-            <h2 className="font-DMSans font-semibold text-[18px]">PUBLISH</h2>
+            <h2 className="font-DMSans font-semibold min-w-[200px] text-[18px]">
+              PUBLISH
+            </h2>
           </div>
           <div className="w-full bg-[#ddd] flex justify-start rounded-md items-start">
             <progress
@@ -56,23 +67,19 @@ const CreateCourse = () => {
         <div className="mt-8">
           {iscreateForm && (
             <div>
-              <Createcourseform />
+              <Createcourseform created={handleIscredentials} />
             </div>
           )}
           {isCredentials && (
             <div>
-              <CredentialsForms />
+              <CredentialsForms created={handleIsModule} />
             </div>
           )}
-          <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
-            PREVIEW
-          </button>
-          <button
-            onClick={handleIscredentials}
-            className="h-[52px] w-[231px] mb-2 px-4 font-DMSans font-semibold text-[16px] text-white rounded-md bg-[#FF5050]"
-          >
-            SAVE ALL CHANGES
-          </button>
+          {ismodule && (
+            <div>
+              <CourseBuilder />
+            </div>
+          )}
           {/* <button
             onClick={() => handleChangeWidth(40)}
             className="btn btn-primary"

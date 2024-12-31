@@ -9,7 +9,7 @@ type CustomElement = {
 
 type CustomDescendant = CustomElement & Descendant;
 
-const CredentialsForms = () => {
+const CredentialsForms = ({ created }: any) => {
   const [admissionRequirements, SetAdmissionRequirements] = useState<
     CustomDescendant[]
   >([{ type: "paragraph", children: [{ text: "Start typing here..." }] }]);
@@ -18,6 +18,10 @@ const CredentialsForms = () => {
     console.log(value);
 
     SetAdmissionRequirements(value as CustomDescendant[]);
+  };
+
+  const handleSubmit = () => {
+    created();
   };
 
   return (
@@ -58,6 +62,15 @@ const CredentialsForms = () => {
         </h2>
         <RichText value={admissionRequirements} onChange={handleEditorChange} />
       </div>
+      <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
+        PREVIEW
+      </button>
+      <button
+        onClick={handleSubmit}
+        className="h-[52px] w-[231px] mb-2 px-4 font-DMSans font-semibold text-[16px] text-white rounded-md bg-[#FF5050]"
+      >
+        SAVE ALL CHANGES
+      </button>
     </div>
   );
 };

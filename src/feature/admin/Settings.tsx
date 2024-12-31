@@ -12,25 +12,58 @@ interface SettingsProps {
   handlescheduleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   setIsSelectDateChecked: (value: boolean) => void;
   setIsScheduleDateChecked: (value: boolean) => void;
-  options: { label: string; value: number }[];
-  facilitator: { label: string; value: number }[];
+  deficultyLevel: { label: string; value: number }[];
+  instructoreType: { label: string; value: number }[];
   courseformat: { label: string; value: number }[];
-  handleSelect: (option: { label: string; value: string | number }) => void;
+  handleSelect: (key: string, option: any) => void;
+  formData: any;
+  setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const Settings: React.FC<SettingsProps> = ({
   theme,
   isSelectDateChecked,
   isScheduleDateChecked,
-  handleRadioChange,
-  handlescheduleChange,
+  // handleRadioChange,
+  // handlescheduleChange,
   setIsSelectDateChecked,
   setIsScheduleDateChecked,
-  options,
-  facilitator,
+  deficultyLevel,
+  instructoreType,
   courseformat,
-  handleSelect,
+  formData,
+  setFormData,
+  // handleSelect,
 }) => {
+  // Handle form field changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData: any) => ({ ...prevData, [name]: value }));
+  };
+
+  const handlenRadioChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: string
+  ) => {
+    const { value } = e.target;
+    setFormData((prevData: any) => ({ ...prevData, [field]: value }));
+  };
+
+  // const handleSelectChange = (key: string, option: any) => {
+  //   setFormData((prevData: any) => ({ ...prevData, [key]: option }));
+  //   handleSelect(key, option);
+  // };
+
+  const handleSelectChange = (
+    field: string,
+    option: { label: string; value: string | number }
+  ) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      [field]: option,
+    }));
+  };
+
   return (
     <div className="border-t-2 border-[#ddd] py-4">
       <h2 className="font-DMSans font-bold text-[22px]">SETTINGS</h2>
@@ -40,7 +73,10 @@ const Settings: React.FC<SettingsProps> = ({
             label="Maximum number of students"
             type="number"
             placeholder="0"
+            name="maxStudents"
             containerClassname="w-full"
+            value={formData.maxStudents}
+            onChange={handleInputChange}
             labelClassName="text-[17px] font-DMSans font-semibold"
             inputContainerClassName={cn(
               "h-[48px]",
@@ -53,38 +89,60 @@ const Settings: React.FC<SettingsProps> = ({
         <Section
           title="Course Run"
           options={[
-            { label: "Monthly", color: "blue-500" },
-            { label: "Self Pace", color: "blue-500" },
+            { label: "Monthly", color: "green-500" },
+            { label: "Self Pace", color: "green-500" },
           ]}
           theme={theme}
+          selectedValue={formData.courseRun}
+          onChange={(e: any) => handlenRadioChange(e, "courseRun")}
         />
         <Schedule
           title="Enrollment schedule"
           theme={theme}
           isChecked={isSelectDateChecked}
           setIsChecked={setIsSelectDateChecked}
-          handleRadioChange={handleRadioChange}
+          selectedValue={formData.enrollmentSchedule}
+          onChange={(e: any) => handlenRadioChange(e, "enrollmentSchedule")}
+          startDate={formData.enrollmentStartDate}
+          endDate={formData.enrollmentEndDate}
+          setStartDate={(date: string) =>
+            setFormData({ ...formData, enrollmentStartDate: date })
+          }
+          setEndDate={(date: string) =>
+            setFormData({ ...formData, enrollmentEndDate: date })
+          }
         />
         <Schedule
           title="Course schedule"
           theme={theme}
           isChecked={isScheduleDateChecked}
           setIsChecked={setIsScheduleDateChecked}
-          handleRadioChange={handlescheduleChange}
+          selectedValue={formData.courseSchedule}
+          onChange={(e: any) => handlenRadioChange(e, "courseSchedule")}
+          startDate={formData.courseStartDate}
+          endDate={formData.courseEndDate}
+          setStartDate={(date: string) =>
+            setFormData({ ...formData, courseStartDate: date })
+          }
+          setEndDate={(date: string) =>
+            setFormData({ ...formData, courseEndDate: date })
+          }
         />
         <Dropdowns
           theme={theme}
-          options={options}
-          facilitator={facilitator}
+          options={deficultyLevel}
+          facilitator={instructoreType}
           courseformat={courseformat}
-          handleSelect={handleSelect}
+          handleSelect={handleSelectChange}
+          handleInputChange={handleInputChange}
+          cohortTagValue={formData.cohortTag}
         />
       </div>
     </div>
   );
 };
 
-const Section = ({ title, options, theme }: any) => (
+const Section = ({ title, options, theme, selectedValue, onChange }: any) => (
   <>
     <h2 className="font-DMSans font-bold text-[18px] mt-4">{title}</h2>
     <div className="w-full lg:w-[400px] gap-4 flex justify-start items-center">
@@ -98,11 +156,13 @@ const Section = ({ title, options, theme }: any) => (
               type="radio"
               name={`radio-${title}`}
               className={cn(
-                "radio border-[0.5px]",
+                "radio  radio-success border-[0.5px]",
                 `checked:bg-${option.color}`,
                 theme === "dark" ? "border-[#fff]" : "border-[#333]"
               )}
-              defaultChecked={index === 0}
+              value={option.label} // Assign value to each radio button
+              checked={selectedValue === option.label} // Check if the option is selected
+              onChange={onChange} // Pass the change handler to update the selected value
             />
           </label>
         </div>
@@ -116,8 +176,13 @@ const Schedule = ({
   theme,
   isChecked,
   setIsChecked,
-}: //   handleRadioChange,
-any) => (
+  selectedValue,
+  onChange,
+  startDate,
+  endDate,
+  setStartDate,
+  setEndDate,
+}: any) => (
   <>
     <h2 className="font-DMSans font-bold text-[18px] mt-4">{title}</h2>
     <div className="w-full lg:w-[400px] gap-4 flex justify-start items-center">
@@ -130,12 +195,15 @@ any) => (
             type="radio"
             name={`radio-${title}`}
             className={cn(
-              "radio border-[0.5px] checked:bg-blue-500",
+              "radio  radio-success border-[0.5px] checked:bg-green-500",
               theme === "dark" ? "border-[#fff]" : "border-[#333]"
             )}
             value="allTime"
-            checked={!isChecked} // Bind to isChecked
-            onChange={() => setIsChecked(false)} // Update state when "All Time" is selected
+            checked={selectedValue === "allTime"}
+            onChange={(e) => {
+              setIsChecked(false);
+              onChange(e); // Update the selectedValue in parent
+            }}
           />
         </label>
       </div>
@@ -148,12 +216,15 @@ any) => (
             type="radio"
             name={`radio-${title}`}
             className={cn(
-              "radio border-[0.5px] checked:bg-blue-500",
+              "radio  radio-success border-[0.5px] checked:bg-green-500",
               theme === "dark" ? "border-[#fff]" : "border-[#333]"
             )}
             value="selectDate"
-            checked={isChecked} // Bind to isChecked
-            onChange={() => setIsChecked(true)} // Update state when "Select Date" is selected
+            checked={selectedValue === "selectDate"}
+            onChange={(e) => {
+              setIsChecked(true);
+              onChange(e); // Update the selectedValue in parent
+            }}
           />
         </label>
       </div>
@@ -165,16 +236,28 @@ any) => (
         transition={{ duration: 0.5 }}
         className="w-[400px] border-[1px] shadow-lg border-[#ddd] p-4 mt-4"
       >
-        <DateFields theme={theme} />
+        <DateFields
+          theme={theme}
+          startDate={startDate}
+          endDate={endDate}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+        />
       </motion.div>
     )}
   </>
 );
 
-const DateFields = ({ theme }: any) => (
+const DateFields = ({
+  theme,
+  startDate,
+  endDate,
+  setStartDate,
+  setEndDate,
+}: any) => (
   <div className="flex justify-between items-center">
     <div className="flex justify-start w-[49%] items-start flex-col">
-      <label htmlFor="start date" className="font-DMSans font-bold text-[14px]">
+      <label htmlFor="start-date" className="font-DMSans font-bold text-[14px]">
         START DATE
       </label>
       <input
@@ -183,10 +266,12 @@ const DateFields = ({ theme }: any) => (
           "border-[1px] border-[#ddd] p-2 w-full rounded-md",
           theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
         )}
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
       />
     </div>
     <div className="flex justify-start w-[49%] items-start flex-col">
-      <label htmlFor="end date" className="font-DMSans font-bold text-[14px]">
+      <label htmlFor="end-date" className="font-DMSans font-bold text-[14px]">
         END DATE
       </label>
       <input
@@ -195,6 +280,8 @@ const DateFields = ({ theme }: any) => (
           "border-[1px] border-[#ddd] p-2 w-full rounded-md",
           theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
         )}
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
       />
     </div>
   </div>
@@ -206,6 +293,8 @@ const Dropdowns = ({
   facilitator,
   courseformat,
   handleSelect,
+  handleInputChange,
+  cohortTagValue,
 }: any) => (
   <>
     <div className="my-4 w-full lg:w-[70%] flex flex-col lg:flex-row flex-wrap justify-between items-center">
@@ -214,17 +303,17 @@ const Dropdowns = ({
           label="Difficulty level"
           labelClassName="text-[14px] font-DMSans font-semibold mb-2"
           options={options}
-          onSelect={handleSelect}
+          onSelect={(option) => handleSelect("difficultyLevel", option)}
           placeholder="Select Difficulty level"
         />
       </div>
       <div className="w-full lg:w-[48%] mb-4">
         <SelectionDropdown
-          label="Course type"
+          label="Instructor Type"
           labelClassName="text-[14px] font-DMSans font-semibold mb-2"
           options={facilitator}
-          onSelect={handleSelect}
-          placeholder="Select Course type"
+          onSelect={(option) => handleSelect("instructoreType", option)}
+          placeholder="Select Instructor type"
         />
       </div>
     </div>
@@ -234,7 +323,7 @@ const Dropdowns = ({
           label="Course Format"
           labelClassName="text-[14px] font-DMSans font-semibold mb-2"
           options={courseformat}
-          onSelect={handleSelect}
+          onSelect={(option) => handleSelect("courseFormat", option)}
           placeholder="Select Course Format"
         />
       </div>
@@ -243,6 +332,9 @@ const Dropdowns = ({
           label="Cohort tag"
           type="text"
           placeholder="Cohort tag"
+          name="cohortTag"
+          value={cohortTagValue}
+          onChange={handleInputChange}
           containerClassname="w-full"
           labelClassName="text-[17px] font-DMSans font-semibold"
           inputContainerClassName={cn(

@@ -3,10 +3,16 @@ import { useState } from "react";
 interface RangeSliderProps {
   title: string;
   baseAmount: number;
-  currency: string;
+  // currency: string;
+  onMonthChange: (months: number) => void;
 }
 
-const RangeSlider = ({ title, baseAmount, currency }: RangeSliderProps) => {
+const RangeSlider = ({
+  title,
+  baseAmount,
+  // currency,
+  onMonthChange,
+}: RangeSliderProps) => {
   const [currentStep, setCurrentStep] = useState(1);
 
   const totalAmount = currentStep * baseAmount;
@@ -14,10 +20,15 @@ const RangeSlider = ({ title, baseAmount, currency }: RangeSliderProps) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
-      currency: currency,
+      currency: "NGN",
     }).format(amount);
   };
 
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const months = Number(e.target.value);
+    setCurrentStep(months);
+    onMonthChange(months);
+  };
   return (
     <div>
       <h2 className="font-DMSans font-bold text-[18px] my-4">{title}</h2>
@@ -26,7 +37,7 @@ const RangeSlider = ({ title, baseAmount, currency }: RangeSliderProps) => {
         min={1}
         max={12}
         value={currentStep}
-        onChange={(e) => setCurrentStep(Number(e.target.value))}
+        onChange={handleSliderChange}
         className="range range-error"
         step={1}
       />
