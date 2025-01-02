@@ -152,7 +152,7 @@ export const courseData = [
     status: "Completed",
   },
   {
-    id: "sksjkakas",
+    id: "sksjkarrkas",
     avatar: "",
     sn: 1,
     title: "Diploma in Human Resource In Business Admin",
@@ -164,7 +164,7 @@ export const courseData = [
     status: "Completed",
   },
   {
-    id: "sksjkakas",
+    id: "sksjykakas",
     avatar: "",
     sn: 1,
     title: "Diploma in Human Resource In Business Admin",
@@ -176,7 +176,7 @@ export const courseData = [
     status: "Completed",
   },
   {
-    id: "sksjkakas",
+    id: "sksjkaukas",
     avatar: "",
     sn: 1,
     title: "Diploma in Human Resource In Business Admin",
@@ -188,7 +188,7 @@ export const courseData = [
     status: "Completed",
   },
   {
-    id: "sksjkakas",
+    id: "sksjkaikas",
     avatar: "",
     sn: 1,
     title: "Diploma in Human Resource In Business Admin",

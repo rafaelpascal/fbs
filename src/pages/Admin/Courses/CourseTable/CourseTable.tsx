@@ -10,6 +10,7 @@ import InDataTable from "~/components/table/InDataTable";
 import { courseData } from "~/components/constants/data";
 import ActionMenu from "~/components/table/ActionMenu";
 import { useState } from "react";
+import { NewCohortModal } from "~/components/Modal/NewCohortModal";
 // import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
@@ -27,6 +28,7 @@ interface MerchantTableRow {
 
 const CourseTable = () => {
   const [, setIscontact] = useState(false);
+  const [isNewcohort, setIsNewcohort] = useState(false);
   const navigate = useNavigate();
   // const [filters, setFilters] = useState({
   //   dateFrom: "",
@@ -149,7 +151,7 @@ const CourseTable = () => {
           actions={[
             { label: "Edit", action: () => handleView(row.id) },
             { label: "Delete", action: () => handlecontact(row.id) },
-            { label: "Add Cohort", action: () => handlecontact(row.id) },
+            { label: "Add Cohort", action: () => setIsNewcohort(true) },
             { label: "Suspend", action: () => handlecontact(row.id) },
             { label: "Copy link", action: () => handlecontact(row.id) },
           ]}
@@ -160,9 +162,14 @@ const CourseTable = () => {
     },
   ];
 
-  //   const handleClose = () => {
-  //     setIscontact(false);
-  //   };
+  const handleSuccess = () => {
+    console.log("success");
+  };
+
+  const handleClose = () => {
+    setIscontact(false);
+    setIsNewcohort(false);
+  };
 
   return (
     <div className="w-full pb-4 flex justify-center items-center bg-[#fff]">
@@ -176,6 +183,11 @@ const CourseTable = () => {
         />
       </div>
       {/* <ContactModal isOpen={isContact} closeModal={handleClose} /> */}
+      <NewCohortModal
+        isOpen={isNewcohort}
+        handlecreate={handleSuccess}
+        closeModal={handleClose}
+      />
     </div>
   );
 };

@@ -7,7 +7,7 @@ type ModuleCardsProp = {
 };
 const ModuleCards = ({ title, lesson, courseStarted }: ModuleCardsProp) => {
   return (
-    <div className="p-4 bg-white flex flex-col justify-between items-start">
+    <div className="p-4 border-b-2 border-[#ddd] bg-white flex flex-col justify-between items-start">
       {courseStarted === "completed" && (
         <h2 className="text-[#47C839] font-DMSans text-[18px] font-semibold text-left">
           Lesson {lesson}

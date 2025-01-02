@@ -61,7 +61,11 @@ const AdminCourses = () => {
           </div>
           <div className="flex flex-col lg:flex-row flex-wrap justify-between items-center">
             <div className="w-full lg:w-[350px] mb-6">
-              <SelectionDropdown options={options} onSelect={handleSelect} />
+              <SelectionDropdown
+                options={options}
+                placeholder="Select Program"
+                onSelect={handleSelect}
+              />
             </div>
             <button
               className={cn(

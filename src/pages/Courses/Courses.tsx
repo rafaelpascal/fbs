@@ -22,7 +22,7 @@ const programSpecifications = [
     duration: "Hybrid",
   },
   {
-    title: "Starting",
+    title: "Course Starting",
     duration: "February 12",
   },
   {
@@ -34,7 +34,7 @@ const programSpecifications = [
     duration: "March 23 2025",
   },
   {
-    title: "Ending",
+    title: "Course Ending",
     duration: "March 23 2025",
   },
   {
@@ -216,7 +216,7 @@ const Dashboard = () => {
                     className="flex justify-start items-center gap-2"
                   >
                     <p className="text-[18px] font-semibold font-DMSans">
-                      {specifications.title}
+                      {specifications.title} :
                     </p>
                     <p className="text-[18px] font-normal font-DMSans">
                       {specifications.duration}
@@ -357,9 +357,15 @@ const Dashboard = () => {
                       />
                     ))}
                   </div>
-
-                  <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
-                    Lessons View
+                  <div className="grid grid-cols-1 mt-8 gap-x-60 sm:grid-cols-2">
+                    {courses.map((course) => (
+                      <ModuleCards
+                        key={course.id}
+                        courseStarted={course.courseStarted}
+                        lesson={course.lesson}
+                        title={course.title}
+                      />
+                    ))}
                   </div>
                 </Carousel>
               )}

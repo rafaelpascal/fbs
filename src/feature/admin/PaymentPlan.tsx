@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
 import RangeSlider from "~/components/data-inputs/RangeSlider";
 import { BaseInput } from "~/components/data-inputs/text-input";
@@ -15,9 +16,14 @@ interface PaymentPlanProps {
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
+interface FormData {
+  paymentplan: null | { value: string };
+}
 const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
   const { theme } = useTheme();
-
+  const [paymentPlan, setPaymentPlan] = useState<FormData>({
+    paymentplan: null,
+  });
   const handleSelect = (
     field: string,
     option: { label: string; value: string | number }
@@ -152,8 +158,10 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
         {/* Pass the selected currency to the RangeSlider component */}
         <div>
           <RangeSlider
-            title="Installment Plan (monthly)"
+            title="Installment Plan"
             baseAmount={75000}
+            formData={paymentPlan}
+            setFormData={setPaymentPlan}
             // currency={formData.currency}
             onMonthChange={handleMonthChange}
           />
