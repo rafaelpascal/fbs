@@ -23,7 +23,7 @@ export const Api = axios.create({
 Api.interceptors.request.use((config) => {
   // const user = AuthService.getSession();
   // if (user) config.headers["x-access-token"] = user.token["access-token"];
-
+  config.headers.Authorization = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNvZGVkaWdlc3RsdGRAZ21haWwuY29tIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpYXQiOjE3MzQwODg3MzZ9.KEiX2GU17jUbGiqO-bPCZfgYyo_mtdSey88RYHAPU2g`;
   return config;
 });
 

@@ -31,3 +31,15 @@ type PaymentPlanResponse = {
   message: string;
   payment_plan: PaymentPlan[];
 };
+type FormRequirements = {
+  id: number;
+  requirements: string;
+  requirement_text: string;
+};
+
+type FormRequirementsResponse = {
+  status: string;
+  success: boolean;
+  message: string;
+  requirements: FormRequirements[];
+};

@@ -15,7 +15,7 @@ const RichText: React.FC<RichTextProps> = ({ value, onChange }) => {
       <Slate editor={editor} initialValue={value} onChange={onChange}>
         <Editable
           placeholder="Enter some text..."
-          className="p-4 h-[134px] border-[0.5px] border-[#ddd] rounded-md mb-2"
+          className="p-4 h-[134px] text-[#333] border-[0.5px] border-[#ddd] rounded-md mb-2"
         />
       </Slate>
     </div>

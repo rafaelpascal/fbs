@@ -40,16 +40,28 @@ const LoginForm = () => {
   // Handle Login and MFA pop up
   const handleLogin = form.handleSubmit(async (data: AuthFormPayload) => {
     try {
-      await AuthService.login(data);
-      await showAlert(
-        "success",
-        "Successful!",
-        "Continue to dashboard!",
-        "Ok",
-        "#03435F"
-      );
-      navigate(ROUTES.DASHBOARD);
-      form.reset();
+      const res = await AuthService.login(data);
+      if (res.userData.success === false) {
+        await showAlert(
+          "error",
+          "Login failed!",
+          res.userData.message,
+          "Ok",
+          "#ED342B"
+        );
+        form.reset();
+        return;
+      } else {
+        await showAlert(
+          "success",
+          "Successful!",
+          "Continue to dashboard!",
+          "Ok",
+          "#03435F"
+        );
+        navigate(ROUTES.DASHBOARD);
+        form.reset();
+      }
     } catch (error) {
       form.reset();
       console.log(error);

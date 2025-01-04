@@ -20,6 +20,14 @@ interface SettingsProps {
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
+const courserun = [
+  { label: "Monthly", value: 1 },
+  { label: "Weekly", value: 2 },
+  { label: "Daily", value: 3 },
+  { label: "Semester", value: 4 },
+  { label: "Trimester", value: 5 },
+];
+
 const Settings: React.FC<SettingsProps> = ({
   theme,
   isSelectDateChecked,
@@ -86,7 +94,7 @@ const Settings: React.FC<SettingsProps> = ({
             )}
           />
         </div>
-        <Section
+        {/* <Section
           title="Course Run"
           options={[
             { label: "Monthly", color: "green-500" },
@@ -95,7 +103,16 @@ const Settings: React.FC<SettingsProps> = ({
           theme={theme}
           selectedValue={formData.courseRun}
           onChange={(e: any) => handlenRadioChange(e, "courseRun")}
-        />
+        /> */}
+        <div className="w-full lg:w-[30%] mb-4">
+          <SelectionDropdown
+            label="Course run"
+            labelClassName="text-[14px] font-DMSans font-semibold mb-2"
+            options={courserun}
+            onSelect={(option) => handleSelectChange("courserun", option)}
+            placeholder="Select Course run"
+          />
+        </div>
         <Schedule
           title="Enrollment schedule"
           theme={theme}
@@ -142,34 +159,34 @@ const Settings: React.FC<SettingsProps> = ({
   );
 };
 
-const Section = ({ title, options, theme, selectedValue, onChange }: any) => (
-  <>
-    <h2 className="font-DMSans font-bold text-[18px] mt-4">{title}</h2>
-    <div className="w-full lg:w-[400px] gap-4 flex justify-start items-center">
-      {options.map((option: any, index: number) => (
-        <div className="form-control" key={index}>
-          <label className="label cursor-pointer">
-            <span className="text-[14px] font-DMSans font-semibold uppercase mr-4">
-              {option.label}
-            </span>
-            <input
-              type="radio"
-              name={`radio-${title}`}
-              className={cn(
-                "radio  radio-success border-[0.5px]",
-                `checked:bg-${option.color}`,
-                theme === "dark" ? "border-[#fff]" : "border-[#333]"
-              )}
-              value={option.label} // Assign value to each radio button
-              checked={selectedValue === option.label} // Check if the option is selected
-              onChange={onChange} // Pass the change handler to update the selected value
-            />
-          </label>
-        </div>
-      ))}
-    </div>
-  </>
-);
+// const Section = ({ title, options, theme, selectedValue, onChange }: any) => (
+//   <>
+//     <h2 className="font-DMSans font-bold text-[18px] mt-4">{title}</h2>
+//     <div className="w-full lg:w-[400px] gap-4 flex justify-start items-center">
+//       {options.map((option: any, index: number) => (
+//         <div className="form-control" key={index}>
+//           <label className="label cursor-pointer">
+//             <span className="text-[14px] font-DMSans font-semibold uppercase mr-4">
+//               {option.label}
+//             </span>
+//             <input
+//               type="radio"
+//               name={`radio-${title}`}
+//               className={cn(
+//                 "radio  radio-success border-[0.5px]",
+//                 `checked:bg-${option.color}`,
+//                 theme === "dark" ? "border-[#fff]" : "border-[#333]"
+//               )}
+//               value={option.label}
+//               checked={selectedValue === option.label}
+//               onChange={onChange}
+//             />
+//           </label>
+//         </div>
+//       ))}
+//     </div>
+//   </>
+// );
 
 const Schedule = ({
   title,
@@ -202,7 +219,7 @@ const Schedule = ({
             checked={selectedValue === "allTime"}
             onChange={(e) => {
               setIsChecked(false);
-              onChange(e); // Update the selectedValue in parent
+              onChange(e);
             }}
           />
         </label>
@@ -223,7 +240,7 @@ const Schedule = ({
             checked={selectedValue === "selectDate"}
             onChange={(e) => {
               setIsChecked(true);
-              onChange(e); // Update the selectedValue in parent
+              onChange(e);
             }}
           />
         </label>

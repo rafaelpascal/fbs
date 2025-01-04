@@ -9,6 +9,9 @@ import { cn } from "~/utils/helpers";
 import PaymentPlan from "./PaymentPlan";
 import Settings from "./Settings";
 import MultipleSelectionDropdown from "~/components/Collapsible/MultipleSelectionDropdown";
+import { CourseServices } from "~/api/course";
+import { showAlert } from "~/utils/sweetAlert";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
 const options = [
   { label: "Executive Diploma", value: 1 },
@@ -41,15 +44,21 @@ const supervisors = [
 const deficultyLevel = [
   { label: "Beginner", value: 1 },
   { label: "Advanced", value: 2 },
+  { label: "Intermediate", value: 3 },
 ];
 
 const instructoreType = [
-  { label: "Instructor-led", value: 1 },
-  { label: "Advanced", value: 2 },
+  { label: "Blended ", value: 1 },
+  { label: "Instructor-led", value: 2 },
+  { label: "Self-Paced", value: 3 },
 ];
 const courseFormat = [
-  { label: "Hybrid (online + on-site)", value: 1 },
-  { label: "Advanced", value: 2 },
+  { label: "Online + Onsite", value: 1 },
+  { label: "Onsite", value: 2 },
+  { label: "Online", value: 3 },
+  { label: "Lecture-Based", value: 4 },
+  { label: "Case Study", value: 5 },
+  { label: "Project-Based", value: 6 },
 ];
 
 interface Option {
@@ -73,6 +82,7 @@ interface FormData {
   enrollmentSchedule: string;
   courseSchedule: string;
   difficultyLevel: null | { value: string };
+  courserun: null | { value: string };
   instructoreType: null | { value: string };
   courseFormat: null | { value: string };
   cohortTag: string;
@@ -95,6 +105,7 @@ interface FormData {
 const Createcourseform = ({ created }: any) => {
   const { theme } = useTheme();
   const [isSelectDateChecked, setIsSelectDateChecked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isScheduleDateChecked, setIsScheduleDateChecked] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     courseTitle: "",
@@ -111,6 +122,7 @@ const Createcourseform = ({ created }: any) => {
     enrollmentSchedule: "allTime",
     courseSchedule: "allTime",
     difficultyLevel: null,
+    courserun: null,
     instructoreType: null,
     courseFormat: null,
     cohortTag: "",
@@ -135,7 +147,6 @@ const Createcourseform = ({ created }: any) => {
   };
 
   const handlescheduleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("jsjjsjsjd");
     setIsScheduleDateChecked(event.target.value === "scheduleDate");
   };
 
@@ -179,41 +190,36 @@ const Createcourseform = ({ created }: any) => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setIsSubmitting(true);
     e.preventDefault();
 
-    // Create a new FormData instance
     const formDataToSend = new FormData();
 
-    // Append non-file fields to FormData
     formDataToSend.append("programme_category_id", "2");
     formDataToSend.append("course_title", formData.courseTitle);
     formDataToSend.append("course_type", formData.courseType?.value || "");
     formDataToSend.append("creators", formData.editors?.value || "");
     formDataToSend.append("description", formData.description);
 
-    // Loop through arrays and append them to FormData
     formData.facilitator?.forEach((item) =>
       formDataToSend.append("facilitators[]", item.value.toString())
     );
     formData.supervisors?.forEach((item) =>
       formDataToSend.append("supervisors[]", item.value.toString())
     );
-
-    // Append file fields to FormData
     formData.featuredImages.forEach((file) => {
       formDataToSend.append("course_image[]", file);
     });
 
-    // Append video URL and other fields
     formDataToSend.append("video_url", formData.featuredVideo);
 
-    // Other fields
     formDataToSend.append("max_students", formData.maxStudents);
-    formDataToSend.append("course_run", formData.courseRun);
+    // formDataToSend.append("course_run", formData.courseRun);
     formDataToSend.append(
       "difficulty_level",
       formData.difficultyLevel?.value || ""
     );
+    formDataToSend.append("course_run", formData.courserun?.value || "");
     formDataToSend.append(
       "instructoreType",
       formData.instructoreType?.value || ""
@@ -221,18 +227,23 @@ const Createcourseform = ({ created }: any) => {
     formDataToSend.append("course_mode", formData.courseFormat?.value || "");
     formDataToSend.append("course_format", "digital");
     formDataToSend.append("program_plan", "2");
-
-    // Add any other form data fields similarly
     formDataToSend.append("currency", formData.currency.join(","));
     formDataToSend.append("program_fee", formData.nairaAmount);
     formDataToSend.append("dollarAmount", formData.dollarAmount);
 
-    // Log all values in FormData
-    console.log("Logging FormData values:");
-    formDataToSend.forEach((value, key) => {
-      console.log(key, value);
-    });
-    created();
+    const res = await CourseServices.createCourse(formDataToSend);
+    console.log(res);
+    if (res.data.success === true) {
+      setIsSubmitting(false);
+      await showAlert(
+        "success",
+        "Created!",
+        "Proceed with Course requirements!",
+        "Ok",
+        "#03435F"
+      );
+      created();
+    }
   };
 
   const handleSettingsSelect = (key: string, option: any) => {
@@ -365,15 +376,21 @@ const Createcourseform = ({ created }: any) => {
           <div>
             <PaymentPlan formData={formData} setFormData={setFormData} />
           </div>
-          <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
-            PREVIEW
-          </button>
-          <button
-            type="submit"
-            className="h-[52px] w-[231px] mb-2 px-4 font-DMSans font-semibold text-[16px] text-white rounded-md bg-[#FF5050]"
-          >
-            SAVE ALL CHANGES
-          </button>
+          <div className="flex flex-row justify-start items-center">
+            <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
+              PREVIEW
+            </button>
+            <button
+              type="submit"
+              className="h-[52px] w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2 bg-[#FF5050]"
+            >
+              <p className="font-DMSans font-semibold text-[16px] text-white">
+                {" "}
+                SAVE ALL CHANGES
+              </p>
+              {isSubmitting && <LoadingSpinner size="xs" />}
+            </button>
+          </div>
         </div>
       </div>
     </form>

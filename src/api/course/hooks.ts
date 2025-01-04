@@ -11,3 +11,13 @@ export const fetchPaymentPlans = () => {
     initialData: undefined,
   });
 };
+export const fetchFormRequirements = () => {
+  return useQuery({
+    queryKey: ["form"],
+    queryFn: async () => {
+      const res = await CourseServices.formRequirements();
+      return res;
+    },
+    initialData: undefined,
+  });
+};

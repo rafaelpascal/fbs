@@ -209,15 +209,16 @@ const Dashboard = () => {
               Professional Certificate in Communication And Public Relations
             </p>
             <div className="w-full my-4 flex justify-center items-center">
-              <div className="w-full my-4 grid grid-cols-1 sm:grid-cols-3">
+              <div className="w-full my-4 grid grid-cols-1 lg:grid-cols-3">
                 {programSpecifications.map((specifications, index) => (
                   <div
                     key={index}
-                    className="flex justify-start items-center gap-2"
+                    className="mx-2 flex flex-row flex-wrap justify-start items-center"
                   >
                     <p className="text-[18px] font-semibold font-DMSans">
-                      {specifications.title} :
+                      {specifications.title}
                     </p>
+                    <p className="text-[18px] font-semibold font-DMSans"> : </p>
                     <p className="text-[18px] font-normal font-DMSans">
                       {specifications.duration}
                     </p>

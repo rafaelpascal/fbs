@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SelectionDropdown from "../Collapsible/SelectionDropdown";
 
 interface RangeSliderProps {
@@ -51,9 +51,6 @@ const RangeSlider = ({
     setCurrentStep(months);
     onMonthChange(months);
   };
-  useEffect(() => {
-    console.log("hhhhh", formData);
-  }, [formData]);
 
   return (
     <div>

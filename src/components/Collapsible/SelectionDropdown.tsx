@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useTheme } from "~/context/theme-provider";
 import { cn } from "~/utils/helpers";
@@ -28,6 +28,7 @@ const SelectionDropdown: React.FC<SelectionDropdownProps> = ({
   const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Function to toggle dropdown visibility
   const handleToggle = () => {
@@ -41,8 +42,25 @@ const SelectionDropdown: React.FC<SelectionDropdownProps> = ({
     onSelect(option);
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative w-full rounded-[8px]">
+    <div className="relative w-full rounded-[8px]" ref={dropdownRef}>
       {label && <label className={labelClassName}>{label}</label>}
       <div
         className={`flex justify-between border-[0.5px] border-[#ddd] mt-2 items-center  rounded-md p-3 cursor-pointer shadow-sm bg-transparent`}

@@ -49,6 +49,10 @@ const Header = () => {
     navigate(ROUTES.ADMINDASHBOARD);
   };
 
+  const handleLogin = () => {
+    navigate(ROUTES.HOME);
+  };
+
   return (
     <div className="relative h-[193px] w-full">
       {/* Mobile Menu Icon */}
@@ -148,7 +152,10 @@ const Header = () => {
           </div>
           <div className="flex justify-end items-center gap-3">
             <p>Apply for a course</p>
-            <button className="w-[222px] h-[54px] text-[#fff] bg-[#FF1515] rounded-[8px]">
+            <button
+              onClick={handleLogin}
+              className="w-[222px] h-[54px] text-[#fff] bg-[#FF1515] rounded-[8px]"
+            >
               STUDENT LOGIN
             </button>
           </div>

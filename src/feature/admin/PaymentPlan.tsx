@@ -83,7 +83,7 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
 
   return (
     <div className="w-full border-t-2 border-[#ddd] py-4">
-      <h2 className="font-DMSans font-bold text-[22px]">PAYMENTS</h2>
+      <h2 className="font-DMSans font-bold text-[22px] mb-6">PAYMENTS</h2>
       <div className="my-4 w-full lg:w-[40%] min-w-[600px]">
         <h2 className="font-DMSans font-bold text-[16px]">Program fee</h2>
 
@@ -119,44 +119,58 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
 
         {/* Program fee amounts */}
         <div className="flex justify-between my-4 gap-2 items-center w-full">
-          <div className="w-[50%]">
-            <BaseInput
-              label="Naira Amount"
-              name="nairaAmount"
-              value={formData.nairaAmount}
-              onChange={handleInputChange}
-              placeholder="Naira Amount"
-              containerClassname="w-full"
-              labelClassName="text-[17px] font-DMSans font-semibold"
-              inputContainerClassName={cn(
-                "h-[48px]",
-                theme === "dark"
-                  ? "select-secondary"
-                  : "border-[0.5px] border-[#ddd]"
-              )}
-            />
-          </div>
-          <div className="w-[50%]">
-            <BaseInput
-              label="Dollar Amount"
-              name="dollarAmount"
-              value={formData.dollarAmount}
-              onChange={handleInputChange}
-              placeholder="Dollar Amount"
-              containerClassname="w-full"
-              labelClassName="text-[17px] font-DMSans font-semibold"
-              inputContainerClassName={cn(
-                "h-[48px]",
-                theme === "dark"
-                  ? "select-secondary"
-                  : "border-[0.5px] border-[#ddd]"
-              )}
-            />
-          </div>
+          {formData.currency.includes("NGN") && (
+            <motion.div
+              initial={{ x: "100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="w-full lg:w-[50%]"
+            >
+              <BaseInput
+                label="Naira Amount"
+                name="nairaAmount"
+                value={formData.nairaAmount}
+                onChange={handleInputChange}
+                placeholder="Naira Amount"
+                containerClassname="w-full"
+                labelClassName="text-[17px] font-DMSans font-semibold"
+                inputContainerClassName={cn(
+                  "h-[48px]",
+                  theme === "dark"
+                    ? "select-secondary"
+                    : "border-[0.5px] border-[#ddd]"
+                )}
+              />
+            </motion.div>
+          )}
+          {formData.currency.includes("USD") && (
+            <motion.div
+              initial={{ x: "100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="w-full lg:w-[50%]"
+            >
+              <BaseInput
+                label="Dollar Amount"
+                name="dollarAmount"
+                value={formData.dollarAmount}
+                onChange={handleInputChange}
+                placeholder="Dollar Amount"
+                containerClassname="w-full"
+                labelClassName="text-[17px] font-DMSans font-semibold"
+                inputContainerClassName={cn(
+                  "h-[48px]",
+                  theme === "dark"
+                    ? "select-secondary"
+                    : "border-[0.5px] border-[#ddd]"
+                )}
+              />
+            </motion.div>
+          )}
         </div>
 
         {/* Pass the selected currency to the RangeSlider component */}
-        <div>
+        <div className="w-full">
           <RangeSlider
             title="Installment Plan"
             baseAmount={75000}
