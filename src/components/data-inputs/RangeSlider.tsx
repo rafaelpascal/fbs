@@ -50,6 +50,10 @@ const RangeSlider = ({
     const months = Number(e.target.value);
     setCurrentStep(months);
     onMonthChange(months);
+    // setFormData((prevFormData: any) => ({
+    //   ...prevFormData,
+    //   currentStep: months,
+    // }));
   };
 
   return (

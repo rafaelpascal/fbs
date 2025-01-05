@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Descendant } from "slate";
 import RichText from "~/components/data-inputs/RichText";
 import FormRequirements from "./FormRequirements";
+// import { CourseServices } from "~/api/course";
+import { showAlert } from "~/utils/sweetAlert";
 
 type CustomElement = {
   type: "paragraph";
@@ -30,7 +32,7 @@ const CredentialsForms = ({ created }: any) => {
     { type: "paragraph", children: [{ text: "" }] },
   ]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const extractText = (nodes: CustomDescendant[]): string => {
       return nodes
         .map((node) => node.children.map((child) => child.text).join(""))
@@ -38,6 +40,7 @@ const CredentialsForms = ({ created }: any) => {
     };
 
     const payload = {
+      course_id: 8,
       admissionRequirements: extractText(admissionRequirements),
       learningObjectives: extractText(learningObjectives),
       assessmentMethods: extractText(assessmentMethods),
@@ -45,9 +48,21 @@ const CredentialsForms = ({ created }: any) => {
       courseStructure: extractText(courseStructure),
       courseFor: extractText(courseFor),
     };
-
-    console.log("Payload:", payload);
-    created();
+    try {
+      console.log("Payload:", payload);
+      // const res = await CourseServices.createCourseRequirements(payload);
+      // console.log("Response:", res);
+      await showAlert(
+        "success",
+        "Created!",
+        "Proceed with Course Builder!",
+        "Ok",
+        "#03435F"
+      );
+      created();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

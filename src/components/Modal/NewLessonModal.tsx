@@ -8,10 +8,8 @@ import { BaseInput } from "../data-inputs/text-input";
 import { useTheme } from "~/context/theme-provider";
 import ImageUpload from "../data-inputs/ImageUpload";
 import { LoadingSpinner } from "../ui/loading-spinner";
-import { CourseServices } from "~/api/course";
 
 interface IModalPropsType {
-  moduleNumber: number;
   isOpen: boolean;
   closeModal: () => void;
   handlecreate: () => void;
@@ -35,8 +33,7 @@ const initialFormData = {
   featuredImages: [] as File[],
 };
 
-export const NewModuleModal = ({
-  moduleNumber,
+export const NewLessonModal = ({
   isOpen,
   closeModal,
   handlecreate,
@@ -71,13 +68,10 @@ export const NewModuleModal = ({
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     setisSubmitting(true);
     const dataToSubmit = new FormData();
 
-    dataToSubmit.append("programme_category_id", "2");
-    dataToSubmit.append("course_id", "8");
-    dataToSubmit.append("module_number", moduleNumber.toString());
     dataToSubmit.append("module_title", formData.title);
     dataToSubmit.append("module_description", formData.description);
     dataToSubmit.append("module_objectives", formData.objectives);
@@ -90,9 +84,6 @@ export const NewModuleModal = ({
     for (const [key, value] of dataToSubmit.entries()) {
       console.log(`${key}:`, value);
     }
-    const res = await CourseServices.createCourseModule(dataToSubmit);
-    console.log("response", res);
-
     // moduleData
     setModuleData((prevData: any) => ({
       ...prevData,
@@ -108,18 +99,25 @@ export const NewModuleModal = ({
     <BaseModal isOpen={isOpen} closeModal={closeModal}>
       <div className="w-full flex px-2 justify-between items-center bg-[#b8b6b6] py-3">
         <h2 className="font-DMSans text-[#fff] text-[18px] font-semibold text-center">
-          NEW COURSE MODULE
+          NEW COURSE LESSON
         </h2>
         <button onClick={handleclose}>
           <MdCancel className="text-[30px] text-[#F01E00]" />
         </button>
       </div>
       <div className="flex w-full h-[600px] lg:w-[1000px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
+        <div>
+          <h2 className="text-[17px] font-DMSans font-semibold">
+            LESSON IMAGE
+          </h2>
+          <ImageUpload onUpload={handleImageUpload} />
+        </div>
+
         <div className="my-4 w-full">
           <BaseInput
-            label="Module Title"
+            label="Lesson Title"
             type="text"
-            placeholder="Module Title"
+            placeholder="Lesson Title"
             containerClassname="w-full"
             labelClassName="text-[17px] font-DMSans font-semibold"
             inputContainerClassName={cn(
@@ -132,72 +130,7 @@ export const NewModuleModal = ({
             onChange={(e: any) => handleInputChange("title", e.target.value)}
           />
         </div>
-        <div className="mb-4">
-          <h2 className="font-DMSans font-semibold text-[18px]">
-            MODULE NUMBER : {moduleNumber}
-          </h2>
-        </div>
-        <div>
-          <h2 className="text-[17px] font-DMSans font-semibold">
-            MODULE IMAGE
-          </h2>
-          <ImageUpload onUpload={handleImageUpload} />
-        </div>
-        <div className="my-4 w-full">
-          <BaseInput
-            label="MODULE DESCRIPTION"
-            type="textarea"
-            placeholder="MODULE DESCRIPTION"
-            containerClassname="w-full"
-            labelClassName="text-[17px] font-DMSans font-semibold"
-            inputContainerClassName={cn(
-              "h-[153px] ",
-              theme === "dark"
-                ? "select-secondary"
-                : "border-[0.5px] border-[#ddd]"
-            )}
-            value={formData.description}
-            onChange={(e: any) =>
-              handleInputChange("description", e.target.value)
-            }
-          />
-        </div>
-        <div className="my-4 w-full">
-          <BaseInput
-            label="MODULE OBJECTIVES"
-            type="textarea"
-            placeholder="MODULE OBJECTIVES"
-            containerClassname="w-full"
-            labelClassName="text-[17px] font-DMSans font-semibold"
-            inputContainerClassName={cn(
-              "h-[153px] ",
-              theme === "dark"
-                ? "select-secondary"
-                : "border-[0.5px] border-[#ddd]"
-            )}
-            value={formData.objectives}
-            onChange={(e: any) =>
-              handleInputChange("objectives", e.target.value)
-            }
-          />
-        </div>
-        <div className="my-4 w-full">
-          <BaseInput
-            label="REQUIRED READING"
-            type="textarea"
-            placeholder="REQUIRED READING"
-            containerClassname="w-full"
-            labelClassName="text-[17px] font-DMSans font-semibold"
-            inputContainerClassName={cn(
-              "h-[153px] ",
-              theme === "dark"
-                ? "select-secondary"
-                : "border-[0.5px] border-[#ddd]"
-            )}
-            value={formData.reading}
-            onChange={(e: any) => handleInputChange("reading", e.target.value)}
-          />
-        </div>
+
         <div className="flex justify-start items-start gap-4">
           <button
             onClick={handleclose}

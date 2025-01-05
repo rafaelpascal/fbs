@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+// import { useState } from "react";
 import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
 import RangeSlider from "~/components/data-inputs/RangeSlider";
 import { BaseInput } from "~/components/data-inputs/text-input";
@@ -16,14 +16,14 @@ interface PaymentPlanProps {
   setFormData: React.Dispatch<React.SetStateAction<any>>;
 }
 
-interface FormData {
-  paymentplan: null | { value: string };
-}
+// interface FormData {
+//   paymentplan: null | { value: string };
+// }
 const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
   const { theme } = useTheme();
-  const [paymentPlan, setPaymentPlan] = useState<FormData>({
-    paymentplan: null,
-  });
+  // const [paymentPlan, setPaymentPlan] = useState<FormData>({
+  //   paymentplan: null,
+  // });
   const handleSelect = (
     field: string,
     option: { label: string; value: string | number }
@@ -40,23 +40,37 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
     setFormData((prevData: any) => ({ ...prevData, [name]: value }));
   };
 
+  // const handleCheckboxChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   currency: string
+  // ) => {
+  //   if (e.target.checked) {
+  //     // Add currency to the array if it's checked
+  //     setFormData((prevData: any) => ({
+  //       ...prevData,
+  //       currency: [...prevData.currency, currency],
+  //     }));
+  //   } else {
+  //     // Remove currency from the array if it's unchecked
+  //     setFormData((prevData: any) => ({
+  //       ...prevData,
+  //       currency: prevData.currency.filter((item: any) => item !== currency),
+  //     }));
+  //   }
+  // };
+
   const handleCheckboxChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    currency: string
+    currencyKey: "NGN" | "USD"
   ) => {
-    if (e.target.checked) {
-      // Add currency to the array if it's checked
-      setFormData((prevData: any) => ({
-        ...prevData,
-        currency: [...prevData.currency, currency],
-      }));
-    } else {
-      // Remove currency from the array if it's unchecked
-      setFormData((prevData: any) => ({
-        ...prevData,
-        currency: prevData.currency.filter((item: any) => item !== currency),
-      }));
-    }
+    const isChecked = e.target.checked;
+    setFormData((prevFormData: any) => ({
+      ...prevFormData,
+      currency: {
+        ...prevFormData.currency,
+        [currencyKey]: isChecked,
+      },
+    }));
   };
 
   const handleValidityChange = (
@@ -96,7 +110,7 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
               </span>
               <input
                 type="checkbox"
-                checked={formData.currency.includes("NGN")}
+                checked={formData.currency?.NGN || false}
                 onChange={(e) => handleCheckboxChange(e, "NGN")}
                 className="checkbox checkbox-success [--chkbg:theme(colors.green.600)] [--chkfg:white]"
               />
@@ -109,7 +123,7 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
               </span>
               <input
                 type="checkbox"
-                checked={formData.currency.includes("USD")}
+                checked={formData.currency?.USD || false}
                 onChange={(e) => handleCheckboxChange(e, "USD")}
                 className="checkbox checkbox-success [--chkbg:theme(colors.green.600)] [--chkfg:white]"
               />
@@ -119,7 +133,7 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
 
         {/* Program fee amounts */}
         <div className="flex justify-between my-4 gap-2 items-center w-full">
-          {formData.currency.includes("NGN") && (
+          {formData.currency?.NGN && (
             <motion.div
               initial={{ x: "100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -143,7 +157,7 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
               />
             </motion.div>
           )}
-          {formData.currency.includes("USD") && (
+          {formData.currency?.USD && (
             <motion.div
               initial={{ x: "100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -174,8 +188,8 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
           <RangeSlider
             title="Installment Plan"
             baseAmount={75000}
-            formData={paymentPlan}
-            setFormData={setPaymentPlan}
+            formData={formData}
+            setFormData={setFormData}
             // currency={formData.currency}
             onMonthChange={handleMonthChange}
           />

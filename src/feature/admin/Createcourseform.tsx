@@ -91,14 +91,19 @@ interface FormData {
   courseStartDate: string;
   courseEndDate: string;
   //
-  currency: string[];
+  currency: {
+    NGN: boolean;
+    USD: boolean;
+  };
   nairaAmount: string;
   dollarAmount: string;
   couponTitle: string;
   couponValidity: boolean;
   couponValidTill: string;
+  // currentStep: number;
   discountType: string;
   discountValue: string;
+  paymentplan: null | { value: string };
   selectedMonths: number;
 }
 
@@ -131,11 +136,15 @@ const Createcourseform = ({ created }: any) => {
     courseStartDate: "",
     courseEndDate: "",
     //
-    currency: [],
+    currency: {
+      NGN: false,
+      USD: false,
+    },
     nairaAmount: "",
     dollarAmount: "",
     couponTitle: "",
     couponValidity: false,
+    paymentplan: null,
     couponValidTill: "",
     discountType: "",
     discountValue: "",
@@ -189,6 +198,19 @@ const Createcourseform = ({ created }: any) => {
     }));
   };
 
+  const isFormValid = (): boolean => {
+    // Required fields to validate
+    const requiredFields = [
+      "courseTitle",
+      "courseType",
+      "description",
+      "maxStudents",
+    ];
+    return requiredFields.every(
+      (field) => formData[field as keyof FormData] !== ""
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     setIsSubmitting(true);
     e.preventDefault();
@@ -227,9 +249,16 @@ const Createcourseform = ({ created }: any) => {
     formDataToSend.append("course_mode", formData.courseFormat?.value || "");
     formDataToSend.append("course_format", "digital");
     formDataToSend.append("program_plan", "2");
-    formDataToSend.append("currency", formData.currency.join(","));
-    formDataToSend.append("program_fee", formData.nairaAmount);
-    formDataToSend.append("dollarAmount", formData.dollarAmount);
+    formDataToSend.append("usd", formData.currency.USD ? "1" : "0");
+    formDataToSend.append("naira", formData.currency.NGN ? "1" : "0");
+    formDataToSend.append("naira_amount", formData.nairaAmount);
+    formDataToSend.append("usd_amount", formData.dollarAmount);
+    formDataToSend.append("installment", formData.selectedMonths.toString());
+
+    console.log("FormData Payload:");
+    for (let [key, value] of formDataToSend.entries()) {
+      console.log(`${key}: ${value}`);
+    }
 
     const res = await CourseServices.createCourse(formDataToSend);
     console.log(res);
@@ -382,10 +411,12 @@ const Createcourseform = ({ created }: any) => {
             </button>
             <button
               type="submit"
-              className="h-[52px] w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2 bg-[#FF5050]"
+              className={`h-[52px] w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2 ${
+                isFormValid() ? "bg-[#FF5050]" : "bg-gray-400"
+              }`}
+              disabled={!isFormValid()}
             >
               <p className="font-DMSans font-semibold text-[16px] text-white">
-                {" "}
                 SAVE ALL CHANGES
               </p>
               {isSubmitting && <LoadingSpinner size="xs" />}
