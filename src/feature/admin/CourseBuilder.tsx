@@ -28,25 +28,36 @@ interface Lessons {
 }
 
 interface ImoduleProps {
+  moduleId?: number;
+  selectedModule?: number;
   title: string;
   description: string;
 }
-const CourseBuilder = () => {
+const CourseBuilder = ({ created }: any) => {
   const { theme } = useTheme();
   const [modules, setModules] = useState<Module[]>([]);
-  const [lessons, setLessons] = useState<Lessons[]>([]);
+  const [isNewModule, setIsnewModule] = useState(false);
   const [newModule, setNewModule] = useState({
     number: 0,
     status: false,
   });
-  const [newLesson, setNewLesson] = useState(false);
+  const [newLesson, setNewLesson] = useState({
+    module: 0,
+    status: false,
+  });
   const [selectedModuleId, setSelectedModuleId] = useState(0);
   const [moduleObj, setmoduleObj] = useState<ImoduleProps>({
+    moduleId: 0,
+    title: "",
+    description: "",
+  });
+  const [lessonObj, setlessonObj] = useState<ImoduleProps>({
     title: "",
     description: "",
   });
 
   const addModule = async () => {
+    setIsnewModule(true);
     setNewModule({
       number: 0,
       status: false,
@@ -61,7 +72,7 @@ const CourseBuilder = () => {
   };
 
   useEffect(() => {
-    if (moduleObj.title) {
+    if (isNewModule && moduleObj.title) {
       const newModule: Module = {
         id: modules.length + 1,
         title: `MODULE ${modules.length + 1}`,
@@ -71,58 +82,31 @@ const CourseBuilder = () => {
 
       setModules((prevModules) => [...prevModules, newModule]);
       setSelectedModuleId(newModule.id);
+      setIsnewModule(false);
     }
-  }, [moduleObj]);
+  }, [moduleObj, isNewModule]);
 
-  useEffect(() => {
-    console.log("selectedModuleId", selectedModuleId);
-  }, [selectedModuleId]);
-
-  // const addLesson = async (moduleId: number) => {
-  //   if (modules.length === 0) {
-  //     await showAlert(
-  //       "error",
-  //       "Unauthorized!",
-  //       "Please create a module first!",
-  //       "Ok",
-  //       "#FF5050"
-  //     );
-  //     return;
-  //   }
-
-  //   const newLesson: Lessons = {
-  //     id: lessons.length + 1,
-  //     title: `LESSON ${lessons.length + 1}`,
-  //     description: "New Lesson Description",
-  //     pages: "13 pages",
-  //   };
-
-  //   setModules((prevModules) =>
-  //     prevModules.map((module) =>
-  //       module.id === moduleId
-  //         ? { ...module, lessons: [...module.lessons, newLesson] }
-  //         : module
-  //     )
-  //   );
-  // };
-
-  const addLesson = async (moduleId: number) => {
-    if (modules.length === 0) {
-      await showAlert(
-        "error",
-        "Unauthorized!",
-        "Please create a module first!",
-        "Ok",
-        "#FF5050"
-      );
-      return;
-    }
+  const addLesson = async () => {
+    setNewLesson({
+      module: 0,
+      status: false,
+    });
+    await showAlert(
+      "success",
+      "Created!",
+      "Lesson Successfully Created!",
+      "Ok",
+      "#03435F"
+    );
+    console.log("Selected Module ID: ", selectedModuleId);
 
     // Find the module by ID
-    const selectedModule = modules.find((module) => module.id === moduleId);
+    const selectedModule = modules.find(
+      (module) => module.id === selectedModuleId
+    );
+    console.log("Selected Module: ", selectedModule);
 
     if (!selectedModule) {
-      // If no module is found, show an error or handle the case
       await showAlert(
         "error",
         "Module Not Found!",
@@ -137,19 +121,37 @@ const CourseBuilder = () => {
     const newLesson: Lessons = {
       id: Date.now(),
       title: `LESSON ${selectedModule.lessons.length + 1}`,
-      description: "New Lesson Description",
+      description: lessonObj.title,
       pages: "13 pages",
     };
 
-    // Update the specific module by adding the new lesson
+    // Update the specific module by adding the new lesson to the lessons array
     setModules((prevModules) =>
       prevModules.map((module) =>
-        module.id === moduleId
+        module.id === selectedModuleId
           ? { ...module, lessons: [...module.lessons, newLesson] }
           : module
       )
     );
+
+    // Optionally, reset the lesson object state after adding the lesson
+    setlessonObj({ title: "", description: "" });
   };
+
+  // useEffect(() => {
+  //   if (isNewModule && moduleObj.title) {
+  //     const newModule: Module = {
+  //       id: modules.length + 1,
+  //       title: `MODULE ${modules.length + 1}`,
+  //       description: moduleObj.title,
+  //       lessons: [],
+  //     };
+
+  //     setModules((prevModules) => [...prevModules, newModule]);
+  //     setSelectedModuleId(newModule.id);
+  //     setIsnewModule(false);
+  //   }
+  // }, [moduleObj, isNewModule]);
 
   const removeModule = (id: number) => {
     setModules(modules.filter((module) => module.id !== id));
@@ -160,14 +162,42 @@ const CourseBuilder = () => {
       number: 0,
       status: false,
     });
-    setNewLesson(false);
+    setNewLesson({
+      module: 0,
+      status: false,
+    });
+  };
+
+  const getAllLessons = () => {
+    return modules.flatMap((module) => module.lessons);
   };
 
   const moveLesson = (draggedId: number, hoveredIndex: number) => {
-    const draggedLesson = lessons.find((lesson) => lesson.id === draggedId);
-    const updatedLessons = lessons.filter((lesson) => lesson.id !== draggedId);
-    updatedLessons.splice(hoveredIndex, 0, draggedLesson!);
-    setLessons(updatedLessons);
+    const allLessons = getAllLessons();
+    const draggedLesson = allLessons.find((lesson) => lesson.id === draggedId);
+
+    if (!draggedLesson) {
+      console.warn("Dragged lesson not found!");
+      return;
+    }
+
+    const updatedLessons = allLessons.filter(
+      (lesson) => lesson.id !== draggedId
+    );
+    updatedLessons.splice(hoveredIndex, 0, draggedLesson);
+
+    // Update the modules based on the new lesson order
+    let lessonIndex = 0;
+    const updatedModules = modules.map((module) => {
+      const lessonsForModule = updatedLessons.slice(
+        lessonIndex,
+        lessonIndex + module.lessons.length
+      );
+      lessonIndex += module.lessons.length;
+      return { ...module, lessons: lessonsForModule };
+    });
+
+    setModules(updatedModules);
   };
 
   const handleNewModule = () => {
@@ -177,9 +207,31 @@ const CourseBuilder = () => {
     });
   };
 
+  const handleNewLesson = async () => {
+    if (modules.length === 0) {
+      await showAlert(
+        "error",
+        "Unauthorized!",
+        "Please create a module first!",
+        "Ok",
+        "#FF5050"
+      );
+      return;
+    } else {
+      setNewLesson({
+        module: moduleObj.moduleId || 0,
+        status: true,
+      });
+    }
+  };
+
+  const handlePublish = () => {
+    created();
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="">
+      <div className="relative lg:h-[80vh]">
         <h2 className="font-DMSans mb-2 text-[18px] font-semibold">
           CONTENT BUILDER
         </h2>
@@ -236,7 +288,7 @@ const CourseBuilder = () => {
               Module
             </button>
             <button
-              onClick={() => addLesson(selectedModuleId)}
+              onClick={handleNewLesson}
               className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
             >
               Lesson
@@ -301,12 +353,27 @@ const CourseBuilder = () => {
           setModuleData={setmoduleObj}
         />
         <NewLessonModal
-          isOpen={newLesson}
+          moduleId={newLesson.module}
+          isOpen={newLesson.status}
           closeModal={handleClose}
-          handlecreate={addModule}
+          handlecreate={addLesson}
           moduleData={moduleObj}
           setModuleData={setmoduleObj}
         />
+        <div className="lg:absolute bottom-3 flex flex-row flex-wrap justify-start items-center gap-4">
+          <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
+            PREVIEW
+          </button>
+          <button
+            onClick={handlePublish}
+            className="h-[52px] bg-[#FF5050] w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2"
+          >
+            <p className="font-DMSans font-semibold text-[16px] text-white">
+              PUBLISH COURSE LIVE
+            </p>
+            {/* {isSubmitting && <LoadingSpinner size="xs" />} */}
+          </button>
+        </div>
       </div>
     </DndProvider>
   );
@@ -314,14 +381,21 @@ const CourseBuilder = () => {
 
 // LessonItem component for drag-and-drop
 const LessonItem = ({ lesson, theme, index, moveLesson }: any) => {
+  if (!lesson?.id) {
+    console.error("Invalid lesson object:", lesson);
+    return null;
+  }
+
   const [, drag] = useDrag({
     type: ItemTypes.LESSON,
-    item: { id: lesson.id, index },
+    item: { id: lesson?.id || "", index },
   });
 
   const [, drop] = useDrop({
     accept: ItemTypes.LESSON,
     hover: (item: any) => {
+      console.log(item.index !== index);
+
       if (item.index !== index) {
         moveLesson(item.id, index);
         item.index = index;

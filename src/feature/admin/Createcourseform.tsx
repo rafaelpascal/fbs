@@ -12,6 +12,8 @@ import MultipleSelectionDropdown from "~/components/Collapsible/MultipleSelectio
 import { CourseServices } from "~/api/course";
 import { showAlert } from "~/utils/sweetAlert";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { useDispatch } from "react-redux";
+import { setCourseId } from "~/redux-store/slice/course.slice";
 
 const options = [
   { label: "Executive Diploma", value: 1 },
@@ -69,9 +71,9 @@ interface Option {
 // Define the type for formData
 interface FormData {
   courseTitle: string;
-  courseType: null | { value: string };
+  courseType: null | { label: string };
   facilitator: Option[] | null;
-  editors: null | { value: string };
+  editors: null | { label: string };
   supervisors: Option[] | null;
   description: string;
   featuredImages: File[];
@@ -81,10 +83,10 @@ interface FormData {
   courseRun: string;
   enrollmentSchedule: string;
   courseSchedule: string;
-  difficultyLevel: null | { value: string };
-  courserun: null | { value: string };
-  instructoreType: null | { value: string };
-  courseFormat: null | { value: string };
+  difficultyLevel: null | { label: string };
+  courserun: null | { label: string };
+  instructoreType: null | { label: string };
+  courseFormat: null | { label: string };
   cohortTag: string;
   enrollmentStartDate: string;
   enrollmentEndDate: string;
@@ -103,11 +105,12 @@ interface FormData {
   // currentStep: number;
   discountType: string;
   discountValue: string;
-  paymentplan: null | { value: string };
+  paymentplan: null | { label: string };
   selectedMonths: number;
 }
 
 const Createcourseform = ({ created }: any) => {
+  const dispatch = useDispatch();
   const { theme } = useTheme();
   const [isSelectDateChecked, setIsSelectDateChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -219,18 +222,18 @@ const Createcourseform = ({ created }: any) => {
 
     formDataToSend.append("programme_category_id", "2");
     formDataToSend.append("course_title", formData.courseTitle);
-    formDataToSend.append("course_type", formData.courseType?.value || "");
-    formDataToSend.append("creators", formData.editors?.value || "");
+    formDataToSend.append("course_type", formData.courseType?.label || "");
+    formDataToSend.append("creators[]", formData.editors?.label || "");
     formDataToSend.append("description", formData.description);
 
     formData.facilitator?.forEach((item) =>
-      formDataToSend.append("facilitators[]", item.value.toString())
+      formDataToSend.append("facilitators[]", item.label.toString())
     );
     formData.supervisors?.forEach((item) =>
-      formDataToSend.append("supervisors[]", item.value.toString())
+      formDataToSend.append("supervisors[]", item.label.toString())
     );
     formData.featuredImages.forEach((file) => {
-      formDataToSend.append("course_image[]", file);
+      formDataToSend.append("course_image", file);
     });
 
     formDataToSend.append("video_url", formData.featuredVideo);
@@ -239,15 +242,17 @@ const Createcourseform = ({ created }: any) => {
     // formDataToSend.append("course_run", formData.courseRun);
     formDataToSend.append(
       "difficulty_level",
-      formData.difficultyLevel?.value || ""
+      formData.difficultyLevel?.label || ""
     );
-    formDataToSend.append("course_run", formData.courserun?.value || "");
+    formDataToSend.append("course_run", formData.courserun?.label || "");
     formDataToSend.append(
       "instructoreType",
-      formData.instructoreType?.value || ""
+      formData.instructoreType?.label || ""
     );
-    formDataToSend.append("course_mode", formData.courseFormat?.value || "");
+    formDataToSend.append("course_mode", formData.courseFormat?.label || "");
     formDataToSend.append("course_format", "digital");
+    // formDataToSend.append("certificate_type", "digital");
+    formDataToSend.append("program_fee", "");
     formDataToSend.append("program_plan", "2");
     formDataToSend.append("usd", formData.currency.USD ? "1" : "0");
     formDataToSend.append("naira", formData.currency.NGN ? "1" : "0");
@@ -255,13 +260,9 @@ const Createcourseform = ({ created }: any) => {
     formDataToSend.append("usd_amount", formData.dollarAmount);
     formDataToSend.append("installment", formData.selectedMonths.toString());
 
-    console.log("FormData Payload:");
-    for (let [key, value] of formDataToSend.entries()) {
-      console.log(`${key}: ${value}`);
-    }
-
     const res = await CourseServices.createCourse(formDataToSend);
-    console.log(res);
+    console.log(res.data.course_id);
+    dispatch(setCourseId(res.data.course_id));
     if (res.data.success === true) {
       setIsSubmitting(false);
       await showAlert(
@@ -272,6 +273,8 @@ const Createcourseform = ({ created }: any) => {
         "#03435F"
       );
       created();
+    } else {
+      setIsSubmitting(false);
     }
   };
 
@@ -416,7 +419,7 @@ const Createcourseform = ({ created }: any) => {
               }`}
               disabled={!isFormValid()}
             >
-              <p className="font-DMSans font-semibold text-[16px] text-white">
+              <p className="font-DMSans font-semibold text-[14px] lg:text-[16px] text-white">
                 SAVE ALL CHANGES
               </p>
               {isSubmitting && <LoadingSpinner size="xs" />}

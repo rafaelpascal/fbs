@@ -1,8 +1,5 @@
 // userSlice.js
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-// Define the user state to match the user response structure
-// Define the user state to match the user response structure
 interface UserState {
   userid: number;
   firstname: string;

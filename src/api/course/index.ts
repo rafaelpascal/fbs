@@ -42,6 +42,16 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static createCourseLesson = async (payload: FormData) => {
+    try {
+      const res = await Api.post("/create-lessons", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static createFormRequirements = async (payload: any) => {
     try {
       const res = await Api.post("/create-form-requirements", payload);

@@ -1,14 +1,19 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "~/components/constants/routes";
+import { CourseCreatedModal } from "~/components/Modal/CourseCreatedModal";
 import CourseBuilder from "~/feature/admin/CourseBuilder";
 import Createcourseform from "~/feature/admin/Createcourseform";
 import CredentialsForms from "~/feature/admin/CredentialsForms";
 import { DashboardArea } from "~/layouts/DashboardArea";
 
 const CreateCourse = () => {
+  const navigate = useNavigate();
   const [width, setWidth] = useState(10);
   const [iscreateForm, setiscreateForm] = useState(true);
   const [isCredentials, setisCredentials] = useState(false);
   const [ismodule, setModule] = useState(false);
+  const [ispublished, setIspublished] = useState(false);
 
   const handleChangeWidth = (newWidth: number) => {
     setWidth(newWidth);
@@ -37,7 +42,18 @@ const CreateCourse = () => {
     setisCredentials(false);
     setModule(true);
   };
+  const handlePublish = () => {
+    handleChangeWidth(100);
+    setiscreateForm(false);
+    setisCredentials(false);
+    setModule(false);
+    setIspublished(true);
+  };
 
+  const handleclose = () => {
+    navigate(ROUTES.ASSIGNMENTSTABLE);
+    setIspublished(false);
+  };
   return (
     <DashboardArea>
       <div className="relative">
@@ -77,7 +93,7 @@ const CreateCourse = () => {
           )}
           {ismodule && (
             <div>
-              <CourseBuilder />
+              <CourseBuilder created={handlePublish} />
             </div>
           )}
           {/* <button
@@ -99,6 +115,7 @@ const CreateCourse = () => {
             Set Width to 100
           </button> */}
         </div>
+        <CourseCreatedModal isOpen={ispublished} closeModal={handleclose} />
       </div>
     </DashboardArea>
   );

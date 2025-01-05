@@ -2,8 +2,11 @@ import { useState } from "react";
 import { Descendant } from "slate";
 import RichText from "~/components/data-inputs/RichText";
 import FormRequirements from "./FormRequirements";
-// import { CourseServices } from "~/api/course";
+import { CourseServices } from "~/api/course";
 import { showAlert } from "~/utils/sweetAlert";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
 
 type CustomElement = {
   type: "paragraph";
@@ -13,6 +16,8 @@ type CustomElement = {
 type CustomDescendant = CustomElement & Descendant;
 
 const CredentialsForms = ({ created }: any) => {
+  const courseId = useSelector((state: RootState) => state.course.course_id);
+  const [isSubmitting, setisSubmitting] = useState(false);
   const [admissionRequirements, setAdmissionRequirements] = useState<
     CustomDescendant[]
   >([{ type: "paragraph", children: [{ text: "" }] }]);
@@ -33,6 +38,7 @@ const CredentialsForms = ({ created }: any) => {
   ]);
 
   const handleSubmit = async () => {
+    setisSubmitting(true);
     const extractText = (nodes: CustomDescendant[]): string => {
       return nodes
         .map((node) => node.children.map((child) => child.text).join(""))
@@ -40,18 +46,19 @@ const CredentialsForms = ({ created }: any) => {
     };
 
     const payload = {
-      course_id: 8,
-      admissionRequirements: extractText(admissionRequirements),
-      learningObjectives: extractText(learningObjectives),
-      assessmentMethods: extractText(assessmentMethods),
-      careerOptions: extractText(careerOptions),
-      courseStructure: extractText(courseStructure),
-      courseFor: extractText(courseFor),
+      course_id: courseId,
+      course_requirments: extractText(admissionRequirements),
+      learning_objective: extractText(learningObjectives),
+      assessment_method: extractText(assessmentMethods),
+      career_option: extractText(careerOptions),
+      course_structure: extractText(courseStructure),
+      course_for: extractText(courseFor),
     };
     try {
       console.log("Payload:", payload);
-      // const res = await CourseServices.createCourseRequirements(payload);
-      // console.log("Response:", res);
+      const res = await CourseServices.createCourseRequirements(payload);
+      console.log("Response:", res);
+      setisSubmitting(false);
       await showAlert(
         "success",
         "Created!",
@@ -61,6 +68,7 @@ const CredentialsForms = ({ created }: any) => {
       );
       created();
     } catch (error) {
+      setisSubmitting(false);
       console.log(error);
     }
   };
@@ -138,9 +146,12 @@ const CredentialsForms = ({ created }: any) => {
       </button>
       <button
         onClick={handleSubmit}
-        className="h-[52px] w-[231px] mb-2 px-4 font-DMSans font-semibold text-[16px] text-white rounded-md bg-[#FF5050]"
+        className="h-[52px] bg-[#FF5050] w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2"
       >
-        SAVE ALL CHANGES
+        <p className="font-DMSans font-semibold text-[16px] text-white">
+          SAVE ALL CHANGES
+        </p>
+        {isSubmitting && <LoadingSpinner size="xs" />}
       </button>
     </div>
   );

@@ -1,5 +1,5 @@
 import { BaseModal } from "./BaseModal";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { cn } from "~/utils/helpers";
 // import { ROUTES } from "../constants/routes";
@@ -8,45 +8,51 @@ import { BaseInput } from "../data-inputs/text-input";
 import { useTheme } from "~/context/theme-provider";
 import ImageUpload from "../data-inputs/ImageUpload";
 import { LoadingSpinner } from "../ui/loading-spinner";
+import MediaUpload from "../data-inputs/MediaUpload";
+import PDFUpload from "../data-inputs/PDFUpload";
+import WordUpload from "../data-inputs/WordDocUpload";
+import { CourseServices } from "~/api/course";
+import { RootState } from "~/redux-store/store";
+import { useSelector } from "react-redux";
 
 interface IModalPropsType {
+  moduleId: number;
   isOpen: boolean;
   closeModal: () => void;
-  handlecreate: () => void;
+  handlecreate: (moduleId: number) => void;
   moduleData: any;
   setModuleData: React.Dispatch<React.SetStateAction<any>>;
 }
 
 interface FormData {
   title: string;
-  description: string;
-  objectives: string;
-  reading: string;
+  embed: string;
   featuredImages: File[];
 }
 
 const initialFormData = {
   title: "",
-  description: "",
-  objectives: "",
-  reading: "",
+  embed: "",
   featuredImages: [] as File[],
 };
 
 export const NewLessonModal = ({
+  moduleId,
   isOpen,
   closeModal,
   handlecreate,
   setModuleData,
 }: IModalPropsType) => {
   const { theme } = useTheme();
+  const courseId = useSelector((state: RootState) => state.course.course_id);
   const [isSubmitting, setisSubmitting] = useState(false);
+  const [selectedPdf, setSelectedFile] = useState<File | null>(null);
+  const [selectedWord, setSelectedWord] = useState<File | null>(null);
+  const [selectedMediaFile, setMediaFile] = useState<File | null>(null);
   //   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     title: "",
-    description: "",
-    objectives: "",
-    reading: "",
+    embed: "",
     featuredImages: [],
   });
   // Close modal
@@ -68,30 +74,61 @@ export const NewLessonModal = ({
     }));
   };
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    console.log("moduleId", moduleId);
+  }, [moduleId]);
+
+  const handleFileSelect = (file: File | null) => {
+    setSelectedFile(file);
+    console.log("Selected file:", file);
+  };
+
+  const handleWordSelect = (file: File | null) => {
+    setSelectedWord(file);
+    console.log("Selected file:", file);
+  };
+
+  const handleMediaUpload = (file: File | null) => {
+    setMediaFile(file);
+  };
+
+  const handleSubmit = async () => {
     setisSubmitting(true);
+
+    // Create a new FormData object
     const dataToSubmit = new FormData();
-
-    dataToSubmit.append("module_title", formData.title);
-    dataToSubmit.append("module_description", formData.description);
-    dataToSubmit.append("module_objectives", formData.objectives);
-    dataToSubmit.append("module_reading", formData.reading);
-
+    dataToSubmit.append("programme_category_id", "2");
+    dataToSubmit.append("course_id", courseId?.toString() || "");
+    dataToSubmit.append("stream_video_audio", formData.embed);
+    dataToSubmit.append("module_id", "1");
+    dataToSubmit.append("lesson_title", formData.title);
     formData.featuredImages.forEach((file) => {
-      dataToSubmit.append(`module_image`, file);
+      dataToSubmit.append("lesson_image", file);
     });
-
+    if (selectedPdf) {
+      dataToSubmit.append("pdf_upload", selectedPdf);
+    }
+    if (selectedWord) {
+      dataToSubmit.append("word_file", selectedWord);
+    }
+    if (selectedMediaFile) {
+      dataToSubmit.append("video_audio_upload", selectedMediaFile);
+    }
     for (const [key, value] of dataToSubmit.entries()) {
       console.log(`${key}:`, value);
     }
-    // moduleData
+
+    const res = await CourseServices.createCourseLesson(dataToSubmit);
+    console.log("dddddddd", res);
+
+    // Set module data (if needed)
     setModuleData((prevData: any) => ({
       ...prevData,
       title: formData.title,
-      description: formData.description,
     }));
+
     setisSubmitting(false);
-    handlecreate();
+    handlecreate(moduleId);
     setFormData(initialFormData);
   };
 
@@ -130,7 +167,32 @@ export const NewLessonModal = ({
             onChange={(e: any) => handleInputChange("title", e.target.value)}
           />
         </div>
-
+        <div className="w-full">
+          <PDFUpload onFileSelect={handleFileSelect} />
+        </div>
+        <div className="w-full">
+          <MediaUpload onMediaUpload={handleMediaUpload} />
+        </div>
+        <div className="w-full">
+          <WordUpload onFileSelect={handleWordSelect} />
+        </div>
+        <div className="my-4 w-full">
+          <BaseInput
+            label="EMBED VIDEO/AUDIO"
+            type="text"
+            placeholder="EMBED VIDEO/AUDIO"
+            containerClassname="w-full"
+            labelClassName="text-[17px] font-DMSans font-semibold"
+            inputContainerClassName={cn(
+              "h-[53px] ",
+              theme === "dark"
+                ? "select-secondary"
+                : "border-[0.5px] border-[#ddd]"
+            )}
+            value={formData.embed}
+            onChange={(e: any) => handleInputChange("embed", e.target.value)}
+          />
+        </div>
         <div className="flex justify-start items-start gap-4">
           <button
             onClick={handleclose}

@@ -9,6 +9,8 @@ import { useTheme } from "~/context/theme-provider";
 import ImageUpload from "../data-inputs/ImageUpload";
 import { LoadingSpinner } from "../ui/loading-spinner";
 import { CourseServices } from "~/api/course";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
 
 interface IModalPropsType {
   moduleNumber: number;
@@ -43,6 +45,8 @@ export const NewModuleModal = ({
   setModuleData,
 }: IModalPropsType) => {
   const { theme } = useTheme();
+  const courseId = useSelector((state: RootState) => state.course.course_id);
+
   const [isSubmitting, setisSubmitting] = useState(false);
   //   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
@@ -76,7 +80,7 @@ export const NewModuleModal = ({
     const dataToSubmit = new FormData();
 
     dataToSubmit.append("programme_category_id", "2");
-    dataToSubmit.append("course_id", "8");
+    dataToSubmit.append("course_id", courseId?.toString() || "");
     dataToSubmit.append("module_number", moduleNumber.toString());
     dataToSubmit.append("module_title", formData.title);
     dataToSubmit.append("module_description", formData.description);
@@ -86,16 +90,11 @@ export const NewModuleModal = ({
     formData.featuredImages.forEach((file) => {
       dataToSubmit.append(`module_image`, file);
     });
-
-    for (const [key, value] of dataToSubmit.entries()) {
-      console.log(`${key}:`, value);
-    }
     const res = await CourseServices.createCourseModule(dataToSubmit);
-    console.log("response", res);
-
     // moduleData
     setModuleData((prevData: any) => ({
       ...prevData,
+      moduleId: res.data.data.module_id,
       title: formData.title,
       description: formData.description,
     }));
