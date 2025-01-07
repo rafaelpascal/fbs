@@ -11,10 +11,11 @@ import { courseData } from "~/components/constants/data";
 import ActionMenu from "~/components/table/ActionMenu";
 import { useState } from "react";
 import { NewCohortModal } from "~/components/Modal/NewCohortModal";
+import { showAlert } from "~/utils/sweetAlert";
 // import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
-  id: string;
+  id: number;
   avatar: string;
   sn: number;
   title: string;
@@ -28,7 +29,10 @@ interface MerchantTableRow {
 
 const CourseTable = () => {
   const [, setIscontact] = useState(false);
-  const [isNewcohort, setIsNewcohort] = useState(false);
+  const [isNewcohort, setIsNewcohort] = useState({
+    courseId: 0,
+    status: false,
+  });
   const navigate = useNavigate();
   // const [filters, setFilters] = useState({
   //   dateFrom: "",
@@ -66,12 +70,12 @@ const CourseTable = () => {
   // );
 
   // View a Row
-  const handleView = (id: string) => {
+  const handleView = (id: number) => {
     navigate(`/admin/dashboard/application/${id}`);
   };
 
   // Handle handlecontact
-  const handlecontact = (id: string) => {
+  const handlecontact = (id: number) => {
     setIscontact(true);
     console.log(id);
   };
@@ -82,7 +86,7 @@ const CourseTable = () => {
       name: "S/N",
       selector: (row: { sn: number }) => row.sn,
       cell: (_row, index: number) => index + 1,
-      width: "60px",
+      width: "50px",
     },
     {
       name: "Title",
@@ -95,7 +99,7 @@ const CourseTable = () => {
           </h2>
         </div>
       ),
-      width: "450px",
+      width: "400px",
     },
     {
       name: "Date created",
@@ -115,6 +119,7 @@ const CourseTable = () => {
           text={row?.status?.toString() || ""}
         />
       ),
+      width: "120px",
     },
     {
       name: "Creator",
@@ -151,7 +156,10 @@ const CourseTable = () => {
           actions={[
             { label: "Edit", action: () => handleView(row.id) },
             { label: "Delete", action: () => handlecontact(row.id) },
-            { label: "Add Cohort", action: () => setIsNewcohort(true) },
+            {
+              label: "Add Cohort",
+              action: () => setIsNewcohort({ courseId: row.id, status: true }),
+            },
             { label: "Suspend", action: () => handlecontact(row.id) },
             { label: "Copy link", action: () => handlecontact(row.id) },
           ]}
@@ -162,13 +170,26 @@ const CourseTable = () => {
     },
   ];
 
-  const handleSuccess = () => {
-    console.log("success");
+  const handleSuccess = async () => {
+    setIsNewcohort({
+      courseId: 0,
+      status: false,
+    });
+    await showAlert(
+      "success",
+      "Created!",
+      "Cohort Successfully Created!",
+      "Ok",
+      "#03435F"
+    );
   };
 
   const handleClose = () => {
     setIscontact(false);
-    setIsNewcohort(false);
+    setIsNewcohort({
+      courseId: 0,
+      status: false,
+    });
   };
 
   return (
@@ -184,7 +205,8 @@ const CourseTable = () => {
       </div>
       {/* <ContactModal isOpen={isContact} closeModal={handleClose} /> */}
       <NewCohortModal
-        isOpen={isNewcohort}
+        courseId={isNewcohort.courseId}
+        isOpen={isNewcohort.status}
         handlecreate={handleSuccess}
         closeModal={handleClose}
       />

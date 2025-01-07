@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaTimes } from "react-icons/fa";
 import { useTheme } from "~/context/theme-provider";
 import { cn } from "~/utils/helpers";
 
@@ -55,26 +55,58 @@ const MultipleSelectionDropdown: React.FC<SelectionDropdownProps> = ({
     onSelect(updatedOptions); // Pass the updated selection to the parent
   };
 
+  // Function to remove a specific option
+  const handleRemoveOption = (option: Option) => {
+    const updatedOptions = selectedOptions.filter(
+      (selected) => selected.value !== option.value
+    );
+    setSelectedOptions(updatedOptions);
+    onSelect(updatedOptions);
+  };
+
   return (
     <div className="relative w-full rounded-[8px]">
       {label && <label className={labelClassName}>{label}</label>}
-      <div
-        className={`flex justify-between border-[0.5px] border-[#ddd] mt-2 items-center  rounded-md p-3 cursor-pointer shadow-sm bg-transparent`}
-        onClick={handleToggle}
-      >
-        <span className="font-DMSans font-semibold text-[16px]">
-          {selectedOptions.length > 0
-            ? selectedOptions.map((option) => option.label).join(", ")
-            : placeholder}
-        </span>
-        {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+      <div className="flex flex-col lg:flex-row flex-wrap justify-start items-start lg:items-center gap-4">
+        <div
+          className={`flex w-[50%] h-[50px] flex-row justify-between border-[0.5px] border-[#ddd] mt-2 items-center rounded-md p-3 cursor-pointer shadow-sm bg-transparent`}
+          onClick={handleToggle}
+        >
+          <span className="font-DMSans font-semibold text-[16px]">
+            {selectedOptions.length > 0
+              ? selectedOptions[selectedOptions.length - 1].label // Show only the last selected option
+              : placeholder}
+          </span>
+          {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+        </div>
+        {/* Display Selected Options */}
+        {selectedOptions.length > 0 && (
+          <div className="lg:absolute right-[10%] mt-4 border-[0.5px] border-[#ddd] p-2 rounded-md grid grid-cols-2 gap-2">
+            {selectedOptions.map((option) => (
+              <div
+                key={option.value}
+                className="flex items-center justify-between px-3 py-1 bg-gray-200 rounded-md text-sm font-medium"
+              >
+                <span className="font-DMSans font-semibold text-[14px]">
+                  {option.label}
+                </span>
+                <button
+                  onClick={() => handleRemoveOption(option)}
+                  className="ml-2 text-red-500 hover:text-red-700"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Dropdown Options */}
       {isOpen && (
         <ul
           className={cn(
-            "absolute left-0 right-0 mt-2 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto",
+            "absolute w-[50%] left-0 right-0 mt-2 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto",
             theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
           )}
         >

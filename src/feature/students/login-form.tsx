@@ -41,6 +41,8 @@ const LoginForm = () => {
   const handleLogin = form.handleSubmit(async (data: AuthFormPayload) => {
     try {
       const res = await AuthService.login(data);
+      console.log(res);
+
       if (res.userData.success === false) {
         await showAlert(
           "error",
@@ -51,6 +53,17 @@ const LoginForm = () => {
         );
         form.reset();
         return;
+      }
+      if (res?.userData?.profile?.[0].user_role === 1) {
+        await showAlert(
+          "success",
+          "Successful!",
+          "Continue to dashboard!",
+          "Ok",
+          "#03435F"
+        );
+        navigate(ROUTES.ADMINDASHBOARD);
+        form.reset();
       } else {
         await showAlert(
           "success",

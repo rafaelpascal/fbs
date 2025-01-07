@@ -14,6 +14,9 @@ import { showAlert } from "~/utils/sweetAlert";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { useDispatch } from "react-redux";
 import { setCourseId } from "~/redux-store/slice/course.slice";
+import { motion } from "framer-motion";
+import { FaChevronDown, FaChevronRight } from "react-icons/fa";
+import { GrCertificate } from "react-icons/gr";
 
 const options = [
   { label: "Executive Diploma", value: 1 },
@@ -63,6 +66,11 @@ const courseFormat = [
   { label: "Project-Based", value: 6 },
 ];
 
+const Orientation = [
+  { label: "Portraite", value: 1 },
+  { label: "Landscape", value: 2 },
+];
+
 interface Option {
   label: string;
   value: string | number;
@@ -78,6 +86,7 @@ interface FormData {
   description: string;
   featuredImages: File[];
   featuredVideo: string;
+  orientation: string;
   //
   maxStudents: string;
   courseRun: string;
@@ -114,6 +123,7 @@ const Createcourseform = ({ created }: any) => {
   const { theme } = useTheme();
   const [isSelectDateChecked, setIsSelectDateChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCertType, setIsCertType] = useState(false);
   const [isScheduleDateChecked, setIsScheduleDateChecked] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     courseTitle: "",
@@ -124,6 +134,7 @@ const Createcourseform = ({ created }: any) => {
     description: "",
     featuredImages: [],
     featuredVideo: "",
+    orientation: "",
     //
     maxStudents: "",
     courseRun: "Monthly",
@@ -305,8 +316,8 @@ const Createcourseform = ({ created }: any) => {
             handleInputChange("courseTitle", e.target.value)
           }
         />
-        <div className="my-4 w-full lg:w-[70%] flex flex-col lg:flex-row flex-wrap justify-between items-center">
-          <div className="w-full lg:w-[48%] mb-4">
+        <div className="my-4 w-full flex flex-col lg:flex-row flex-wrap justify-start gap-4 items-center">
+          <div className="w-full lg:w-[30%] mb-4">
             <SelectionDropdown
               label="COURSE TYPE"
               labelClassName="text-[14px] font-DMSans font-semibold mb-2"
@@ -315,7 +326,7 @@ const Createcourseform = ({ created }: any) => {
               placeholder="Select course type"
             />
           </div>
-          <div className="w-full lg:w-[48%] mb-4">
+          <div className="w-full lg:w-[60%] mb-4">
             <MultipleSelectionDropdown
               label="FACILITATORS"
               labelClassName="text-[14px] font-DMSans font-semibold mb-2"
@@ -325,8 +336,8 @@ const Createcourseform = ({ created }: any) => {
             />
           </div>
         </div>
-        <div className="my-4 w-full lg:w-[70%] flex flex-col lg:flex-row flex-wrap justify-between items-center">
-          <div className="w-full lg:w-[48%] mb-4">
+        <div className="my-4 w-full flex flex-col lg:flex-row flex-wrap justify-start gap-4 items-center">
+          <div className="w-full lg:w-[30%] mb-4">
             <SelectionDropdown
               label="CREATORS/EDITORS"
               labelClassName="text-[14px] font-DMSans font-semibold mb-2"
@@ -335,13 +346,13 @@ const Createcourseform = ({ created }: any) => {
               placeholder="Select Editors"
             />
           </div>
-          <div className="w-full lg:w-[48%] mb-4">
+          <div className="w-full lg:w-[60%] mb-4">
             <MultipleSelectionDropdown
               label="SUPERVISORS"
               labelClassName="text-[14px] font-DMSans font-semibold mb-2"
               options={supervisors}
               onSelect={handleSupervisorSelect}
-              placeholder="Select Facilitators"
+              placeholder="Select Supervisors"
             />
           </div>
         </div>
@@ -407,6 +418,47 @@ const Createcourseform = ({ created }: any) => {
           />
           <div>
             <PaymentPlan formData={formData} setFormData={setFormData} />
+          </div>
+          <div className="w-full border-[1px] bg-white p-2 border-[#ddd]  mt-4 rounded-md">
+            <h2 className="font-DMSans font-semibold text-[16px] mb-4">
+              Select Certificate Type
+            </h2>
+            <div className="flex justify-start gap-[1px] items-center">
+              <div className="w-full lg:w-[80px] flex justify-center items-center rounded-l-[12px] bg-[#6440FB] h-[60px]">
+                <GrCertificate className="text-[30px] text-white" />
+              </div>
+              <button
+                onClick={() => setIsCertType(!isCertType)}
+                className="w-full lg:w-[80px] flex justify-center items-center rounded-r-[12px] bg-[#6440FB] h-[60px]"
+              >
+                {isCertType ? (
+                  <FaChevronDown className="text-[30px] text-white" />
+                ) : (
+                  <FaChevronRight className="text-[30px] text-white" />
+                )}
+              </button>
+            </div>
+            {isCertType && (
+              <motion.div
+                initial={{ x: "100%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="w-full lg:w-[40%] p-0 mt-4"
+              >
+                <div className="w-full mb-2">
+                  <SelectionDropdown
+                    label=""
+                    labelClassName="text-[14px] font-DMSans font-semibold"
+                    options={Orientation}
+                    onSelect={(option) => handleSelect("orientation", option)}
+                    placeholder="Certificate Type"
+                  />
+                </div>
+                <p className="font-DMSans font-semibold text-[16px] text-[#F01E00B2] italic">
+                  Leave as it is if no changes.
+                </p>
+              </motion.div>
+            )}
           </div>
           <div className="flex flex-row justify-start items-center">
             <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">

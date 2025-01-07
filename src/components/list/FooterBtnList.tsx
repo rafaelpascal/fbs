@@ -15,7 +15,7 @@ const FooterBtnList = ({
   const ListTag = ordered ? "ol" : "ul";
 
   return (
-    <div>
+    <div className="">
       <h2 className="text-[17px] my-4 lg:mb-10 text-white text-center lg:text-left w-full font-DMSans font-semibold">
         {title}
       </h2>

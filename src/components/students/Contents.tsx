@@ -7,7 +7,7 @@ import CourseContents from "./CourseContents";
 import Description from "./Description";
 import MbaList from "../list/mba";
 import { ROUTES } from "../constants/routes";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CiClock1 } from "react-icons/ci";
 import { LuMonitorPlay } from "react-icons/lu";
 import { IoExtensionPuzzleOutline } from "react-icons/io5";
@@ -153,18 +153,30 @@ const Contents = () => {
               Instalment Plan Available
             </p>
             <div className="flex justify-center gap-2 items-center">
-              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200">
+              <Link
+                to="https://web.facebook.com/fordaxbschool/"
+                className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200"
+              >
                 <FaFacebookF />
-              </button>
-              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200">
+              </Link>
+              <Link
+                to="https://x.com/Fordaxbschool"
+                className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200"
+              >
                 <FaTwitter />
-              </button>
-              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200">
+              </Link>
+              <Link
+                to=""
+                className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200"
+              >
                 <FaInstagramSquare />
-              </button>
-              <button className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200">
+              </Link>
+              <Link
+                to="https://www.linkedin.com/company/fordaxbschool/"
+                className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200"
+              >
                 <FaLinkedin />
-              </button>
+              </Link>
             </div>
           </div>
         </div>

@@ -140,7 +140,7 @@ export const AssignmentData = [
 
 export const courseData = [
   {
-    id: "sksjkakas",
+    id: 1,
     avatar: "",
     sn: 1,
     title: "Diploma in Human Resource In Business Admin",
@@ -152,7 +152,7 @@ export const courseData = [
     status: "Completed",
   },
   {
-    id: "sksjkarrkas",
+    id: 2,
     avatar: "",
     sn: 1,
     title: "Diploma in Human Resource In Business Admin",
@@ -164,7 +164,7 @@ export const courseData = [
     status: "Completed",
   },
   {
-    id: "sksjykakas",
+    id: 3,
     avatar: "",
     sn: 1,
     title: "Diploma in Human Resource In Business Admin",
@@ -176,7 +176,7 @@ export const courseData = [
     status: "Completed",
   },
   {
-    id: "sksjkaukas",
+    id: 4,
     avatar: "",
     sn: 1,
     title: "Diploma in Human Resource In Business Admin",
@@ -188,7 +188,7 @@ export const courseData = [
     status: "Completed",
   },
   {
-    id: "sksjkaikas",
+    id: 5,
     avatar: "",
     sn: 1,
     title: "Diploma in Human Resource In Business Admin",

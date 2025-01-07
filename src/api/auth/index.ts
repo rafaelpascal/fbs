@@ -60,4 +60,6 @@ export class AuthService extends BaseAPIService {
       throw handleError;
     }
   };
+
+  static getSession = this.handleUserSession;
 }

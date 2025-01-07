@@ -6,7 +6,7 @@ import { CiLinkedin, CiYoutube } from "react-icons/ci";
 import { FBSlogo } from "~/assets";
 import { useTheme } from "~/context/theme-provider";
 import ThemeToggle from "../buttons/ThemeController";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "../constants/routes";
 
 const Header = () => {
@@ -45,10 +45,6 @@ const Header = () => {
     navigate(ROUTES.EVENTS);
   };
 
-  const handleCreateCourse = () => {
-    navigate(ROUTES.ADMINDASHBOARD);
-  };
-
   const handleLogin = () => {
     navigate(ROUTES.HOME);
   };
@@ -82,19 +78,21 @@ const Header = () => {
             theme === "dark" ? "bg-[#333]" : "bg-white"
           }`}
         >
-          <button onClick={handleCreateCourse}>Admin</button>
-          <button>Home</button>
-          <button>About</button>
-          <button>Programs</button>
+          <Link to="https://fordaxbschool.com">Home</Link>
+          <Link to="https://fordaxbschool.com/about">About</Link>
+          <Link to="https://fordaxbschool.com/execs">Programs</Link>
           <button onClick={handleNavigateEvents}>Events</button>
-          <button onClick={handleNavigateEvents}>Blog</button>
+          <Link to="https://fordaxbschool.com/blog">Blog</Link>
           <button>Resources</button>
-          <button>Contact</button>
+          <Link to="https://fordaxbschool.com/contact">Contact</Link>
         </nav>
         <div className="p-4 border-t">
-          <button className="w-full h-[54px] text-[#fff] bg-[#FF1515] rounded-[8px]">
+          <Link
+            to="/login"
+            className="w-full h-[54px] text-[#fff] bg-[#FF1515] rounded-[8px]"
+          >
             STUDENT LOGIN
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -140,14 +138,13 @@ const Header = () => {
           <div className="flex justify-start gap-10 items-center w-full lg:w-[50%]">
             <img src={FBSlogo} alt="biopaylogo" width={100} />
             <div className="hidden lg:flex gap-4">
-              <button onClick={handleCreateCourse}>Admin</button>
-              <button>Home</button>
-              <button>About</button>
-              <button>Programs</button>
+              <Link to="https://fordaxbschool.com">Home</Link>
+              <Link to="https://fordaxbschool.com/about">About</Link>
+              <Link to="https://fordaxbschool.com/execs">Programs</Link>
               <button onClick={handleNavigateEvents}>Events</button>
-              <button>Blog</button>
+              <Link to="https://fordaxbschool.com/blog">Blog</Link>
               <button>Resources</button>
-              <button>Contact</button>
+              <Link to="https://fordaxbschool.com/contact">Contact</Link>
             </div>
           </div>
           <div className="flex justify-end items-center gap-3">

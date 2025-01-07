@@ -190,8 +190,8 @@ const Footer = () => {
           />
         </div>
       </div>
-      <div className="relative flex flex-col justify-center items-center bg-black w-full">
-        <div className="w-full  flex justify-between items-center flex-col lg:flex-row lg:w-[1218px] ">
+      <div className="relative flex flex-col justify-start items-center pt-10 bg-black w-full">
+        <div className="w-full  flex justify-between items-start flex-col lg:flex-row lg:w-[1218px] ">
           <div className="text-[#fff]">
             <h2>Call us</h2>
             <p>07017695596</p>

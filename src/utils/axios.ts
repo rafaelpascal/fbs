@@ -2,6 +2,7 @@ import qs from "qs";
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 import axios, { AxiosError } from "axios";
 import Swal from "sweetalert2";
+import { AuthService } from "~/api/auth";
 
 // Function to catch any axios error in th interceptor
 const handleAxiosError = (error: AxiosError<ANY>) => {
@@ -21,9 +22,8 @@ export const Api = axios.create({
 });
 
 Api.interceptors.request.use((config) => {
-  // const user = AuthService.getSession();
-  // if (user) config.headers["x-access-token"] = user.token["access-token"];
-  config.headers.Authorization = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNvZGVkaWdlc3RsdGRAZ21haWwuY29tIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpYXQiOjE3MzQwODg3MzZ9.KEiX2GU17jUbGiqO-bPCZfgYyo_mtdSey88RYHAPU2g`;
+  const user = AuthService.getSession();
+  if (user) config.headers.Authorization = `Bearer ${user?.user}`;
   return config;
 });
 
