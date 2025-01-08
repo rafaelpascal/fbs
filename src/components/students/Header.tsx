@@ -106,11 +106,15 @@ const Header = () => {
           <div className="flex gap-4 justify-start items-center">
             <div className="flex justify-start items-center gap-3">
               <FaPhoneAlt />
-              <p>07035957197</p>
+              <p className="font-DMSans text-[14px] font-semibold">
+                07017695596
+              </p>
             </div>
             <div className="flex justify-start items-center gap-2">
               <MdOutlineAttachEmail />
-              <p>olatundeji@gmail.com</p>
+              <p className="font-DMSans text-[14px] font-semibold">
+                admin@fordaxbschool.com
+              </p>
             </div>
           </div>
           <div className="flex gap-4 justify-end items-center">

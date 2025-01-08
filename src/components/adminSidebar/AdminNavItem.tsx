@@ -52,8 +52,9 @@ export const SideNav = (props: SideNavProps) => {
   // style
   const style = ({ isActive }: ActiveClass) => {
     const baseStyles = cn(
-      "relative flex flex-row w-full items-center px-2 gap-4 py-3 bg-transparent",
-      isActive && "rounded-[8px] w-full text-[#FFFFFF] bg-[#FF3B30]"
+      "relative flex flex-row w-full hover:border-[0.5px] hover:border-[#FF3B30] rounded-[8px] hover:text-[#FF3B30] justify-start gap-2 items-center p-2 bg-transparent",
+      isActive &&
+        "rounded-[8px] hover:border-[0.5px] hover:border-[#FF3B30] hover:text-[#FFFFFF] w-full text-[#FFFFFF] bg-[#FF3B30]"
     );
 
     if (typeof className === "string") return cn(baseStyles, className);
@@ -62,7 +63,7 @@ export const SideNav = (props: SideNavProps) => {
   };
 
   return (
-    <div>
+    <div className="w-full">
       {dropdown && children?.length !== 0 ? (
         <div className="w-full flex flex-col px-4 justify-between items-center">
           <button

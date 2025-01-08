@@ -37,6 +37,7 @@ export const AdminSidebar = () => {
   const toggleCollapse = useCallback(() => {
     setIsCollapsed((prevState) => !prevState);
   }, []);
+
   const handleLogout = () => {
     navigate(ROUTES.HOME);
   };
@@ -100,9 +101,9 @@ export const AdminSidebar = () => {
           {/* Navigation Items */}
           <ul
             className={cn(
-              "px-0 lg:px-[20px] bg-transparent grid grid-cols-1 overflow-y-auto",
+              "w-full px-4  bg-transparent grid grid-cols-1 overflow-y-auto",
               "transition-all duration-300",
-              isCollapsed ? "gap-2" : "gap-4"
+              isCollapsed ? "gap-2" : "gap-3"
             )}
             style={{ maxHeight: "calc(100vh - 200px)" }}
           >
@@ -111,7 +112,7 @@ export const AdminSidebar = () => {
                 key={data.text}
                 {...data}
                 textStyles={cn(
-                  "hidden bg-transparent text-md my-3 lg:block",
+                  "hidden bg-transparent text-md lg:block",
                   isCollapsed && "hidden"
                 )}
                 iconOnly={isCollapsed}
@@ -123,7 +124,7 @@ export const AdminSidebar = () => {
           <div className="absolute bottom-0 p-[20px] w-full bg-transparent">
             <button
               onClick={handleLogout}
-              className="flex py-4 flex-row items-center gap-4"
+              className="flex p-2 hover:border-[0.5px] w-full hover:border-[#FF3B30] rounded-[8px] hover:text-[#FF3B30] flex-row items-center gap-4"
             >
               <LogoutOpen width={24} height={24} className="bg-transparent" />
               {!isCollapsed && (

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 // import { useCallback, useState } from "react";
 import moment from "moment";
 import { Status } from "~/components/ui/Badge";
-import { statColorCode } from "~/utils/helpers";
+import { cn, statColorCode } from "~/utils/helpers";
 // import TableFilter from "~/components/table/TableFilter";
 import InDataTable from "~/components/table/InDataTable";
 import { courseData } from "~/components/constants/data";
@@ -12,6 +12,7 @@ import ActionMenu from "~/components/table/ActionMenu";
 import { useState } from "react";
 import { NewCohortModal } from "~/components/Modal/NewCohortModal";
 import { showAlert } from "~/utils/sweetAlert";
+import { useTheme } from "~/context/theme-provider";
 // import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
@@ -28,6 +29,7 @@ interface MerchantTableRow {
 }
 
 const CourseTable = () => {
+  const { theme } = useTheme();
   const [, setIscontact] = useState(false);
   const [isNewcohort, setIsNewcohort] = useState({
     courseId: 0,
@@ -193,7 +195,12 @@ const CourseTable = () => {
   };
 
   return (
-    <div className="w-full pb-4 flex justify-center items-center bg-[#fff]">
+    <div
+      className={cn(
+        "w-full pb-4 flex justify-center items-center",
+        theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
+      )}
+    >
       <div className="w-[99%]">
         <InDataTable<MerchantTableRow>
           columns={columns}

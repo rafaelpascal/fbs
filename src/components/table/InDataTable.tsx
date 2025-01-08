@@ -121,7 +121,7 @@ const InDataTable = <T extends object>({
 
   return (
     // skipcq: JS-0415
-    <div className="z-10 ">
+    <div className="z-10">
       <div className="relative flex justify-between gap-2 pr-2 mb-3">
         {title && (
           <h2 className="text-[16px] w-full mx-4 text-[#4F4F4F] font-CircularStd font-bold">

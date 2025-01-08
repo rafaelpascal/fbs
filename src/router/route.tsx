@@ -29,6 +29,8 @@ import PollsTable from "~/pages/Admin/Courses/CourseTable/PollsTable.tsx";
 import QuizzesTable from "~/pages/Admin/Courses/CourseTable/QuizzesTable.tsx";
 import CreateCourse from "~/pages/Admin/Courses/CreateCourse.tsx";
 import { TanstackProvider } from "~/context/tanstack-query/index.tsx";
+import AdminManagement from "~/pages/Admin/AccountManagement/AdminManagement.tsx";
+import Transactions from "~/pages/Courses/Transactions.tsx";
 
 // Lazy load the components
 const Lecture = lazyLoad(() => import("~/pages/lecture/Lecture.tsx"));
@@ -82,6 +84,10 @@ const router = createBrowserRouter([
       {
         path: ROUTES.BANKTRANSFER,
         element: <BankTransfer />,
+      },
+      {
+        path: ROUTES.STUDENTRANSACTION,
+        element: <Transactions />,
       },
     ],
   },
@@ -143,6 +149,10 @@ const router = createBrowserRouter([
       {
         path: ROUTES.NEWCOURSE,
         element: <CreateCourse />,
+      },
+      {
+        path: ROUTES.ADMINMANAGEMENT,
+        element: <AdminManagement />,
       },
     ],
   },

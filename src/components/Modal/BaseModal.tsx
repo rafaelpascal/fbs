@@ -8,7 +8,6 @@ interface IBaseModal extends IChildren, IModalPropsType {
   closeModal: () => void;
 }
 
-// Test
 export const BaseModal = ({ children, isOpen }: IBaseModal) => {
   const { theme } = useTheme();
   const tooltipRef = useRef<HTMLElement>(null);

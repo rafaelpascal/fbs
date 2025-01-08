@@ -61,7 +61,7 @@ const Dashboard = () => {
             <DoughnutChartDemo />
           </div>
         </div>
-        <div className="flex justify-between flex-col lg:flex-row flex-wrap items-start">
+        <div className="flex justify-between flex-col lg:flex-row items-start">
           <div className="rounded-lg w-full lg:w-[470px] shadow-lg p-4">
             <div className="flex border-b-[2px] py-4 justify-between items-center">
               <h2 className="font-DMSans font-bold text-[17px]">Instructors</h2>
@@ -88,7 +88,7 @@ const Dashboard = () => {
           </div>
           <div className="rounded-lg w-full lg:w-[470px] shadow-lg p-4">
             <div className="flex border-b-[2px] py-4 justify-between items-center">
-              <h2 className="font-DMSans font-bold text-[17px]">Instructors</h2>
+              <h2 className="font-DMSans font-bold text-[17px]">Courses</h2>
               <button className="underline text-[#FF3B30] text-[14px] font-DMSans font-semibold">
                 View All
               </button>
@@ -129,26 +129,26 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
-          <div
-            className={cn(
-              "w-full  z-0 mt-6 pt-[16px] shadow-lg rounded-[8px]",
-              theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
-            )}
-          >
-            <div className="w-auto mb-4 mx-4 overflow-x-auto border-[1px] border-[#F4F5F8] rounded-[8px] p-2 flex justify-start items-center gap-3">
-              <NavLink to="payment" className={getNavLinkClassName}>
-                Payments
-              </NavLink>
-              <NavLink to="application" className={getNavLinkClassName}>
-                Students/Applications
-              </NavLink>
-              <NavLink to="faculty" className={getNavLinkClassName}>
-                Faculties
-              </NavLink>
-            </div>
-            <div className="p-4">
-              <Outlet />
-            </div>
+        </div>
+        <div
+          className={cn(
+            "w-full  z-0 mt-6 pt-[16px] shadow-lg rounded-[8px]",
+            theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
+          )}
+        >
+          <div className="w-auto mb-4 mx-4 overflow-x-auto border-[1px] border-[#F4F5F8] rounded-[8px] p-2 flex justify-start items-center gap-3">
+            <NavLink to="payment" className={getNavLinkClassName}>
+              Payments
+            </NavLink>
+            <NavLink to="application" className={getNavLinkClassName}>
+              Students/Applications
+            </NavLink>
+            <NavLink to="faculty" className={getNavLinkClassName}>
+              Faculties
+            </NavLink>
+          </div>
+          <div className="p-4">
+            <Outlet />
           </div>
         </div>
       </div>

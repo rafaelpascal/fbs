@@ -25,4 +25,6 @@ export const ROUTES = {
   POLLSTABLE: "/admin/courses/pollstable",
   QUIZZESTABLE: "/admin/courses/quizes",
   NEWCOURSE: "/admin/courses/newcourse",
+  ADMINMANAGEMENT: "/admin/signup",
+  STUDENTRANSACTION: "/transaction",
 };

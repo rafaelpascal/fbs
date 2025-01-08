@@ -8,8 +8,8 @@ import { BaseButton } from "~/components/buttons/BaseButton";
 import { ROUTES } from "~/components/constants/routes";
 import { AuthService } from "~/api/auth";
 import { showAlert } from "~/utils/sweetAlert";
-// import { useAuth } from "~/context/auth_provider";
-// import { ROUTES } from "~/components/constants/routes";
+import { setUser } from "~/redux-store/slice/user.Slice";
+import { useDispatch } from "react-redux";
 
 const fields = [
   {
@@ -29,20 +29,17 @@ const fields = [
 // Login form
 const LoginForm = () => {
   const navigate = useNavigate();
-  //   const { login } = useAuth();
+  const dispatch = useDispatch();
   const form = useForm<AuthFormPayload>({
     resolver: zodResolver(authSchema),
     mode: "onChange",
   });
   const { unWrapErrors } = Validator.reactHookHandler(form.formState);
-  //   const navigate = useNavigate();
 
   // Handle Login and MFA pop up
   const handleLogin = form.handleSubmit(async (data: AuthFormPayload) => {
     try {
       const res = await AuthService.login(data);
-      console.log(res);
-
       if (res.userData.success === false) {
         await showAlert(
           "error",
@@ -71,6 +68,14 @@ const LoginForm = () => {
           "Continue to dashboard!",
           "Ok",
           "#03435F"
+        );
+        dispatch(
+          setUser({
+            userid: res?.userData?.profile[0]?.userid,
+            firstname: res?.userData?.profile[0]?.firstname,
+            lastname: res?.userData?.profile[0]?.lastname,
+            email: res?.userData?.profile[0]?.email,
+          })
         );
         navigate(ROUTES.DASHBOARD);
         form.reset();

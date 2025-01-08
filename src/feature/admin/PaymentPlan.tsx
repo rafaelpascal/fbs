@@ -40,25 +40,6 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
     setFormData((prevData: any) => ({ ...prevData, [name]: value }));
   };
 
-  // const handleCheckboxChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>,
-  //   currency: string
-  // ) => {
-  //   if (e.target.checked) {
-  //     // Add currency to the array if it's checked
-  //     setFormData((prevData: any) => ({
-  //       ...prevData,
-  //       currency: [...prevData.currency, currency],
-  //     }));
-  //   } else {
-  //     // Remove currency from the array if it's unchecked
-  //     setFormData((prevData: any) => ({
-  //       ...prevData,
-  //       currency: prevData.currency.filter((item: any) => item !== currency),
-  //     }));
-  //   }
-  // };
-
   const handleCheckboxChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     currencyKey: "NGN" | "USD"
@@ -282,7 +263,7 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
                 )}
               />
               <button
-                className="h-[52px] mb-2 px-4 font-DMSans font-semibold text-[16px] text-white bg-[#1CB503]"
+                className="h-[52px] rounded-md mb-2 px-4 font-DMSans font-semibold text-[16px] text-white bg-[#1CB503]"
                 onClick={handleSubmit}
               >
                 Activate coupon

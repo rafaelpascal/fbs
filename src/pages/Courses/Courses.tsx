@@ -11,37 +11,19 @@ import { MdLock } from "react-icons/md";
 import Carousel from "~/components/Carousel/Carousel";
 import LessonsCard from "~/components/cards/LessonsCard";
 import ForumsCard from "~/components/cards/ForumsCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "~/context/theme-provider";
 import { FaChevronDown } from "react-icons/fa6";
 import ModuleCards from "~/components/cards/ModuleCards";
+// import { useSelector } from "react-redux";
+// import { RootState } from "~/redux-store/store";
+import { CourseServices } from "~/api/course";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
-const programSpecifications = [
-  {
-    title: "Format",
-    duration: "Hybrid",
-  },
-  {
-    title: "Course Starting",
-    duration: "February 12",
-  },
-  {
-    title: "Cohort",
-    duration: "1/Dec 2025",
-  },
-  {
-    title: "Application Date",
-    duration: "March 23 2025",
-  },
-  {
-    title: "Course Ending",
-    duration: "March 23 2025",
-  },
-  {
-    title: "Duration",
-    duration: "6 week (s)",
-  },
-];
+type ProgramSpecification = {
+  title: string;
+  duration: string | null;
+};
 
 const courses = [
   {
@@ -175,7 +157,13 @@ const Lessons = [
 ];
 const Dashboard = () => {
   const { theme } = useTheme();
+  // const user = useSelector((state: RootState) => state.user);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [courseTitle, setCourseTitle] = useState("");
+  const [programSpecifications, setProgramSpecifications] = useState<
+    ProgramSpecification[]
+  >([]);
   const location = useLocation();
   const [enrolled] = useState(location.state?.enrolled || false);
   const [selectedOption, setSelectedOption] = useState<string | null>(
@@ -190,6 +178,7 @@ const Dashboard = () => {
   const handlePayment = () => {
     navigate(ROUTES.PAYMENT);
   };
+
   const handleStartCourse = (type: string, courseId: number) => {
     if (type === "word") {
       navigate(`/word-course/${courseId}`);
@@ -200,32 +189,96 @@ const Dashboard = () => {
     }
   };
 
+  const fetchmyapplication = async () => {
+    setLoading(true);
+    try {
+      const payload = {
+        userid: 23, // Example user ID
+      };
+      const res = await CourseServices.fetchApplication(payload);
+
+      if (res.data && res.data.data && res.data.data.length > 0) {
+        const application = res.data.data[0];
+        console.log(application);
+        setCourseTitle(application.course_title);
+        // Map database response to programSpecifications format
+        const updatedProgramSpecifications = [
+          {
+            title: "Format",
+            duration: application.course_mode || "N/A",
+          },
+          {
+            title: "Course Starting",
+            duration: application.start_date || "N/A",
+          },
+          {
+            title: "Cohort",
+            duration: application.cohort || "N/A",
+          },
+          {
+            title: "Application Date",
+            duration: application.created_at
+              ? new Date(application.created_at).toLocaleDateString()
+              : "N/A",
+          },
+          {
+            title: "Course Ending",
+            duration: application.end_date || "N/A",
+          },
+          {
+            title: "Duration",
+            duration: application.duration
+              ? `${application.duration} week(s)`
+              : "N/A",
+          },
+        ];
+
+        console.log(updatedProgramSpecifications);
+        // Set the updated programSpecifications to state or use it elsewhere
+        setProgramSpecifications(updatedProgramSpecifications);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching application:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchmyapplication();
+  }, []);
+
   return (
     <DashboardArea>
       <Collapsible title="My Enrollments" initialState={true}>
         <div className="w-full flex justify-center items-center">
           <div className=" lg:w-[90%]">
-            <p className="text-left font-DMSans text-[20px] font-semibold">
-              Professional Certificate in Communication And Public Relations
+            <p className="text-left capitalize font-DMSans text-[20px] font-semibold">
+              {courseTitle}
             </p>
-            <div className="w-full my-4 flex justify-center items-center">
-              <div className="w-full my-4 grid grid-cols-1 lg:grid-cols-3">
-                {programSpecifications.map((specifications, index) => (
-                  <div
-                    key={index}
-                    className="mx-2 flex flex-row flex-wrap justify-start items-center"
-                  >
-                    <p className="text-[18px] font-semibold font-DMSans">
-                      {specifications.title}
-                    </p>
-                    <p className="text-[18px] font-semibold font-DMSans"> : </p>
-                    <p className="text-[18px] font-normal font-DMSans">
-                      {specifications.duration}
-                    </p>
-                  </div>
-                ))}
+            {loading ? (
+              <div className="flex justify-center items-center w-full py-6">
+                <LoadingSpinner size="sm" />
               </div>
-            </div>
+            ) : (
+              <div className="w-full my-4 flex justify-center items-center">
+                <div className="w-full my-4 grid grid-cols-1 lg:grid-cols-3">
+                  {programSpecifications.map((specifications, index) => (
+                    <div
+                      key={index}
+                      className="mx-2 flex flex-row flex-wrap justify-start items-center"
+                    >
+                      <p className="text-[18px] font-semibold font-DMSans">
+                        {specifications.title}
+                      </p>
+                      {" : "}
+                      <p className="text-[18px] capitalize font-normal font-DMSans">
+                        {specifications.duration}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="flex flex-col lg:flex-row justify-between items-center">
               <div className="flex w-full justify-start items-center gap-2">
                 <p className="text-center font-DMSans text-[20px] font-semibold">

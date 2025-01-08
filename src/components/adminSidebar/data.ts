@@ -1,11 +1,14 @@
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdOutlineEventAvailable } from "react-icons/md";
 import { SideNavProps } from "./AdminNavItem";
-import { HiClipboardDocumentList } from "react-icons/hi2";
-// import { BsBank, BsBarChartFill } from "react-icons/bs";
-// import { RiHand } from "react-icons/ri";
-// import { LuUserCircle } from "react-icons/lu";
-// import { RiExchange2Fill } from "react-icons/ri";
-// import { IoDocumentsOutline } from "react-icons/io5";
+import { HiClipboardDocumentList, HiUserGroup } from "react-icons/hi2";
+import { PiCertificateBold, PiStudentFill } from "react-icons/pi";
+import {
+  FaCcMastercard,
+  FaSchoolCircleCheck,
+  FaUserCheck,
+} from "react-icons/fa6";
+import { TiMessages } from "react-icons/ti";
+import { FaCogs } from "react-icons/fa";
 
 export const sidebarData: SideNavProps[] = [
   {
@@ -19,5 +22,59 @@ export const sidebarData: SideNavProps[] = [
     icon: HiClipboardDocumentList,
     dropdown: false,
     text: "Courses",
+  },
+  {
+    href: "",
+    icon: PiStudentFill,
+    dropdown: false,
+    text: "Students",
+  },
+  {
+    href: "",
+    icon: MdOutlineEventAvailable,
+    dropdown: false,
+    text: "Events",
+  },
+  {
+    href: "",
+    icon: FaSchoolCircleCheck,
+    dropdown: false,
+    text: "Admission",
+  },
+  {
+    href: "/admin/signup",
+    icon: FaUserCheck,
+    dropdown: false,
+    text: "Signups",
+  },
+  {
+    href: "",
+    icon: HiUserGroup,
+    dropdown: false,
+    text: "Faculties",
+  },
+  {
+    href: "",
+    icon: TiMessages,
+    dropdown: false,
+    text: "Message",
+  },
+  {
+    href: "",
+    icon: PiCertificateBold,
+    dropdown: false,
+    text: "Certificates",
+  },
+  {
+    href: "",
+    icon: FaCcMastercard,
+    dropdown: false,
+    text: "Payments",
+  },
+  {
+    href: "",
+    icon: FaCogs,
+    dropdown: false,
+    text: "Settings",
   },
 ];

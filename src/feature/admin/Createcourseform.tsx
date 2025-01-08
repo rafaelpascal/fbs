@@ -228,64 +228,69 @@ const Createcourseform = ({ created }: any) => {
   const handleSubmit = async (e: React.FormEvent) => {
     setIsSubmitting(true);
     e.preventDefault();
+    try {
+      const formDataToSend = new FormData();
 
-    const formDataToSend = new FormData();
+      formDataToSend.append("programme_category_id", "2");
+      formDataToSend.append("course_title", formData.courseTitle);
+      formDataToSend.append("course_type", formData.courseType?.label || "");
+      formDataToSend.append("creators[]", formData.editors?.label || "");
+      formDataToSend.append("description", formData.description);
 
-    formDataToSend.append("programme_category_id", "2");
-    formDataToSend.append("course_title", formData.courseTitle);
-    formDataToSend.append("course_type", formData.courseType?.label || "");
-    formDataToSend.append("creators[]", formData.editors?.label || "");
-    formDataToSend.append("description", formData.description);
-
-    formData.facilitator?.forEach((item) =>
-      formDataToSend.append("facilitators[]", item.label.toString())
-    );
-    formData.supervisors?.forEach((item) =>
-      formDataToSend.append("supervisors[]", item.label.toString())
-    );
-    formData.featuredImages.forEach((file) => {
-      formDataToSend.append("course_image", file);
-    });
-
-    formDataToSend.append("video_url", formData.featuredVideo);
-
-    formDataToSend.append("max_students", formData.maxStudents);
-    // formDataToSend.append("course_run", formData.courseRun);
-    formDataToSend.append(
-      "difficulty_level",
-      formData.difficultyLevel?.label || ""
-    );
-    formDataToSend.append("course_run", formData.courserun?.label || "");
-    formDataToSend.append(
-      "instructoreType",
-      formData.instructoreType?.label || ""
-    );
-    formDataToSend.append("course_mode", formData.courseFormat?.label || "");
-    formDataToSend.append("course_format", "digital");
-    // formDataToSend.append("certificate_type", "digital");
-    formDataToSend.append("program_fee", "");
-    formDataToSend.append("program_plan", "2");
-    formDataToSend.append("usd", formData.currency.USD ? "1" : "0");
-    formDataToSend.append("naira", formData.currency.NGN ? "1" : "0");
-    formDataToSend.append("naira_amount", formData.nairaAmount);
-    formDataToSend.append("usd_amount", formData.dollarAmount);
-    formDataToSend.append("installment", formData.selectedMonths.toString());
-
-    const res = await CourseServices.createCourse(formDataToSend);
-    console.log(res.data.course_id);
-    dispatch(setCourseId(res.data.course_id));
-    if (res.data.success === true) {
-      setIsSubmitting(false);
-      await showAlert(
-        "success",
-        "Created!",
-        "Proceed with Course requirements!",
-        "Ok",
-        "#03435F"
+      formData.facilitator?.forEach((item) =>
+        formDataToSend.append("facilitators[]", item.label.toString())
       );
-      created();
-    } else {
+      formData.supervisors?.forEach((item) =>
+        formDataToSend.append("supervisors[]", item.label.toString())
+      );
+      formData.featuredImages.forEach((file) => {
+        formDataToSend.append("course_image", file);
+      });
+
+      formDataToSend.append("video_url", formData.featuredVideo);
+
+      formDataToSend.append("max_students", formData.maxStudents);
+      // formDataToSend.append("course_run", formData.courseRun);
+      formDataToSend.append(
+        "difficulty_level",
+        formData.difficultyLevel?.label || ""
+      );
+      formDataToSend.append("course_run", formData.courserun?.label || "");
+      formDataToSend.append(
+        "instructoreType",
+        formData.instructoreType?.label || ""
+      );
+      formDataToSend.append("course_mode", formData.courseFormat?.label || "");
+      formDataToSend.append("course_format", "digital");
+      // formDataToSend.append("certificate_type", "digital");
+      formDataToSend.append("program_fee", "");
+      formDataToSend.append("program_plan", "2");
+      formDataToSend.append("usd", formData.currency.USD ? "1" : "0");
+      formDataToSend.append("naira", formData.currency.NGN ? "1" : "0");
+      formDataToSend.append("naira_amount", formData.nairaAmount);
+      formDataToSend.append("usd_amount", formData.dollarAmount);
+      formDataToSend.append("installment", formData.selectedMonths.toString());
+
+      const res = await CourseServices.createCourse(formDataToSend);
+      console.log(res.data.course_id);
+      dispatch(setCourseId(res.data.course_id));
+      if (res.data.success === true) {
+        setIsSubmitting(false);
+        await showAlert(
+          "success",
+          "Created!",
+          "Proceed with Course requirements!",
+          "Ok",
+          "#03435F"
+        );
+        created();
+      } else {
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.log(error);
       setIsSubmitting(false);
+      await showAlert("error", "Failed!", "Failed to create!", "Ok", "#FF5050");
     }
   };
 
@@ -419,7 +424,7 @@ const Createcourseform = ({ created }: any) => {
           <div>
             <PaymentPlan formData={formData} setFormData={setFormData} />
           </div>
-          <div className="w-full border-[1px] bg-white p-2 border-[#ddd]  mt-4 rounded-md">
+          <div className="w-full my-4 p-2">
             <h2 className="font-DMSans font-semibold text-[16px] mb-4">
               Select Certificate Type
             </h2>
