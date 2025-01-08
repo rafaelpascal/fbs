@@ -1,73 +1,6 @@
 import { IoIosStar } from "react-icons/io";
-import List from "~/components/list/List";
-const Facilitators = () => {
-  type FacilitatorsProps = {
-    Title: string;
-    items: string[];
-  };
-  const FacilitatorsItem: FacilitatorsProps[] = [
-    {
-      Title: "Learning Objectives ",
-      items: [
-        "Five O'level credit passes including English Language and Mathematics.",
-        "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
-        "HND graduates with a minimum of upper credit may be considered.",
-        "Candidates are required to have a minimum of one year post-graduation work experience.",
-        "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
-      ],
-    },
-    {
-      Title: "Course Structure",
-      items: [
-        "Five O'level credit passes including English Language and Mathematics.",
-        "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
-        "HND graduates with a minimum of upper credit may be considered.",
-        "Candidates are required to have a minimum of one year post-graduation work experience.",
-        "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
-      ],
-    },
-    {
-      Title: "Assessment Methods",
-      items: [
-        "Five O'level credit passes including English Language and Mathematics.",
-        "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
-        "HND graduates with a minimum of upper credit may be considered.",
-        "Candidates are required to have a minimum of one year post-graduation work experience.",
-        "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
-      ],
-    },
-    {
-      Title: "Career Options & Opportunities",
-      items: [
-        "Five O'level credit passes including English Language and Mathematics.",
-        "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
-        "HND graduates with a minimum of upper credit may be considered.",
-        "Candidates are required to have a minimum of one year post-graduation work experience.",
-        "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
-      ],
-    },
-    {
-      Title: "Admission Requirements",
-      items: [
-        "Five O'level credit passes including English Language and Mathematics.",
-        "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
-        "HND graduates with a minimum of upper credit may be considered.",
-        "Candidates are required to have a minimum of one year post-graduation work experience.",
-        "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
-      ],
-    },
-    {
-      Title: "Who is this course for ?",
-      items: [
-        "Five O'level credit passes including English Language and Mathematics.",
-        "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
-        "HND graduates with a minimum of upper credit may be considered.",
-        "Candidates are required to have a minimum of one year post-graduation work experience.",
-        "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
-      ],
-    },
-  ];
 
+const Facilitators = () => {
   return (
     <div>
       <div className="flex justify-start flex-col lg:flex-row items-start lg:items-center gap-4">
@@ -95,15 +28,6 @@ const Facilitators = () => {
         web applications to project management applications for niche
         industries.{" "}
       </p>
-      {FacilitatorsItem.map((facilitator, index) => (
-        <List
-          key={index}
-          items={facilitator.items}
-          title={facilitator.Title}
-          ordered={false}
-          customClass="p-2"
-        />
-      ))}
     </div>
   );
 };

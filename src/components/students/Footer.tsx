@@ -18,33 +18,33 @@ type FacilitatorsProps = {
 
 const FooterItems = [
   {
-    title: "Expert faculty and thought leaders",
-    text: "Learn from the best in the business. Our distinguished faculty and guest speakers are leaders in their respective fields, bringing real-world insights and practical ideas to the classroom.",
+    title: "Mastery, not Just another certificate",
+    text: "The Fordax smart courses are for individuals who aim to master critical business skills and also earn a globally recognized certificate that enables them to secure high-paying jobs. It’s your express path to becoming an industry expert.",
     icon: GiGraduateCap,
   },
   {
     title: "Expert faculty and thought leaders",
-    text: "Learn from the best in the business. Our distinguished faculty and guest speakers are leaders in their respective fields, bringing real-world insights and practical ideas to the classroom.",
+    text: "Learn from the best in the business. Our distinguished faculty and guest speakers are leaders in their respective fields, bringing real-world insights and practical ideas to the classroom. See our faculty (https://fordaxbschool.com/our-faculty)",
     icon: GiGraduateCap,
   },
   {
-    title: "Expert faculty and thought leaders",
-    text: "Learn from the best in the business. Our distinguished faculty and guest speakers are leaders in their respective fields, bringing real-world insights and practical ideas to the classroom.",
+    title: "Cohort of like-minded peers",
+    text: "Join a diverse and ambitious group of professionals and entrepreneurs from around the world who share your passion for growth and success.",
     icon: GiGraduateCap,
   },
   {
-    title: "Expert faculty and thought leaders",
-    text: "Learn from the best in the business. Our distinguished faculty and guest speakers are leaders in their respective fields, bringing real-world insights and practical ideas to the classroom.",
+    title: "Empower your future",
+    text: "Whether you’re looking to unlock new career opportunities, propel your startup to the next level, or prepare for higher leadership roles, our programs will empower you to achieve your business goals.",
     icon: GiGraduateCap,
   },
   {
-    title: "Expert faculty and thought leaders",
-    text: "Learn from the best in the business. Our distinguished faculty and guest speakers are leaders in their respective fields, bringing real-world insights and practical ideas to the classroom.",
+    title: "Modern, convenient, and up-to-date curriculum",
+    text: "Our courses are designed to reflect the latest business trends and practices, and they are delivered in a way that is both convenient and effective for busy professionals. Students develop the skills and knowledge they need to succeed in today’s rapidly changing business world.",
     icon: GiGraduateCap,
   },
   {
-    title: "Expert faculty and thought leaders",
-    text: "Learn from the best in the business. Our distinguished faculty and guest speakers are leaders in their respective fields, bringing real-world insights and practical ideas to the classroom.",
+    title: "High return on investment",
+    text: "With competitive tuition rates and the potential for immediate career advancement, your investment in the Fordax MBA and certificate programs pays off quickly. The school’s high-quality education, strong career services office, and extensive alumni network can help you to achieve your career goals and earn a high ROI on your investment.",
     icon: GiGraduateCap,
   },
 ];
@@ -113,7 +113,7 @@ const Footer = () => {
           <h2 className="text-[30px] mb-4 font-DMSans text-[#fff] font-semibold text-center">
             ABOUT FORDAX
           </h2>
-          <p className="text-center text-white font-DMSans font-normal w-full lg:w-[816px]">
+          <p className="text-center text-white font-DMSans text-[20px] font-normal w-full lg:w-[816px]">
             Fordax Business School, located in Abuja, is a prestigious private
             graduate business school that offers accelerated business programs
             to visionary founders, entrepreneurs and ambitious professionals.

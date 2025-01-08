@@ -19,6 +19,7 @@ import {
   FaLinkedin,
   FaTwitter,
 } from "react-icons/fa";
+import List from "../list/List";
 
 const tabsData = [
   { title: "Overview" },
@@ -28,6 +29,72 @@ const tabsData = [
   { title: "Tuition" },
 ];
 
+type FacilitatorsProps = {
+  Title: string;
+  items: string[];
+};
+const FacilitatorsItem: FacilitatorsProps[] = [
+  {
+    Title: "Learning Objectives ",
+    items: [
+      "Five O'level credit passes including English Language and Mathematics.",
+      "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
+      "HND graduates with a minimum of upper credit may be considered.",
+      "Candidates are required to have a minimum of one year post-graduation work experience.",
+      "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
+    ],
+  },
+  {
+    Title: "Course Structure",
+    items: [
+      "Five O'level credit passes including English Language and Mathematics.",
+      "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
+      "HND graduates with a minimum of upper credit may be considered.",
+      "Candidates are required to have a minimum of one year post-graduation work experience.",
+      "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
+    ],
+  },
+  {
+    Title: "Assessment Methods",
+    items: [
+      "Five O'level credit passes including English Language and Mathematics.",
+      "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
+      "HND graduates with a minimum of upper credit may be considered.",
+      "Candidates are required to have a minimum of one year post-graduation work experience.",
+      "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
+    ],
+  },
+  {
+    Title: "Career Options & Opportunities",
+    items: [
+      "Five O'level credit passes including English Language and Mathematics.",
+      "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
+      "HND graduates with a minimum of upper credit may be considered.",
+      "Candidates are required to have a minimum of one year post-graduation work experience.",
+      "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
+    ],
+  },
+  {
+    Title: "Admission Requirements",
+    items: [
+      "Five O'level credit passes including English Language and Mathematics.",
+      "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
+      "HND graduates with a minimum of upper credit may be considered.",
+      "Candidates are required to have a minimum of one year post-graduation work experience.",
+      "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
+    ],
+  },
+  {
+    Title: "Who is this course for ?",
+    items: [
+      "Five O'level credit passes including English Language and Mathematics.",
+      "Bachelor's degree in any field from a recognised university, with a minimum of second class lower division.",
+      "HND graduates with a minimum of upper credit may be considered.",
+      "Candidates are required to have a minimum of one year post-graduation work experience.",
+      "Applicants with lower academic qualifications may generally need to demonstrate longer duration of work experience.",
+    ],
+  },
+];
 const FooterbtnItem: {
   items: { text: string; icon: JSX.Element; count?: string }[];
   ordered: boolean;
@@ -95,6 +162,15 @@ const Contents = () => {
             <div className="">Course structure content goes here.</div>
             <div className="">Tuition content goes here.</div>
           </Tabs>
+          {FacilitatorsItem.map((facilitator, index) => (
+            <List
+              key={index}
+              items={facilitator.items}
+              title={facilitator.Title}
+              ordered={false}
+              customClass="p-2"
+            />
+          ))}
           <Fee />
           <div className="flex justify-between items-center w-full">
             <BaseButton
