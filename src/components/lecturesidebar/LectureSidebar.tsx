@@ -4,9 +4,9 @@ import { HiMenuAlt2 } from "react-icons/hi";
 import { useCallback, useState } from "react";
 import { FBSlogo } from "~/assets";
 import { useTheme } from "~/context/theme-provider";
-import Collapsible from "../Collapsible/Collapsible";
 import { LectureItems } from "./LectureItems";
 import { RiHome2Line } from "react-icons/ri";
+import LectureCollapsible from "../Collapsible/LectureCollapsible";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -89,7 +89,7 @@ export const LectureSidebar = () => {
           </button> */}
 
           {/* Navigation Items */}
-          <Collapsible
+          <LectureCollapsible
             title="Module 1: Introduction to Consulting And Business Strategy"
             initialState={true}
             headerClassName="text-[18px]"
@@ -115,8 +115,8 @@ export const LectureSidebar = () => {
                 />
               ))}
             </ul>
-          </Collapsible>
-          <Collapsible
+          </LectureCollapsible>
+          <LectureCollapsible
             title="My Notes"
             initialState={false}
             headerClassName="text-[14px] h-[20px]"
@@ -124,17 +124,17 @@ export const LectureSidebar = () => {
             <ul>
               <li>My Notes</li>
             </ul>
-          </Collapsible>
-          <Collapsible
+          </LectureCollapsible>
+          <LectureCollapsible
             title="Support/Help"
             initialState={false}
-            headerClassName="text-[14px] text-[#fff] h-[20px]"
+            headerClassName="text-[14px] bg-[#3D85F9] text-[#fff] h-[20px]"
             containerClassname="bg-[#3D85F9]"
           >
             <ul>
               <li>My Notes</li>
             </ul>
-          </Collapsible>
+          </LectureCollapsible>
         </div>
       </aside>
     </>

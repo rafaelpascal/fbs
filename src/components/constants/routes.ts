@@ -27,4 +27,5 @@ export const ROUTES = {
   NEWCOURSE: "/admin/courses/newcourse",
   ADMINMANAGEMENT: "/admin/signup",
   STUDENTRANSACTION: "/transaction",
+  EVENTMANAGEMENT: "/events/management",
 };

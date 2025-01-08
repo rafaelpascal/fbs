@@ -352,7 +352,7 @@ const Dashboard = () => {
               </div>
               {selectedOption === "MODULES" && (
                 <Carousel>
-                  <div className="grid grid-cols-1 gap-x-60 gap-y-10 sm:grid-cols-2">
+                  <div className="grid w-[100%] grid-cols-1 gap-x-20 gap-y-10 sm:grid-cols-2">
                     {courses.map((course) => (
                       <CourseCard
                         key={course.id}

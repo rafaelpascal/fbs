@@ -15,7 +15,7 @@ const AdminManagement = () => {
   return (
     <DashboardArea>
       <div className="flex justify-between items-center w-full">
-        <h2 className="text-[18px] font-DMSans font-semibold">Admin</h2>
+        <h2 className="text-[25px] font-DMSans font-semibold">Admin</h2>
         <button
           onClick={() => setisNewAdmin(true)}
           className="py-2 px-4 bg-[#FF1515] rounded-md"

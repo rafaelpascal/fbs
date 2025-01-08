@@ -84,6 +84,7 @@ interface FormData {
   editors: null | { label: string };
   supervisors: Option[] | null;
   description: string;
+  highlight: string;
   featuredImages: File[];
   featuredVideo: string;
   orientation: string;
@@ -132,6 +133,7 @@ const Createcourseform = ({ created }: any) => {
     editors: null,
     supervisors: null,
     description: "",
+    highlight: "",
     featuredImages: [],
     featuredVideo: "",
     orientation: "",
@@ -386,6 +388,25 @@ const Createcourseform = ({ created }: any) => {
               <FiEdit className="text-[30px]" />
               <IoMdClose className="text-[30px]" />
             </div>
+          </div>
+          <div className="my-4">
+            <BaseInput
+              label="COURSE HIGHLIGHT"
+              type="textarea"
+              placeholder="COURSE HIGHLIGHT"
+              containerClassname="w-full"
+              labelClassName="text-[17px] font-DMSans font-semibold"
+              inputContainerClassName={cn(
+                "h-[153px] ",
+                theme === "dark"
+                  ? "select-secondary"
+                  : "border-[0.5px] border-[#ddd]"
+              )}
+              value={formData.highlight}
+              onChange={(e: any) =>
+                handleInputChange("highlight", e.target.value)
+              }
+            />
           </div>
           <div className="my-4">
             <BaseInput

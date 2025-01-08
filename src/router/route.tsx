@@ -9,29 +9,56 @@ import { LoadingSpinner } from "~/components/ui/loading-spinner.tsx";
 import LectureLayout from "~/layouts/LectureLayout.tsx";
 import { lazyLoad } from "~/utils/lazyLoad";
 import Quiz from "~/pages/lecture/Quiz.tsx";
-import WordLecture from "~/pages/lecture/wordLecture.tsx";
-import Assignment from "~/pages/lecture/Assignment.tsx";
-import BankTransfer from "~/pages/Courses/BankTransfer.tsx";
-import Congratulations from "~/pages/lecture/Congratulations.tsx";
-import LectureComplete from "~/pages/lecture/LectureComplete.tsx";
-import Events from "~/pages/Home/Events.tsx";
-import SingleEvent from "~/pages/Home/SingleEvent.tsx";
-import AdminAppLayout from "~/layouts/AdminLayout.tsx";
-import Dashboard from "~/pages/Admin/Dashboard.tsx";
-import FacultiesTable from "~/pages/Admin/Tables/FacultiesTable.tsx";
-import ApplicationTable from "~/pages/Admin/Tables/ApplicationTable.tsx";
-import PaymentsTable from "~/pages/Admin/Tables/PaymentsTable.tsx";
-import CourseApplications from "~/pages/Admin/Students/CourseApplications.tsx";
-import AdminCourses from "~/pages/Admin/Courses/AdminCourses.tsx";
-import CourseAssignmentTable from "~/pages/Admin/Courses/CourseTable/CourseAssignmentTable.tsx";
-import CapstonesTable from "~/pages/Admin/Courses/CourseTable/CapstonesTable.tsx";
-import PollsTable from "~/pages/Admin/Courses/CourseTable/PollsTable.tsx";
-import QuizzesTable from "~/pages/Admin/Courses/CourseTable/QuizzesTable.tsx";
-import CreateCourse from "~/pages/Admin/Courses/CreateCourse.tsx";
-import { TanstackProvider } from "~/context/tanstack-query/index.tsx";
-import AdminManagement from "~/pages/Admin/AccountManagement/AdminManagement.tsx";
-import Transactions from "~/pages/Courses/Transactions.tsx";
+const WordLecture = lazyLoad(() => import("~/pages/lecture/wordLecture.tsx"));
+const Assignment = lazyLoad(() => import("~/pages/lecture/Assignment.tsx"));
+const BankTransfer = lazyLoad(() => import("~/pages/Courses/BankTransfer.tsx"));
+const Congratulations = lazyLoad(
+  () => import("~/pages/lecture/Congratulations.tsx")
+);
+const LectureComplete = lazyLoad(
+  () => import("~/pages/lecture/LectureComplete.tsx")
+);
+const Events = lazyLoad(() => import("~/pages/Home/Events.tsx"));
+const SingleEvent = lazyLoad(() => import("~/pages/Home/SingleEvent.tsx"));
+const AdminAppLayout = lazyLoad(() => import("~/layouts/AdminLayout.tsx"));
+const Dashboard = lazyLoad(() => import("~/pages/Admin/Dashboard.tsx"));
+const FacultiesTable = lazyLoad(
+  () => import("~/pages/Admin/Tables/FacultiesTable.tsx")
+);
+const ApplicationTable = lazyLoad(
+  () => import("~/pages/Admin/Tables/ApplicationTable.tsx")
+);
+const PaymentsTable = lazyLoad(
+  () => import("~/pages/Admin/Tables/PaymentsTable.tsx")
+);
+const CourseApplications = lazyLoad(
+  () => import("~/pages/Admin/Students/CourseApplications.tsx")
+);
+const AdminCourses = lazyLoad(
+  () => import("~/pages/Admin/Courses/AdminCourses.tsx")
+);
+const CourseAssignmentTable = lazyLoad(
+  () => import("~/pages/Admin/Courses/CourseTable/CourseAssignmentTable.tsx")
+);
+const CapstonesTable = lazyLoad(
+  () => import("~/pages/Admin/Courses/CourseTable/CapstonesTable.tsx")
+);
+const PollsTable = lazyLoad(
+  () => import("~/pages/Admin/Courses/CourseTable/PollsTable.tsx")
+);
+const QuizzesTable = lazyLoad(
+  () => import("~/pages/Admin/Courses/CourseTable/QuizzesTable.tsx")
+);
+const CreateCourse = lazyLoad(
+  () => import("~/pages/Admin/Courses/CreateCourse.tsx")
+);
+const AdminManagement = lazyLoad(
+  () => import("~/pages/Admin/AccountManagement/AdminManagement.tsx")
+);
+const Transactions = lazyLoad(() => import("~/pages/Courses/Transactions.tsx"));
 
+import { TanstackProvider } from "~/context/tanstack-query/index.tsx";
+import EventsManagement from "~/pages/Admin/Events/EventsManagement.tsx";
 // Lazy load the components
 const Lecture = lazyLoad(() => import("~/pages/lecture/Lecture.tsx"));
 const Login = lazyLoad(() => import("../pages/auth/Login.tsx"));
@@ -153,6 +180,10 @@ const router = createBrowserRouter([
       {
         path: ROUTES.ADMINMANAGEMENT,
         element: <AdminManagement />,
+      },
+      {
+        path: ROUTES.EVENTMANAGEMENT,
+        element: <EventsManagement />,
       },
     ],
   },
