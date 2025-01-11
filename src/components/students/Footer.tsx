@@ -191,10 +191,14 @@ const Footer = () => {
         </div>
       </div>
       <div className="relative flex flex-col justify-start items-center pt-10 bg-black w-full">
-        <div className="w-full  flex justify-between items-start flex-col lg:flex-row lg:w-[1218px] ">
+        <div className="w-full  flex justify-between items-center lg:items-start flex-col lg:flex-row lg:w-[1218px] ">
           <div className="text-[#fff]">
-            <h2>Call us</h2>
-            <p>07017695596</p>
+            <h2 className="font-DMSans font-semibold text-center w-full">
+              Call us
+            </h2>
+            <p className="font-DMSans font-semibold text-center w-full">
+              07017695596
+            </p>
             <div className="mt-8">
               {/* <h2>234 lorem ipsum </h2> */}
               <p>admin@fordaxbschool.com</p>

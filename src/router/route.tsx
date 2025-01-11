@@ -70,6 +70,8 @@ const Application = lazyLoad(() => import("~/pages/Courses/Application.tsx"));
 const FormSubmitted = lazyLoad(
   () => import("~/pages/Courses/FormSubmitted.tsx")
 );
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter([
@@ -221,6 +223,17 @@ const router = createBrowserRouter([
 // App router component
 const AppRouter = () => (
   <TanstackProvider>
+    <ToastContainer
+      position="top-center"
+      autoClose={2000}
+      hideProgressBar={true}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />
     <Suspense
       fallback={
         <div className="w-full h-[100vh] flex justify-center items-center">

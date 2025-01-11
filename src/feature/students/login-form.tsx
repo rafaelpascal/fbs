@@ -52,23 +52,9 @@ const LoginForm = () => {
         return;
       }
       if (res?.userData?.profile?.[0].user_role === 1) {
-        await showAlert(
-          "success",
-          "Successful!",
-          "Continue to dashboard!",
-          "Ok",
-          "#03435F"
-        );
         navigate(ROUTES.ADMINDASHBOARD);
         form.reset();
       } else {
-        await showAlert(
-          "success",
-          "Successful!",
-          "Continue to dashboard!",
-          "Ok",
-          "#03435F"
-        );
         dispatch(
           setUser({
             userid: res?.userData?.profile[0]?.userid,

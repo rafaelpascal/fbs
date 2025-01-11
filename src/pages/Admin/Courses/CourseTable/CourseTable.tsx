@@ -3,29 +3,32 @@ import { TableColumn } from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
 // import { useCallback, useState } from "react";
 import moment from "moment";
-import { Status } from "~/components/ui/Badge";
-import { cn, statColorCode } from "~/utils/helpers";
+// import { Status } from "~/components/ui/Badge";
+import { cn } from "~/utils/helpers";
 // import TableFilter from "~/components/table/TableFilter";
 import InDataTable from "~/components/table/InDataTable";
 import { courseData } from "~/components/constants/data";
 import ActionMenu from "~/components/table/ActionMenu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NewCohortModal } from "~/components/Modal/NewCohortModal";
 import { showAlert } from "~/utils/sweetAlert";
 import { useTheme } from "~/context/theme-provider";
+import { fetchlistCourses } from "~/api/course/hooks";
+import useToast from "~/hooks/useToast";
 // import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
   id: number;
   avatar: string;
   sn: number;
-  title: string;
-  starting: string;
-  ending: string;
+  course_title: string;
+  start_date: string;
+  end_date: string;
   application: string;
   creator: string;
   createdAt: string;
   status: string;
+  course_url: string;
 }
 
 const CourseTable = () => {
@@ -36,6 +39,16 @@ const CourseTable = () => {
     status: false,
   });
   const navigate = useNavigate();
+  const { success, error } = useToast();
+  const [couseData, setCourseData] = useState(courseData);
+  const { data } = fetchlistCourses();
+
+  useEffect(() => {
+    if (data?.course_details) {
+      setCourseData(data?.course_details);
+    }
+  }, [data]);
+
   // const [filters, setFilters] = useState({
   //   dateFrom: "",
   //   dateTo: "",
@@ -82,6 +95,18 @@ const CourseTable = () => {
     console.log(id);
   };
 
+  const handleCopyLink = (courseUrl: string) => {
+    navigator.clipboard.writeText(courseUrl).then(
+      () => {
+        success("Link copied to clipboard!");
+      },
+      (err) => {
+        error("Failed to copy link.");
+        console.error("Failed to copy link:", err);
+      }
+    );
+  };
+
   //   Merchant Table
   const columns: TableColumn<MerchantTableRow>[] = [
     {
@@ -92,12 +117,12 @@ const CourseTable = () => {
     },
     {
       name: "Title",
-      selector: (row: { title: string }) => row.title,
+      selector: (row: { course_title: string }) => row.course_title,
       sortable: true,
       cell: (row) => (
         <div className="flex justify-start gap-2 items-center">
-          <h2 className="text-[16px] font-semibold font-CircularStd text-[#515F76]">
-            {row.title}
+          <h2 className="text-[16px] font-normal font-DMSans">
+            {row.course_title}
           </h2>
         </div>
       ),
@@ -112,17 +137,17 @@ const CourseTable = () => {
         </div>
       ),
     },
-    {
-      name: "Status",
-      selector: (row: { status: string }) => row.status,
-      cell: (row) => (
-        <Status
-          status={statColorCode(row?.status?.toString())}
-          text={row?.status?.toString() || ""}
-        />
-      ),
-      width: "120px",
-    },
+    // {
+    //   name: "Status",
+    //   selector: (row: { status: string }) => row.status,
+    //   cell: (row) => (
+    //     <Status
+    //       status={statColorCode(row?.status?.toString())}
+    //       text={row?.status?.toString() || ""}
+    //     />
+    //   ),
+    //   width: "120px",
+    // },
     {
       name: "Creator",
       selector: (row: { creator: string }) => row.creator,
@@ -130,27 +155,27 @@ const CourseTable = () => {
     },
     {
       name: "Starting",
-      selector: (row: { starting: string }) => row.starting,
+      selector: (row: { start_date: string }) => row.start_date,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
-          {moment(row.starting).format("MM/DD/YYYY")}
+          {moment(row.start_date).format("MM/DD/YYYY")}
         </div>
       ),
     },
     {
       name: "Ending",
-      selector: (row: { ending: string }) => row.ending,
+      selector: (row: { end_date: string }) => row.end_date,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
-          {moment(row.ending).format("MM/DD/YYYY")}
+          {moment(row.end_date).format("MM/DD/YYYY")}
         </div>
       ),
     },
-    {
-      name: "No. Applications",
-      selector: (row: { application: string }) => row.application,
-      sortable: true,
-    },
+    // {
+    //   name: "No. Applications",
+    //   selector: (row: { application: string }) => row.application,
+    //   sortable: true,
+    // },
     {
       name: "Actions",
       cell: (row) => (
@@ -163,7 +188,10 @@ const CourseTable = () => {
               action: () => setIsNewcohort({ courseId: row.id, status: true }),
             },
             { label: "Suspend", action: () => handlecontact(row.id) },
-            { label: "Copy link", action: () => handlecontact(row.id) },
+            {
+              label: "Copy link",
+              action: () => handleCopyLink(row.course_url),
+            },
           ]}
         />
       ),
@@ -204,10 +232,10 @@ const CourseTable = () => {
       <div className="w-[99%]">
         <InDataTable<MerchantTableRow>
           columns={columns}
-          data={courseData}
-          paginatable={false}
+          data={couseData}
+          paginatable
           searchable={false}
-          // pagination={false}
+          // pagination
         />
       </div>
       {/* <ContactModal isOpen={isContact} closeModal={handleClose} /> */}

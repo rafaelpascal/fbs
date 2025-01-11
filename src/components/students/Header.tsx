@@ -52,11 +52,14 @@ const Header = () => {
   return (
     <div className="relative h-[193px] w-full">
       {/* Mobile Menu Icon */}
-      <div className="flex lg:hidden justify-between items-center w-full py-4">
+      <div className="flex lg:hidden justify-between items-center w-full p-4">
         <img src={FBSlogo} alt="biopaylogo" width={100} />
-        <button onClick={toggleSidebar} className="text-2xl">
-          {isSidebarOpen ? <FaTimes /> : <FaBars />}
-        </button>
+        <div>
+          <ThemeToggle />
+          <button onClick={toggleSidebar} className="text-2xl ml-2">
+            {isSidebarOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        </div>
       </div>
 
       {/* Sidebar for Mobile */}
@@ -74,26 +77,56 @@ const Header = () => {
           <img src={FBSlogo} alt="biopaylogo" width={80} />
         </div>
         <nav
-          className={`flex flex-col gap-4 p-4 ${
+          className={`flex flex-col mb-4 gap-4 p-4 ${
             theme === "dark" ? "bg-[#333]" : "bg-white"
           }`}
         >
-          <Link to="https://fordaxbschool.com">Home</Link>
-          <Link to="https://fordaxbschool.com/about">About</Link>
-          <Link to="https://fordaxbschool.com/execs">Programs</Link>
-          <button onClick={handleNavigateEvents}>Events</button>
-          <Link to="https://fordaxbschool.com/blog">Blog</Link>
-          <button>Resources</button>
-          <Link to="https://fordaxbschool.com/contact">Contact</Link>
-        </nav>
-        <div className="p-4 border-t">
           <Link
-            to="/login"
-            className="w-full h-[54px] text-[#fff] bg-[#FF1515] rounded-[8px]"
+            className="text-[18px] font-DMSans font-semibold text-left"
+            to="https://fordaxbschool.com"
           >
-            STUDENT LOGIN
+            Home
           </Link>
-        </div>
+          <Link
+            className="text-[18px] font-DMSans font-semibold text-left"
+            to="https://fordaxbschool.com/about"
+          >
+            About
+          </Link>
+          <Link
+            className="text-[18px] font-DMSans font-semibold text-left"
+            to="https://fordaxbschool.com/execs"
+          >
+            Programs
+          </Link>
+          <button
+            className="text-[18px] font-DMSans font-semibold text-left"
+            onClick={handleNavigateEvents}
+          >
+            Events
+          </button>
+          <Link
+            className="text-[18px] font-DMSans font-semibold text-left"
+            to="https://fordaxbschool.com/blog"
+          >
+            Blog
+          </Link>
+          <button className="text-[18px] font-DMSans font-semibold text-left">
+            Resources
+          </button>
+          <Link
+            className="text-[18px] font-DMSans font-semibold text-left"
+            to="https://fordaxbschool.com/contact"
+          >
+            Contact
+          </Link>
+        </nav>
+        <Link
+          to="/login"
+          className="w-full text-[18px] font-DMSans font-semibold text-center mx-4 px-2 py-4 text-[#fff] bg-[#FF1515] rounded-[8px]"
+        >
+          STUDENT LOGIN
+        </Link>
       </div>
 
       {/* Main Header Content for larger screens */}

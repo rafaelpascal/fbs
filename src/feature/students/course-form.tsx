@@ -20,8 +20,8 @@ const Courseform = () => {
     try {
       const payload = {
         otp: otp,
-        email: user?.email,
-        userid: JSON.stringify(user?.userid),
+        email: user.email,
+        userid: JSON.stringify(user.userid),
       };
       const res = await AuthService.validateOTP(payload);
       dispatch(

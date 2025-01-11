@@ -21,3 +21,13 @@ export const fetchFormRequirements = () => {
     initialData: undefined,
   });
 };
+export const fetchlistCourses = () => {
+  return useQuery({
+    queryKey: ["course"],
+    queryFn: async () => {
+      const res = await CourseServices.listCourses();
+      return res;
+    },
+    initialData: undefined,
+  });
+};

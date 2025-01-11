@@ -16,6 +16,7 @@ import { cn } from "~/utils/helpers";
 import { FaAsterisk } from "react-icons/fa";
 
 interface BaseInputProps {
+  icon?: React.FC<React.SVGProps<SVGSVGElement>>;
   label?: string;
   placeholder?: string;
   containerClassname?: string;
@@ -40,6 +41,7 @@ export const BaseInput = forwardRef<
 >(
   (
     {
+      icon: Icon,
       label,
       placeholder,
       containerClassname,
@@ -86,6 +88,7 @@ export const BaseInput = forwardRef<
             inputContainerClassName
           )}
         >
+          {Icon && <Icon className={cn("bg-transparent text-[34px]")} />}
           {type === "textarea" ? (
             <textarea
               placeholder={placeholder}

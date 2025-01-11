@@ -2,7 +2,7 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import { customStyles } from "../../styles/CustomStyles";
 import { LoadingSpinner } from "../ui/loading-spinner";
 import { FilterModal } from "../Modal/FilterModal";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { IoFilter } from "react-icons/io5";
 import { TbFileExport, TbSearch } from "react-icons/tb";
 
@@ -41,8 +41,8 @@ const InDataTable = <T extends object>({
 }: InDataTableProps<T>) => {
   const [filteredData, setFilteredData] = useState(data);
   const [totalRows, setTotalRows] = useState(data.length);
-  const [perPage, setPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [, setPerPage] = useState(10);
+  const [, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [, setSelectedRowsState] = useState(selectedRows);
@@ -112,12 +112,6 @@ const InDataTable = <T extends object>({
       <LoadingSpinner />
     </div>
   );
-
-  const paginatedData = useMemo(() => {
-    const startIndex = (currentPage - 1) * perPage;
-    const endIndex = startIndex + perPage;
-    return filteredData.slice(startIndex, endIndex);
-  }, [currentPage, perPage, filteredData]);
 
   return (
     // skipcq: JS-0415
@@ -214,7 +208,7 @@ const InDataTable = <T extends object>({
 
       <DataTable
         columns={columns}
-        data={paginatedData}
+        data={filteredData}
         progressPending={false}
         pagination
         paginationTotalRows={totalRows}

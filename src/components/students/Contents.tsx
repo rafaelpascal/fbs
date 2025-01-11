@@ -20,6 +20,8 @@ import {
   FaTwitter,
 } from "react-icons/fa";
 import List from "../list/List";
+import { CourseServices } from "~/api/course";
+import { useEffect, useState } from "react";
 
 const tabsData = [
   { title: "Overview" },
@@ -114,20 +116,87 @@ const FooterbtnItem: {
   },
 ];
 
-const Contents = () => {
+type CourseProps = {
+  id: string;
+  name: string;
+};
+
+const Contents = ({ id, name }: CourseProps) => {
+  const [courseData, setCourseData] = useState({
+    certificate_type: "",
+    cohort: null,
+    cohortid: null,
+    course_format: "",
+    course_id: null,
+    course_mode: "",
+    course_run: "",
+    course_title: "",
+    course_type: "",
+    course_url: "",
+    coursesid: 0,
+    created_at: "",
+    creator: "",
+    creatorid: 0,
+    current_cohort: null,
+    description: "",
+    difficulty_level: "",
+    duration: null,
+    end_date: null,
+    facilitator_name: "",
+    facilitatorid: 43,
+    flexible: null,
+    image_url: "",
+    imageid: 0,
+    installment: null,
+    max_students: "",
+    naira: 1,
+    naira_amount: 0,
+    program_fee: 0,
+    program_plan: "",
+    programme_category_id: 0,
+    regular_fee: null,
+    sales_fee: null,
+    start_date: null,
+    title: null,
+    usd: 1,
+    usd_amount: 100,
+    video_url: "",
+  });
   const navigate = useNavigate();
 
   const handleNavigate = () => {
     navigate(ROUTES.APPLICATION);
   };
 
+  const getCourse = async () => {
+    try {
+      const payload = {
+        title: name,
+        courseid: JSON.parse(id),
+      };
+
+      console.log(typeof payload.courseid);
+
+      const course = await CourseServices.getCourse(payload);
+      setCourseData(course.data.course_details[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getCourse();
+  }, [id, name]);
+
+  useEffect(() => {
+    console.log("courseData", courseData);
+  }, [courseData]);
+
   return (
     <div className="flex justify-center  mb-[10%] font-DMSans items-center px-4">
       <div className="w-full lg:w-[80%] flex flex-wrap lg:flex-row justify-center gap-20 items-start">
         <div className="w-full lg:w-[819px]">
-          <h2 className="text-[40px] my-3">
-            Executive Diploma in Business Communication & Public Relations
-          </h2>
+          <h2 className="text-[40px] my-3">{courseData.course_title}</h2>
           <p className="text-[20px]  my-3">
             Phasellus enim magna, varius et commodo ut, ultricies vitae velit.
             Ut nulla tellus, eleifend euismod pellentesque vel, sagittis vel
@@ -138,20 +207,24 @@ const Contents = () => {
             <span className="text-[#FF3B30]">Cohort</span> 1/Dec 2024{" "}
           </p>
           <p className="text-[20px] my-3">
-            <span className="text-[#FF3B30]">Program:</span> MBA Course{" "}
+            <span className="text-[#FF3B30]">Program:</span>{" "}
+            {courseData.course_type}
           </p>
           <p className="text-[20px] mb-3">
-            <span className="text-[#FF3B30]">Format:</span> Hybrid{" "}
+            <span className="text-[#FF3B30]">Format:</span>{" "}
+            {courseData.course_mode}
           </p>
-          <img
-            src="https://s3-alpha-sig.figma.com/img/fca1/b527/3dc913d6a517b22891c56fc7d0adbaf0?Expires=1734912000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=qXgucmHSHij69aFdeUw7gmInmfaj4dCuyZOA9W4M-303RiQYpXTwTxpLS5vofvJFZa14mTvogxDdAqNtDQasTbrfvQLtMB4C0jcGu~4g7a6z5x94rbTVBcMXiW3BiD~LrLWLaNA~7qGNQInnU6erTL9gGaXka~Q8DKKfLkzZnlM7vrc1Ji85DWBkxns3C5b7CRDOxUF8RvdPFbMDmZXsb4GicnYwcPxxjM-KPndiJtX4ozieSNAphQ42ERNz8~9xHIyjyFI4V9x2~YYQSlcoNcoMj~EZk61ybQwCv2iZwLWedr2stlR9tdgXocQkqzbc-PetPcKMRK31DvfUegE9nw__"
-            alt="Video"
-            className="rounded-lg"
-          />
+          {courseData.image_url && (
+            <img
+              src={courseData.image_url}
+              alt="Video"
+              className="rounded-lg"
+            />
+          )}
 
           <Tabs tabs={tabsData}>
             <div>
-              <Description />
+              <Description description={courseData.description} />
             </div>
             <div>
               <CourseContents />
