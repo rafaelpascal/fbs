@@ -8,7 +8,7 @@ type FooterCardProps = {
 
 const FooterCard = ({ icon: Icon, title, text }: FooterCardProps) => {
   return (
-    <div className="w-full mt-10 lg:w-[410px] flex justify-evenly items-center flex-col border-[1px] rounded-[8px] border-[#FFFFFF]">
+    <div className="w-full mt-10 min:w-[410px] flex justify-evenly items-center flex-col border-[1px] rounded-[8px] border-[#FFFFFF]">
       <div className="flex justify-between border-b-[1px] border-[#ddd]  py-6 px-10 items-center">
         <Icon className={cn("bg-transparent text-[#fff] text-[70px]")} />
         <h2 className="text-[24px] font-DMSans text-[#fff] font-semibold text-center">

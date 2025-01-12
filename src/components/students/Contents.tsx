@@ -22,6 +22,7 @@ import {
 import List from "../list/List";
 import { CourseServices } from "~/api/course";
 import { useEffect, useState } from "react";
+import { LoadingSpinner } from "../ui/loading-spinner";
 
 const tabsData = [
   { title: "Overview" },
@@ -97,31 +98,37 @@ const FacilitatorsItem: FacilitatorsProps[] = [
     ],
   },
 ];
-const FooterbtnItem: {
-  items: { text: string; icon: JSX.Element; count?: string }[];
-  ordered: boolean;
-  customClass: string;
-}[] = [
-  {
-    items: [
-      { text: "9 March, 2025 - 10 July 2025", icon: <CiClock1 /> },
-      { text: "Modules", icon: <LuMonitorPlay />, count: "12" },
-      { text: "Lessons", icon: <IoExtensionPuzzleOutline />, count: "12" },
-      { text: "Duration", icon: <CiClock1 />, count: "4 Months" },
-      { text: "Case Study", icon: <MdBarChart />, count: "9" },
-      { text: "Certificate", icon: <BsAward />, count: "Yes" },
-    ],
-    ordered: false,
-    customClass: "",
-  },
-];
 
 type CourseProps = {
   id: string;
   name: string;
 };
 
+type FooterItem = {
+  text: string;
+  icon: JSX.Element;
+  count?: string | number;
+};
+
+type FooterbtnItem = {
+  items: FooterItem[];
+  ordered: boolean;
+  customClass: string;
+};
+
 const Contents = ({ id, name }: CourseProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isModuleCount, setIsModuleCount] = useState(false);
+  const [lessons, setLessons] = useState([]);
+  const [moduleId, setModuleId] = useState(0);
+  const [ismodule, setIsModule] = useState([]);
+  const [footerBtnItem, setFooterBtnItem] = useState<FooterbtnItem[]>([
+    {
+      items: [],
+      ordered: false,
+      customClass: "",
+    },
+  ]);
   const [courseData, setCourseData] = useState({
     certificate_type: "",
     cohort: null,
@@ -170,28 +177,103 @@ const Contents = ({ id, name }: CourseProps) => {
 
   const getCourse = async () => {
     try {
+      setIsLoading(true);
       const payload = {
         title: name,
         courseid: JSON.parse(id),
       };
-
-      console.log(typeof payload.courseid);
-
       const course = await CourseServices.getCourse(payload);
       setCourseData(course.data.course_details[0]);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getModule = async () => {
+    try {
+      setIsModuleCount(true);
+      const payload = { courseid: courseData.coursesid };
+      const module = await CourseServices.getModuleByCourseId(payload);
+      setIsModule(module.data.course_modules);
+      setModuleId(module.data.course_modules.setModuleId);
+      setIsModuleCount(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getLesson = async () => {
+    setIsModuleCount(true);
+    try {
+      const payload = {
+        moduleid: moduleId,
+      };
+      const lessons = await CourseServices.getLessonByModuleId(payload);
+      setLessons(lessons.data.course_lessons);
+      setIsModuleCount(false);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
+    getLesson();
+  }, [moduleId]);
+
+  useEffect(() => {
+    if (courseData.coursesid) {
+      getModule();
+    }
+  }, [courseData.coursesid]);
+
+  useEffect(() => {
     getCourse();
   }, [id, name]);
 
   useEffect(() => {
-    console.log("courseData", courseData);
-  }, [courseData]);
+    setFooterBtnItem([
+      {
+        items: [
+          {
+            text: `${courseData.start_date} - ${courseData.end_date}`,
+            icon: <CiClock1 />,
+          },
+          {
+            text: "Modules",
+            icon: <LuMonitorPlay />,
+            count: `${ismodule.length}`,
+          },
+          {
+            text: "Lessons",
+            icon: <IoExtensionPuzzleOutline />,
+            count: `${lessons.length}`,
+          },
+          {
+            text: "Duration",
+            icon: <CiClock1 />,
+            count: courseData.duration || "N/A",
+          },
+          { text: "Case Study", icon: <MdBarChart />, count: "9" },
+          {
+            text: "Certificate",
+            icon: <BsAward />,
+            count: courseData.certificate_type || "No",
+          },
+        ],
+        ordered: false,
+        customClass: "",
+      },
+    ]);
+  }, [courseData, courseData.coursesid, isModuleCount]);
 
+  if (isLoading) {
+    return (
+      <div className="h-[400px] w-full flex justify-center items-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
   return (
     <div className="flex justify-center  mb-[10%] font-DMSans items-center px-4">
       <div className="w-full lg:w-[80%] flex flex-wrap lg:flex-row justify-center gap-20 items-start">
@@ -227,7 +309,7 @@ const Contents = ({ id, name }: CourseProps) => {
               <Description description={courseData.description} />
             </div>
             <div>
-              <CourseContents />
+              <CourseContents courseId={id} />
             </div>
             <div>
               <Facilitators />
@@ -244,7 +326,7 @@ const Contents = ({ id, name }: CourseProps) => {
               customClass="p-2"
             />
           ))}
-          <Fee />
+          <Fee naira={courseData.naira_amount} usd={courseData.usd_amount} />
           <div className="flex justify-between items-center w-full">
             <BaseButton
               containerCLassName="mt-4 w-full lg:w-[369.19px] h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[24px] font-bold font-DMSans text-[#fff]"
@@ -289,7 +371,7 @@ const Contents = ({ id, name }: CourseProps) => {
               <p>Add to Cart</p>
             </BaseButton>
           </div>
-          {FooterbtnItem.map((facilitator, index) => (
+          {footerBtnItem.map((facilitator, index) => (
             <MbaList
               key={index}
               items={facilitator.items}

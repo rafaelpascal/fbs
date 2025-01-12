@@ -96,24 +96,6 @@ const CreateCourse = () => {
               <CourseBuilder created={handlePublish} />
             </div>
           )}
-          {/* <button
-            onClick={() => handleChangeWidth(40)}
-            className="btn btn-primary"
-          >
-            Set Width to 40
-          </button>
-          <button
-            onClick={() => handleChangeWidth(70)}
-            className="btn btn-primary"
-          >
-            Set Width to 60
-          </button>
-          <button
-            onClick={() => handleChangeWidth(100)}
-            className="btn btn-primary"
-          >
-            Set Width to 100
-          </button> */}
         </div>
         <CourseCreatedModal isOpen={ispublished} closeModal={handleclose} />
       </div>

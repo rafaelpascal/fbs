@@ -1,9 +1,7 @@
 import { BaseModal } from "./BaseModal";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { cn } from "~/utils/helpers";
-// import { ROUTES } from "../constants/routes";
-// import { useNavigate } from "react-router-dom";
 import { BaseInput } from "../data-inputs/text-input";
 import { useTheme } from "~/context/theme-provider";
 import ImageUpload from "../data-inputs/ImageUpload";
@@ -57,6 +55,7 @@ export const NewLessonModal = ({
   });
   // Close modal
   const handleclose = useCallback(() => {
+    setFormData(initialFormData);
     closeModal();
   }, []);
 
@@ -73,10 +72,6 @@ export const NewLessonModal = ({
       featuredImages: files,
     }));
   };
-
-  useEffect(() => {
-    console.log("moduleId", moduleId);
-  }, [moduleId]);
 
   const handleFileSelect = (file: File | null) => {
     setSelectedFile(file);
@@ -114,14 +109,8 @@ export const NewLessonModal = ({
     if (selectedMediaFile) {
       dataToSubmit.append("video_audio_upload", selectedMediaFile);
     }
-    for (const [key, value] of dataToSubmit.entries()) {
-      console.log(`${key}:`, value);
-    }
-
     const res = await CourseServices.createCourseLesson(dataToSubmit);
-    console.log("dddddddd", res);
-
-    // Set module data (if needed)
+    console.log(res);
     setModuleData((prevData: any) => ({
       ...prevData,
       title: formData.title,

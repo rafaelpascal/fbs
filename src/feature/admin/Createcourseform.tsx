@@ -32,14 +32,11 @@ const facilitator = [
   { label: "James Kuka", value: 3 },
 ];
 
-const editors = [
-  { label: "Executive Diploma", value: 1 },
-  { label: "Professional Certificate", value: 2 },
-  { label: "MBA", value: 3 },
-  { label: "Executive Certificate", value: 4 },
-  { label: "Advanced Certificate", value: 5 },
+const creators = [
+  { label: "JohnPual Aruna", value: 1 },
+  { label: "JYma Pascal", value: 2 },
+  { label: "Raphael Pascal", value: 3 },
 ];
-
 const supervisors = [
   { label: "JohnPual Aruna", value: 1 },
   { label: "JYma Pascal", value: 2 },
@@ -81,7 +78,7 @@ interface FormData {
   courseTitle: string;
   courseType: null | { label: string };
   facilitator: Option[] | null;
-  editors: null | { label: string };
+  editors: Option[] | null;
   supervisors: Option[] | null;
   description: string;
   highlight: string;
@@ -199,6 +196,12 @@ const Createcourseform = ({ created }: any) => {
       supervisors: selectedOptions,
     }));
   };
+  const handleEditorSelect = (selectedOptions: Option[]) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      editors: selectedOptions,
+    }));
+  };
 
   const handleImageUpload = (files: File[]) => {
     setFormData((prev) => ({
@@ -236,11 +239,14 @@ const Createcourseform = ({ created }: any) => {
       formDataToSend.append("programme_category_id", "2");
       formDataToSend.append("course_title", formData.courseTitle);
       formDataToSend.append("course_type", formData.courseType?.label || "");
-      formDataToSend.append("creators[]", formData.editors?.label || "");
       formDataToSend.append("description", formData.description);
 
       formData.facilitator?.forEach((item) =>
         formDataToSend.append("facilitators[]", item.label.toString())
+      );
+
+      formData.editors?.forEach((item) =>
+        formDataToSend.append("creators[]", item.label.toString())
       );
       formData.supervisors?.forEach((item) =>
         formDataToSend.append("supervisors[]", item.label.toString())
@@ -274,7 +280,6 @@ const Createcourseform = ({ created }: any) => {
       formDataToSend.append("installment", formData.selectedMonths.toString());
 
       const res = await CourseServices.createCourse(formDataToSend);
-      console.log(res.data.course_id);
       dispatch(setCourseId(res.data.course_id));
       if (res.data.success === true) {
         setIsSubmitting(false);
@@ -297,15 +302,14 @@ const Createcourseform = ({ created }: any) => {
   };
 
   const handleSettingsSelect = (key: string, option: any) => {
-    // Update formData based on the selected option
     setFormData((prevData) => ({
       ...prevData,
-      [key]: option.value, // Assuming `option` has a `value` field
+      [key]: option.value,
     }));
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div>
       <div className="my-4">
         <BaseInput
           label="COURSE TITLE"
@@ -343,17 +347,17 @@ const Createcourseform = ({ created }: any) => {
             />
           </div>
         </div>
-        <div className="my-4 w-full flex flex-col lg:flex-row flex-wrap justify-start gap-4 items-center">
-          <div className="w-full lg:w-[30%] mb-4">
-            <SelectionDropdown
+        <div className="my-4 w-full flex flex-col justify-start gap-4 items-center">
+          <div className="w-full mb-4">
+            <MultipleSelectionDropdown
               label="CREATORS/EDITORS"
               labelClassName="text-[14px] font-DMSans font-semibold mb-2"
-              options={editors}
-              onSelect={(option) => handleSelect("editors", option)}
-              placeholder="Select Editors"
+              options={creators}
+              onSelect={handleEditorSelect}
+              placeholder="Select Creators/editors"
             />
           </div>
-          <div className="w-full lg:w-[60%] mb-4">
+          <div className="w-full mb-4">
             <MultipleSelectionDropdown
               label="SUPERVISORS"
               labelClassName="text-[14px] font-DMSans font-semibold mb-2"
@@ -491,7 +495,7 @@ const Createcourseform = ({ created }: any) => {
               PREVIEW
             </button>
             <button
-              type="submit"
+              onClick={handleSubmit}
               className={`h-[52px] w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2 ${
                 isFormValid() ? "bg-[#FF5050]" : "bg-gray-400"
               }`}
@@ -505,7 +509,7 @@ const Createcourseform = ({ created }: any) => {
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

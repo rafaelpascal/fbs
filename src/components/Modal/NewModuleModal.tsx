@@ -2,8 +2,6 @@ import { BaseModal } from "./BaseModal";
 import { useCallback, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { cn } from "~/utils/helpers";
-// import { ROUTES } from "../constants/routes";
-// import { useNavigate } from "react-router-dom";
 import { BaseInput } from "../data-inputs/text-input";
 import { useTheme } from "~/context/theme-provider";
 import ImageUpload from "../data-inputs/ImageUpload";
@@ -46,9 +44,7 @@ export const NewModuleModal = ({
 }: IModalPropsType) => {
   const { theme } = useTheme();
   const courseId = useSelector((state: RootState) => state.course.course_id);
-
   const [isSubmitting, setisSubmitting] = useState(false);
-  //   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
@@ -56,8 +52,9 @@ export const NewModuleModal = ({
     reading: "",
     featuredImages: [],
   });
-  // Close modal
+
   const handleclose = useCallback(() => {
+    setFormData(initialFormData);
     closeModal();
   }, []);
 
@@ -91,7 +88,6 @@ export const NewModuleModal = ({
       dataToSubmit.append(`module_image`, file);
     });
     const res = await CourseServices.createCourseModule(dataToSubmit);
-    // moduleData
     setModuleData((prevData: any) => ({
       ...prevData,
       moduleId: res.data.data.module_id,

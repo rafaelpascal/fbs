@@ -3,7 +3,7 @@ import { CiCamera } from "react-icons/ci";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { showAlert } from "~/utils/sweetAlert";
+import useToast from "~/hooks/useToast";
 
 interface ImageUploadProps {
   multiple?: boolean;
@@ -15,24 +15,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onUpload,
 }) => {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-
+  const { error } = useToast();
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const filesArray = Array.from(event.target.files);
-
-      // Check if the total images exceed the limit (3 in this case)
-      if (selectedImages.length + filesArray.length > 3) {
-        // toast.error("You can upload up to 3 images only.");
-        await showAlert(
-          "error",
-          "Maximum exceeded",
-          "You can upload up to 3 images only!",
-          "Ok",
-          "#FF5050"
-          // () => {
-          //   navigate(ROUTES.SETTINGS_SECURITY);
-          // }
-        );
+      if (selectedImages.length + filesArray.length > 1) {
+        error("You can upload up to one image!");
         return;
       }
 
@@ -40,15 +28,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
       setSelectedImages((prev) => [...prev, ...filePreviews]);
       onUpload(filesArray);
-
-      // Clean up object URLs when the component is unmounted or new images are selected
       return () => filePreviews.forEach((url) => URL.revokeObjectURL(url));
     }
   };
 
   return (
     <div className="flex justify-start items-center">
-      {/* Custom Input Button */}
       <ToastContainer />
       <label
         htmlFor="image-upload"
@@ -65,9 +50,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         onChange={handleImageChange}
         className="hidden"
       />
-
-      {/* Image Previews with Framer Motion */}
-      <div className="flex flex-row justify-between overflow-x-auto w-full lg:w-auto gap-4 mt-4">
+      <div className="flex flex-row justify-between scrollbar-style overflow-x-auto w-full lg:w-auto gap-4 mt-4">
         <AnimatePresence>
           {selectedImages.map((image, index) => (
             <motion.div

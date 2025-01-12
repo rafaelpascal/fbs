@@ -3,6 +3,7 @@ import { useTheme } from "~/context/theme-provider";
 
 // Define types for the AccordionItem props
 interface AccordionItemProps {
+  lessons: number;
   title: string;
   children: React.ReactNode;
   name: string;
@@ -11,6 +12,7 @@ interface AccordionItemProps {
 
 // AccordionItem component for individual collapsible items
 const AccordionItem: React.FC<AccordionItemProps> = ({
+  lessons,
   title,
   children,
   name,
@@ -29,7 +31,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       <input type="radio" name={name} defaultChecked={defaultOpen} />
       <div className="collapse-title h-[60px] flex justify-between items-center">
         <p className="text-xl font-medium">{title}</p>
-        <p className="text-sm font-medium">5 lectures • 87 min</p>
+        <p className="text-sm font-medium">{lessons} lectures • 87 min</p>
       </div>
       <div className="collapse-content">
         <div>{children}</div>
@@ -40,6 +42,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 
 // Define types for the Accordion props
 interface AccordionProps {
+  lessons: number;
   items: {
     title: string;
     children: React.ReactNode;
@@ -50,6 +53,7 @@ interface AccordionProps {
 
 // Accordion component that accepts an array of items
 const Accordion: React.FC<AccordionProps> = ({
+  lessons,
   items,
   accordionName = "my-accordion",
 }) => {
@@ -58,6 +62,7 @@ const Accordion: React.FC<AccordionProps> = ({
       {items.map((item, index) => (
         <AccordionItem
           key={index}
+          lessons={lessons}
           title={item.title}
           name={accordionName}
           defaultOpen={item.defaultOpen}

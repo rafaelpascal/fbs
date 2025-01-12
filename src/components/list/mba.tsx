@@ -1,5 +1,11 @@
+type FooterItem = {
+  text: string;
+  icon: JSX.Element;
+  count?: string | number;
+};
+
 type FacilitatorsProps = {
-  items: { text: string; icon: JSX.Element; count?: string }[];
+  items: FooterItem[];
   ordered: boolean;
   customClass: string;
 };

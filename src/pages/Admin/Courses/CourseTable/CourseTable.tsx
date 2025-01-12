@@ -98,7 +98,7 @@ const CourseTable = () => {
   const handleCopyLink = (courseUrl: string) => {
     navigator.clipboard.writeText(courseUrl).then(
       () => {
-        success("Link copied to clipboard!");
+        success("Link copied!");
       },
       (err) => {
         error("Failed to copy link.");

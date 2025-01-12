@@ -54,8 +54,8 @@ const CredentialsForms = ({ created }: any) => {
       course_structure: extractText(courseStructure),
       course_for: extractText(courseFor),
     };
+
     try {
-      console.log("Payload:", payload);
       const res = await CourseServices.createCourseRequirements(payload);
       console.log("Response:", res);
       setisSubmitting(false);
@@ -75,7 +75,7 @@ const CredentialsForms = ({ created }: any) => {
 
   return (
     <div>
-      <div className="">
+      <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           ADMISSION REQUIREMENTS
         </h2>
@@ -86,7 +86,7 @@ const CredentialsForms = ({ created }: any) => {
           }
         />
       </div>
-      <div className="">
+      <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           LEARNING OBJECTIVES
         </h2>
@@ -97,7 +97,7 @@ const CredentialsForms = ({ created }: any) => {
           }
         />
       </div>
-      <div className="">
+      <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           ASSESSMENT METHODS
         </h2>
@@ -108,7 +108,7 @@ const CredentialsForms = ({ created }: any) => {
           }
         />
       </div>
-      <div className="">
+      <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           CAREER OPTIONS & OPPORTUNITIES
         </h2>
@@ -117,7 +117,7 @@ const CredentialsForms = ({ created }: any) => {
           onChange={(value) => setCareerOptions(value as CustomDescendant[])}
         />
       </div>
-      <div className="">
+      <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           COURSE STRUCTURE
         </h2>
@@ -126,7 +126,7 @@ const CredentialsForms = ({ created }: any) => {
           onChange={(value) => setCourseStructure(value as CustomDescendant[])}
         />
       </div>
-      <div className="">
+      <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           WHO IS THIS COURSE FOR?
         </h2>
@@ -141,18 +141,20 @@ const CredentialsForms = ({ created }: any) => {
         </h2>
         <FormRequirements />
       </div>
-      <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
-        PREVIEW
-      </button>
-      <button
-        onClick={handleSubmit}
-        className="h-[52px] bg-[#FF5050] w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2"
-      >
-        <p className="font-DMSans font-semibold text-[16px] text-white">
-          SAVE ALL CHANGES
-        </p>
-        {isSubmitting && <LoadingSpinner size="xs" />}
-      </button>
+      <div className="flex flex-col lg:flex-row flex-wrap justify-start items-center">
+        <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
+          PREVIEW
+        </button>
+        <button
+          onClick={handleSubmit}
+          className="h-[52px] bg-[#FF5050] w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2"
+        >
+          <p className="font-DMSans font-semibold text-[16px] text-white">
+            SAVE ALL CHANGES
+          </p>
+          {isSubmitting && <LoadingSpinner size="xs" />}
+        </button>
+      </div>
     </div>
   );
 };

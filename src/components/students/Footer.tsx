@@ -132,7 +132,7 @@ const Footer = () => {
             Lorem ipsum dolor sit amet, consectetur.
           </p> */}
         </div>
-        <div className="w-full grid grid-cols-1 sm:grid-cols-3">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4">
           {FooterItems.map((items, index) => (
             <FooterCard
               key={index}

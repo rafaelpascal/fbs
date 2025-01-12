@@ -69,19 +69,19 @@ const MultipleSelectionDropdown: React.FC<SelectionDropdownProps> = ({
       {label && <label className={labelClassName}>{label}</label>}
       <div className="flex flex-col lg:flex-row flex-wrap justify-start items-start lg:items-center gap-4">
         <div
-          className={`flex w-[50%] h-[50px] flex-row justify-between border-[0.5px] border-[#ddd] mt-2 items-center rounded-md p-3 cursor-pointer shadow-sm bg-transparent`}
+          className={`flex w-[40%] max-w-[40%] h-[50px] flex-row justify-between border-[0.5px] border-[#ddd] mt-2 items-center rounded-md p-3 cursor-pointer shadow-sm bg-transparent`}
           onClick={handleToggle}
         >
           <span className="font-DMSans font-semibold text-[16px]">
             {selectedOptions.length > 0
-              ? selectedOptions[selectedOptions.length - 1].label // Show only the last selected option
+              ? selectedOptions[selectedOptions.length - 1].label
               : placeholder}
           </span>
           {isOpen ? <FaChevronUp /> : <FaChevronDown />}
         </div>
         {/* Display Selected Options */}
         {selectedOptions.length > 0 && (
-          <div className="lg:absolute right-[10%] mt-4 border-[0.5px] border-[#ddd] p-2 rounded-md grid grid-cols-2 gap-2">
+          <div className=" mt-4 border-[0.5px] border-[#ddd] p-2 rounded-md grid grid-cols-2 gap-2">
             {selectedOptions.map((option) => (
               <div
                 key={option.value}

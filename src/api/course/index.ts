@@ -103,6 +103,24 @@ export class CourseServices extends BaseAPIService {
       throw handleError;
     }
   };
+  static getModuleByCourseId = async (payload: any) => {
+    try {
+      const res = await Api.post("/course/list-modules-bycourse", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static getLessonByModuleId = async (payload: any) => {
+    try {
+      const res = await Api.post("/course/list-lessons-bymodule", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
 
   static listCourses = async (): Promise<any> => {
     try {

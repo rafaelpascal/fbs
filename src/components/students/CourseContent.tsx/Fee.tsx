@@ -1,6 +1,10 @@
 import { useTheme } from "~/context/theme-provider";
 
-const Fee = () => {
+type FeeProps = {
+  naira: number;
+  usd: number;
+};
+const Fee = ({ naira, usd }: FeeProps) => {
   const { theme } = useTheme();
 
   return (
@@ -14,7 +18,20 @@ const Fee = () => {
         }`}
       >
         <p className="text-[24px] font-DMSans font-normal">Full Tuition</p>
-        <p className="text-[24px] font-DMSans font-normal">N350,000</p>
+        <div>
+          <p className="text-[24px] font-DMSans font-normal">
+            {new Intl.NumberFormat("en-NG", {
+              style: "currency",
+              currency: "NGN",
+            }).format(naira)}
+          </p>
+          <p className="text-[24px] font-DMSans font-normal">
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(usd)}
+          </p>
+        </div>
       </div>
       <div
         className={`w-full flex justify-between items-center my-4 p-4 lg:w-[875px] rounded-[8px] ${

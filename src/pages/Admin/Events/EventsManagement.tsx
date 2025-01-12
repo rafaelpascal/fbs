@@ -8,6 +8,10 @@ import { BaseInput } from "~/components/data-inputs/text-input";
 import { useTheme } from "~/context/theme-provider";
 import { DashboardArea } from "~/layouts/DashboardArea";
 import { cn } from "~/utils/helpers";
+import { motion } from "framer-motion";
+import Tabs from "~/components/Tabs/Tabs";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import EventMultiselect from "~/components/Collapsible/EventMultiselect";
 
 interface FormData {
   title: string;
@@ -15,7 +19,10 @@ interface FormData {
   eventype: string;
   eventDate: string;
   naira: string;
+  totalNumber: string;
+  location: string;
   dollar: string;
+  description: string;
   link: string;
   startTime: string;
   endTime: string;
@@ -36,6 +43,12 @@ const Evemt_Type = [
   { label: "Seminar", value: 1 },
   { label: "Workshop", value: 2 },
   { label: "Student Meetup ", value: 3 },
+];
+
+const tabsData = [
+  { title: "Venue" },
+  { title: "Online" },
+  { title: "To-be-announced" },
 ];
 
 // const initialFormData = {
@@ -84,8 +97,11 @@ const Events = () => {
     title: "",
     embed: "",
     eventype: "",
+    location: "",
     eventDate: "",
+    totalNumber: "",
     naira: "",
+    description: "",
     link: "",
     dollar: "",
     startTime: "",
@@ -123,6 +139,28 @@ const Events = () => {
       [field]: option,
     }));
   };
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       async (position) => {
+  //         const { latitude, longitude } = position.coords;
+
+  //         // Example: Use a reverse geocoding service to get the address
+  //         const response = await fetch(
+  //           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+  //         );
+  //         const data = await response.json();
+  //         const address = data.display_name || "Unable to fetch address";
+
+  //         handleInputChange("totalNumber", address);
+  //       },
+  //       (error) => {
+  //         console.error("Error getting location:", error);
+  //       }
+  //     );
+  //   } else {
+  //     alert("Geolocation is not supported by this browser.");
+  //   }
+  // };
 
   return (
     <DashboardArea>
@@ -137,7 +175,7 @@ const Events = () => {
           </h2>
         </button>
       </div>
-      <div className="border-[0.5px] p-4 rounded-md mt-6 border-[#ddd] w-full h-full">
+      <div className="p-4 rounded-md mt-6  w-full h-full">
         <div className="my-4 w-full">
           <BaseInput
             label="Module Title"
@@ -346,6 +384,99 @@ const Events = () => {
               />
             </div>
           </div>
+        </div>
+        <div className="border-[1px] p-4 rounded-md mt-6 border-[#ddd]">
+          <h2 className="text-[18px] w-full font-DMSans font-semibold">
+            Total number of registrations accepted{" "}
+          </h2>
+          <div className="w-full flex flex-col gap-4 lg:flex-row flex-wrap justify-start items-start">
+            <BaseInput
+              label=""
+              type="number"
+              placeholder="totalNumber"
+              // icon={IoLogoUsd}
+              containerClassname="w-full lg:w-[40%]"
+              labelClassName="text-[17px] font-DMSans font-semibold"
+              inputContainerClassName={cn(
+                "h-[53px] ",
+                theme === "dark"
+                  ? "select-secondary"
+                  : "border-[0.5px] border-[#ddd]"
+              )}
+              value={formData.totalNumber}
+              onChange={(e: any) =>
+                handleInputChange("totalNumber", e.target.value)
+              }
+            />
+            {formData.totalNumber !== "" && (
+              <motion.div
+                initial={{ x: "100%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="w-full lg:w-[300px]"
+              >
+                <p className="text-left  text-[#757575] font-DMSans font-semibold text-[14px] italic">
+                  Registration to this event will close after this number is
+                  reached.
+                </p>
+              </motion.div>
+            )}
+          </div>
+        </div>
+        <div className="border-[1px] p-4 rounded-md mt-6 border-[#ddd]">
+          <h2 className="text-[18px] w-full font-DMSans font-semibold">
+            Event location
+          </h2>
+          <Tabs tabs={tabsData}>
+            <div>
+              <BaseInput
+                label=""
+                type="text"
+                placeholder="Link or address of the event"
+                icon={FaMapMarkerAlt}
+                containerClassname="w-full"
+                labelClassName="text-[17px] font-DMSans font-semibold"
+                inputContainerClassName={cn(
+                  "h-[53px]",
+                  theme === "dark"
+                    ? "select-secondary"
+                    : "border-[0.5px] border-[#ddd]"
+                )}
+                value={formData.location}
+                onChange={(e: any) =>
+                  handleInputChange("location", e.target.value)
+                }
+              />
+            </div>
+          </Tabs>
+        </div>
+        <div className="border-[1px] p-4 rounded-md mt-6 border-[#ddd]">
+          <h2 className="text-[18px] w-full font-DMSans font-semibold">
+            Event description
+          </h2>
+          <BaseInput
+            label=""
+            type="textarea"
+            placeholder="Description"
+            containerClassname="w-full"
+            labelClassName="text-[17px] font-DMSans font-semibold"
+            inputContainerClassName={cn(
+              "h-[153px] ",
+              theme === "dark"
+                ? "select-secondary"
+                : "border-[0.5px] border-[#ddd]"
+            )}
+            value={formData.description}
+            onChange={(e: any) =>
+              handleInputChange("description", e.target.value)
+            }
+          />
+        </div>
+        <div className="border-[1px] p-4 rounded-md mt-6 border-[#ddd]">
+          <h2 className="text-[18px] w-full font-DMSans font-semibold">
+            Add guest speakers
+          </h2>
+          <EventMultiselect />
         </div>
       </div>
     </DashboardArea>

@@ -1,43 +1,40 @@
+import { useEffect, useState } from "react";
 import { FaPlay } from "react-icons/fa6";
+import { CourseServices } from "~/api/course";
 
-const CourseItem = () => {
-  const Items = [
-    {
-      title: "Introduction to the User Experience Course",
-      duration: "03:56",
-      started: true,
-    },
-    {
-      title: "Getting started with your Adobe XD project",
-      duration: "03:56",
-      started: false,
-    },
-    {
-      title:
-        "What is UI vs UX - User Interface vs User Experience vs Product Designer",
-      duration: "03:56",
-      started: false,
-    },
-    {
-      title: "Wireframing (low fidelity) in Adobe XD",
-      duration: "03:56",
-      started: false,
-    },
-    {
-      title: "Viewing your prototype on a mobile device",
-      duration: "03:56",
-      started: false,
-    },
-    {
-      title: "Sharing your design",
-      duration: "03:56",
-      started: false,
-    },
-  ];
+type LessonProps = {
+  moduleId: string;
+};
+
+type Lessons = {
+  title: string;
+  duration: string;
+  started: boolean;
+};
+
+const Items: Lessons[] = [];
+
+const CourseItem = ({ moduleId }: LessonProps) => {
+  const [lessons, setLessons] = useState(Items);
+  const getLesson = async () => {
+    try {
+      const payload = {
+        moduleid: moduleId,
+      };
+      const lessons = await CourseServices.getLessonByModuleId(payload);
+      setLessons(lessons.data.course_lessons);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getLesson();
+  }, [moduleId]);
 
   return (
     <div>
-      {Items.map((item, index) => (
+      {lessons.map((item, index) => (
         <div key={index} className="flex justify-between items-center mb-4">
           <div className="flex justify-start gap-4 items-center">
             <div className="h-6 w-6 flex justify-center items-center rounded-full bg-[#FF3B30]/10">
