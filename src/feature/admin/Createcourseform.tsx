@@ -17,6 +17,7 @@ import { setCourseId } from "~/redux-store/slice/course.slice";
 import { motion } from "framer-motion";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { GrCertificate } from "react-icons/gr";
+import { setCourseUrl } from "~/redux-store/slice/url.slice";
 
 const options = [
   { label: "Executive Diploma", value: 1 },
@@ -112,7 +113,7 @@ interface FormData {
   // currentStep: number;
   discountType: string;
   discountValue: string;
-  paymentplan: null | { label: string };
+  paymentplan: null | { value: string };
   selectedMonths: number;
 }
 
@@ -240,6 +241,7 @@ const Createcourseform = ({ created }: any) => {
       formDataToSend.append("course_title", formData.courseTitle);
       formDataToSend.append("course_type", formData.courseType?.label || "");
       formDataToSend.append("description", formData.description);
+      formDataToSend.append("course_highlight", formData.highlight);
 
       formData.facilitator?.forEach((item) =>
         formDataToSend.append("facilitators[]", item.label.toString())
@@ -272,15 +274,36 @@ const Createcourseform = ({ created }: any) => {
       formDataToSend.append("course_format", "digital");
       // formDataToSend.append("certificate_type", "digital");
       formDataToSend.append("program_fee", "");
-      formDataToSend.append("program_plan", "2");
+      formDataToSend.append("program_plan", formData.paymentplan?.value || "");
       formDataToSend.append("usd", formData.currency.USD ? "1" : "0");
+      formDataToSend.append(
+        "enrollment_all_times",
+        formData.enrollmentSchedule === "allTime" ? "1" : "0"
+      );
+      formDataToSend.append(
+        "enrollment_startdate",
+        formData.enrollmentStartDate
+      );
+      formDataToSend.append("enrollment_enddate", formData.enrollmentEndDate);
+      formDataToSend.append(
+        "course_flexible",
+        formData.courseSchedule === "allTime" ? "1" : "0"
+      );
+      formDataToSend.append("course_startdate", formData.courseStartDate);
+      formDataToSend.append("course_enddate", formData.courseEndDate);
       formDataToSend.append("naira", formData.currency.NGN ? "1" : "0");
       formDataToSend.append("naira_amount", formData.nairaAmount);
       formDataToSend.append("usd_amount", formData.dollarAmount);
       formDataToSend.append("installment", formData.selectedMonths.toString());
-
+      console.log("FormData Payload:");
+      for (const [key, value] of formDataToSend.entries()) {
+        console.log(`${key}:`, value);
+      }
       const res = await CourseServices.createCourse(formDataToSend);
+      console.log("ccc", res);
+
       dispatch(setCourseId(res.data.course_id));
+      dispatch(setCourseUrl(res.data.course_url));
       if (res.data.success === true) {
         setIsSubmitting(false);
         await showAlert(

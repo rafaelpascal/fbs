@@ -15,6 +15,7 @@ import { showAlert } from "~/utils/sweetAlert";
 import { useTheme } from "~/context/theme-provider";
 import { fetchlistCourses } from "~/api/course/hooks";
 import useToast from "~/hooks/useToast";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
 // import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
@@ -25,7 +26,7 @@ interface MerchantTableRow {
   start_date: string;
   end_date: string;
   application: string;
-  creator: string;
+  creators: string;
   createdAt: string;
   status: string;
   course_url: string;
@@ -40,11 +41,13 @@ const CourseTable = () => {
   });
   const navigate = useNavigate();
   const { success, error } = useToast();
-  const [couseData, setCourseData] = useState(courseData);
   const { data } = fetchlistCourses();
+  const [couseData, setCourseData] = useState(courseData);
 
   useEffect(() => {
     if (data?.course_details) {
+      console.log(data?.course_details);
+
       setCourseData(data?.course_details);
     }
   }, [data]);
@@ -150,7 +153,7 @@ const CourseTable = () => {
     // },
     {
       name: "Creator",
-      selector: (row: { creator: string }) => row.creator,
+      selector: (row: { creators: string }) => row.creators,
       sortable: true,
     },
     {
@@ -229,15 +232,22 @@ const CourseTable = () => {
         theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
       )}
     >
-      <div className="w-[99%]">
-        <InDataTable<MerchantTableRow>
-          columns={columns}
-          data={couseData}
-          paginatable
-          searchable={false}
-          // pagination
-        />
-      </div>
+      {!data ? (
+        <div className=" w-full h-[300px] flex justify-center items-center">
+          <LoadingSpinner />
+        </div>
+      ) : (
+        <div className="w-[99%]">
+          <InDataTable<MerchantTableRow>
+            columns={columns}
+            data={couseData}
+            paginatable
+            searchable={false}
+            // pagination
+          />
+        </div>
+      )}
+
       {/* <ContactModal isOpen={isContact} closeModal={handleClose} /> */}
       <NewCohortModal
         courseId={isNewcohort.courseId}

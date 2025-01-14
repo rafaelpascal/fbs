@@ -13,10 +13,10 @@ const courseSlice = createSlice({
   initialState,
   reducers: {
     setCourseId: (state, action: PayloadAction<number>) => {
-      state.course_id = action.payload; // Set the course_id
+      state.course_id = action.payload;
     },
     resetCourseId: (state) => {
-      state.course_id = null; // Reset the course_id to null
+      state.course_id = null;
     },
   },
 });

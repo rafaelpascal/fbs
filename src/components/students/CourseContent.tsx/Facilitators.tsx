@@ -1,34 +1,59 @@
+import Slider from "react-slick";
 import { IoIosStar } from "react-icons/io";
+import { Avatar } from "~/components/dashboard/Avatar";
 
-const Facilitators = () => {
+type Facilitator = {
+  name: string;
+  position: string;
+  rating: number;
+  description: string;
+  image: string;
+};
+type FacilitatorsProps = {
+  facilitatorsData: Facilitator[];
+};
+const Facilitators = ({ facilitatorsData }: FacilitatorsProps) => {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
-    <div>
-      <div className="flex justify-start flex-col lg:flex-row items-start lg:items-center gap-4">
-        <img
-          src="https://s3-alpha-sig.figma.com/img/fca1/b527/3dc913d6a517b22891c56fc7d0adbaf0?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=ONW8A23I~6CcWgzr1HJbjqvEoW3bwT1i55H2QsLoX6DrCNuXcpV5ifNj0SVdmpBroZDrl6Knu0Xzjnh25apBeE9SZpiSH~wKajVVh1ffBoWfbVyCEQj20nzVCsFB6PcSPa9LscnJZgX9XytwfcxmVXGsledYyk1MoXOZpVHrxxzdkvoavhJD5eJ0tgAKoIlWX6V0yuMtpOB6Gj01gDY7dZf8bXWb0Cu7ailML3gouHAbAejeo81EnY7BXRE1Bb5rd7DYS2K7PEv4T9CmKuj4SFzBHYa9~F~ocKgS4btoEtez8xPfN-epO6bOFU0GJEM5S2XG8BPexaksN1XJJfrxIQ__"
-          alt=""
-          className="w-[135.37px] rounded-[4px] h-[130.2px]"
-        />
-        <div className="w-full lg:w-[283px]">
-          <h2 className="text-[22px] font-semibold font-DMSans">Floyd Miles</h2>
-          <p className="text-[16px] font-normal font-DMSans">
-            President of Sales, Coco Cola, Africa
-          </p>
-          <div className="flex mt-3 justify-start items-center gap-2">
-            <IoIosStar className="text-[16px] text-[#E59819] font-DMSans" />
-            <p className="text-[16px] text-[#E59819] font-DMSans">4.5</p>
-            <p className="text-[16px] font-DMSans">Instructor Rating</p>
+    <Slider {...settings}>
+      {facilitatorsData.map((facilitator, index) => (
+        <div key={index} className="p-4">
+          <div className="flex justify-start flex-col lg:flex-row items-start lg:items-center gap-4">
+            <Avatar
+              img={facilitator.image}
+              name={facilitator.name}
+              avatarClassName="md:h-[130.2px] rounded-[4px]  h-[130.2px] w-[135.37px] md:w-[130.2px] bg-[#FF3B30]"
+              textClassName="font-normal text-sm"
+              wrapperClassName="max-md:gap-0"
+              color="fff"
+            ></Avatar>
+            <div className="w-full lg:w-[283px]">
+              <h2 className="text-[22px] font-semibold font-DMSans">
+                {facilitator.name}
+              </h2>
+              <p className="text-[16px] font-normal font-DMSans">
+                {facilitator.position}
+              </p>
+              <div className="flex mt-3 justify-start items-center gap-2">
+                <IoIosStar className="text-[16px] text-[#E59819] font-DMSans" />
+                <p className="text-[16px] text-[#E59819] font-DMSans">
+                  {facilitator.rating}
+                </p>
+                <p className="text-[16px] font-DMSans">Instructor Rating</p>
+              </div>
+            </div>
           </div>
+          <p className="my-4 text-[20px]">{facilitator.description}</p>
         </div>
-      </div>
-      <p className="my-4 text-[20px]">
-        Back in 2010, I started brainspin with a desire to design compelling and
-        engaging apps. For over 7 years, I have designed many high profile web
-        and iPhone applications. The applications range from 3D medical aided
-        web applications to project management applications for niche
-        industries.{" "}
-      </p>
-    </div>
+      ))}
+    </Slider>
   );
 };
 

@@ -7,9 +7,7 @@ type LessonProps = {
 };
 
 type Lessons = {
-  title: string;
-  duration: string;
-  started: boolean;
+  lesson_title: string;
 };
 
 const Items: Lessons[] = [];
@@ -22,6 +20,7 @@ const CourseItem = ({ moduleId }: LessonProps) => {
         moduleid: moduleId,
       };
       const lessons = await CourseServices.getLessonByModuleId(payload);
+      console.log("kkkkkkkkkk", lessons);
       setLessons(lessons.data.course_lessons);
     } catch (error) {
       console.log(error);
@@ -32,6 +31,10 @@ const CourseItem = ({ moduleId }: LessonProps) => {
     getLesson();
   }, [moduleId]);
 
+  useEffect(() => {
+    console.log("jjjj", lessons);
+  }, [lessons]);
+
   return (
     <div>
       {lessons.map((item, index) => (
@@ -40,14 +43,16 @@ const CourseItem = ({ moduleId }: LessonProps) => {
             <div className="h-6 w-6 flex justify-center items-center rounded-full bg-[#FF3B30]/10">
               <FaPlay className="text-[#FF3B30] text-[10px]" />
             </div>
-            <h2>{item.title}</h2>
+            <h2 className="font-DMSans font-semibold text-[18px]">
+              {item.lesson_title}
+            </h2>
           </div>
-          <div className="flex justify-end items-center gap-4">
+          {/* <div className="flex justify-end items-center gap-4">
             {item.started && (
               <button className="text-[#FF3B30] underline">Continue</button>
             )}
             <button>{item.duration}</button>
-          </div>
+          </div> */}
         </div>
       ))}
     </div>

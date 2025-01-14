@@ -14,8 +14,6 @@ const NewCourse = () => {
   const name = pathSegments[0];
   const id = pathSegments[1];
 
-  console.log(name, id);
-
   return (
     <div className="">
       <Header />

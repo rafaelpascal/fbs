@@ -75,12 +75,10 @@ export const NewLessonModal = ({
 
   const handleFileSelect = (file: File | null) => {
     setSelectedFile(file);
-    console.log("Selected file:", file);
   };
 
   const handleWordSelect = (file: File | null) => {
     setSelectedWord(file);
-    console.log("Selected file:", file);
   };
 
   const handleMediaUpload = (file: File | null) => {
@@ -95,7 +93,7 @@ export const NewLessonModal = ({
     dataToSubmit.append("programme_category_id", "2");
     dataToSubmit.append("course_id", courseId?.toString() || "");
     dataToSubmit.append("stream_video_audio", formData.embed);
-    dataToSubmit.append("module_id", "1");
+    dataToSubmit.append("module_id", moduleId.toString() || "");
     dataToSubmit.append("lesson_title", formData.title);
     formData.featuredImages.forEach((file) => {
       dataToSubmit.append("lesson_image", file);
@@ -108,6 +106,10 @@ export const NewLessonModal = ({
     }
     if (selectedMediaFile) {
       dataToSubmit.append("video_audio_upload", selectedMediaFile);
+    }
+    console.log("FormData Payload:");
+    for (const [key, value] of dataToSubmit.entries()) {
+      console.log(`${key}:`, value);
     }
     const res = await CourseServices.createCourseLesson(dataToSubmit);
     console.log(res);

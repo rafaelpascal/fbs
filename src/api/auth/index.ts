@@ -4,6 +4,7 @@ import {
   ApplicationFormPayload,
   ApplicationOTPFormPayload,
   AuthFormPayload,
+  ResendOTPPayload,
 } from "~/feature/students/schema";
 import { TypeIs } from "~/utils/packages/type-is";
 
@@ -23,6 +24,16 @@ export class AuthService extends BaseAPIService {
     try {
       type APPLICATIONOTP = APIResponse<VALIDATEOTPResponse>;
       const res = await Api.post<APPLICATIONOTP>("/validate-otp", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static resendOTP = async (payload: ResendOTPPayload) => {
+    try {
+      type APPLICATIONOTP = APIResponse<VALIDATEOTPResponse>;
+      const res = await Api.post<APPLICATIONOTP>("/resend-otp", payload);
       return res;
     } catch (error) {
       const handleError = error;

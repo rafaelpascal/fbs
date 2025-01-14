@@ -1,8 +1,10 @@
 import { BaseModal } from "./BaseModal";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { IoIosCopy } from "react-icons/io";
 import { FaEdit } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
 
 interface IModalPropsType {
   isOpen: boolean;
@@ -15,10 +17,30 @@ export const CourseCreatedModal = ({
   //   message,
   closeModal,
 }: IModalPropsType) => {
-  // Close modal
+  const course_url = useSelector((state: RootState) => state.url.course_url);
+  const [isCopied, setIsCopied] = useState(false);
+
   const handleclose = useCallback(() => {
     closeModal();
   }, []);
+
+  useEffect(() => {
+    console.log("ffff", course_url);
+  }, [course_url]);
+
+  const handleCopy = () => {
+    if (course_url) {
+      navigator.clipboard.writeText(course_url).then(
+        () => {
+          setIsCopied(true);
+          setTimeout(() => setIsCopied(false), 2000);
+        },
+        (error) => {
+          console.error("Failed to copy text: ", error);
+        }
+      );
+    }
+  };
 
   return (
     <BaseModal isOpen={isOpen} closeModal={closeModal}>
@@ -41,11 +63,14 @@ export const CourseCreatedModal = ({
           </h2>
           <div className="w-full flex justify-start items-center gap-2">
             <p className="text-[16px] text-left font-DMSans font-normal ">
-              https://docs.google.com/document/d/
+              {course_url}
             </p>
-            <button>
+            <button onClick={handleCopy}>
               <IoIosCopy className="text-[30px]" />
             </button>
+            {isCopied && (
+              <span className="text-green-500 text-sm">Copied!</span>
+            )}
           </div>
         </div>
         <button className="mt-14 flex justify-start items-center gap-4">

@@ -51,7 +51,7 @@ const ToolbarButton: React.FC<{
         toggleFormat(editor, format);
       }}
       className={`p-2 ${
-        isActive ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
+        isActive ? "bg-[#F01E00] text-white" : "bg-gray-200 text-gray-800"
       } rounded`}
     >
       {icon}
@@ -84,9 +84,41 @@ const FontSizeButton: React.FC = () => {
         e.preventDefault();
         increaseFontSize();
       }}
-      className="p-2 bg-gray-200 font-DMSans font-bold text-gray-800 rounded"
+      className="p-2 bg-gray-200 font-DMSans font-bold hover:bg-[#F01E00] hover:text-[#fff] text-gray-800 rounded"
     >
       A+
+    </button>
+  );
+};
+
+const FontSizeReduceButton: React.FC = () => {
+  const editor = useSlate();
+
+  const decreaseFontSize = () => {
+    const [match] = Editor.nodes<CustomText>(editor, {
+      match: Text.isText,
+      universal: true,
+    });
+
+    const currentFontSize = match?.[0]?.fontSize || "18px";
+    const newFontSize = `${Math.max(8, parseInt(currentFontSize) - 2)}px`;
+
+    Transforms.setNodes<CustomText>(
+      editor,
+      { fontSize: newFontSize },
+      { match: Text.isText, split: true }
+    );
+  };
+
+  return (
+    <button
+      onMouseDown={(e) => {
+        e.preventDefault();
+        decreaseFontSize();
+      }}
+      className="p-2 bg-gray-200 font-DMSans font-bold hover:bg-[#F01E00] hover:text-[#fff] text-gray-800 rounded"
+    >
+      A-
     </button>
   );
 };
@@ -156,10 +188,11 @@ const RichText: React.FC<RichTextProps> = ({ value, onChange }) => {
           <ToolbarButton format="underline" icon={<FaUnderline />} />
           <ToolbarButton format="code" icon={<FaCode />} />
           <FontSizeButton />
+          <FontSizeReduceButton />
         </div>
         <Editable
           placeholder="Enter some text..."
-          className="p-4 h-[134px] text-[#333] text-[18px] border-[0.5px] border-[#ddd] rounded-md mb-2"
+          className="p-4 h-[200px] scrollbar-style overflow-y-auto text-[#333] text-[18px] border-[0.5px] border-[#ddd] rounded-md mb-2"
           renderLeaf={renderLeaf}
         />
       </Slate>

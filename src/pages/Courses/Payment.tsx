@@ -45,15 +45,13 @@ const Payment = () => {
     setLoading(true);
     try {
       const payload = {
-        userid: 23, // Example user ID
+        userid: 23,
       };
       const res = await CourseServices.fetchApplication(payload);
 
       if (res.data && res.data.data && res.data.data.length > 0) {
         const application = res.data.data[0];
-        console.log(application);
         setCourseTitle(application.course_title);
-        // Map database response to programSpecifications format
         const updatedProgramSpecifications = [
           {
             title: "Format",
@@ -86,9 +84,6 @@ const Payment = () => {
               : "N/A",
           },
         ];
-
-        console.log(updatedProgramSpecifications);
-        // Set the updated programSpecifications to state or use it elsewhere
         setProgramSpecifications(updatedProgramSpecifications);
         setLoading(false);
       }
@@ -100,6 +95,7 @@ const Payment = () => {
   useEffect(() => {
     fetchmyapplication();
   }, []);
+
   return (
     <DashboardArea>
       <div className="shadow-md flex justify-center items-center rounded-[12px] w-full h-full py-12">

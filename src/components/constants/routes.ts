@@ -1,6 +1,6 @@
 export const ROUTES = {
   NEW_COURSE: "/:title/:id",
-  APPLICATION: "/application",
+  APPLICATION: "/application/:title/:id",
   FORM_SUBMITTED: "/submitted",
   HOME: "/login",
   DASHBOARD: "/dashboard",

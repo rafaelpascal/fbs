@@ -50,7 +50,9 @@ const CourseContents = ({ courseId }: CourseContentProps) => {
       <h2 className="font-DMSans font-semibold mb-4 text-[20px]">
         Description
       </h2>
-      <h2 className="mb-4">{ismodule.length} Modules • lessons</h2>
+      <h2 className="mb-4">
+        {ismodule.length} Modules • {}lessons
+      </h2>
       <Accordion
         lessons={0}
         items={accordionItems}

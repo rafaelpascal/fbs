@@ -7,6 +7,11 @@ export const authSchema = Validator.object({
 });
 export type AuthFormPayload = z.infer<typeof authSchema>;
 
+export const resendOTPSchema = Validator.object({
+  email: Validator.email("Email"),
+});
+export type ResendOTPPayload = z.infer<typeof resendOTPSchema>;
+
 export const transferSchema = Validator.object({
   bankName: Validator.string("Bank Name"),
   bankAccount: Validator.string("Bank Account"),

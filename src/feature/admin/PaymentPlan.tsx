@@ -37,7 +37,8 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData: any) => ({ ...prevData, [name]: value }));
+    const sanitizedValue = value.replace(/,/g, "");
+    setFormData((prevData: any) => ({ ...prevData, [name]: sanitizedValue }));
   };
 
   const handleCheckboxChange = (
