@@ -215,7 +215,7 @@ const CourseBuilder = ({ created }: any) => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="relative lg:h-[80vh]">
+      <div className="">
         <h2 className="font-DMSans mb-2 text-[18px] font-semibold">
           CONTENT BUILDER
         </h2>
@@ -340,7 +340,7 @@ const CourseBuilder = ({ created }: any) => {
           moduleData={moduleObj}
           setModuleData={setlessonObj}
         />
-        <div className="lg:absolute bottom-3 flex flex-row flex-wrap justify-start items-center gap-4">
+        <div className="flex flex-row flex-wrap justify-start items-center gap-4">
           <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
             PREVIEW
           </button>

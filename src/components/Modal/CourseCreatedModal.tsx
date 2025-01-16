@@ -1,5 +1,5 @@
 import { BaseModal } from "./BaseModal";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { IoIosCopy } from "react-icons/io";
 import { FaEdit } from "react-icons/fa";
@@ -23,10 +23,6 @@ export const CourseCreatedModal = ({
   const handleclose = useCallback(() => {
     closeModal();
   }, []);
-
-  useEffect(() => {
-    console.log("ffff", course_url);
-  }, [course_url]);
 
   const handleCopy = () => {
     if (course_url) {

@@ -11,6 +11,7 @@ import { CiClock1 } from "react-icons/ci";
 import { LuMonitorPlay } from "react-icons/lu";
 import { IoExtensionPuzzleOutline } from "react-icons/io5";
 import { MdBarChart } from "react-icons/md";
+import ReactPlayer from "react-player";
 import { BsAward } from "react-icons/bs";
 import {
   FaFacebookF,
@@ -27,7 +28,6 @@ const tabsData = [
   { title: "Overview" },
   { title: "Course Content" },
   { title: "Faculties" },
-  { title: "Course Structure" },
   { title: "Tuition" },
 ];
 
@@ -131,6 +131,7 @@ const Contents = ({ id, name }: CourseProps) => {
     certificate_type: "",
     cohort: null,
     cohortid: null,
+    cohort_title: "",
     course_format: "",
     course_flexible: "",
     course_id: null,
@@ -177,12 +178,6 @@ const Contents = ({ id, name }: CourseProps) => {
     video_url: "",
   });
 
-  const namesArray = courseData.facilitators.split(",");
-  facilitatorsData.forEach((facilitator, index) => {
-    if (namesArray[index]) {
-      facilitator.name = namesArray[index];
-    }
-  });
   const navigate = useNavigate();
 
   const updatedFacilitatorsItem = FacilitatorsItem.map((facilitator) => {
@@ -233,6 +228,8 @@ const Contents = ({ id, name }: CourseProps) => {
         courseid: JSON.parse(id),
       };
       const course = await CourseServices.getCourse(payload);
+      console.log("ffff", course);
+
       setCourseData(course.data.course_details[0]);
       setIsLoading(false);
     } catch (error) {
@@ -281,6 +278,13 @@ const Contents = ({ id, name }: CourseProps) => {
     getCourse();
   }, [id, name]);
 
+  const namesArray = courseData.facilitators.split(",");
+  facilitatorsData.forEach((facilitator, index) => {
+    if (namesArray[index]) {
+      facilitator.name = namesArray[index];
+    }
+  });
+
   const handleNavigate = () => {
     navigate(`/application/${courseData.course_title}/${courseData.coursesid}`);
   };
@@ -326,6 +330,11 @@ const Contents = ({ id, name }: CourseProps) => {
 
   const monthlyPayment = courseData.naira_amount / courseData.installment;
 
+  const lectureItems = {
+    title: "Introduction to Business consulting And Strategy",
+    videoSrc: `${courseData.video_url}`,
+  };
+
   if (isLoading) {
     return (
       <div className="h-[400px] w-full flex justify-center items-center">
@@ -340,7 +349,8 @@ const Contents = ({ id, name }: CourseProps) => {
           <h2 className="text-[40px] my-3">{courseData.course_title}</h2>
           <p className="text-[20px]  my-3">{courseData.course_highlight}</p>
           <p className="text-[20px]">
-            <span className="text-[#FF3B30]">Cohort</span> {courseData.cohort}
+            <span className="text-[#FF3B30]">Cohort</span>{" "}
+            {courseData.cohort_title}
           </p>
           <p className="text-[20px] my-3">
             <span className="text-[#FF3B30]">Program:</span>{" "}
@@ -350,7 +360,25 @@ const Contents = ({ id, name }: CourseProps) => {
             <span className="text-[#FF3B30]">Format:</span>{" "}
             {courseData.course_mode}
           </p>
-          <img src={courseData.images} alt="Video" className="rounded-lg" />
+          {courseData.video_url ? (
+            <div
+              style={{
+                maxWidth: "100%",
+                position: "relative",
+                paddingTop: "56.25%",
+              }}
+            >
+              <ReactPlayer
+                url={lectureItems.videoSrc}
+                controls
+                width="100%"
+                height="100%"
+                style={{ position: "absolute", top: 0, left: 0 }}
+              />
+            </div>
+          ) : (
+            <img src={courseData.images} alt="Video" className="rounded-lg" />
+          )}
           <Tabs tabs={tabsData}>
             <div>
               <Description description={courseData.description} />
@@ -361,23 +389,23 @@ const Contents = ({ id, name }: CourseProps) => {
             <div>
               <Facilitators facilitatorsData={facilitatorsData} />
             </div>
-            <div className="">Course structure content goes here.</div>
-            <div className="">Tuition content goes here.</div>
+            <div className="">
+              <Fee
+                naira={courseData.naira_amount}
+                usd={courseData.usd_amount}
+                installment={courseData.installment}
+              />
+            </div>
           </Tabs>
           {updatedFacilitatorsItem.map((facilitator, index) => (
             <List
               key={index}
               items={facilitator.items}
               title={facilitator.Title}
-              ordered={false}
+              ordered={true}
               customClass="p-2"
             />
           ))}
-          <Fee
-            naira={courseData.naira_amount}
-            usd={courseData.usd_amount}
-            installment={courseData.installment}
-          />
           <div className="flex justify-between flex-col lg:flex-row flex-wrap w-full">
             <BaseButton
               containerCLassName="mt-4 w-full lg:w-[369.19px] h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[24px] font-bold font-DMSans text-[#fff]"

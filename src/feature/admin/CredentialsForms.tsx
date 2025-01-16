@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Descendant } from "slate";
-import RichText from "~/components/data-inputs/RichText";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
 import FormRequirements from "./FormRequirements";
 import { CourseServices } from "~/api/course";
 import { showAlert } from "~/utils/sweetAlert";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
-import { useSelector } from "react-redux";
-import { RootState } from "~/redux-store/store";
+import RichTextEditor from "~/components/data-inputs/RichtextQuill";
+import { Descendant } from "slate";
 
 type CustomElement = {
   type: "paragraph";
@@ -17,7 +17,7 @@ type CustomDescendant = CustomElement & Descendant;
 
 const CredentialsForms = ({ created }: any) => {
   const courseId = useSelector((state: RootState) => state.course.course_id);
-  const [isSubmitting, setisSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [admissionRequirements, setAdmissionRequirements] = useState<
     CustomDescendant[]
   >([{ type: "paragraph", children: [{ text: "" }] }]);
@@ -38,7 +38,7 @@ const CredentialsForms = ({ created }: any) => {
   ]);
 
   const handleSubmit = async () => {
-    setisSubmitting(true);
+    setIsSubmitting(true);
     const extractText = (nodes: CustomDescendant[]): string => {
       return nodes
         .map((node) => node.children.map((child) => child.text).join(""))
@@ -54,11 +54,12 @@ const CredentialsForms = ({ created }: any) => {
       course_structure: extractText(courseStructure),
       course_for: extractText(courseFor),
     };
+    console.log(payload);
 
     try {
       const res = await CourseServices.createCourseRequirements(payload);
       console.log("Response:", res);
-      setisSubmitting(false);
+      setIsSubmitting(false);
       await showAlert(
         "success",
         "Created!",
@@ -68,7 +69,7 @@ const CredentialsForms = ({ created }: any) => {
       );
       created();
     } catch (error) {
-      setisSubmitting(false);
+      setIsSubmitting(false);
       console.log(error);
     }
   };
@@ -79,60 +80,82 @@ const CredentialsForms = ({ created }: any) => {
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           ADMISSION REQUIREMENTS
         </h2>
-        <RichText
-          value={admissionRequirements}
-          onChange={(value) =>
-            setAdmissionRequirements(value as CustomDescendant[])
-          }
+        <RichTextEditor
+          value={admissionRequirements
+            .map((node) => node.children[0].text)
+            .join("")} // Pass the string value
+          onChange={(value: string) => {
+            setAdmissionRequirements([
+              { type: "paragraph", children: [{ text: value }] }, // Convert back to CustomDescendant format
+            ]);
+          }}
         />
       </div>
       <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           LEARNING OBJECTIVES
         </h2>
-        <RichText
-          value={learningObjectives}
-          onChange={(value) =>
-            setLearningObjectives(value as CustomDescendant[])
-          }
+        <RichTextEditor
+          value={learningObjectives
+            .map((node) => node.children[0].text)
+            .join("")}
+          onChange={(value: string) => {
+            setLearningObjectives([
+              { type: "paragraph", children: [{ text: value }] },
+            ]);
+          }}
         />
       </div>
       <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           ASSESSMENT METHODS
         </h2>
-        <RichText
-          value={assessmentMethods}
-          onChange={(value) =>
-            setAssessmentMethods(value as CustomDescendant[])
-          }
+        <RichTextEditor
+          value={assessmentMethods
+            .map((node) => node.children[0].text)
+            .join("")}
+          onChange={(value: string) => {
+            setAssessmentMethods([
+              { type: "paragraph", children: [{ text: value }] },
+            ]);
+          }}
         />
       </div>
       <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           CAREER OPTIONS & OPPORTUNITIES
         </h2>
-        <RichText
-          value={careerOptions}
-          onChange={(value) => setCareerOptions(value as CustomDescendant[])}
+        <RichTextEditor
+          value={careerOptions.map((node) => node.children[0].text).join("")}
+          onChange={(value: string) => {
+            setCareerOptions([
+              { type: "paragraph", children: [{ text: value }] },
+            ]);
+          }}
         />
       </div>
       <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           COURSE STRUCTURE
         </h2>
-        <RichText
-          value={courseStructure}
-          onChange={(value) => setCourseStructure(value as CustomDescendant[])}
+        <RichTextEditor
+          value={courseStructure.map((node) => node.children[0].text).join("")}
+          onChange={(value: string) => {
+            setCourseStructure([
+              { type: "paragraph", children: [{ text: value }] },
+            ]);
+          }}
         />
       </div>
       <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
           WHO IS THIS COURSE FOR?
         </h2>
-        <RichText
-          value={courseFor}
-          onChange={(value) => setCourseFor(value as CustomDescendant[])}
+        <RichTextEditor
+          value={courseFor.map((node) => node.children[0].text).join("")}
+          onChange={(value: string) => {
+            setCourseFor([{ type: "paragraph", children: [{ text: value }] }]);
+          }}
         />
       </div>
       <div className="shadow-md my-4 p-4">

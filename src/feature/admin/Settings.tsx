@@ -346,9 +346,9 @@ const Dropdowns = ({
       </div>
       <div className="w-full lg:w-[48%] mb-4">
         <BaseInput
-          label="Cohort tag"
+          label="Cohort Title"
           type="text"
-          placeholder="Cohort tag"
+          placeholder="Cohort Title"
           name="cohortTag"
           value={cohortTagValue}
           onChange={handleInputChange}

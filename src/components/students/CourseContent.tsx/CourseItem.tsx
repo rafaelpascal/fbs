@@ -20,7 +20,6 @@ const CourseItem = ({ moduleId }: LessonProps) => {
         moduleid: moduleId,
       };
       const lessons = await CourseServices.getLessonByModuleId(payload);
-      console.log("kkkkkkkkkk", lessons);
       setLessons(lessons.data.course_lessons);
     } catch (error) {
       console.log(error);
@@ -30,10 +29,6 @@ const CourseItem = ({ moduleId }: LessonProps) => {
   useEffect(() => {
     getLesson();
   }, [moduleId]);
-
-  useEffect(() => {
-    console.log("jjjj", lessons);
-  }, [lessons]);
 
   return (
     <div>

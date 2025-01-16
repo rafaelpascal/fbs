@@ -272,7 +272,6 @@ const Createcourseform = ({ created }: any) => {
       );
       formDataToSend.append("course_mode", formData.courseFormat?.label || "");
       formDataToSend.append("course_format", "digital");
-      // formDataToSend.append("certificate_type", "digital");
       formDataToSend.append("program_fee", "");
       formDataToSend.append("program_plan", formData.paymentplan?.value || "");
       formDataToSend.append("usd", formData.currency.USD ? "1" : "0");
@@ -285,6 +284,7 @@ const Createcourseform = ({ created }: any) => {
         formData.enrollmentStartDate
       );
       formDataToSend.append("enrollment_enddate", formData.enrollmentEndDate);
+      formDataToSend.append("cohort_title", formData.cohortTag);
       formDataToSend.append(
         "course_flexible",
         formData.courseSchedule === "allTime" ? "1" : "0"

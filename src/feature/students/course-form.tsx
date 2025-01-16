@@ -18,7 +18,7 @@ type CourseFormProps = {
 const Courseform = ({ name, id }: CourseFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [courseData, setCourseData] = useState({
-    cohortid: null,
+    course_id: 0,
     course_title: "",
   });
   const { theme } = useTheme();
@@ -59,8 +59,6 @@ const Courseform = ({ name, id }: CourseFormProps) => {
         courseid: JSON.parse(id),
       };
       const course = await CourseServices.getCourse(payload);
-      console.log("bbbbbb", course);
-
       setCourseData(course.data.course_details[0]);
       setIsLoading(false);
     } catch (error) {
@@ -85,6 +83,7 @@ const Courseform = ({ name, id }: CourseFormProps) => {
           handleOTPComplete={handleOTPComplete}
           submitting={submitting}
           coursetitle={courseData.course_title}
+          course_id={courseData.course_id}
         />
       )}
 

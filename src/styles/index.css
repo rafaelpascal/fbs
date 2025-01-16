@@ -57,6 +57,16 @@ canvas {
   scrollbar-color: #888;
 }
 
+.rich-text-content ol {
+  list-style-type: disc; /* Ensures dots are used */
+  margin-left: 20px; /* Adds indentation for nested lists */
+}
+
+.rich-text-content li {
+  margin-bottom: 8px; /* Adds spacing between items */
+}
+
+
 .custom-title {
   font-size: 24px; /* Adjust the title font size */
 }

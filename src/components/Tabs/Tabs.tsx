@@ -35,7 +35,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, children }) => {
             <span
               role="tab"
               aria-selected={activeTab === index}
-              className={`cursor-pointer text-[14px] font-DMSans font-semibold py-2 border-b-2 
+              className={`cursor-pointer text-[18px] font-DMSans font-semibold py-2 border-b-2 
           ${
             activeTab === index
               ? theme === "dark"

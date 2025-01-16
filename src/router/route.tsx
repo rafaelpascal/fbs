@@ -74,151 +74,162 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Define the router with the future flag inside createBrowserRouter
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: ROUTES.NEW_COURSE,
+      element: <NewCourse />,
+    },
+    {
+      path: ROUTES.EVENTS,
+      element: <Events />,
+    },
+    {
+      path: ROUTES.SINGLE_EVENT,
+      element: <SingleEvent />,
+    },
+    {
+      path: ROUTES.APPLICATION,
+      element: <Application />,
+    },
+    {
+      path: ROUTES.FORM_SUBMITTED,
+      element: <FormSubmitted />,
+    },
+    {
+      path: ROUTES.HOME,
+      element: <Login />,
+    },
+    {
+      element: <AppLayout />,
+      children: [
+        {
+          path: ROUTES.DASHBOARD,
+          element: <Home />,
+        },
+        {
+          path: ROUTES.PAYMENT,
+          element: <Payment />,
+        },
+        {
+          path: ROUTES.BANKTRANSFER,
+          element: <BankTransfer />,
+        },
+        {
+          path: ROUTES.STUDENTRANSACTION,
+          element: <Transactions />,
+        },
+      ],
+    },
+    {
+      element: <AdminAppLayout />,
+      children: [
+        {
+          path: ROUTES.ADMINDASHBOARD,
+          element: <Dashboard />,
+          children: [
+            {
+              index: true,
+              element: <Navigate to={ROUTES.PAYMENTTABLE} />,
+            },
+            {
+              path: ROUTES.PAYMENTTABLE,
+              element: <PaymentsTable />,
+            },
+            {
+              path: ROUTES.APPLICATIONTABLE,
+              element: <ApplicationTable />,
+            },
+            {
+              path: ROUTES.FACULTYTABLE,
+              element: <FacultiesTable />,
+            },
+          ],
+        },
+        {
+          path: ROUTES.COURSEAPPLICATION,
+          element: <CourseApplications />,
+        },
+        {
+          path: ROUTES.COURSES,
+          element: <AdminCourses />,
+          children: [
+            {
+              index: true,
+              element: <Navigate to={ROUTES.ASSIGNMENTSTABLE} />,
+            },
+            {
+              path: ROUTES.ASSIGNMENTSTABLE,
+              element: <CourseAssignmentTable />,
+            },
+            {
+              path: ROUTES.CAPSTONESTABLE,
+              element: <CapstonesTable />,
+            },
+            {
+              path: ROUTES.POLLSTABLE,
+              element: <PollsTable />,
+            },
+            {
+              path: ROUTES.QUIZZESTABLE,
+              element: <QuizzesTable />,
+            },
+          ],
+        },
+        {
+          path: ROUTES.NEWCOURSE,
+          element: <CreateCourse />,
+        },
+        {
+          path: ROUTES.ADMINMANAGEMENT,
+          element: <AdminManagement />,
+        },
+        {
+          path: ROUTES.EVENTMANAGEMENT,
+          element: <EventsManagement />,
+        },
+      ],
+    },
+    {
+      element: <LectureLayout />,
+      children: [
+        {
+          path: ROUTES.LECTURE,
+          element: <Lecture />,
+        },
+        {
+          path: ROUTES.QUIZ,
+          element: <Quiz />,
+        },
+        {
+          path: ROUTES.WORD,
+          element: <WordLecture />,
+        },
+        {
+          path: ROUTES.ASSIGNMENT,
+          element: <Assignment />,
+        },
+        {
+          path: ROUTES.CONGRATULATIONS,
+          element: <Congratulations />,
+        },
+        {
+          path: ROUTES.LECTURECOMPLETE,
+          element: <LectureComplete />,
+        },
+      ],
+    },
+  ],
   {
-    path: ROUTES.NEW_COURSE,
-    element: <NewCourse />,
-  },
-  {
-    path: ROUTES.EVENTS,
-    element: <Events />,
-  },
-  {
-    path: ROUTES.SINGLE_EVENT,
-    element: <SingleEvent />,
-  },
-  {
-    path: ROUTES.APPLICATION,
-    element: <Application />,
-  },
-  {
-    path: ROUTES.FORM_SUBMITTED,
-    element: <FormSubmitted />,
-  },
-  {
-    path: ROUTES.HOME,
-    element: <Login />,
-  },
-  {
-    element: <AppLayout />,
-    children: [
-      {
-        path: ROUTES.DASHBOARD,
-        element: <Home />,
-      },
-      {
-        path: ROUTES.PAYMENT,
-        element: <Payment />,
-      },
-      {
-        path: ROUTES.BANKTRANSFER,
-        element: <BankTransfer />,
-      },
-      {
-        path: ROUTES.STUDENTRANSACTION,
-        element: <Transactions />,
-      },
-    ],
-  },
-  {
-    element: <AdminAppLayout />,
-    children: [
-      {
-        path: ROUTES.ADMINDASHBOARD,
-        element: <Dashboard />,
-        children: [
-          {
-            index: true,
-            element: <Navigate to={ROUTES.PAYMENTTABLE} />,
-          },
-          {
-            path: ROUTES.PAYMENTTABLE,
-            element: <PaymentsTable />,
-          },
-          {
-            path: ROUTES.APPLICATIONTABLE,
-            element: <ApplicationTable />,
-          },
-          {
-            path: ROUTES.FACULTYTABLE,
-            element: <FacultiesTable />,
-          },
-        ],
-      },
-      {
-        path: ROUTES.COURSEAPPLICATION,
-        element: <CourseApplications />,
-      },
-      {
-        path: ROUTES.COURSES,
-        element: <AdminCourses />,
-        children: [
-          {
-            index: true,
-            element: <Navigate to={ROUTES.ASSIGNMENTSTABLE} />,
-          },
-          {
-            path: ROUTES.ASSIGNMENTSTABLE,
-            element: <CourseAssignmentTable />,
-          },
-          {
-            path: ROUTES.CAPSTONESTABLE,
-            element: <CapstonesTable />,
-          },
-          {
-            path: ROUTES.POLLSTABLE,
-            element: <PollsTable />,
-          },
-          {
-            path: ROUTES.QUIZZESTABLE,
-            element: <QuizzesTable />,
-          },
-        ],
-      },
-      {
-        path: ROUTES.NEWCOURSE,
-        element: <CreateCourse />,
-      },
-      {
-        path: ROUTES.ADMINMANAGEMENT,
-        element: <AdminManagement />,
-      },
-      {
-        path: ROUTES.EVENTMANAGEMENT,
-        element: <EventsManagement />,
-      },
-    ],
-  },
-  {
-    element: <LectureLayout />,
-    children: [
-      {
-        path: ROUTES.LECTURE,
-        element: <Lecture />,
-      },
-      {
-        path: ROUTES.QUIZ,
-        element: <Quiz />,
-      },
-      {
-        path: ROUTES.WORD,
-        element: <WordLecture />,
-      },
-      {
-        path: ROUTES.ASSIGNMENT,
-        element: <Assignment />,
-      },
-      {
-        path: ROUTES.CONGRATULATIONS,
-        element: <Congratulations />,
-      },
-      {
-        path: ROUTES.LECTURECOMPLETE,
-        element: <LectureComplete />,
-      },
-    ],
-  },
-]);
+    future: {
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_relativeSplatPath: true,
+      v7_skipActionErrorRevalidation: true,
+    },
+  }
+);
 
 // App router component
 const AppRouter = () => (
@@ -241,7 +252,12 @@ const AppRouter = () => (
         </div>
       }
     >
-      <RouterProvider router={router} />
+      <RouterProvider
+        router={router}
+        future={{
+          v7_startTransition: true,
+        }}
+      />
     </Suspense>
   </TanstackProvider>
 );

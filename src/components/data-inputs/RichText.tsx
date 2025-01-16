@@ -1,8 +1,15 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { createEditor, Descendant, Text } from "slate";
 import { Slate, Editable, withReact, useSlate } from "slate-react";
 import { Transforms, Editor } from "slate";
-import { FaBold, FaItalic, FaUnderline, FaCode } from "react-icons/fa";
+import {
+  FaBold,
+  FaItalic,
+  FaUnderline,
+  FaCode,
+  FaListUl,
+  FaListOl,
+} from "react-icons/fa";
 import { BaseElement } from "slate";
 interface RichTextProps {
   value: Descendant[];
@@ -23,8 +30,14 @@ export type CustomText = {
 
 // Define a CustomElement
 export interface CustomElement extends BaseElement {
-  type: "paragraph" | "heading" | "code-block";
-  children: CustomText[]; // A CustomElement contains an array of CustomText
+  type:
+    | "paragraph"
+    | "heading"
+    | "code-block"
+    | "ordered-list"
+    | "unordered-list"
+    | "list-item";
+  children: CustomText[];
 }
 
 // Union type for all Slate nodes
@@ -91,6 +104,72 @@ const FontSizeButton: React.FC = () => {
   );
 };
 
+const isListActive = (
+  editor: Editor,
+  format: "unordered-list" | "ordered-list"
+) => {
+  const [match] = Editor.nodes(editor, {
+    match: (n) =>
+      Editor.isBlock(editor, n as CustomElement) &&
+      (n as CustomElement).type === format,
+  });
+  const isActive = !!match; // Determine if the format is active
+  console.log(isActive); // Log the active state
+  return isActive; // Return the active state
+};
+
+const ListButton: React.FC<{
+  format: "unordered-list" | "ordered-list";
+  icon: React.ReactNode;
+}> = ({ format, icon }) => {
+  const editor = useSlate();
+  const isActive = isListActive(editor, format); // Use the custom isListActive function
+
+  useEffect(() => {
+    console.log("Editor state updated:", isActive);
+  }, [isActive]); // Log whenever the active state changes
+
+  const toggleList = () => {
+    const isListCurrentlyActive = isListActive(editor, format);
+    console.log("Before toggle:", isListCurrentlyActive);
+
+    if (isListCurrentlyActive) {
+      Transforms.unwrapNodes(editor, {
+        match: (n) =>
+          Editor.isBlock(editor, n as CustomElement) &&
+          ((n as CustomElement).type === "unordered-list" ||
+            (n as CustomElement).type === "ordered-list"),
+      });
+    } else {
+      Transforms.wrapNodes(
+        editor,
+        { type: format, children: [] } as CustomElement,
+        {
+          match: (n) =>
+            Editor.isBlock(editor, n as CustomElement) &&
+            (n as CustomElement).type !== "list-item",
+        }
+      );
+    }
+
+    // You can also call `Editor.focus(editor)` if needed to ensure the editor is focused after the transformation
+  };
+
+  return (
+    <button
+      onMouseDown={(e) => {
+        e.preventDefault();
+        toggleList();
+      }}
+      className={`p-2 ${
+        isActive ? "bg-[#F01E00] text-white" : "bg-gray-200 text-gray-800"
+      } rounded`}
+    >
+      {icon}
+    </button>
+  );
+};
+
 const FontSizeReduceButton: React.FC = () => {
   const editor = useSlate();
 
@@ -142,6 +221,31 @@ const isFormatActive = (editor: Editor, format: keyof CustomText) => {
   return !!match;
 };
 
+const renderElement = (props: any) => {
+  const { attributes, children, element } = props;
+
+  switch (element.type) {
+    case "ordered-list":
+      return (
+        <ol {...attributes} className="list-decimal pl-5">
+          {children}
+        </ol>
+      );
+    case "unordered-list":
+      return (
+        <ul {...attributes} className="list-disc pl-5">
+          {children}
+        </ul>
+      );
+    case "list-item":
+      return <li {...attributes}>{children}</li>;
+    // Ensure paragraph is not rendered inside a list
+    case "paragraph":
+    default:
+      return <div {...attributes}>{children}</div>;
+  }
+};
+
 // Render Leaf for text formatting
 const renderLeaf = (props: any) => {
   const { attributes, children, leaf } = props;
@@ -189,10 +293,13 @@ const RichText: React.FC<RichTextProps> = ({ value, onChange }) => {
           <ToolbarButton format="code" icon={<FaCode />} />
           <FontSizeButton />
           <FontSizeReduceButton />
+          <ListButton format="unordered-list" icon={<FaListUl />} />
+          <ListButton format="ordered-list" icon={<FaListOl />} />
         </div>
         <Editable
           placeholder="Enter some text..."
           className="p-4 h-[200px] scrollbar-style overflow-y-auto text-[#333] text-[18px] border-[0.5px] border-[#ddd] rounded-md mb-2"
+          renderElement={renderElement}
           renderLeaf={renderLeaf}
         />
       </Slate>

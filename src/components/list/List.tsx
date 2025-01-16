@@ -1,14 +1,20 @@
 import { GoDotFill } from "react-icons/go";
+import RichText from "./RichText";
+import DOMPurify from "dompurify";
 
 type FacilitatorsProps = {
   title: string;
   items: string[];
-  ordered: boolean;
-  customClass: string;
+  ordered?: boolean;
+  customClass?: string;
 };
 
-const List = ({ title, items, ordered, customClass }: FacilitatorsProps) => {
-  // Choose the list type based on the `ordered` prop
+const List = ({
+  title,
+  items,
+  ordered = false,
+  customClass = "",
+}: FacilitatorsProps) => {
   const ListTag = ordered ? "ol" : "ul";
 
   return (
@@ -16,12 +22,12 @@ const List = ({ title, items, ordered, customClass }: FacilitatorsProps) => {
       <h2 className="text-[20px] font-DMSans font-semibold mb-4">{title}</h2>
       <ListTag className={`${customClass}`}>
         {items.map((item, index) => (
-          <li
-            key={index}
-            className="flex justify-start items-center gap-4 py-2"
-          >
-            <GoDotFill />
-            <p>{item}</p>
+          <li key={index} className="flex items-start gap-4 py-2">
+            {!ordered && <GoDotFill className="mt-1" />}
+            <div className="flex-1">
+              {/* Use RichText for advanced rendering or sanitize directly */}
+              <RichText content={DOMPurify.sanitize(item)} />
+            </div>
           </li>
         ))}
       </ListTag>

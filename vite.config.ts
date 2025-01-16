@@ -5,6 +5,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 // Export the Vite configuration
 export default defineConfig({
+  server: {
+    port: 5174,
+  },
   plugins: [
     tsconfigPaths(),
     react(),

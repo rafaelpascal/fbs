@@ -14,15 +14,9 @@ import { showAlert } from "~/utils/sweetAlert";
 import { useDispatch } from "react-redux";
 import { setUser } from "~/redux-store/slice/user.Slice";
 import useCountdown from "~/hooks/useCountdown";
+import { setFormRequirements } from "~/redux-store/slice/form_requirements.slice";
 
 const fields = [
-  {
-    name: "programmeid" as const,
-    placeholder: "programmeid",
-    label: "programmeid",
-    value: `12`,
-    type: "hidden",
-  },
   {
     name: "firstname" as const,
     placeholder: "First name",
@@ -47,16 +41,19 @@ const fields = [
 ];
 
 type PersonalInfoProp = {
+  course_id: number;
   coursetitle: string;
   handleOTPComplete: (otp: string) => void;
   submitting: boolean;
 };
 
 const PersonalInfo = ({
+  course_id,
   coursetitle,
   handleOTPComplete,
   submitting,
 }: PersonalInfoProp) => {
+  const dispatch = useDispatch();
   const { seconds, startCountdown, resetCountdown } = useCountdown(60);
   const [resendLoading, setresendLoading] = useState(false);
   const [value, setValue] = useState<string | undefined>(undefined);
@@ -68,11 +65,15 @@ const PersonalInfo = ({
   const [isCodeSent, setisCodeSent] = useState(false);
   const initialCountdown = 30;
   const [, setCountdown] = useState(initialCountdown);
-  const dispatch = useDispatch();
 
   const handleEmailverification = async (data: ApplicationFormPayload) => {
     try {
-      const res = await AuthService.verificationcode(data);
+      const payload = {
+        programmeid: course_id,
+        ...data,
+      };
+      const res = await AuthService.verificationcode(payload);
+      dispatch(setFormRequirements(res.data.form_requirements));
       dispatch(
         setUser({
           userid: res?.data?.userid,
@@ -98,10 +99,9 @@ const PersonalInfo = ({
 
   const handleResend = async () => {
     try {
-      const email = form.getValues("email"); // Retrieve the email value from the form
+      const email = form.getValues("email");
       const payload = { email };
-
-      setresendLoading(true); // Show loading state
+      setresendLoading(true);
       const res = await AuthService.resendOTP(payload);
       console.log(res);
 
@@ -129,10 +129,8 @@ const PersonalInfo = ({
   };
 
   useEffect(() => {
-    if (!isCodeSent) {
-      startCountdown();
-    }
-  }, [isCodeSent]);
+    startCountdown();
+  }, []);
 
   // Handle resend button click
   const handleResendClick = () => {
@@ -161,18 +159,8 @@ const PersonalInfo = ({
         </button>
       </div>
       <form onSubmit={form.handleSubmit(handleEmailverification)}>
-        <div className="w-full mt-4 lg:mt-[6%] grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="w-full my-4 lg:mt-[6%] grid grid-cols-1 gap-4 sm:grid-cols-2">
           {fields.map((field) => {
-            if (field.type === "hidden") {
-              return (
-                <input
-                  key={field.name}
-                  type="hidden"
-                  value={field.value || ""}
-                  {...form.register(field.name)}
-                />
-              );
-            }
             return (
               <BaseInput
                 key={field.name}
@@ -201,56 +189,54 @@ const PersonalInfo = ({
             />
           </div>
           {isCodeSent && (
-            <>
-              <div className="">
-                <h2 className=" text-[18px] font-bold font-DMSans mb-2">
-                  Email verification code
-                </h2>
-                <OTPInput length={4} onComplete={handleOTPComplete} />
-                {submitting ? (
-                  <div className="flex mt-4 justify-start items-center gap-2">
-                    <p className=" text-[18px] italic font-normal font-DMSans ">
-                      Verifying code...
-                    </p>
-                    <LoadingSpinner size="xs" />
-                  </div>
-                ) : (
-                  <>
-                    <h2 className=" text-[18px] italic font-normal font-DMSans mb-2">
-                      Put the verification code sent to your email
+            <div className="mt-8">
+              <h2 className=" text-[18px] font-bold font-DMSans mb-2">
+                Email verification code
+              </h2>
+              <OTPInput length={4} onComplete={handleOTPComplete} />
+              {submitting ? (
+                <div className="flex mt-4 justify-start items-center gap-2">
+                  <p className=" text-[18px] italic font-normal font-DMSans ">
+                    Verifying code...
+                  </p>
+                  <LoadingSpinner size="xs" />
+                </div>
+              ) : (
+                <>
+                  <h2 className=" text-[18px] italic font-normal font-DMSans mb-2">
+                    Put the verification code sent to your email
+                  </h2>
+                  <div className="flex w-full justify-start items-center">
+                    <h2 className=" text-[14px] font-semibold font-DMSans">
+                      Didn’t receive the code?{" "}
                     </h2>
-                    <div className="flex w-full justify-start items-center">
-                      <h2 className=" text-[14px] font-semibold font-DMSans">
-                        Didn’t receive the code?{" "}
-                      </h2>
-                      {seconds > 0 ? (
-                        <span className="text-[14px] ml-2 text-[#FF1515] font-DMSans font-semibold">
-                          Resend in {seconds} seconds
-                        </span>
-                      ) : resendLoading ? (
-                        <div className="flex justify-center items-center gap-2">
-                          <p className="text-[14px] text-[#FF1515] font-DMSans font-bold">
-                            Resending...
-                          </p>
-                          <LoadingSpinner size="xs" />
-                        </div>
-                      ) : (
-                        <button
-                          onClick={handleResendClick}
-                          className="text-[14px] text-[#FF1515] font-DMSans font-bold"
-                        >
-                          Click to resend
-                        </button>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            </>
+                    {seconds > 0 ? (
+                      <span className="text-[14px] ml-2 text-[#FF1515] font-DMSans font-semibold">
+                        Resend in {seconds} seconds
+                      </span>
+                    ) : resendLoading ? (
+                      <div className="flex justify-center items-center gap-2">
+                        <p className="text-[14px] text-[#FF1515] font-DMSans font-bold">
+                          Resending...
+                        </p>
+                        <LoadingSpinner size="xs" />
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleResendClick}
+                        className="text-[14px] ml-2 text-[#FF1515] font-DMSans font-bold"
+                      >
+                        Click to resend
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           )}
         </div>
         <BaseButton
-          containerCLassName={`mt-4 h-[46px] w-auto rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
+          containerCLassName={`mt-16 h-[46px] w-auto rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
             !form.formState.isValid || form.formState.isSubmitting
               ? "cursor-not-allowed opacity-50"
               : ""

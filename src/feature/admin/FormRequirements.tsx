@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { CourseServices } from "~/api/course";
 import { fetchFormRequirements } from "~/api/course/hooks";
 import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { useTheme } from "~/context/theme-provider";
+import { RootState } from "~/redux-store/store";
 import { cn } from "~/utils/helpers";
 import { showAlert } from "~/utils/sweetAlert";
 
@@ -14,6 +16,8 @@ interface FormData {
 type Editor = null | { label: string; value: string | number };
 
 const FormRequirements = () => {
+  const courseId = useSelector((state: RootState) => state.course.course_id);
+
   const { theme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data } = fetchFormRequirements();
@@ -57,7 +61,7 @@ const FormRequirements = () => {
 
     // Prepare the payload
     const payload = {
-      course_id: 10,
+      course_id: courseId,
       requirement_text: formData.editors.label,
       requirements: transformedOptions?.find(
         (option) => option.value === formData.editors?.value

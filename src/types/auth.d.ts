@@ -1,3 +1,9 @@
+type FormRequirement = {
+  id: number;
+  course_id: number;
+  requirements: string;
+  requirement_text: string;
+};
 interface OTPsentResponse {
   status: string;
   success: string;
@@ -5,7 +11,9 @@ interface OTPsentResponse {
   email: string;
   userid: number;
   programmeid: number;
+  form_requirements: FormRequirement[];
 }
+
 interface VALIDATEOTPResponse {
   firstname: string;
   lastname: string;

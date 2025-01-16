@@ -53,6 +53,9 @@ const Passwordfields = [
 ];
 
 const Otherinfo = () => {
+  const formRequirements = useSelector(
+    (state: RootState) => state.formRequirements.form_requirements
+  );
   const navigate = useNavigate();
   const [value, setValue] = useState<string | undefined>(undefined);
   const [referralCode, setreferralCode] = useState("");
@@ -95,6 +98,10 @@ const Otherinfo = () => {
     setSelectedState(event.target.value);
   };
 
+  useEffect(() => {
+    console.log("formRequirements", formRequirements);
+  }, [formRequirements]);
+
   const options = useMemo(() => {
     return countryList()
       .getData()
@@ -110,24 +117,25 @@ const Otherinfo = () => {
   });
   const { unWrapErrors } = Validator.reactHookHandler(form.formState);
 
-  // Handler for handling files selected for O'Level Certificate
-  const handleLevelCertificateSelected = (file: File | null) => {
-    setLevelCertificate(file);
+  const handleFileUpload = (requirement: string, file: File | null) => {
+    switch (requirement) {
+      case "olevel":
+        setLevelCertificate(file);
+        break;
+      case "cv":
+        setCv(file);
+        break;
+      case "degree_certificate":
+        setDegreeCertificate(file);
+        break;
+      case "resume":
+        setResume(file);
+        break;
+      default:
+        console.warn(`Unknown requirement: ${requirement}`);
+    }
   };
 
-  const handleCvSelected = (file: File | null) => {
-    setCv(file);
-  };
-
-  // Handler for handling files selected for Degree Certificate
-  const handleDegreeCertificateSelected = (file: File | null) => {
-    setDegreeCertificate(file);
-  };
-
-  // Handler for handling files selected for Resume
-  const handleResumeSelected = (file: File | null) => {
-    setResume(file);
-  };
   const handleReferalCodeComplete = (otp: string) => {
     console.log("Complete OTP:", otp);
     setreferralCode(otp);
@@ -334,7 +342,26 @@ const Otherinfo = () => {
             </div>
           </div>
         </div>
-        <div className="py-2 w-full">
+        {formRequirements.length !== 0 && (
+          <div>
+            {formRequirements.map((requirement) => (
+              <div key={requirement.id} className="py-2 w-full">
+                <div className="flex justify-start gap-2 items-center">
+                  <h2 className="text-2xl font-semibold mb-4">
+                    {requirement.requirement_text}
+                  </h2>
+                  <FaAsterisk className="text-[#F01E00] mb-4 text-[12px]" />
+                </div>
+                <FileUpload
+                  onFileUpload={(file) =>
+                    handleFileUpload(requirement.requirements, file)
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        )}
+        {/* <div className="py-2 w-full">
           <div className="flex justify-start gap-2 items-center">
             <h2 className="text-2xl font-semibold mb-4">
               Upload Your O'Level Certificate
@@ -368,9 +395,9 @@ const Otherinfo = () => {
             <FaAsterisk className="text-[#F01E00] mb-12 text-[12px]" />
           </div>
           <FileUpload onFileUpload={handleResumeSelected} />
-        </div>
-        <div className="">
-          <h2 className=" text-[18px] font-bold font-DMSans mb-2">
+        </div> */}
+        <div className="w-full">
+          <h2 className="text-[18px] font-bold font-DMSans mb-2">
             Referral code
           </h2>
           <ReferalCode

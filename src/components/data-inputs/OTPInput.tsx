@@ -70,7 +70,7 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, onComplete }) => {
           maxLength={1}
           onChange={(e) => handleChange(e.target.value, index)}
           onKeyDown={(e) => handleKeyDown(e, index)}
-          className={`w-16 lg:w-[136px] h-16 lg:h-[67px] border-2 border-gray-300 rounded text-center text-lg focus:outline-none focus:border-blue-500 ${
+          className={`w-16 lg:w-[106px] h-16 lg:h-[67px] border-2 border-gray-300 rounded text-center text-lg focus:outline-none focus:border-blue-500 ${
             theme === "dark" ? "bg-[#333] text-[#fff]" : "bg-[#fff] text-[#000]"
           }`}
         />

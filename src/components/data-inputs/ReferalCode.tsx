@@ -73,7 +73,7 @@ const ReferalCode: React.FC<OTPInputProps> = ({
           onKeyDown={(e) => handleKeyDown(e, index)}
           // onBlur={() => handleBlur(index)}
           ref={(el) => (inputs.current[index] = el)}
-          className={`w-16 lg:w-[136px] h-16 lg:h-[67px] border-2 border-gray-300 rounded text-center text-lg focus:outline-none focus:border-blue-500 ${
+          className={`w-16 h-16 border-2 border-gray-300 rounded text-center text-lg focus:outline-none focus:border-blue-500 ${
             theme === "dark" ? "bg-[#333] text-[#fff]" : "bg-[#fff] text-[#000]"
           }`}
         />

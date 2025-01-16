@@ -20,7 +20,6 @@ export const transferSchema = Validator.object({
 export type TransferFormPayload = z.infer<typeof transferSchema>;
 
 export const applicationSchema = Validator.object({
-  programmeid: Validator.number("Programme Id"),
   firstname: Validator.string("First Name"),
   lastname: Validator.string("Last Name"),
   email: Validator.email("Email"),
