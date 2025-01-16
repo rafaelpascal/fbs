@@ -13,8 +13,8 @@ import { AuthService } from "~/api/auth";
 import { showAlert } from "~/utils/sweetAlert";
 import { useDispatch } from "react-redux";
 import { setUser } from "~/redux-store/slice/user.Slice";
-import useCountdown from "~/hooks/useCountdown";
 import { setFormRequirements } from "~/redux-store/slice/form_requirements.slice";
+import Countdownauth from "~/hooks/use-Countdown-auth";
 
 const fields = [
   {
@@ -54,7 +54,7 @@ const PersonalInfo = ({
   submitting,
 }: PersonalInfoProp) => {
   const dispatch = useDispatch();
-  const { seconds, startCountdown, resetCountdown } = useCountdown(60);
+  const { seconds, startCountdown, resetCountdown } = Countdownauth(60);
   const [resendLoading, setresendLoading] = useState(false);
   const [value, setValue] = useState<string | undefined>(undefined);
   const form = useForm<ApplicationFormPayload>({
@@ -67,6 +67,7 @@ const PersonalInfo = ({
   const [, setCountdown] = useState(initialCountdown);
 
   const handleEmailverification = async (data: ApplicationFormPayload) => {
+    startCountdown();
     try {
       const payload = {
         programmeid: course_id,

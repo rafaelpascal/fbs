@@ -1,39 +1,50 @@
 import { useState, useEffect } from "react";
 
 interface CountdownHook {
+  minutes: number;
   seconds: number;
   startCountdown: () => void;
   resetCountdown: () => void;
   isActive: boolean;
 }
 
-const useCountdown = (initialSeconds = 60): CountdownHook => {
-  const [seconds, setSeconds] = useState(initialSeconds);
-  const [isActive, setIsActive] = useState(false);
+const useCountdown = (
+  initialMinutes: number = 1,
+  initialSeconds: number = 0,
+  onCountdownEnd?: () => void
+): CountdownHook => {
+  const [totalSeconds, setTotalSeconds] = useState<number>(
+    initialMinutes * 60 + initialSeconds
+  );
+  const [isActive, setIsActive] = useState<boolean>(false);
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | undefined;
 
-    if (isActive && seconds > 0) {
+    if (isActive && totalSeconds > 0) {
       timer = setInterval(() => {
-        setSeconds((prevSeconds) => prevSeconds - 1);
+        setTotalSeconds((prevTotalSeconds) => prevTotalSeconds - 1);
       }, 1000);
-    } else if (seconds === 0) {
+    } else if (totalSeconds === 0) {
       setIsActive(false);
+      onCountdownEnd?.(); // Trigger the callback when time reaches 0
     }
 
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [isActive, seconds]);
+  }, [isActive, totalSeconds, onCountdownEnd]);
 
   const startCountdown = () => setIsActive(true);
   const resetCountdown = () => {
     setIsActive(false);
-    setSeconds(initialSeconds);
+    setTotalSeconds(initialMinutes * 60 + initialSeconds);
   };
 
-  return { seconds, startCountdown, resetCountdown, isActive };
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return { minutes, seconds, startCountdown, resetCountdown, isActive };
 };
 
 export default useCountdown;
