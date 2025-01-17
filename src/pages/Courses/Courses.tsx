@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 import { useTheme } from "~/context/theme-provider";
 import { FaChevronDown } from "react-icons/fa6";
 import ModuleCards from "~/components/cards/ModuleCards";
-// import { useSelector } from "react-redux";
-// import { RootState } from "~/redux-store/store";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
 import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
@@ -157,7 +157,7 @@ const Lessons = [
 ];
 const Dashboard = () => {
   const { theme } = useTheme();
-  // const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [courseTitle, setCourseTitle] = useState("");
@@ -193,7 +193,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const payload = {
-        userid: 23, // Example user ID
+        userid: user.userid,
       };
       const res = await CourseServices.fetchApplication(payload);
 
@@ -209,12 +209,16 @@ const Dashboard = () => {
           },
           {
             title: "Course Starting",
-            duration: application.start_date || "N/A",
+            duration:
+              application.course_flexible === 0
+                ? application.start_date || "N/A"
+                : "Flexible",
           },
           {
             title: "Cohort",
             duration: application.cohort || "N/A",
           },
+
           {
             title: "Application Date",
             duration: application.created_at
@@ -223,7 +227,10 @@ const Dashboard = () => {
           },
           {
             title: "Course Ending",
-            duration: application.end_date || "N/A",
+            duration:
+              application.course_flexible === 0
+                ? application.end_date || "N/A"
+                : "Flexible",
           },
           {
             title: "Duration",
@@ -290,7 +297,7 @@ const Dashboard = () => {
               </div>
               {!enrolled && (
                 <BaseButton
-                  containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] `}
+                  containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[14px] lg:text-[16px] font-bold font-DMSans text-[#fff] `}
                   hoverScale={1.01}
                   hoverOpacity={0.8}
                   tapScale={0.9}

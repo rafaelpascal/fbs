@@ -54,6 +54,20 @@ export class AuthService extends BaseAPIService {
       throw handleError;
     }
   };
+  static subsequentApplication = async (payload: FormData) => {
+    try {
+      type APPLICATIONRES = APPLICATION;
+      const res = await Api.post<APPLICATIONRES>(
+        "/subsequent-application",
+        payload
+      );
+      console.log(res);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
 
   static login = async (payload: AuthFormPayload) => {
     try {

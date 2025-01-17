@@ -1,5 +1,6 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { CourseServices } from "~/api/course";
 import { fetchPaymentPlans } from "~/api/course/hooks";
 import { BaseButton } from "~/components/buttons/BaseButton";
@@ -8,6 +9,7 @@ import { NewPaymentModal } from "~/components/Modal/NewPaymentModal";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { useTheme } from "~/context/theme-provider";
 import { DashboardArea } from "~/layouts/DashboardArea";
+import { RootState } from "~/redux-store/store";
 
 type ProgramSpecification = {
   title: string;
@@ -15,6 +17,7 @@ type ProgramSpecification = {
 };
 
 const Payment = () => {
+  const user = useSelector((state: RootState) => state.user);
   const { data } = fetchPaymentPlans();
   const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
@@ -45,7 +48,7 @@ const Payment = () => {
     setLoading(true);
     try {
       const payload = {
-        userid: 23,
+        userid: user.userid,
       };
       const res = await CourseServices.fetchApplication(payload);
 

@@ -12,6 +12,10 @@ interface OTPsentResponse {
   userid: number;
   programmeid: number;
   form_requirements: FormRequirement[];
+  response?: {
+    is_email_verified: number;
+    userid: number;
+  };
 }
 
 interface VALIDATEOTPResponse {

@@ -12,6 +12,8 @@ import { motion } from "framer-motion";
 import Tabs from "~/components/Tabs/Tabs";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import EventMultiselect from "~/components/Collapsible/EventMultiselect";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { EventPublished } from "~/components/Modal/EventPublished";
 
 interface FormData {
   title: string;
@@ -59,29 +61,40 @@ const tabsData = [
 // };
 
 const ImageUploadLabel = () => {
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0]; // Get the first file
+      setUploadedFile(file);
+    }
+  };
   return (
     <label htmlFor="imageUpload" className="cursor-pointer">
-      <div className="w-full flex justify-center items-center flex-col bg-[#D9D9D9] rounded-md h-[370px]">
-        <div className="size-[90px] rounded-full mb-4 bg-black flex justify-center items-center">
-          <LuUpload className="size-[50px] text-white" />
+      {uploadedFile && uploadedFile.type.startsWith("image") ? (
+        <img
+          src={URL.createObjectURL(uploadedFile)}
+          alt="Uploaded"
+          className="w-[90px] h-[90px] object-cover rounded-md"
+        />
+      ) : (
+        <div className="w-full flex justify-center items-center flex-col bg-[#D9D9D9] rounded-md h-[370px]">
+          <div className="size-[90px] rounded-full mb-4 bg-black flex justify-center items-center">
+            <LuUpload className="size-[50px] text-white" />
+          </div>
+          <h2 className="text-[25px] w-[182px] text-center font-DMSans font-normal">
+            Upload photos And videos
+          </h2>
         </div>
-        <h2 className="text-[25px] w-[182px] text-center font-DMSans font-normal">
-          Upload photos And videos
-        </h2>
-      </div>
+      )}
       <input
         id="imageUpload"
         type="file"
         multiple
         accept="image/*,video/*"
         className="hidden"
-        onChange={(e) => {
-          const files = e.target.files;
-          if (files) {
-            // Handle selected files here
-            console.log(Array.from(files));
-          }
-        }}
+        onChange={handleFileChange}
       />
     </label>
   );
@@ -90,7 +103,9 @@ const ImageUploadLabel = () => {
 const Events = () => {
   const { theme } = useTheme();
   // const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [, setIsNewEvent] = useState(false);
+  const [ispublished, setIspublished] = useState(false);
   const [, setIsEventType] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
@@ -118,6 +133,13 @@ const Events = () => {
     }));
   };
 
+  const isFormValid = (): boolean => {
+    // Required fields to validate
+    const requiredFields = ["title", "location", "eventDate", "naira"];
+    return requiredFields.every(
+      (field) => formData[field as keyof FormData] !== ""
+    );
+  };
   const handleNewEvent = () => {
     // navigate(ROUTES.PAYMENT);
     setIsNewEvent(true);
@@ -139,28 +161,18 @@ const Events = () => {
       [field]: option,
     }));
   };
-  //   if (navigator.geolocation) {
-  //     navigator.geolocation.getCurrentPosition(
-  //       async (position) => {
-  //         const { latitude, longitude } = position.coords;
 
-  //         // Example: Use a reverse geocoding service to get the address
-  //         const response = await fetch(
-  //           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-  //         );
-  //         const data = await response.json();
-  //         const address = data.display_name || "Unable to fetch address";
+  const handleSubmit = () => {
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIspublished(true);
+    }, 1000);
+    setIsSubmitting(false);
+  };
 
-  //         handleInputChange("totalNumber", address);
-  //       },
-  //       (error) => {
-  //         console.error("Error getting location:", error);
-  //       }
-  //     );
-  //   } else {
-  //     alert("Geolocation is not supported by this browser.");
-  //   }
-  // };
+  const handleclose = () => {
+    setIspublished(false);
+  };
 
   return (
     <DashboardArea>
@@ -478,6 +490,19 @@ const Events = () => {
           </h2>
           <EventMultiselect />
         </div>
+        <button
+          onClick={handleSubmit}
+          className={`h-[52px] w-[231px] my-4 px-4 rounded-md flex justify-center items-center gap-2 ${
+            isFormValid() ? "bg-[#FF5050]" : "bg-gray-400"
+          }`}
+          disabled={!isFormValid()}
+        >
+          <p className="font-DMSans font-semibold text-[14px] lg:text-[16px] text-white">
+            SAVE ALL CHANGES
+          </p>
+          {isSubmitting && <LoadingSpinner size="xs" />}
+        </button>
+        <EventPublished isOpen={ispublished} closeModal={handleclose} />
       </div>
     </DashboardArea>
   );

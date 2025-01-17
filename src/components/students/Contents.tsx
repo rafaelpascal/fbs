@@ -1,4 +1,3 @@
-import { mbaimage } from "~/assets";
 import { BaseButton } from "../buttons/BaseButton";
 import Tabs from "../Tabs/Tabs";
 import Facilitators from "./CourseContent.tsx/Facilitators";
@@ -347,7 +346,9 @@ const Contents = ({ id, name }: CourseProps) => {
       <div className="w-full lg:w-[80%] flex flex-wrap lg:flex-row justify-center gap-20 items-start">
         <div className="w-full lg:w-[819px]">
           <h2 className="text-[40px] my-3">{courseData.course_title}</h2>
-          <p className="text-[20px]  my-3">{courseData.course_highlight}</p>
+          <p className="text-[18px] text-left  my-3">
+            {courseData.course_highlight}
+          </p>
           <p className="text-[20px]">
             <span className="text-[#FF3B30]">Cohort</span>{" "}
             {courseData.cohort_title}
@@ -427,7 +428,7 @@ const Contents = ({ id, name }: CourseProps) => {
           </div>
         </div>
         <div className="w-full lg:w-[443.02px] p-4 rounded-md shadow-md">
-          <img src={mbaimage} alt="mbaimage" />
+          <img src={courseData.images} alt="mbaimage" />
           <div className="flex py-4 justify-between items-center">
             <p className="font-DMSans font-semibold text-[18px]">
               {new Intl.NumberFormat("en-NG", {

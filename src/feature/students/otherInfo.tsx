@@ -11,13 +11,14 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import countryList from "react-select-country-list";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "~/components/constants/routes";
 import FileUpload from "~/components/data-inputs/Document";
 import { useSelector } from "react-redux";
 import { RootState } from "~/redux-store/store";
 import { AuthService } from "~/api/auth";
 import { showAlert } from "~/utils/sweetAlert";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
 const fields = [
   {
@@ -52,7 +53,15 @@ const Passwordfields = [
   },
 ];
 
-const Otherinfo = () => {
+const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
+  const { pathname } = useLocation();
+  const decodedPath = decodeURIComponent(pathname);
+  const pathSegments = decodedPath
+    .split("/")
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+  const id = pathSegments[2];
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const formRequirements = useSelector(
     (state: RootState) => state.formRequirements.form_requirements
   );
@@ -137,7 +146,6 @@ const Otherinfo = () => {
   };
 
   const handleReferalCodeComplete = (otp: string) => {
-    console.log("Complete OTP:", otp);
     setreferralCode(otp);
   };
 
@@ -146,6 +154,7 @@ const Otherinfo = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setIsSubmitting(true);
     try {
       e.preventDefault();
 
@@ -183,11 +192,8 @@ const Otherinfo = () => {
         "select[name='country']"
       )?.value;
       if (selectedCountry) formData.append("country", selectedCountry);
-
-      // Add gender (radio button)
       if (selectedGender) formData.append("gender", selectedGender);
-
-      // Add files (O'Level Certificate, CV, Degree Certificate, Resume)
+      if (id) formData.append("programmeid", id);
       if (levelCertificate) {
         formData.append("olevel_certificate", levelCertificate);
       }
@@ -200,36 +206,41 @@ const Otherinfo = () => {
       if (resume) {
         formData.append("resume", resume);
       }
-
-      // Add referral code
-      // const referralCode = form.getValues("referralCode");
       if (referralCode) formData.append("referral_code", referralCode);
-
-      // Add source information
       const howDidYouHear = document.querySelector<HTMLSelectElement>(
         "select[name='source']"
       )?.value;
       if (howDidYouHear) formData.append("hear_aboutus", howDidYouHear);
       if (isAccepted) formData.append("iagree", isAccepted ? "1" : "0");
-
-      // Log the FormData for debugging
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
+      if (isSubsequent) {
+        await AuthService.subsequentApplication(formData);
+        setIsSubmitting(false);
+        await showAlert(
+          "success",
+          "Successful!",
+          "Successfully submitted application!",
+          "Ok",
+          "#03435F",
+          () => {
+            handleNavigate();
+          }
+        );
+      } else {
+        await AuthService.continueApplication(formData);
+        setIsSubmitting(false);
+        await showAlert(
+          "success",
+          "Successful!",
+          "Account Successfully cretaed!",
+          "Ok",
+          "#03435F",
+          () => {
+            handleNavigate();
+          }
+        );
       }
-
-      const res = await AuthService.continueApplication(formData);
-      console.log(res);
-      await showAlert(
-        "success",
-        "Successful!",
-        "Account Successfully cretaed!",
-        "Ok",
-        "#03435F",
-        () => {
-          handleNavigate();
-        }
-      );
     } catch (error) {
+      setIsSubmitting(false);
       console.log(error);
     }
   };
@@ -361,41 +372,6 @@ const Otherinfo = () => {
             ))}
           </div>
         )}
-        {/* <div className="py-2 w-full">
-          <div className="flex justify-start gap-2 items-center">
-            <h2 className="text-2xl font-semibold mb-4">
-              Upload Your O'Level Certificate
-            </h2>
-            <FaAsterisk className="text-[#F01E00] mb-4 text-[12px]" />
-          </div>
-          <FileUpload onFileUpload={handleLevelCertificateSelected} />
-        </div>
-
-        <div className="py-2 w-full">
-          <div className="flex justify-start gap-2 items-center">
-            <h2 className="text-2xl font-semibold mb-4">Upload your CV</h2>
-            <FaAsterisk className="text-[#F01E00] mb-4 text-[12px]" />
-          </div>
-          <FileUpload onFileUpload={handleCvSelected} />
-        </div>
-
-        <div className="py-2 w-full">
-          <div className="flex justify-start gap-2 items-center">
-            <h2 className="text-2xl font-semibold mb-4">
-              Upload Your Original Degree Certificate or Postgraduate Diploma
-            </h2>
-            <FaAsterisk className="text-[#F01E00] mb-4 text-[12px]" />
-          </div>
-          <FileUpload onFileUpload={handleDegreeCertificateSelected} />
-        </div>
-
-        <div className="py-2 w-full">
-          <div className="flex justify-start gap-2 items-center">
-            <h2 className="text-2xl mb-12 font-semibold">Upload Your Resume</h2>
-            <FaAsterisk className="text-[#F01E00] mb-12 text-[12px]" />
-          </div>
-          <FileUpload onFileUpload={handleResumeSelected} />
-        </div> */}
         <div className="w-full">
           <h2 className="text-[18px] font-bold font-DMSans mb-2">
             Referral code
@@ -419,19 +395,21 @@ const Otherinfo = () => {
           </select>
         </div>
       </div>
-      <div className="flex justify-between items-center gap-4 mt-4">
-        {Passwordfields.map((field, index) => (
-          <BaseInput
-            key={index}
-            {...field}
-            labelClassName="text-[18px] font-bold font-DMSans"
-            containerClassname="w-full"
-            {...form.register(field.name)}
-            error={unWrapErrors(field.name)}
-          />
-        ))}
-      </div>
-      <div className="form-control mt-4 w-full lg:w-[30%]">
+      {!isSubsequent && (
+        <div className="flex justify-between items-center gap-4 mt-4">
+          {Passwordfields.map((field, index) => (
+            <BaseInput
+              key={index}
+              {...field}
+              labelClassName="text-[18px] font-bold font-DMSans"
+              containerClassname="w-full"
+              {...form.register(field.name)}
+              error={unWrapErrors(field.name)}
+            />
+          ))}
+        </div>
+      )}
+      <div className="mt-4 w-full flex justify-start items-center">
         <label className="label cursor-pointer">
           <input
             type="checkbox"
@@ -439,20 +417,34 @@ const Otherinfo = () => {
             checked={isAccepted}
             onChange={handleCheckboxChange}
           />
-          <span className="text-[15px] font-normal font-DMSans">
+          <span className="text-[15px] ml-4 font-semibold font-DMSans">
             Accept the Terms and Privacy Policy of Fordax
           </span>
         </label>
       </div>
-      <BaseButton
-        containerCLassName="mt-4 h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]"
-        hoverScale={1.01}
-        hoverOpacity={0.8}
-        tapScale={0.9}
-        onClick={handleSubmit}
-      >
-        <p>APPLY FOR THE PROGRAM NOW</p>
-      </BaseButton>
+      {isSubsequent ? (
+        <BaseButton
+          containerCLassName="mt-4 h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]"
+          hoverScale={1.01}
+          hoverOpacity={0.8}
+          tapScale={0.9}
+          onClick={handleSubmit}
+        >
+          <p>SUBMIT APPLICATION</p>
+          {isSubmitting && <LoadingSpinner size="xs" />}
+        </BaseButton>
+      ) : (
+        <BaseButton
+          containerCLassName="mt-4 h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]"
+          hoverScale={1.01}
+          hoverOpacity={0.8}
+          tapScale={0.9}
+          onClick={handleSubmit}
+        >
+          <p>APPLY FOR THE PROGRAM NOW</p>
+          {isSubmitting && <LoadingSpinner size="xs" />}
+        </BaseButton>
+      )}
     </div>
   );
 };

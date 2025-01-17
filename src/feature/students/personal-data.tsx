@@ -44,6 +44,7 @@ type PersonalInfoProp = {
   course_id: number;
   coursetitle: string;
   handleOTPComplete: (otp: string) => void;
+  handleAlreadyExist: () => void;
   submitting: boolean;
 };
 
@@ -51,6 +52,7 @@ const PersonalInfo = ({
   course_id,
   coursetitle,
   handleOTPComplete,
+  handleAlreadyExist,
   submitting,
 }: PersonalInfoProp) => {
   const dispatch = useDispatch();
@@ -74,29 +76,80 @@ const PersonalInfo = ({
         ...data,
       };
       const res = await AuthService.verificationcode(payload);
-      dispatch(setFormRequirements(res.data.form_requirements));
-      dispatch(
-        setUser({
-          userid: res?.data?.userid,
-          email: res?.data?.email,
-        })
-      );
-      await showAlert(
-        "success",
-        "Successful!",
-        "OTP has been sent to your email!",
-        "Ok",
-        "#03435F",
-        () => {
-          setisCodeSent(true);
-        }
-      );
-    } catch (error) {
-      form.reset();
-      // setisCodeSent(false);
-      console.log(error);
+      if (res?.data?.response?.is_email_verified === 2) {
+        dispatch(
+          setUser({
+            userid: res?.data?.response?.userid,
+            email: "",
+          })
+        );
+        await showAlert(
+          "success",
+          "Successful!",
+          "User already exists, Continue with Application!",
+          "Ok",
+          "#03435F",
+          () => {
+            handleAlreadyExist();
+          }
+        );
+      } else {
+        dispatch(setFormRequirements(res.data.form_requirements));
+        dispatch(
+          setUser({
+            userid: res?.data?.userid,
+            email: res?.data?.email,
+          })
+        );
+        await showAlert(
+          "success",
+          "Successful!",
+          "OTP has been sent to your email!",
+          "Ok",
+          "#03435F",
+          () => {
+            setisCodeSent(true);
+          }
+        );
+      }
+    } catch (error: any) {
+      console.error("Unknown error:", error);
     }
   };
+
+  // const handleEmailverification = async (data: ApplicationFormPayload) => {
+  //   startCountdown();
+  //   try {
+  //     const payload = {
+  //       programmeid: course_id,
+  //       ...data,
+  //     };
+  //     const res = await AuthService.verificationcode(payload);
+  //     dispatch(setFormRequirements(res.data.form_requirements));
+  //     dispatch(
+  //       setUser({
+  //         userid: res?.data?.userid,
+  //         email: res?.data?.email,
+  //       })
+  //     );
+  //     await showAlert(
+  //       "success",
+  //       "Successful!",
+  //       "OTP has been sent to your email!",
+  //       "Ok",
+  //       "#03435F",
+  //       () => {
+  //         setisCodeSent(true);
+  //       }
+  //     );
+  //   } catch (error) {
+  //     // form.reset();
+  //     // setisCodeSent(false);
+  //     if (error == "User already exists in our database") {
+  //       console.log("ccccccc", error);
+  //     }
+  //   }
+  // };
 
   const handleResend = async () => {
     try {

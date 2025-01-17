@@ -22,7 +22,10 @@ const List = ({
       <h2 className="text-[20px] font-DMSans font-semibold mb-4">{title}</h2>
       <ListTag className={`${customClass}`}>
         {items.map((item, index) => (
-          <li key={index} className="flex items-start gap-4 py-2">
+          <li
+            key={index}
+            className="flex text-left text-[16px] items-start font-DMSans gap-4 py-2"
+          >
             {!ordered && <GoDotFill className="mt-1" />}
             <div className="flex-1">
               {/* Use RichText for advanced rendering or sanitize directly */}

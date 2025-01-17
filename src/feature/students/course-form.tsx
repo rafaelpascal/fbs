@@ -17,6 +17,7 @@ type CourseFormProps = {
 
 const Courseform = ({ name, id }: CourseFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubsequent, setIsSubsequent] = useState(false);
   const [courseData, setCourseData] = useState({
     course_id: 0,
     course_title: "",
@@ -51,6 +52,12 @@ const Courseform = ({ name, id }: CourseFormProps) => {
     }
   };
 
+  const handleAlreadyExist = () => {
+    setIsSubsequent(true);
+    setEmail(true);
+    isSubmitted(false);
+  };
+
   const getCourse = async () => {
     try {
       setIsLoading(true);
@@ -74,17 +81,22 @@ const Courseform = ({ name, id }: CourseFormProps) => {
     <div
       className={`p-4 lg:p-10 ${theme === "dark" ? "bg-[#333]" : "bg-[#fff]"}`}
     >
-      {isLoading ? (
-        <div className="w-full flex justify-center items-center">
-          <LoadingSpinner />
-        </div>
-      ) : (
-        <PersonalInfo
-          handleOTPComplete={handleOTPComplete}
-          submitting={submitting}
-          coursetitle={courseData.course_title}
-          course_id={courseData.course_id}
-        />
+      {!isEmailVerified && (
+        <>
+          {isLoading ? (
+            <div className="w-full flex justify-center items-center">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <PersonalInfo
+              handleOTPComplete={handleOTPComplete}
+              handleAlreadyExist={handleAlreadyExist}
+              submitting={submitting}
+              coursetitle={courseData.course_title}
+              course_id={courseData.course_id}
+            />
+          )}
+        </>
       )}
 
       {/* Animate the dropdown using Framer Motion */}
@@ -96,7 +108,7 @@ const Courseform = ({ name, id }: CourseFormProps) => {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Otherinfo />
+            <Otherinfo isSubsequent={isSubsequent} />
           </motion.div>
         )}
       </AnimatePresence>

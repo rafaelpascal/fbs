@@ -2,11 +2,7 @@ import { MdDashboard, MdOutlineEventAvailable } from "react-icons/md";
 import { SideNavProps } from "./AdminNavItem";
 import { HiClipboardDocumentList, HiUserGroup } from "react-icons/hi2";
 import { PiCertificateBold, PiStudentFill } from "react-icons/pi";
-import {
-  FaCcMastercard,
-  FaSchoolCircleCheck,
-  FaUserCheck,
-} from "react-icons/fa6";
+import { FaCcMastercard, FaSchoolCircleCheck } from "react-icons/fa6";
 import { TiMessages } from "react-icons/ti";
 import { FaCogs } from "react-icons/fa";
 
@@ -43,12 +39,6 @@ export const sidebarData: SideNavProps[] = [
   },
   {
     href: "/admin/signup",
-    icon: FaUserCheck,
-    dropdown: false,
-    text: "Signups",
-  },
-  {
-    href: "",
     icon: HiUserGroup,
     dropdown: false,
     text: "Faculties",

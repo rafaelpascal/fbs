@@ -23,7 +23,7 @@ const Description = ({ description }: DescriptionProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease: "easeInOut" }}
-          className="text-left font-DMSans font-normal leading-[26px]"
+          className="text-left font-DMSans font-normal text-[18px] leading-[26px]"
         >
           {isExpanded || description.length <= MAX_LENGTH
             ? description
@@ -33,7 +33,7 @@ const Description = ({ description }: DescriptionProps) => {
       {description.length > MAX_LENGTH && (
         <button
           onClick={handleToggle}
-          className="hover:px-2 font-DMSans font-semibold text-[14px] hover:border-[1px] hover:border-[#FF3B30] text-[#FF3B30] rounded"
+          className="hover:px-2 font-DMSans font-semibold text-[16px] mt-2 hover:border-[1px] hover:border-[#FF3B30] text-[#FF3B30] rounded"
         >
           {isExpanded ? "Show Less" : "Show More"}
         </button>
