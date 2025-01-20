@@ -6,10 +6,7 @@ import { cn } from "~/utils/helpers";
 import { ROUTES } from "../constants/routes";
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "~/redux-store/store";
 import { CourseServices } from "~/api/course";
-import { LoadingSpinner } from "../ui/loading-spinner";
 
 interface IModalPropsType {
   applicationId: number;
@@ -23,8 +20,6 @@ export const NewPaymentModal = ({
   closeModal,
 }: IModalPropsType) => {
   const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.user);
-  const [loading, setLoading] = useState(false);
   const [applicationData, setApplicationData] = useState({
     naira_amount: 0,
     email: "",
@@ -34,17 +29,18 @@ export const NewPaymentModal = ({
   });
 
   const fetchmyapplication = async () => {
-    setLoading(true);
     try {
-      const payload = {
-        applicationid: applicationId,
-      };
-      const res = await CourseServices.fetchSingleApplication(payload);
-
-      if (res.data && res.data.data && res.data.data.length > 0) {
-        const application = res.data.data[0];
-        setApplicationData(application);
-        setLoading(false);
+      if (applicationId) {
+        const payload = {
+          applicationid: applicationId,
+        };
+        const res = await CourseServices.fetchSingleApplication(payload);
+        if (res.data && res.data.data && res.data.data.length > 0) {
+          const application = res.data.data[0];
+          setApplicationData(application);
+        }
+      } else {
+        console.log("No application Id Set");
       }
     } catch (error) {
       console.error("Error fetching application:", error);
@@ -61,7 +57,7 @@ export const NewPaymentModal = ({
 
   useEffect(() => {
     fetchmyapplication();
-  }, [user]);
+  }, [applicationId]);
 
   const config = {
     public_key: "FLWPUBK_TEST-512e73fbe507f41f6ebbdd13dcc57537-X",
@@ -118,18 +114,12 @@ export const NewPaymentModal = ({
         </div>
         <div className="flex gap-4 p-4 justify-between items-center">
           <div className="w-[50%] h-[100px] rounded-md  bg-[#6440FB]">
-            {loading ? (
-              <div className="w-full h-full flex justify-center items-center">
-                <LoadingSpinner size="xs" />
-              </div>
-            ) : (
-              <FlutterWaveButton
-                {...fwConfig}
-                className={cn(
-                  "rounded-md p-2 font-semibold font-DMSans h-full w-full text-[#fff] hover:bg-[#6440FB]/60"
-                )}
-              />
-            )}
+            <FlutterWaveButton
+              {...fwConfig}
+              className={cn(
+                "rounded-md p-2 font-semibold font-DMSans h-full w-full text-[#fff] hover:bg-[#6440FB]/60"
+              )}
+            />
           </div>
 
           <button

@@ -43,10 +43,14 @@ const Payment = () => {
   };
 
   const handlePayment = () => {
-    setPayment({
-      applicationid: JSON.parse(id ?? ""),
-      status: true,
-    });
+    if (id) {
+      console.log("vvvvvvvvvvvv", id);
+
+      setPayment({
+        applicationid: JSON.parse(id),
+        status: true,
+      });
+    }
   };
 
   const handleClose = () => {
@@ -64,49 +68,53 @@ const Payment = () => {
   const fetchmyapplication = async () => {
     setLoading(true);
     try {
-      const payload = {
-        applicationid: JSON.parse(id ?? ""),
-      };
+      if (id) {
+        const payload = {
+          applicationid: JSON.parse(id),
+        };
 
-      const res = await CourseServices.fetchSingleApplication(payload);
-      if (res.data && res.data.data && res.data.data.length > 0) {
-        const application = res.data.data[0];
-        setCourseTitle(application.course_title);
-        setCourseAmount(application.naira_amount);
-        const updatedProgramSpecifications = [
-          {
-            title: "Format",
-            duration: application.course_mode || "N/A",
-          },
-          {
-            title: "Course Starting",
-            duration:
-              moment(application.start_date).format("DD MMM YYYY") || "N/A",
-          },
-          {
-            title: "Cohort",
-            duration: "N/A",
-          },
-          {
-            title: "Application Date",
-            duration: moment(application.created_at).format("DD MMM YYYY")
-              ? new Date(application.created_at).toLocaleDateString()
-              : "N/A",
-          },
-          {
-            title: "Course Ending",
-            duration:
-              moment(application.end_date).format("DD MMM YYYY") || "N/A",
-          },
-          {
-            title: "Duration",
-            duration: application.duration
-              ? `${application.duration} week(s)`
-              : "N/A",
-          },
-        ];
-        setProgramSpecifications(updatedProgramSpecifications);
-        setLoading(false);
+        const res = await CourseServices.fetchSingleApplication(payload);
+        if (res.data && res.data.data && res.data.data.length > 0) {
+          const application = res.data.data[0];
+          setCourseTitle(application.course_title);
+          setCourseAmount(application.naira_amount);
+          const updatedProgramSpecifications = [
+            {
+              title: "Format",
+              duration: application.course_mode || "N/A",
+            },
+            {
+              title: "Course Starting",
+              duration:
+                moment(application.start_date).format("DD MMM YYYY") || "N/A",
+            },
+            {
+              title: "Cohort",
+              duration: "N/A",
+            },
+            {
+              title: "Application Date",
+              duration: moment(application.created_at).format("DD MMM YYYY")
+                ? new Date(application.created_at).toLocaleDateString()
+                : "N/A",
+            },
+            {
+              title: "Course Ending",
+              duration:
+                moment(application.end_date).format("DD MMM YYYY") || "N/A",
+            },
+            {
+              title: "Duration",
+              duration: application.duration
+                ? `${application.duration} week(s)`
+                : "N/A",
+            },
+          ];
+          setProgramSpecifications(updatedProgramSpecifications);
+          setLoading(false);
+        }
+      } else {
+        console.log("No Id available");
       }
     } catch (error) {
       console.error("Error fetching application:", error);
@@ -115,7 +123,7 @@ const Payment = () => {
 
   useEffect(() => {
     fetchmyapplication();
-  }, []);
+  }, [id]);
 
   return (
     <DashboardArea>
