@@ -4,7 +4,6 @@ import { DashboardArea } from "~/layouts/DashboardArea";
 import Collapsible from "~/components/Collapsible/Collapsible";
 import { BaseButton } from "~/components/buttons/BaseButton";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ROUTES } from "~/components/constants/routes";
 import { IoMdUnlock } from "react-icons/io";
 import CourseCard from "~/components/cards/CourseCard";
 import { MdLock } from "react-icons/md";
@@ -20,9 +19,32 @@ import { RootState } from "~/redux-store/store";
 import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
-type ProgramSpecification = {
+type Specification = {
+  id: string;
   title: string;
   duration: string | null;
+};
+
+type ProgramSpecification = {
+  applicationid: string;
+  courseTitle: string;
+  specifications: Specification[];
+};
+
+interface Application {
+  applicationid: string;
+  course_title: string;
+  course_format?: string;
+  course_flexible?: number;
+  start_date?: string;
+  cohort_title?: string;
+  created_at?: string;
+  end_date?: string;
+  duration?: number;
+}
+
+type Program = {
+  course_title: string;
 };
 
 const courses = [
@@ -160,10 +182,10 @@ const Dashboard = () => {
   const user = useSelector((state: RootState) => state.user);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [courseTitle, setCourseTitle] = useState("");
   const [programSpecifications, setProgramSpecifications] = useState<
     ProgramSpecification[]
   >([]);
+  const [applications, setapplications] = useState<Program[]>([]);
   const location = useLocation();
   const [enrolled] = useState(location.state?.enrolled || false);
   const [selectedOption, setSelectedOption] = useState<string | null>(
@@ -175,8 +197,8 @@ const Dashboard = () => {
     console.log(`Selected option: ${option}`);
   };
 
-  const handlePayment = () => {
-    navigate(ROUTES.PAYMENT);
+  const handlePayment = (applicationId: string) => {
+    navigate(`/payment/${applicationId}`);
   };
 
   const handleStartCourse = (type: string, courseId: number) => {
@@ -198,50 +220,50 @@ const Dashboard = () => {
       const res = await CourseServices.fetchApplication(payload);
 
       if (res.data && res.data.data && res.data.data.length > 0) {
-        const application = res.data.data[0];
-        console.log(application);
-        setCourseTitle(application.course_title);
-        // Map database response to programSpecifications format
-        const updatedProgramSpecifications = [
-          {
-            title: "Format",
-            duration: application.course_mode || "N/A",
-          },
-          {
-            title: "Course Starting",
-            duration:
-              application.course_flexible === 0
-                ? application.start_date || "N/A"
-                : "Flexible",
-          },
-          {
-            title: "Cohort",
-            duration: application.cohort || "N/A",
-          },
-
-          {
-            title: "Application Date",
-            duration: application.created_at
-              ? new Date(application.created_at).toLocaleDateString()
-              : "N/A",
-          },
-          {
-            title: "Course Ending",
-            duration:
-              application.course_flexible === 0
-                ? application.end_date || "N/A"
-                : "Flexible",
-          },
-          {
-            title: "Duration",
-            duration: application.duration
-              ? `${application.duration} week(s)`
-              : "N/A",
-          },
-        ];
-
-        console.log(updatedProgramSpecifications);
-        // Set the updated programSpecifications to state or use it elsewhere
+        const application = res.data.data;
+        setapplications(application);
+        const updatedProgramSpecifications: ProgramSpecification[] =
+          application.map((app: Application) => ({
+            courseTitle: app.course_title || "N/A",
+            applicationid: app.applicationid || 0,
+            specifications: [
+              {
+                title: "Format",
+                duration: app.course_format || "N/A",
+              },
+              {
+                title: "Course Starting",
+                duration:
+                  app.course_flexible === 0
+                    ? app.start_date || "N/A"
+                    : "Flexible",
+              },
+              {
+                title: "Cohort",
+                duration: app.cohort_title || "N/A",
+              },
+              {
+                title: "Application Date",
+                duration: app.created_at
+                  ? new Date(app.created_at).toLocaleDateString()
+                  : "N/A",
+              },
+              {
+                title: "Course Ending",
+                duration:
+                  app.course_flexible === 0
+                    ? app.end_date || "N/A"
+                    : "Flexible",
+              },
+              {
+                title: "Duration",
+                duration:
+                  app.duration && app.duration > 0
+                    ? `${app.duration} week(s)`
+                    : "N/A",
+              },
+            ],
+          }));
         setProgramSpecifications(updatedProgramSpecifications);
         setLoading(false);
       }
@@ -257,57 +279,70 @@ const Dashboard = () => {
   return (
     <DashboardArea>
       <Collapsible title="My Enrollments" initialState={true}>
-        <div className="w-full flex justify-center items-center">
-          <div className=" lg:w-[90%]">
-            <p className="text-left capitalize font-DMSans text-[20px] font-semibold">
-              {courseTitle}
-            </p>
-            {loading ? (
-              <div className="flex justify-center items-center w-full py-6">
-                <LoadingSpinner size="sm" />
-              </div>
-            ) : (
-              <div className="w-full my-4 flex justify-center items-center">
-                <div className="w-full my-4 grid grid-cols-1 lg:grid-cols-3">
-                  {programSpecifications.map((specifications, index) => (
-                    <div
-                      key={index}
-                      className="mx-2 flex flex-row flex-wrap justify-start items-center"
-                    >
-                      <p className="text-[18px] font-semibold font-DMSans">
-                        {specifications.title}
-                      </p>
-                      {" : "}
-                      <p className="text-[18px] capitalize font-normal font-DMSans">
-                        {specifications.duration}
-                      </p>
+        <div className="h-[400px] overflow-y-auto scrollbar-style">
+          {applications.map((program, index) => (
+            <div
+              key={index}
+              className="w-full border-[1px] rounded-md my-2 border-[#ddd] py-2 flex justify-center items-center"
+            >
+              <div className=" lg:w-[90%]">
+                <p className="text-left capitalize font-DMSans text-[20px] font-semibold">
+                  {program.course_title}
+                </p>
+                {loading ? (
+                  <div className="flex justify-center items-center w-full py-6">
+                    <LoadingSpinner size="sm" />
+                  </div>
+                ) : (
+                  <div className="w-full my-4 flex justify-center items-center">
+                    <div className="w-full my-4 grid grid-cols-1 lg:grid-cols-3">
+                      {programSpecifications[index]?.specifications?.map(
+                        (spec, specIndex) => (
+                          <div
+                            key={specIndex}
+                            className="mx-2 flex flex-row flex-wrap justify-start items-center"
+                          >
+                            <p className="text-[18px] font-semibold font-DMSans">
+                              {spec.title}
+                            </p>
+                            {" : "}
+                            <p className="text-[18px] capitalize font-normal font-DMSans">
+                              {spec.duration}
+                            </p>
+                          </div>
+                        )
+                      )}
                     </div>
-                  ))}
+                  </div>
+                )}
+                <div className="flex flex-col lg:flex-row justify-between items-center">
+                  <div className="flex w-full justify-start items-center gap-2">
+                    <p className="text-center font-DMSans text-[20px] font-semibold">
+                      Application status:
+                    </p>
+                    <span className="text-[#158608] font-DMSans text-[24px] font-semibold">
+                      Accepted
+                    </span>
+                  </div>
+                  {!enrolled && (
+                    <BaseButton
+                      containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[14px] lg:text-[16px] font-bold font-DMSans text-[#fff] `}
+                      hoverScale={1.01}
+                      hoverOpacity={0.8}
+                      tapScale={0.9}
+                      onClick={() =>
+                        handlePayment(
+                          programSpecifications[index]?.applicationid
+                        )
+                      }
+                    >
+                      <p>Proceed with payment</p>
+                    </BaseButton>
+                  )}
                 </div>
               </div>
-            )}
-            <div className="flex flex-col lg:flex-row justify-between items-center">
-              <div className="flex w-full justify-start items-center gap-2">
-                <p className="text-center font-DMSans text-[20px] font-semibold">
-                  Application status:
-                </p>
-                <span className="text-[#158608] font-DMSans text-[24px] font-semibold">
-                  Accepted
-                </span>
-              </div>
-              {!enrolled && (
-                <BaseButton
-                  containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[14px] lg:text-[16px] font-bold font-DMSans text-[#fff] `}
-                  hoverScale={1.01}
-                  hoverOpacity={0.8}
-                  tapScale={0.9}
-                  onClick={handlePayment}
-                >
-                  <p>Proceed with payment</p>
-                </BaseButton>
-              )}
             </div>
-          </div>
+          ))}
         </div>
       </Collapsible>
       {enrolled ? (

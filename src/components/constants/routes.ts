@@ -5,7 +5,7 @@ export const ROUTES = {
   HOME: "/login",
   DASHBOARD: "/dashboard",
   ADMINDASHBOARD: "/admin/dashboard",
-  PAYMENT: "/payment",
+  PAYMENT: "/payment/:id",
   LECTURE: "/lecture/:id",
   QUIZ: "/assignment",
   WORD: "/word",

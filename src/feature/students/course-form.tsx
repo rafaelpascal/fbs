@@ -33,7 +33,7 @@ const Courseform = ({ name, id }: CourseFormProps) => {
     try {
       const payload = {
         otp: otp,
-        email: user.email,
+        email: user?.email,
         userid: JSON.stringify(user.userid),
       };
       const res = await AuthService.validateOTP(payload);

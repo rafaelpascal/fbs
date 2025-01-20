@@ -34,6 +34,16 @@ export class CourseServices extends BaseAPIService {
 
   static fetchApplication = async (payload: any) => {
     try {
+      const res = await Api.post("/fetch-ongoing-application", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static fetchSingleApplication = async (payload: any) => {
+    try {
       const res = await Api.post("/fetch-application", payload);
       return res;
     } catch (error) {

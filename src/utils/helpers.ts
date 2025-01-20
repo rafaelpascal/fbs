@@ -162,3 +162,14 @@ export const checkPasswordStrength = (
  */
 export const isValidPassword = (password?: string): boolean =>
   validatePassword.safeParse(password).success;
+
+export function formatToCurrency(
+  amount: any,
+  locale = "en-NG",
+  currency = "NGN"
+) {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: currency,
+  }).format(amount);
+}
