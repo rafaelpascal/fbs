@@ -9,12 +9,20 @@ import { useNavigate } from "react-router-dom";
 import { CourseServices } from "~/api/course";
 
 interface IModalPropsType {
+  fullAmount: string;
+  formattedAmount: string;
+  paymentPlan: number;
   applicationId: number;
+  currency: string;
   isOpen: boolean;
   closeModal: () => void;
 }
 
 export const NewPaymentModal = ({
+  fullAmount,
+  formattedAmount,
+  paymentPlan,
+  currency,
   applicationId,
   isOpen,
   closeModal,
@@ -22,10 +30,12 @@ export const NewPaymentModal = ({
   const navigate = useNavigate();
   const [applicationData, setApplicationData] = useState({
     naira_amount: 0,
+    usd_amount: 0,
     email: "",
     firstname: "",
     lastname: "",
     phone: "",
+    installment: "",
   });
 
   const fetchmyapplication = async () => {
@@ -59,12 +69,34 @@ export const NewPaymentModal = ({
     fetchmyapplication();
   }, [applicationId]);
 
+  const sendResponseToBackend = async (flutterwave_response: any) => {
+    try {
+      const response = await CourseServices.submitFluterres(
+        flutterwave_response
+      );
+      if (!response.data.success) {
+        response.data.message;
+      } else {
+        console.log("No data");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const config = {
     public_key: "FLWPUBK_TEST-512e73fbe507f41f6ebbdd13dcc57537-X",
     tx_ref: Date.now().toString(),
-    // amount: applicationData.naira_amount,
-    amount: 500,
-    currency: "NGN",
+    amount:
+      paymentPlan === 2
+        ? formattedAmount
+          ? parseFloat(formattedAmount.replace(/[^\d.-]/g, ""))
+          : 0
+        : fullAmount
+        ? parseFloat(fullAmount.replace(/[^\d.-]/g, ""))
+        : 0,
+    // amount: 500,
+    currency: currency,
     payment_options: "card,mobilemoney,ussd",
     //  redirect_url: "https://yourwebsite.com/payment-success",
     customer: {
@@ -83,8 +115,9 @@ export const NewPaymentModal = ({
     ...config,
     text: "Pay with your bank card using Flutterwave",
     callback: (response: any) => {
-      console.log(response);
+      sendResponseToBackend(response);
       closePaymentModal();
+      closeModal();
     },
     onClose: () => {},
   };

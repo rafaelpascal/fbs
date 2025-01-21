@@ -2,28 +2,44 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { CourseServices } from "~/api/course";
-import { fetchPaymentPlans } from "~/api/course/hooks";
 import { BaseButton } from "~/components/buttons/BaseButton";
 import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
 import { NewPaymentModal } from "~/components/Modal/NewPaymentModal";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { useTheme } from "~/context/theme-provider";
 import { DashboardArea } from "~/layouts/DashboardArea";
-import { formatToCurrency } from "~/utils/helpers";
-import { motion } from "framer-motion";
+import { cn, formatToCurrency } from "~/utils/helpers";
 
 type ProgramSpecification = {
   title: string;
   duration: string | null;
 };
 
+const PaymentPlan = [
+  { label: "Full Payment", value: 1 },
+  { label: "Installment", value: 2 },
+];
+
 const Payment = () => {
-  const { data } = fetchPaymentPlans();
   const { id } = useParams();
   const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
-  const [courseTitle, setCourseTitle] = useState("");
-  const [courseAmount, setCourseAmount] = useState("");
+  const [paymentPlan, setPaymentPlan] = useState(0);
+  const [currency, setCurrency] = useState<"NGN" | "USD">("NGN");
+  const [formattedAmount, setFormattedAmount] = useState("");
+  const [selectedAmount, setSelectedAmount] = useState("");
+  const [applicationData, setApplicationData] = useState({
+    naira_amount: 0,
+    usd_amount: 0,
+    email: "",
+    firstname: "",
+    lastname: "",
+    phone: "",
+    course_title: "",
+    installment: "",
+    program_plan: "",
+  });
+
   const [newPayment, setPayment] = useState({
     applicationid: 0,
     status: false,
@@ -37,15 +53,20 @@ const Payment = () => {
     setIsChecked(event.target.checked);
   };
 
+  const toggleCurrency = () => {
+    setCurrency((prev) => (prev === "NGN" ? "USD" : "NGN"));
+  };
   // const navigate = useNavigate();
   const handleSelect = (option: { label: string; value: string | number }) => {
-    console.log("Selected option:", option);
+    if (option.value === 1) {
+      setPaymentPlan(1);
+    } else {
+      setPaymentPlan(2);
+    }
   };
 
   const handlePayment = () => {
     if (id) {
-      console.log("vvvvvvvvvvvv", id);
-
       setPayment({
         applicationid: JSON.parse(id),
         status: true,
@@ -60,11 +81,6 @@ const Payment = () => {
     });
   };
 
-  const mappedOptions = data?.payment_plan.map((plan: any) => ({
-    label: plan.category,
-    value: plan.payment_planid,
-  }));
-
   const fetchmyapplication = async () => {
     setLoading(true);
     try {
@@ -76,8 +92,7 @@ const Payment = () => {
         const res = await CourseServices.fetchSingleApplication(payload);
         if (res.data && res.data.data && res.data.data.length > 0) {
           const application = res.data.data[0];
-          setCourseTitle(application.course_title);
-          setCourseAmount(application.naira_amount);
+          setApplicationData(application);
           const updatedProgramSpecifications = [
             {
               title: "Format",
@@ -125,6 +140,44 @@ const Payment = () => {
     fetchmyapplication();
   }, [id]);
 
+  useEffect(() => {
+    const amount =
+      currency === "USD"
+        ? Number(applicationData.usd_amount) /
+          Number(applicationData.installment)
+        : Number(applicationData.naira_amount) /
+          Number(applicationData.installment);
+
+    const formattedValue = formatToCurrency(
+      amount,
+      currency === "USD" ? "USD" : "NGN"
+    );
+
+    setFormattedAmount(formattedValue);
+  }, [
+    currency,
+    applicationData.usd_amount,
+    applicationData.naira_amount,
+    applicationData.installment,
+  ]);
+
+  useEffect(() => {
+    let amount;
+    if (currency === "USD") {
+      amount = Number(applicationData.usd_amount);
+    } else {
+      amount = Number(applicationData.naira_amount);
+    }
+
+    // Format the amount before setting it in state
+    const formattedAmount = formatToCurrency(
+      amount,
+      currency === "USD" ? "USD" : "NGN"
+    );
+
+    setSelectedAmount(formattedAmount);
+  }, [currency, applicationData.usd_amount, applicationData.naira_amount]);
+
   return (
     <DashboardArea>
       <div className="shadow-md flex justify-center items-center rounded-[12px] w-full h-full py-12">
@@ -132,7 +185,7 @@ const Payment = () => {
           <p className=" mb-6 font-DMSans text-[24px] font-semibold">Payment</p>
           <div className=" lg:w-[90%]">
             <p className="text-left capitalize font-DMSans text-[20px] font-semibold">
-              {courseTitle}
+              {applicationData.course_title}
             </p>
             {loading ? (
               <div className="flex justify-center items-center w-full py-6">
@@ -160,13 +213,32 @@ const Payment = () => {
             )}
             <div className="py-8">
               <p className="mb-6 font-DMSans text-[24px] font-semibold">
-                Chose A Payment Plan
+                Choose A Payment Plan
               </p>
               <div className="w-full lg:w-[399px]">
                 <SelectionDropdown
-                  options={mappedOptions}
+                  options={PaymentPlan}
                   onSelect={handleSelect}
                 />
+              </div>
+              <div className="flex items-center justify-start gap-4 my-4">
+                <p className="text-[#7F7F7F] font-DMSans text-[18px] font-semibold">
+                  Pay in
+                </p>
+                <label className="flex items-center cursor-pointer">
+                  <span className="mr-2 text-[16px] font-semibold font-DMSans">
+                    NGN
+                  </span>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-success"
+                    checked={currency === "USD"}
+                    onChange={toggleCurrency}
+                  />
+                  <span className="ml-2 text-[16px] font-semibold font-DMSans">
+                    USD
+                  </span>
+                </label>
               </div>
               <div className="overflow-x-auto mt-6 w-full lg:w-[717px]">
                 <table
@@ -180,38 +252,70 @@ const Payment = () => {
                   <thead>
                     <tr className="bg-[#757575] text-[#fff]">
                       <th>Description</th>
-                      <th>Qty</th>
-                      <th>Unit Price</th>
+                      <th>Payment Plan</th>
                       <th>Amount</th>
                     </tr>
                   </thead>
                   <tbody className="">
                     {/* row 1 */}
                     <tr className="font-semibold font-DMSans">
-                      <th>{courseTitle}</th>
-                      <td>1</td>
-                      <td>{formatToCurrency(courseAmount)}</td>
-                      <td>{formatToCurrency(courseAmount)}</td>
+                      <th>{applicationData.course_title}</th>
+                      {paymentPlan === 1 ? (
+                        <td>Full Payment</td>
+                      ) : (
+                        <td>
+                          {applicationData.installment}{" "}
+                          {applicationData.program_plan === "1"
+                            ? "Month"
+                            : "Split"}{" "}
+                          Inst
+                        </td>
+                      )}
+                      {paymentPlan === 1 ? (
+                        <td>
+                          {currency === "USD"
+                            ? formatToCurrency(
+                                Number(applicationData.usd_amount),
+                                "USD"
+                              )
+                            : formatToCurrency(
+                                Number(applicationData.naira_amount),
+                                "NGN"
+                              )}
+                        </td>
+                      ) : (
+                        <td>
+                          {currency === "USD"
+                            ? formatToCurrency(
+                                Number(applicationData.usd_amount) /
+                                  Number(applicationData.installment),
+                                "USD"
+                              )
+                            : formatToCurrency(
+                                Number(applicationData.naira_amount) /
+                                  Number(applicationData.installment),
+                                "NGN"
+                              )}
+                        </td>
+                      )}
                     </tr>
                     {/* row 2 */}
                     <tr className="font-semibold font-DMSans">
                       <th></th>
-                      <td></td>
-                      <td>Subtotal</td>
-                      <td>{formatToCurrency(courseAmount)}</td>
-                    </tr>
-                    {/* row 3 */}
-                    <tr className="font-semibold font-DMSans">
-                      <th></th>
-                      <td></td>
                       <td>Discount</td>
                       <td>0.00</td>
                     </tr>
+                    {paymentPlan === 2 && (
+                      <tr className="font-bold font-DMSans text-[16px]">
+                        <th></th>
+                        <td>Inst</td>
+                        <td>{formattedAmount}</td>
+                      </tr>
+                    )}
                     <tr className="font-bold font-DMSans text-[16px]">
                       <th></th>
-                      <td></td>
-                      <td>Total</td>
-                      <td>{formatToCurrency(courseAmount)}</td>
+                      <td>Total Amount</td>
+                      <td>{selectedAmount}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -247,31 +351,29 @@ const Payment = () => {
                 </span>
               </p>
             </div>
-            {isChecked && (
-              <motion.div
-                className="flex flex-col lg:flex-row justify-between items-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={
-                  isChecked ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
-                }
-                transition={{ duration: 0.5 }}
-              >
-                <BaseButton
-                  containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]`}
-                  hoverScale={1.01}
-                  hoverOpacity={0.8}
-                  tapScale={0.9}
-                  onClick={handlePayment}
-                >
-                  <p>Proceed with payment</p>
-                </BaseButton>
-              </motion.div>
-            )}
+
+            <BaseButton
+              containerCLassName={cn(
+                `mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]`,
+                !isChecked ? "opacity-50 cursor-not-allowed" : ""
+              )}
+              hoverScale={1.01}
+              hoverOpacity={0.8}
+              tapScale={0.9}
+              onClick={handlePayment}
+              disabled={!isChecked}
+            >
+              <p>Proceed with payment</p>
+            </BaseButton>
           </div>
         </div>
       </div>
       <NewPaymentModal
+        fullAmount={selectedAmount}
+        paymentPlan={paymentPlan}
+        formattedAmount={formattedAmount}
         applicationId={newPayment.applicationid}
+        currency={currency}
         isOpen={newPayment.status}
         closeModal={handleClose}
       />

@@ -113,6 +113,7 @@ export class CourseServices extends BaseAPIService {
       throw handleError;
     }
   };
+
   static getModuleByCourseId = async (payload: any) => {
     try {
       const res = await Api.post("/course/list-modules-bycourse", payload);
@@ -125,6 +126,15 @@ export class CourseServices extends BaseAPIService {
   static getLessonByModuleId = async (payload: any) => {
     try {
       const res = await Api.post("/course/list-lessons-bymodule", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static submitFluterres = async (payload: any) => {
+    try {
+      const res = await Api.post("/successful-payment-details", payload);
       return res;
     } catch (error) {
       const handleError = error;
