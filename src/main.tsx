@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { AuthProvider } from "./context/auth_provider/index.tsx";
 import { ThemeProvider } from "./context/theme-provider/index.tsx";
 import "./styles/index.css";
+import { SidebarProvider } from "./context/Sidebar_Provider/index.tsx";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
@@ -16,7 +17,9 @@ if (rootElement) {
       <ThemeProvider>
         <Provider store={store}>
           <AuthProvider>
-            <AppRouter />
+            <SidebarProvider>
+              <AppRouter />
+            </SidebarProvider>
           </AuthProvider>
         </Provider>
       </ThemeProvider>

@@ -151,4 +151,23 @@ export class CourseServices extends BaseAPIService {
       throw handleError;
     }
   };
+
+  static modulebyCourseId = async (payload: any) => {
+    try {
+      const res = await Api.post("/course/list-modules-bycourse", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static lessonsByModuleId = async (payload: any) => {
+    try {
+      const res = await Api.post("/course/list-lessons-bymodule", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
 }

@@ -6,7 +6,6 @@ import { BaseButton } from "~/components/buttons/BaseButton";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoMdUnlock } from "react-icons/io";
 import CourseCard from "~/components/cards/CourseCard";
-import { MdLock } from "react-icons/md";
 import Carousel from "~/components/Carousel/Carousel";
 import LessonsCard from "~/components/cards/LessonsCard";
 import ForumsCard from "~/components/cards/ForumsCard";
@@ -14,10 +13,10 @@ import { useEffect, useState } from "react";
 import { useTheme } from "~/context/theme-provider";
 import { FaChevronDown } from "react-icons/fa6";
 import ModuleCards from "~/components/cards/ModuleCards";
-import { useSelector } from "react-redux";
-import { RootState } from "~/redux-store/store";
 import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { AuthService } from "~/api/auth";
+import { splitArray } from "~/utils/helpers";
 
 type Specification = {
   id: string;
@@ -47,115 +46,20 @@ type Program = {
   course_title: string;
 };
 
-const courses = [
-  {
-    type: "word",
-    lesson: "1",
-    id: 1,
-    title: "LEADERSHIP & STRATEGIC MANAGEMENT",
-    description:
-      "Distinguishing leadership from management, exploring roles, functions, achieving balance, and understanding the evolution through case....",
-    lessonsInfo: "23 Lessons | 3 Case studies | 4 Quizzes",
-    buttonText: "Resume Course",
-    progress: "4/13",
-    icon: IoMdUnlock,
-    courseStarted: "started",
-  },
-  {
-    id: 2,
-    type: "video",
-    lesson: "2",
-    title: "BUSINESS COMMUNICATION SKILLS",
-    description:
-      "Mastering communication techniques, effective presentations, and team collaboration....",
-    lessonsInfo: "18 Lessons | 2 Case studies | 3 Quizzes",
-    buttonText: "Start Course",
-    icon: MdLock,
-    progress: "",
-    courseStarted: "started",
-  },
-  {
-    id: 3,
-    type: "video",
-    lesson: "3",
-    title: "BUSINESS COMMUNICATION SKILLS",
-    description:
-      "Mastering communication techniques, effective presentations, and team collaboration....",
-    lessonsInfo: "18 Lessons | 2 Case studies | 3 Quizzes",
-    buttonText: "Start Course",
-    icon: MdLock,
-    progress: "",
-    courseStarted: "not started",
-  },
-  {
-    id: 4,
-    type: "video",
-    lesson: "4",
-    title: "DATA ANALYTICS FUNDAMENTALS",
-    description:
-      "Understanding data analytics, tools, and case studies to drive data-driven decision making....",
-    lessonsInfo: "30 Lessons | 5 Case studies | 6 Quizzes",
-    buttonText: "Completed",
-    progress: "30/30",
-    icon: IoMdUnlock,
-    courseStarted: "completed",
-  },
-];
-
-const secondcourses = [
-  {
-    id: 1,
-    type: "video",
-    lesson: "1",
-    title: "LEADERSHIP & STRATEGIC MANAGEMENT",
-    description:
-      "Distinguishing leadership from management, exploring roles, functions, achieving balance, and understanding the evolution through case....",
-    lessonsInfo: "23 Lessons | 3 Case studies | 4 Quizzes",
-    buttonText: "Resume Course",
-    progress: "12/13",
-    icon: IoMdUnlock,
-    status: "started",
-  },
-  {
-    id: 2,
-    type: "video",
-    lesson: "2",
-    title: "BUSINESS COMMUNICATION SKILLS",
-    description:
-      "Mastering communication techniques, effective presentations, and team collaboration....",
-    lessonsInfo: "18 Lessons | 2 Case studies | 3 Quizzes",
-    buttonText: "Start Course",
-    icon: MdLock,
-    progress: "",
-    status: "not started",
-  },
-  {
-    id: 3,
-    type: "video",
-    lesson: "3",
-    title: "BUSINESS COMMUNICATION SKILLS",
-    description:
-      "Mastering communication techniques, effective presentations, and team collaboration....",
-    lessonsInfo: "18 Lessons | 2 Case studies | 3 Quizzes",
-    buttonText: "Start Course",
-    icon: MdLock,
-    progress: "",
-    status: "not started",
-  },
-  {
-    id: 4,
-    type: "video",
-    lesson: "4",
-    title: "DATA ANALYTICS FUNDAMENTALS",
-    description:
-      "Understanding data analytics, tools, and case studies to drive data-driven decision making....",
-    lessonsInfo: "30 Lessons | 5 Case studies | 6 Quizzes",
-    buttonText: "Completed",
-    progress: "15/15",
-    icon: IoMdUnlock,
-    status: "completed",
-  },
-];
+type Module = {
+  type: string;
+  lesson: string;
+  moduleid: number;
+  programme_category_id: number;
+  course_id: number;
+  module_number: string;
+  module_title: string;
+  module_description: string;
+  module_objectives: string;
+  module_reading: string;
+  module_image: string;
+  created_at: string; // ISO date string
+};
 
 const Lessons = [
   {
@@ -179,8 +83,9 @@ const Lessons = [
 ];
 const Dashboard = () => {
   const { theme } = useTheme();
-  const user = useSelector((state: RootState) => state.user);
   const [loading, setLoading] = useState(false);
+  const [courses, setcourses] = useState<Module[]>([]);
+  const [secondcourses, setsecondcourses] = useState<Module[]>([]);
   const navigate = useNavigate();
   const [programSpecifications, setProgramSpecifications] = useState<
     ProgramSpecification[]
@@ -191,6 +96,7 @@ const Dashboard = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(
     "MODULES"
   );
+  const Storeduser = AuthService.getSession();
 
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
@@ -215,7 +121,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const payload = {
-        userid: user.userid,
+        userid: Storeduser?.user,
       };
       const res = await CourseServices.fetchApplication(payload);
 
@@ -271,6 +177,24 @@ const Dashboard = () => {
       console.error("Error fetching application:", error);
     }
   };
+
+  const fetModules = async () => {
+    try {
+      const payload = {
+        courseid: 15,
+      };
+      const res = await CourseServices.getModuleByCourseId(payload);
+      const [chunk1, chunk2] = splitArray<Module>(res.data.course_modules);
+      setcourses(chunk1);
+      setsecondcourses(chunk2);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetModules();
+  }, []);
 
   useEffect(() => {
     fetchmyapplication();
@@ -397,38 +321,39 @@ const Dashboard = () => {
                   <div className="grid w-[100%] grid-cols-1 gap-x-20 gap-y-10 sm:grid-cols-2">
                     {courses.map((course) => (
                       <CourseCard
-                        key={course.id}
-                        title={course.title}
-                        description={course.description}
-                        lessonsInfo={course.lessonsInfo}
-                        buttonText={course.buttonText}
-                        progress={course.progress}
-                        icon={course.icon}
-                        courseStarted={course.courseStarted}
+                        key={course.moduleid}
+                        title={course.module_title}
+                        description={course.module_description}
+                        lessonsInfo={course.module_objectives}
+                        buttonText="Start Module"
+                        progress="15"
+                        icon={IoMdUnlock}
+                        courseStarted="not started"
                         onButtonClick={() =>
-                          handleStartCourse(course.type, course.id)
+                          handleStartCourse("video", course.moduleid)
                         }
                       />
                     ))}
                   </div>
-
-                  <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
-                    {secondcourses.map((course) => (
-                      <CourseCard
-                        key={course.id}
-                        title={course.title}
-                        description={course.description}
-                        lessonsInfo={course.lessonsInfo}
-                        buttonText={course.buttonText}
-                        progress={course.progress}
-                        icon={course.icon}
-                        courseStarted={course.status}
-                        onButtonClick={() =>
-                          console.log(`${course.title} resumed!`)
-                        }
-                      />
-                    ))}
-                  </div>
+                  {secondcourses && secondcourses.length > 0 && (
+                    <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                      {secondcourses.map((course) => (
+                        <CourseCard
+                          key={course.moduleid}
+                          title={course.module_title}
+                          description={course.module_description}
+                          lessonsInfo={course.module_objectives}
+                          buttonText="Start Module"
+                          progress="15"
+                          icon={IoMdUnlock}
+                          courseStarted="not started"
+                          onButtonClick={() =>
+                            handleStartCourse(course.type, course.moduleid)
+                          }
+                        />
+                      ))}
+                    </div>
+                  )}
                 </Carousel>
               )}
               {selectedOption === "LESSONS" && (
@@ -446,20 +371,20 @@ const Dashboard = () => {
                     </div>
                     {courses.map((course) => (
                       <ModuleCards
-                        key={course.id}
-                        courseStarted={course.courseStarted}
+                        key={course.moduleid}
+                        courseStarted="not started"
                         lesson={course.lesson}
-                        title={course.title}
+                        title={course.module_title}
                       />
                     ))}
                   </div>
                   <div className="grid grid-cols-1 mt-8 gap-x-60 sm:grid-cols-2">
                     {courses.map((course) => (
                       <ModuleCards
-                        key={course.id}
-                        courseStarted={course.courseStarted}
+                        key={course.moduleid}
+                        courseStarted="not started"
                         lesson={course.lesson}
-                        title={course.title}
+                        title={course.module_title}
                       />
                     ))}
                   </div>

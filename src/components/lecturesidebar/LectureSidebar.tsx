@@ -1,4 +1,4 @@
-import { lecturesidebarData } from "./data";
+// import { lecturesidebarData } from "./data";
 import { cn } from "~/utils/helpers";
 import { HiMenuAlt2 } from "react-icons/hi";
 import { useCallback, useState } from "react";
@@ -6,7 +6,7 @@ import { FBSlogo } from "~/assets";
 import { useTheme } from "~/context/theme-provider";
 import { LectureItems } from "./LectureItems";
 import { RiHome2Line } from "react-icons/ri";
-import LectureCollapsible from "../Collapsible/LectureCollapsible";
+import { useSidebar } from "~/context/Sidebar_Provider";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -21,6 +21,7 @@ export const LectureSidebar = () => {
   const { theme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed] = useState(false);
+  const { sidebarData } = useSidebar();
 
   // Toggle side bar on mobile view
   const toggleSidebar = useCallback(() => {
@@ -51,7 +52,7 @@ export const LectureSidebar = () => {
           "fixed top-0 left-0 h-screen lg:flex lg:flex-col justify-between z-40 transition-transform transform",
           isSidebarOpen ? "translate-x-0 w-[300px]" : "-translate-x-full",
           "lg:translate-x-0 lg:relative",
-          isCollapsed ? "lg:w-[80px]" : "lg:min-w-[472px]",
+          isCollapsed ? "lg:w-[80px]" : "lg:w-[600px]",
           theme === "light" ? "bg-[#EEF2F6]" : "bg-[#424141]"
         )}
       >
@@ -89,21 +90,20 @@ export const LectureSidebar = () => {
           </button> */}
 
           {/* Navigation Items */}
-          <LectureCollapsible
-            title="Module 1: Introduction to Consulting And Business Strategy"
-            initialState={true}
-            headerClassName="text-[18px]"
-          >
+          <div className="w-full shadow-md rounded-md">
+            <h2 className="mx-2 my-4 font-DMSans text-[18px] font-bold w-full">
+              Module 1: Introduction to Consulting And Business Strategy
+            </h2>
             <ul
               className={cn(
-                "w-full grid grid-cols-1 overflow-y-auto",
+                "w-full grid grid-cols-1 overflow-x-hidden overflow-y-auto",
                 "transition-all duration-300",
                 isCollapsed ? "gap-2" : "gap-4",
                 theme === "light" ? "bg-[#EEF2F6]" : "bg-[#424141]"
               )}
               style={{ maxHeight: "calc(100vh - 200px)" }}
             >
-              {lecturesidebarData.map((data) => (
+              {sidebarData.map((data) => (
                 <LectureItems
                   key={data.text}
                   {...data}
@@ -115,26 +115,15 @@ export const LectureSidebar = () => {
                 />
               ))}
             </ul>
-          </LectureCollapsible>
-          <LectureCollapsible
-            title="My Notes"
-            initialState={false}
-            headerClassName="text-[14px] h-[20px]"
-          >
-            <ul>
-              <li>My Notes</li>
-            </ul>
-          </LectureCollapsible>
-          <LectureCollapsible
-            title="Support/Help"
-            initialState={false}
-            headerClassName="text-[14px] bg-[#3D85F9] text-[#fff] h-[20px]"
-            containerClassname="bg-[#3D85F9]"
-          >
-            <ul>
-              <li>My Notes</li>
-            </ul>
-          </LectureCollapsible>
+          </div>
+          <button className="text-[14px] w-full py-4 rounded-md shadow-md bg-transparent">
+            <p className="font-DMSans font-semibold text-[14px]">My Notes</p>
+          </button>
+          <button className="text-[14px] w-full py-4 rounded-md shadow-md bg-transparent">
+            <p className="font-DMSans font-semibold text-[14px]">
+              Support/Help
+            </p>
+          </button>
         </div>
       </aside>
     </>

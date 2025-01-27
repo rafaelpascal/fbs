@@ -25,8 +25,8 @@ const CourseCard: React.FC<CourseCardProps> = ({
 }) => {
   return (
     <div className="relative w-full mt-4 h-[325px] bg-[#fff]">
-      <div className="p-6 h-[240px] flex justify-between items-start flex-col">
-        <div className="flex justify-between w-full gap-6 items-center">
+      <div className="p-4 h-[240px] overflow-y-hidden flex justify-between items-start flex-col">
+        <div className="flex justify-between w-full gap-6 mb-4 items-center">
           <h2 className="text-[20px] font-DMSans font-bold text-[#000000] w-[60%]">
             {title}
           </h2>
@@ -41,12 +41,16 @@ const CourseCard: React.FC<CourseCardProps> = ({
             </div>
           )}
         </div>
-        <p className="text-[15px] font-DMSans font-normal text-[#757575] w-full lg:w-[408px]">
-          {description}
-        </p>
-        <p className="text-[15px] font-DMSans font-normal text-[#757575] w-full lg:w-[408px]">
-          {lessonsInfo}
-        </p>
+        {description !== "" && (
+          <p className="text-[15px] w-full font-DMSans font-normal text-[#757575]">
+            {description}
+          </p>
+        )}
+        {description === "" && (
+          <p className="text-[15px] font-DMSans font-normal text-[#757575] w-full">
+            {lessonsInfo}
+          </p>
+        )}
       </div>
       <BaseButton
         containerCLassName={`absolute flex justify-start items-center bottom-0 h-[73px] w-full rounded-[0px] text-[24px] font-bold font-DMSans text-[#fff] ${
@@ -61,9 +65,10 @@ const CourseCard: React.FC<CourseCardProps> = ({
         tapScale={0.9}
         onClick={onButtonClick}
       >
-        <div className="flex justify-between items-center w-full lg:w-[65%]">
+        <div className="flex justify-between items-center w-full">
           <p>{progress}</p>
           <p>{buttonText}</p>
+          <p></p>
         </div>
       </BaseButton>
     </div>

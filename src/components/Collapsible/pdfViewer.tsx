@@ -9,6 +9,7 @@ import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
 
 // Set the workerSrc for pdf.js (matching API version)
 GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@3.11.174/legacy/build/pdf.worker.min.js`;
+const proxyUrl = "https://cors-anywhere.herokuapp.com/";
 
 const PdfViewer = forwardRef(({ file }: { file: string }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -21,7 +22,13 @@ const PdfViewer = forwardRef(({ file }: { file: string }, ref) => {
     const loadPdf = async () => {
       try {
         setLoading(true);
-        const pdf = await getDocument(file).promise;
+        const response = await fetch(proxyUrl + file);
+        // if (!response.ok) {
+        //   throw new Error(`Failed to fetch PDF: ${response.statusText}`);
+        // }
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const pdf = await getDocument(url).promise;
         setNumPages(pdf.numPages);
         renderPage(pageNumber, pdf);
       } catch (error) {
@@ -35,21 +42,50 @@ const PdfViewer = forwardRef(({ file }: { file: string }, ref) => {
   }, [file, pageNumber]);
 
   const renderPage = async (pageNum: number, pdf: any) => {
-    const page = await pdf.getPage(pageNum);
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+    try {
+      const page = await pdf.getPage(pageNum);
+      const canvas = canvasRef.current;
+      const context = canvas?.getContext("2d");
 
-    if (canvas && context) {
-      const viewport = page.getViewport({ scale: 1 });
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      page.render({
-        canvasContext: context,
-        viewport: viewport,
-      });
+      if (canvas && context) {
+        const rotation = page.rotate || 0; // Get rotation from PDF metadata
+        const adjustedViewport = page.getViewport({
+          scale: 1,
+          rotation: rotation, // Apply the rotation here
+        });
+
+        // Ensure the canvas dimensions match the viewport
+        canvas.width = adjustedViewport.width;
+        canvas.height = adjustedViewport.height;
+
+        // Render the page on the canvas with the correct rotation
+        const renderContext = {
+          canvasContext: context,
+          viewport: adjustedViewport,
+        };
+        await page.render(renderContext).promise;
+      }
+    } catch (error) {
+      console.error("Error rendering page:", error);
     }
   };
 
+  useEffect(() => {
+    const renderPdf = async () => {
+      const pdf = await getDocument(file).promise;
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 1.5 });
+      const canvas = canvasRef.current;
+      const context = canvas?.getContext("2d");
+
+      if (canvas && context) {
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        await page.render({ canvasContext: context, viewport }).promise;
+      }
+    };
+    renderPdf();
+  }, [file]);
   const goToNextPage = () => {
     if (pageNumber < numPages) {
       setPageNumber(pageNumber + 1);

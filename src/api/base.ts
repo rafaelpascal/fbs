@@ -8,8 +8,6 @@ export class BaseAPIService {
 
   protected static storeUser = (data: Session) => {
     const response = SessionSchema.safeParse(data);
-    console.log(data, response);
-
     if (response.success) {
       const res = encryptionHandler({
         action: "encrypt",

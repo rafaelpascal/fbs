@@ -23,7 +23,7 @@ export const Api = axios.create({
 
 Api.interceptors.request.use((config) => {
   const user = AuthService.getSession();
-  if (user) config.headers.Authorization = `Bearer ${user?.user}`;
+  if (user) config.headers.Authorization = `Bearer ${user?.token}`;
   return config;
 });
 

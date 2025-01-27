@@ -75,7 +75,8 @@ export class AuthService extends BaseAPIService {
       const res = await Api.post<LOGIN>("/login", payload);
       this.storeUser(
         TypeIs.any({
-          user: res.data.token,
+          user: JSON.stringify(res.data.profile[0].userid),
+          token: res.data.token,
         })
       );
       const userData = res.data;

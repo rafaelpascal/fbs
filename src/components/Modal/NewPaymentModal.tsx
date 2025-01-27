@@ -71,13 +71,14 @@ export const NewPaymentModal = ({
 
   const sendResponseToBackend = async (flutterwave_response: any) => {
     try {
-      const response = await CourseServices.submitFluterres(
-        flutterwave_response
-      );
-      if (!response.data.success) {
-        response.data.message;
+      const payload = {
+        payment_details: { ...flutterwave_response },
+      };
+      const response = await CourseServices.submitFluterres(payload);
+      if (response.data.success === true) {
+        navigate(ROUTES.DASHBOARD, { state: { enrolled: true } });
       } else {
-        console.log("No data");
+        return false;
       }
     } catch (error) {
       console.log(error);

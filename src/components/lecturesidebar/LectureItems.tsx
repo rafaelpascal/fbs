@@ -60,7 +60,7 @@ export const LectureItems = (props: SideNavProps) => {
       {dropdown && children?.length !== 0 ? (
         <div className="w-full flex flex-col justify-between items-center">
           <button
-            className="bg-[#FF3B30]/10 mb-1 flex justify-between items-center text-left w-full h-[60px] px-4 rounded-md"
+            className="bg-[#FF3B30]/10 py-1 mb-1 flex justify-between items-center text-left w-full  px-4 rounded-md"
             onClick={handleDropdownClick}
           >
             <div className="flex gap-5 justify-start items-center">
@@ -80,22 +80,22 @@ export const LectureItems = (props: SideNavProps) => {
             {dropdown && (
               <div className="">
                 {isClicked ? (
-                  <IoIosArrowUp className="" />
+                  <IoIosArrowUp className="text-[25px]" />
                 ) : (
-                  <IoIosArrowDown className="" />
+                  <IoIosArrowDown className="text-[25px]" />
                 )}
               </div>
             )}
           </button>
           {isClicked && children && (
             <motion.div
-              className="bg-inherit w-full rounded-[4px] p-0 flex justify-start items-start"
+              className="bg-inherit w-full mb-3 rounded-[4px] p-0 flex justify-start items-start"
               initial="hidden"
               animate="visible"
               exit="exit"
               variants={dropdownVariants}
             >
-              <ul className="m-0 p-0 bg-inherit flex justify-center gap-2 items-start flex-col w-full">
+              <ul className="m-0 p-0 bg-inherit overflow-x-hidden flex justify-center gap-2 items-start flex-col w-full">
                 {children.map((child) => (
                   <li
                     key={child.text}
@@ -104,12 +104,12 @@ export const LectureItems = (props: SideNavProps) => {
                     <NavLink
                       to={child.href}
                       onClick={() => setIsClicked(false)}
-                      className="hover:bg-[#FF3B30]/10 flex justify-between items-center text-left w-full h-[30px] px-4 rounded-md"
+                      className="hover:bg-[#FF3B30]/10 hover:border-[0.5px] hover:border-[#FF3B30] flex justify-start w-full items-center text-left py-1 px-4 rounded-md"
                     >
                       <child.icon
                         className={cn("bg-transparent text-[14px]")}
                       />
-                      <span className="text-[14px] w-[90%] bg-transparent font-semibold font-DMSans">
+                      <span className="text-[14px] ml-2 truncate overflow-x-hidden w-full bg-transparent font-semibold font-DMSans">
                         {child.text}
                       </span>
                     </NavLink>

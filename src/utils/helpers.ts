@@ -170,3 +170,22 @@ export function formatToCurrency(amount: any, currency: "NGN" | "USD" = "NGN") {
     currency: currency,
   }).format(amount);
 }
+
+export function splitArray<T>(arr: T[]): T[][] {
+  const breakPoints = [2, 9]; // Break points at indices 5 and 9
+  const result = [];
+  let start = 0;
+
+  for (const breakPoint of breakPoints) {
+    if (start < arr.length) {
+      result.push(arr.slice(start, breakPoint));
+      start = breakPoint;
+    }
+  }
+
+  if (start < arr.length) {
+    result.push(arr.slice(start)); // Add remaining items
+  }
+
+  return result;
+}
