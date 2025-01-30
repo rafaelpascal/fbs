@@ -1,12 +1,15 @@
 // import { lecturesidebarData } from "./data";
 import { cn } from "~/utils/helpers";
 import { HiMenuAlt2 } from "react-icons/hi";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FBSlogo } from "~/assets";
 import { useTheme } from "~/context/theme-provider";
 import { LectureItems } from "./LectureItems";
 import { RiHome2Line } from "react-icons/ri";
 import { useSidebar } from "~/context/Sidebar_Provider";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
+import { CourseServices } from "~/api/course";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -18,15 +21,35 @@ export interface SideNavProps {
 
 // Sidebar Component
 export const LectureSidebar = () => {
+  const courseId = useSelector((state: RootState) => state.course.course_id);
   const { theme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed] = useState(false);
   const { sidebarData } = useSidebar();
+  const [moduleTitle, setModuleTitle] = useState("");
 
   // Toggle side bar on mobile view
   const toggleSidebar = useCallback(() => {
     setIsSidebarOpen((prevState) => !prevState);
   }, []);
+
+  const fetModules = async () => {
+    try {
+      const payload = {
+        courseid: courseId,
+      };
+      console.log(payload);
+      const res = await CourseServices.getModuleByCourseId(payload);
+
+      setModuleTitle(res.data.course_modules[0].module_title);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetModules();
+  }, [courseId]);
 
   return (
     <>
@@ -92,7 +115,7 @@ export const LectureSidebar = () => {
           {/* Navigation Items */}
           <div className="w-full shadow-md rounded-md">
             <h2 className="mx-2 my-4 font-DMSans text-[18px] font-bold w-full">
-              Module 1: Introduction to Consulting And Business Strategy
+              Module 1: {moduleTitle}
             </h2>
             <ul
               className={cn(

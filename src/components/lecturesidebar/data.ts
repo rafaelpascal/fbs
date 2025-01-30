@@ -8,7 +8,7 @@ export const lecturesidebarData: SideNavProps[] = [
     icon: HiClipboardDocumentList,
     dropdown: true,
     playing: true,
-    text: "Lesson 1: Introduction to Business consulting And Strategy ",
+    text: " ",
     children: [
       {
         href: "/lecture/:id",

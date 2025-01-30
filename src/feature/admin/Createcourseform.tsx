@@ -225,6 +225,7 @@ const Createcourseform = ({ created }: any) => {
       "courseType",
       "description",
       "maxStudents",
+      "cohortTag",
     ];
     return requiredFields.every(
       (field) => formData[field as keyof FormData] !== ""
@@ -300,8 +301,6 @@ const Createcourseform = ({ created }: any) => {
         console.log(`${key}:`, value);
       }
       const res = await CourseServices.createCourse(formDataToSend);
-      console.log("ccc", res);
-
       dispatch(setCourseId(res.data.course_id));
       dispatch(setCourseUrl(res.data.course_url));
       if (res.data.success === true) {

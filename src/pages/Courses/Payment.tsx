@@ -1,5 +1,6 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { CourseServices } from "~/api/course";
 import { BaseButton } from "~/components/buttons/BaseButton";
@@ -8,6 +9,7 @@ import { NewPaymentModal } from "~/components/Modal/NewPaymentModal";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { useTheme } from "~/context/theme-provider";
 import { DashboardArea } from "~/layouts/DashboardArea";
+import { setCourseId } from "~/redux-store/slice/course.slice";
 import { cn, formatToCurrency } from "~/utils/helpers";
 
 type ProgramSpecification = {
@@ -21,6 +23,7 @@ const PaymentPlan = [
 ];
 
 const Payment = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
@@ -90,6 +93,7 @@ const Payment = () => {
         };
 
         const res = await CourseServices.fetchSingleApplication(payload);
+        sessionStorage.setItem("course_id", res.data.data[0].course_id);
         if (res.data && res.data.data && res.data.data.length > 0) {
           const application = res.data.data[0];
           setApplicationData(application);
@@ -135,6 +139,13 @@ const Payment = () => {
       console.error("Error fetching application:", error);
     }
   };
+
+  useEffect(() => {
+    const savedCourseId = sessionStorage.getItem("course_id");
+    if (savedCourseId) {
+      dispatch(setCourseId(Number(savedCourseId)));
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     fetchmyapplication();

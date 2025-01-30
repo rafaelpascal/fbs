@@ -100,7 +100,11 @@ export const NewModuleModal = ({
   };
 
   return (
-    <BaseModal isOpen={isOpen} closeModal={closeModal}>
+    <BaseModal
+      isOpen={isOpen}
+      closeModal={closeModal}
+      className="lg:min-w-[1000px] "
+    >
       <div className="w-full flex px-2 justify-between items-center bg-[#b8b6b6] py-3">
         <h2 className="font-DMSans text-[#fff] text-[18px] font-semibold text-center">
           NEW COURSE MODULE
@@ -109,7 +113,7 @@ export const NewModuleModal = ({
           <MdCancel className="text-[30px] text-[#F01E00]" />
         </button>
       </div>
-      <div className="flex w-full h-[600px] lg:w-[1000px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
+      <div className="flex w-full h-[600px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
         <div className="my-4 w-full">
           <BaseInput
             label="Module Title"

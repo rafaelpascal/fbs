@@ -9,7 +9,7 @@ import { LoadingSpinner } from "../ui/loading-spinner";
 import MediaUpload from "../data-inputs/MediaUpload";
 import PDFUpload from "../data-inputs/PDFUpload";
 import WordUpload from "../data-inputs/WordDocUpload";
-import { CourseServices } from "~/api/course";
+// import { CourseServices } from "~/api/course";
 import { RootState } from "~/redux-store/store";
 import { useSelector } from "react-redux";
 
@@ -34,7 +34,7 @@ const initialFormData = {
   featuredImages: [] as File[],
 };
 
-export const NewLessonModal = ({
+export const NewCapstoneModal = ({
   moduleId,
   isOpen,
   closeModal,
@@ -107,10 +107,14 @@ export const NewLessonModal = ({
     if (selectedMediaFile) {
       dataToSubmit.append("video_audio_upload", selectedMediaFile);
     }
-    await CourseServices.createCourseLesson(dataToSubmit);
+    console.log("FormData Payload:");
+    for (const [key, value] of dataToSubmit.entries()) {
+      console.log(`${key}:`, value);
+    }
+    // const res = await CourseServices.createCourseLesson(dataToSubmit);
     setModuleData((prevData: any) => ({
       ...prevData,
-      title: formData.title,
+      title: "formData.title",
     }));
 
     setisSubmitting(false);
@@ -126,7 +130,7 @@ export const NewLessonModal = ({
     >
       <div className="w-full flex px-2 justify-between items-center bg-[#b8b6b6] py-3">
         <h2 className="font-DMSans text-[#fff] text-[18px] font-semibold text-center">
-          NEW COURSE LESSON
+          NEW COURSE CAPSTONE
         </h2>
         <button onClick={handleclose}>
           <MdCancel className="text-[30px] text-[#F01E00]" />
@@ -135,16 +139,16 @@ export const NewLessonModal = ({
       <div className="flex w-full h-[600px] lg:w-[1000px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
         <div>
           <h2 className="text-[17px] font-DMSans font-semibold">
-            LESSON IMAGE
+            CAPSTONE IMAGE
           </h2>
           <ImageUpload onUpload={handleImageUpload} />
         </div>
 
         <div className="my-4 w-full">
           <BaseInput
-            label="Lesson Title"
+            label="Capstone Title"
             type="text"
-            placeholder="Lesson Title"
+            placeholder="Capstone Title"
             containerClassname="w-full"
             labelClassName="text-[17px] font-DMSans font-semibold"
             inputContainerClassName={cn(

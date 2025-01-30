@@ -6,25 +6,30 @@ import { NewModuleModal } from "~/components/Modal/NewModuleModal";
 import { useTheme } from "~/context/theme-provider";
 import { cn } from "~/utils/helpers";
 import { showAlert } from "~/utils/sweetAlert";
-import { useDrag, useDrop } from "react-dnd";
-import { ItemTypes } from "~/types/ItemTypes";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { RiDragMove2Fill } from "react-icons/ri";
 import { NewLessonModal } from "~/components/Modal/NewLessonModal";
-
-interface Module {
-  id: number;
-  title: string;
-  description: string;
-  lessons: Lessons[];
-}
+import { NewCapstoneModal } from "~/components/Modal/NewCapstoneModal";
+import { CapstoneItem, LessonItem } from "./Items";
 
 interface Lessons {
   id: number;
   title: string;
   description: string;
   pages: string;
+}
+interface Capstone {
+  id: number;
+  title: string;
+  description: string;
+  pages: string;
+}
+interface Module {
+  id: number;
+  title: string;
+  description: string;
+  lessons: Lessons[];
+  capstone: Capstone[];
 }
 
 interface ImoduleProps {
@@ -45,6 +50,10 @@ const CourseBuilder = ({ created }: any) => {
     module: 0,
     status: false,
   });
+  const [newCapstone, setNewCapstone] = useState({
+    module: 0,
+    status: false,
+  });
   const [selectedModuleId, setSelectedModuleId] = useState(0);
   const [moduleObj, setmoduleObj] = useState<ImoduleProps>({
     moduleId: 0,
@@ -52,6 +61,10 @@ const CourseBuilder = ({ created }: any) => {
     description: "",
   });
   const [lessonObj, setlessonObj] = useState<ImoduleProps>({
+    title: "",
+    description: "",
+  });
+  const [capstoneObj, setCapstoneObj] = useState<ImoduleProps>({
     title: "",
     description: "",
   });
@@ -78,6 +91,7 @@ const CourseBuilder = ({ created }: any) => {
         title: `MODULE ${modules.length + 1}`,
         description: moduleObj.title,
         lessons: [],
+        capstone: [],
       };
 
       setModules((prevModules) => [...prevModules, newModule]);
@@ -108,6 +122,28 @@ const CourseBuilder = ({ created }: any) => {
     }
   }, [lessonObj]);
 
+  useEffect(() => {
+    const selectedModule = modules.find(
+      (module) => module.id === selectedModuleId
+    );
+    if (selectedModule && capstoneObj.title) {
+      const newCapstone: Lessons = {
+        id: Date.now(),
+        title: `CAPSTONE ${selectedModule.capstone.length + 1}`,
+        description: capstoneObj.title,
+        pages: "13 pages",
+      };
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === selectedModuleId
+            ? { ...module, capstone: [...module.capstone, newCapstone] }
+            : module
+        )
+      );
+      setCapstoneObj({ title: "", description: "" });
+    }
+  }, [capstoneObj]);
+
   const addLesson = async () => {
     setNewLesson({
       module: 0,
@@ -117,6 +153,34 @@ const CourseBuilder = ({ created }: any) => {
       "success",
       "Created!",
       "Lesson Successfully Created!",
+      "Ok",
+      "#03435F"
+    );
+
+    const selectedModule = modules.find(
+      (module) => module.id === selectedModuleId
+    );
+    if (!selectedModule) {
+      await showAlert(
+        "error",
+        "Module Not Found!",
+        "The selected module does not exist.",
+        "Ok",
+        "#FF5050"
+      );
+      return;
+    }
+  };
+
+  const addCapstone = async () => {
+    setNewCapstone({
+      module: 0,
+      status: false,
+    });
+    await showAlert(
+      "success",
+      "Created!",
+      "Capstone Successfully Created!",
       "Ok",
       "#03435F"
     );
@@ -146,6 +210,10 @@ const CourseBuilder = ({ created }: any) => {
       status: false,
     });
     setNewLesson({
+      module: 0,
+      status: false,
+    });
+    setNewCapstone({
       module: 0,
       status: false,
     });
@@ -208,6 +276,24 @@ const CourseBuilder = ({ created }: any) => {
       });
     }
   };
+  // New Capstone
+  const handleNewCapstone = async () => {
+    if (modules.length === 0) {
+      await showAlert(
+        "error",
+        "Unauthorized!",
+        "Please create a module first!",
+        "Ok",
+        "#FF5050"
+      );
+      return;
+    } else {
+      setNewCapstone({
+        module: moduleObj.moduleId || 0,
+        status: true,
+      });
+    }
+  };
 
   const handlePublish = () => {
     created();
@@ -257,6 +343,17 @@ const CourseBuilder = ({ created }: any) => {
                 />
               ))}
             </div>
+            <div>
+              {module.capstone.map((lesson, index) => (
+                <CapstoneItem
+                  key={`${module.id}-${lesson.id}-${index}`}
+                  capstone={lesson}
+                  index={index}
+                  moveLesson={moveLesson}
+                  theme={theme}
+                />
+              ))}
+            </div>
           </div>
         ))}
         <div className="flex mt-4 justify-center items-center w-full">
@@ -286,7 +383,7 @@ const CourseBuilder = ({ created }: any) => {
               Polls
             </button>
             <button
-              // onClick={addModule}
+              onClick={handleNewCapstone}
               className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
             >
               Capstone
@@ -340,6 +437,14 @@ const CourseBuilder = ({ created }: any) => {
           moduleData={moduleObj}
           setModuleData={setlessonObj}
         />
+        <NewCapstoneModal
+          moduleId={newCapstone.module}
+          isOpen={newCapstone.status}
+          closeModal={handleClose}
+          handlecreate={addCapstone}
+          moduleData={moduleObj}
+          setModuleData={setCapstoneObj}
+        />
         <div className="flex flex-row flex-wrap justify-start items-center gap-4">
           <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
             PREVIEW
@@ -356,73 +461,6 @@ const CourseBuilder = ({ created }: any) => {
         </div>
       </div>
     </DndProvider>
-  );
-};
-
-// LessonItem component for drag-and-drop
-const LessonItem = ({ lesson, theme, index, moveLesson }: any) => {
-  if (!lesson?.id) {
-    return null;
-  }
-
-  const [, drag] = useDrag({
-    type: ItemTypes.LESSON,
-    item: { id: lesson?.id || "", index },
-  });
-
-  const [, drop] = useDrop({
-    accept: ItemTypes.LESSON,
-    hover: (item: any) => {
-      if (item.index !== index) {
-        moveLesson(item.id, index);
-        item.index = index;
-      }
-    },
-  });
-
-  return (
-    <div ref={drop} className="flex justify-between items-center gap-2">
-      <button ref={drag} className="p-2 rounded text-white">
-        <RiDragMove2Fill
-          className={cn(
-            "text-[30px]",
-            theme === "dark" ? "text-[#fff]" : "text-[#333]"
-          )}
-        />
-      </button>
-      <div
-        // The container div becomes the drop target
-        // className="p-3 w-full shadow-md flex flex-col lg:flex-row justify-between items-start mb-2"
-        className={cn(
-          "p-3 w-full shadow-md flex flex-col lg:flex-row justify-between items-start mb-2",
-          theme === "dark"
-            ? "bg-transparent border-[0.5px] border-[#ddd]"
-            : "bg-[#B3B3B3]/10"
-        )}
-      >
-        <div className="flex justify-start items-start gap-2">
-          <h2 className="font-DMSans font-semibold text-[18px] text-[#FF5050]">
-            {lesson.title}:
-          </h2>
-          <h2 className="font-DMSans font-semibold text-[18px]">
-            {lesson.description}
-          </h2>
-        </div>
-
-        {/* The button will trigger the drag action */}
-        <div className="flex justify-end items-end gap-2">
-          <p className="font-DMSans mr-10 font-normal text-[18px]">
-            {lesson.pages}
-          </p>
-          <button>
-            <FiEdit className="text-[30px]" />
-          </button>
-          <button>
-            <MdOutlineCancel className="text-[30px]" />
-          </button>
-        </div>
-      </div>
-    </div>
   );
 };
 

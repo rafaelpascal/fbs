@@ -6,9 +6,10 @@ import { useTheme } from "~/context/theme-provider";
 interface IBaseModal extends IChildren, IModalPropsType {
   isOpen: boolean;
   closeModal: () => void;
+  className?: string;
 }
 
-export const BaseModal = ({ children, isOpen }: IBaseModal) => {
+export const BaseModal = ({ children, className, isOpen }: IBaseModal) => {
   const { theme } = useTheme();
   const tooltipRef = useRef<HTMLElement>(null);
 
@@ -26,7 +27,8 @@ export const BaseModal = ({ children, isOpen }: IBaseModal) => {
             ref={tooltipRef as React.RefObject<HTMLDivElement>}
             className={cn(
               "h-auto max-h-[800px]  w-auto rounded-[8px] overflow-y-auto shadow-md [@media(max-width:1200px)]:w-[50%] [@media(max-width:700px)]:w-[90%] ",
-              theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
+              theme === "dark" ? "bg-[#333]" : "bg-[#fff]",
+              className
             )}
           >
             {children}

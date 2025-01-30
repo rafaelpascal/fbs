@@ -17,6 +17,8 @@ import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { AuthService } from "~/api/auth";
 import { splitArray } from "~/utils/helpers";
+import { RootState } from "~/redux-store/store";
+import { useSelector } from "react-redux";
 
 type Specification = {
   id: string;
@@ -83,6 +85,7 @@ const Lessons = [
 ];
 const Dashboard = () => {
   const { theme } = useTheme();
+  const courseId = useSelector((state: RootState) => state.course.course_id);
   const [loading, setLoading] = useState(false);
   const [courses, setcourses] = useState<Module[]>([]);
   const [secondcourses, setsecondcourses] = useState<Module[]>([]);
@@ -100,7 +103,6 @@ const Dashboard = () => {
 
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
-    console.log(`Selected option: ${option}`);
   };
 
   const handlePayment = (applicationId: string) => {
@@ -181,7 +183,7 @@ const Dashboard = () => {
   const fetModules = async () => {
     try {
       const payload = {
-        courseid: 15,
+        courseid: courseId,
       };
       const res = await CourseServices.getModuleByCourseId(payload);
       const [chunk1, chunk2] = splitArray<Module>(res.data.course_modules);
@@ -194,7 +196,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetModules();
-  }, []);
+  }, [courseId]);
 
   useEffect(() => {
     fetchmyapplication();
@@ -321,6 +323,7 @@ const Dashboard = () => {
                   <div className="grid w-[100%] grid-cols-1 gap-x-20 gap-y-10 sm:grid-cols-2">
                     {courses.map((course) => (
                       <CourseCard
+                        moduleNumber={course.module_number}
                         key={course.moduleid}
                         title={course.module_title}
                         description={course.module_description}
@@ -339,6 +342,7 @@ const Dashboard = () => {
                     <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
                       {secondcourses.map((course) => (
                         <CourseCard
+                          moduleNumber={course.module_number}
                           key={course.moduleid}
                           title={course.module_title}
                           description={course.module_description}

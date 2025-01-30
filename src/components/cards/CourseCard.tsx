@@ -4,6 +4,7 @@ import { cn } from "~/utils/helpers";
 
 interface CourseCardProps {
   title: string;
+  moduleNumber: string;
   description: string;
   lessonsInfo: string;
   courseStarted: string;
@@ -14,6 +15,7 @@ interface CourseCardProps {
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({
+  moduleNumber,
   title,
   description,
   lessonsInfo,
@@ -26,20 +28,31 @@ const CourseCard: React.FC<CourseCardProps> = ({
   return (
     <div className="relative w-full mt-4 h-[325px] bg-[#fff]">
       <div className="p-4 h-[240px] overflow-y-hidden flex justify-between items-start flex-col">
-        <div className="flex justify-between w-full gap-6 mb-4 items-center">
-          <h2 className="text-[20px] font-DMSans font-bold text-[#000000] w-[60%]">
-            {title}
-          </h2>
-          {(courseStarted === "completed" || courseStarted === "started") && (
-            <div className="w-[56px] bg-[#EBEDF0] h-[56px] rounded-full flex justify-center items-center">
-              <Icon className={cn("bg-transparent text-[#000] text-[30px]")} />
-            </div>
-          )}
-          {courseStarted === "not started" && (
-            <div className="w-[56px] bg-[#FF5050] h-[56px] rounded-full flex justify-center items-center">
-              <Icon className={cn("bg-transparent text-[#000] text-[30px]")} />
-            </div>
-          )}
+        <div className="flex justify-between w-full gap-2 mb-4 items-center">
+          <div className="lg:w-[80%] w-full flex justify-start items-center gap-4">
+            <h2 className="text-[20px] font-DMSans font-bold text-[#000000]">
+              {moduleNumber}
+            </h2>
+            <h2 className="text-[18px] font-DMSans font-bold w-full text-[#000000]">
+              {title}
+            </h2>
+          </div>
+          <div className="w-[20%] flex justify-end items-center">
+            {(courseStarted === "completed" || courseStarted === "started") && (
+              <div className="w-[56px] bg-[#EBEDF0] h-[56px] rounded-full flex justify-center items-center">
+                <Icon
+                  className={cn("bg-transparent text-[#000] text-[30px]")}
+                />
+              </div>
+            )}
+            {courseStarted === "not started" && (
+              <div className="w-[56px] bg-[#FF5050] h-[56px] rounded-full flex justify-center items-center">
+                <Icon
+                  className={cn("bg-transparent text-[#000] text-[30px]")}
+                />
+              </div>
+            )}
+          </div>
         </div>
         {description !== "" && (
           <p className="text-[15px] w-full font-DMSans font-normal text-[#757575]">
