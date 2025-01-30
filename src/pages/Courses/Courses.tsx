@@ -195,7 +195,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetModules();
+    console.log("courseId", courseId);
+    if (courseId) {
+      fetModules();
+    }
   }, [courseId]);
 
   useEffect(() => {

@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { CourseServices } from "~/api/course";
 import { useSidebar } from "~/context/Sidebar_Provider";
 import { FaFilePdf, FaPlayCircle, FaVideo } from "react-icons/fa";
-// import PdfViewer from "~/components/Collapsible/pdfViewer";
+import PdfViewer from "~/components/Collapsible/pdfViewer";
 import { SideNavProps } from "~/components/lecturesidebar/LectureItems";
 
 const Lecture = () => {
@@ -77,7 +77,7 @@ const Lecture = () => {
                 : "#",
             icon: FaFilePdf,
             dropdown: false,
-            text: "PDF",
+            text: "Lecture",
           },
           {
             href:
@@ -87,7 +87,7 @@ const Lecture = () => {
                 : "#",
             icon: FaVideo,
             dropdown: false,
-            text: "Video/Audio",
+            text: "Quiz",
           },
           {
             href: lessonItem.stream_video_audio
@@ -95,7 +95,7 @@ const Lecture = () => {
               : "#",
             icon: FaPlayCircle,
             dropdown: false,
-            text: "Stream",
+            text: "Assignment",
           },
         ],
       })
@@ -152,15 +152,15 @@ const Lecture = () => {
                         idx === currentIndex ? "block" : "hidden"
                       }`}
                     >
-                      {/* <PdfViewer ref={pdfViewerRef} file={media} /> */}
-                      <iframe
+                      <PdfViewer ref={pdfViewerRef} file={media} />
+                      {/* <iframe
                         src={`https://docs.google.com/gview?url=${encodeURIComponent(
                           media
                         )}&embedded=true`}
                         width="100%"
                         height="600px"
                         className="border rounded-md shadow-lg"
-                      />
+                      /> */}
                     </div>
                   );
                 } else if (media.includes("youtube.com")) {

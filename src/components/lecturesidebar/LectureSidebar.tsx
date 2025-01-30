@@ -10,6 +10,7 @@ import { useSidebar } from "~/context/Sidebar_Provider";
 import { useSelector } from "react-redux";
 import { RootState } from "~/redux-store/store";
 import { CourseServices } from "~/api/course";
+import { LoadingSpinner } from "../ui/loading-spinner";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -25,8 +26,10 @@ export const LectureSidebar = () => {
   const { theme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const { sidebarData } = useSidebar();
   const [moduleTitle, setModuleTitle] = useState("");
+  const [moduleNumber, setModuleNumber] = useState("");
 
   // Toggle side bar on mobile view
   const toggleSidebar = useCallback(() => {
@@ -34,21 +37,25 @@ export const LectureSidebar = () => {
   }, []);
 
   const fetModules = async () => {
+    setLoading(true);
     try {
       const payload = {
         courseid: courseId,
       };
-      console.log(payload);
       const res = await CourseServices.getModuleByCourseId(payload);
-
       setModuleTitle(res.data.course_modules[0].module_title);
+      setModuleNumber(res.data.course_modules[0].module_number);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
 
   useEffect(() => {
-    fetModules();
+    if (courseId) {
+      fetModules();
+    }
   }, [courseId]);
 
   return (
@@ -114,9 +121,15 @@ export const LectureSidebar = () => {
 
           {/* Navigation Items */}
           <div className="w-full shadow-md rounded-md">
-            <h2 className="mx-2 my-4 font-DMSans text-[18px] font-bold w-full">
-              Module 1: {moduleTitle}
-            </h2>
+            {isLoading ? (
+              <div className="w-full py-4 flex justify-center items-center">
+                <LoadingSpinner size="xs" />
+              </div>
+            ) : (
+              <h2 className="mx-2 my-4 font-DMSans text-[18px] font-bold w-full">
+                Module {moduleNumber}: {moduleTitle}
+              </h2>
+            )}
             <ul
               className={cn(
                 "w-full grid grid-cols-1 overflow-x-hidden overflow-y-auto",

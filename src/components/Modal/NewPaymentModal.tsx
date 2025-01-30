@@ -124,8 +124,12 @@ export const NewPaymentModal = ({
   };
 
   return (
-    <BaseModal isOpen={isOpen} closeModal={closeModal}>
-      <div className="flex w-full lg:w-[514px] h-auto p-6 flex-col items-center justify-center">
+    <BaseModal
+      isOpen={isOpen}
+      closeModal={closeModal}
+      className="lg:max-w-[514px]"
+    >
+      <div className="flex w-full h-auto p-6 flex-col items-center justify-center">
         <div className="w-full flex justify-end items-center">
           <div className="flex justify-between items-start w-full lg:w-[55%]">
             <div className="h-[80px] w-[80px] bg-slate-300 rounded-full flex justify-center items-center">

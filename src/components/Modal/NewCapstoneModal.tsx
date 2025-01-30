@@ -126,7 +126,7 @@ export const NewCapstoneModal = ({
     <BaseModal
       isOpen={isOpen}
       closeModal={closeModal}
-      className="lg:min-w-[1000px] "
+      className="lg:min-w-[1000px]"
     >
       <div className="w-full flex px-2 justify-between items-center bg-[#b8b6b6] py-3">
         <h2 className="font-DMSans text-[#fff] text-[18px] font-semibold text-center">
