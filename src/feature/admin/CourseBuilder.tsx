@@ -10,7 +10,9 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { NewLessonModal } from "~/components/Modal/NewLessonModal";
 import { NewCapstoneModal } from "~/components/Modal/NewCapstoneModal";
-import { CapstoneItem, LessonItem } from "./Items";
+import { Assignment, CapstoneItem, LessonItem } from "./Items";
+import { NewAssignmentModal } from "~/components/Modal/NewAssignmentModal";
+import { NewQuizModal } from "~/components/Modal/NewQuizModal";
 
 interface Lessons {
   id: number;
@@ -30,6 +32,8 @@ interface Module {
   description: string;
   lessons: Lessons[];
   capstone: Capstone[];
+  assignment: Capstone[];
+  quiz: Capstone[];
 }
 
 interface ImoduleProps {
@@ -52,6 +56,16 @@ const CourseBuilder = ({ created }: any) => {
   });
   const [newCapstone, setNewCapstone] = useState({
     module: 0,
+    lesson: 0,
+    status: false,
+  });
+  const [newAssignment, setNewAssignment] = useState({
+    module: 0,
+    lesson: 0,
+    status: false,
+  });
+  const [newQuiz, setNewQuiz] = useState({
+    module: 0,
     status: false,
   });
   const [selectedModuleId, setSelectedModuleId] = useState(0);
@@ -61,10 +75,19 @@ const CourseBuilder = ({ created }: any) => {
     description: "",
   });
   const [lessonObj, setlessonObj] = useState<ImoduleProps>({
+    moduleId: 0,
     title: "",
     description: "",
   });
   const [capstoneObj, setCapstoneObj] = useState<ImoduleProps>({
+    title: "",
+    description: "",
+  });
+  const [assignmentObj, setAssignmentObj] = useState<ImoduleProps>({
+    title: "",
+    description: "",
+  });
+  const [QuizObj, setQuizObj] = useState<ImoduleProps>({
     title: "",
     description: "",
   });
@@ -92,6 +115,8 @@ const CourseBuilder = ({ created }: any) => {
         description: moduleObj.title,
         lessons: [],
         capstone: [],
+        assignment: [],
+        quiz: [],
       };
 
       setModules((prevModules) => [...prevModules, newModule]);
@@ -100,6 +125,7 @@ const CourseBuilder = ({ created }: any) => {
     }
   }, [moduleObj, isNewModule]);
 
+  // Lesson
   useEffect(() => {
     const selectedModule = modules.find(
       (module) => module.id === selectedModuleId
@@ -118,10 +144,11 @@ const CourseBuilder = ({ created }: any) => {
             : module
         )
       );
-      setlessonObj({ title: "", description: "" });
+      // setlessonObj({ title: "", description: "" });
     }
   }, [lessonObj]);
 
+  // capstone
   useEffect(() => {
     const selectedModule = modules.find(
       (module) => module.id === selectedModuleId
@@ -129,7 +156,8 @@ const CourseBuilder = ({ created }: any) => {
     if (selectedModule && capstoneObj.title) {
       const newCapstone: Lessons = {
         id: Date.now(),
-        title: `CAPSTONE ${selectedModule.capstone.length + 1}`,
+        // title: `CAPSTONE ${selectedModule.capstone.length + 1}`,
+        title: `CAPSTONE`,
         description: capstoneObj.title,
         pages: "13 pages",
       };
@@ -143,6 +171,54 @@ const CourseBuilder = ({ created }: any) => {
       setCapstoneObj({ title: "", description: "" });
     }
   }, [capstoneObj]);
+
+  // assignmentObj
+  useEffect(() => {
+    const selectedModule = modules.find(
+      (module) => module.id === selectedModuleId
+    );
+    if (selectedModule && assignmentObj.title) {
+      const newAssignment: Lessons = {
+        id: Date.now(),
+        // title: `ASSIGNMENT ${selectedModule.assignment.length + 1}`,
+        title: `ASSIGNMENT`,
+        description: assignmentObj.title,
+        pages: "13 pages",
+      };
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === selectedModuleId
+            ? { ...module, assignment: [...module.assignment, newAssignment] }
+            : module
+        )
+      );
+      setAssignmentObj({ title: "", description: "" });
+    }
+  }, [assignmentObj]);
+
+  // Quiz
+  useEffect(() => {
+    const selectedModule = modules.find(
+      (module) => module.id === selectedModuleId
+    );
+    if (selectedModule && QuizObj.title) {
+      const newQuiz: Lessons = {
+        id: Date.now(),
+        // title: `ASSIGNMENT ${selectedModule.assignment.length + 1}`,
+        title: `QUIZ`,
+        description: QuizObj.title,
+        pages: "13 pages",
+      };
+      setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === selectedModuleId
+            ? { ...module, quiz: [...module.quiz, newQuiz] }
+            : module
+        )
+      );
+      setQuizObj({ title: "", description: "" });
+    }
+  }, [assignmentObj]);
 
   const addLesson = async () => {
     setNewLesson({
@@ -175,6 +251,7 @@ const CourseBuilder = ({ created }: any) => {
   const addCapstone = async () => {
     setNewCapstone({
       module: 0,
+      lesson: 0,
       status: false,
     });
     await showAlert(
@@ -188,6 +265,64 @@ const CourseBuilder = ({ created }: any) => {
     const selectedModule = modules.find(
       (module) => module.id === selectedModuleId
     );
+    if (!selectedModule) {
+      await showAlert(
+        "error",
+        "Module Not Found!",
+        "The selected module does not exist.",
+        "Ok",
+        "#FF5050"
+      );
+      return;
+    }
+  };
+
+  const addAssignment = async () => {
+    setNewAssignment({
+      module: 0,
+      lesson: 0,
+      status: false,
+    });
+    await showAlert(
+      "success",
+      "Created!",
+      "Assignment Successfully Created!",
+      "Ok",
+      "#03435F"
+    );
+
+    const selectedModule = modules.find((module) => {
+      return module.id === selectedModuleId;
+    });
+    if (!selectedModule) {
+      await showAlert(
+        "error",
+        "Module Not Found!",
+        "The selected module does not exist.",
+        "Ok",
+        "#FF5050"
+      );
+      return;
+    }
+  };
+
+  const addQuiz = async () => {
+    setNewQuiz({
+      module: 0,
+      status: false,
+    });
+    await showAlert(
+      "success",
+      "Created!",
+      "Quiz Successfully Created!",
+      "Ok",
+      "#03435F"
+    );
+
+    const selectedModule = modules.find(
+      (module) => module.id === selectedModuleId
+    );
+
     if (!selectedModule) {
       await showAlert(
         "error",
@@ -214,6 +349,16 @@ const CourseBuilder = ({ created }: any) => {
       status: false,
     });
     setNewCapstone({
+      module: 0,
+      lesson: 0,
+      status: false,
+    });
+    setNewAssignment({
+      module: 0,
+      lesson: 0,
+      status: false,
+    });
+    setNewQuiz({
       module: 0,
       status: false,
     });
@@ -276,6 +421,7 @@ const CourseBuilder = ({ created }: any) => {
       });
     }
   };
+
   // New Capstone
   const handleNewCapstone = async () => {
     if (modules.length === 0) {
@@ -289,6 +435,46 @@ const CourseBuilder = ({ created }: any) => {
       return;
     } else {
       setNewCapstone({
+        module: moduleObj.moduleId || 0,
+        lesson: lessonObj.moduleId || 0,
+        status: true,
+      });
+    }
+  };
+
+  // New Assignment
+  const handleNewAssignment = async () => {
+    if (modules.length === 0) {
+      await showAlert(
+        "error",
+        "Unauthorized!",
+        "Please create a module first!",
+        "Ok",
+        "#FF5050"
+      );
+      return;
+    } else {
+      setNewAssignment({
+        module: moduleObj.moduleId || 0,
+        lesson: lessonObj.moduleId || 0,
+        status: true,
+      });
+    }
+  };
+
+  // New Assignment
+  const handleNewQuiz = async () => {
+    if (modules.length === 0) {
+      await showAlert(
+        "error",
+        "Unauthorized!",
+        "Please create a module first!",
+        "Ok",
+        "#FF5050"
+      );
+      return;
+    } else {
+      setNewQuiz({
         module: moduleObj.moduleId || 0,
         status: true,
       });
@@ -354,6 +540,17 @@ const CourseBuilder = ({ created }: any) => {
                 />
               ))}
             </div>
+            <div>
+              {module.assignment.map((lesson, index) => (
+                <Assignment
+                  key={`${module.id}-${lesson.id}-${index}`}
+                  capstone={lesson}
+                  index={index}
+                  moveLesson={moveLesson}
+                  theme={theme}
+                />
+              ))}
+            </div>
           </div>
         ))}
         <div className="flex mt-4 justify-center items-center w-full">
@@ -372,6 +569,7 @@ const CourseBuilder = ({ created }: any) => {
             </button>
             <button
               // onClick={addModule}
+              onClick={handleNewQuiz}
               className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
             >
               Quiz
@@ -389,7 +587,7 @@ const CourseBuilder = ({ created }: any) => {
               Capstone
             </button>
             <button
-              // onClick={addLesson}
+              onClick={handleNewAssignment}
               className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
             >
               Assignments
@@ -439,11 +637,29 @@ const CourseBuilder = ({ created }: any) => {
         />
         <NewCapstoneModal
           moduleId={newCapstone.module}
+          lessonId={newCapstone.lesson}
           isOpen={newCapstone.status}
           closeModal={handleClose}
           handlecreate={addCapstone}
           moduleData={moduleObj}
           setModuleData={setCapstoneObj}
+        />
+        <NewAssignmentModal
+          moduleId={newAssignment.module}
+          lessonId={newAssignment.lesson}
+          isOpen={newAssignment.status}
+          closeModal={handleClose}
+          handlecreate={addAssignment}
+          moduleData={moduleObj}
+          setModuleData={setAssignmentObj}
+        />
+        <NewQuizModal
+          moduleId={newQuiz.module}
+          isOpen={newQuiz.status}
+          closeModal={handleClose}
+          handlecreate={addQuiz}
+          moduleData={moduleObj}
+          setModuleData={setQuizObj}
         />
         <div className="flex flex-row flex-wrap justify-start items-center gap-4">
           <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">

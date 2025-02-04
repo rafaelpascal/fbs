@@ -7,10 +7,9 @@ import { useTheme } from "~/context/theme-provider";
 import { LectureItems } from "./LectureItems";
 import { RiHome2Line } from "react-icons/ri";
 import { useSidebar } from "~/context/Sidebar_Provider";
-import { useSelector } from "react-redux";
-import { RootState } from "~/redux-store/store";
 import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "../ui/loading-spinner";
+import { Link } from "react-router-dom";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -22,7 +21,8 @@ export interface SideNavProps {
 
 // Sidebar Component
 export const LectureSidebar = () => {
-  const courseId = useSelector((state: RootState) => state.course.course_id);
+  // const courseId = useSelector((state: RootState) => state.course.course_id);
+  const courseId = localStorage.getItem("course_id");
   const { theme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed] = useState(false);
@@ -103,7 +103,9 @@ export const LectureSidebar = () => {
             />
           </div>
           <div className="w-full flex mt-4 flex-row justify-start gap-6 items-center">
-            <RiHome2Line className="text-[35px]" />
+            <Link to="/dashboard">
+              <RiHome2Line className="text-[35px]" />
+            </Link>
             <h2 className="text-[20px] font-DMSans font-semibold">
               <span className="text-[#1CB503]">Week 2</span> / 12 weeks
             </h2>

@@ -29,6 +29,7 @@ export const NewPaymentModal = ({
 }: IModalPropsType) => {
   const navigate = useNavigate();
   const [applicationData, setApplicationData] = useState({
+    applicationid: 0,
     naira_amount: 0,
     usd_amount: 0,
     email: "",
@@ -72,7 +73,10 @@ export const NewPaymentModal = ({
   const sendResponseToBackend = async (flutterwave_response: any) => {
     try {
       const payload = {
-        payment_details: { ...flutterwave_response },
+        payment_details: {
+          ...flutterwave_response,
+          application_id: applicationData.applicationid,
+        },
       };
       const response = await CourseServices.submitFluterres(payload);
       if (response.data.success === true) {

@@ -72,150 +72,161 @@ const FormSubmitted = lazyLoad(
 );
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ErrorPage from "~/pages/ErrorPage.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
   [
     {
-      path: ROUTES.NEW_COURSE,
-      element: <NewCourse />,
-    },
-    {
-      path: ROUTES.EVENTS,
-      element: <Events />,
-    },
-    {
-      path: ROUTES.SINGLE_EVENT,
-      element: <SingleEvent />,
-    },
-    {
-      path: ROUTES.APPLICATION,
-      element: <Application />,
-    },
-    {
-      path: ROUTES.FORM_SUBMITTED,
-      element: <FormSubmitted />,
-    },
-    {
-      path: ROUTES.HOME,
-      element: <Login />,
-    },
-    {
-      element: <AppLayout />,
+      path: "/", // Root route
+      errorElement: <ErrorPage />, // Global error handler
       children: [
         {
-          path: ROUTES.DASHBOARD,
-          element: <Home />,
+          path: ROUTES.NEW_COURSE,
+          element: <NewCourse />,
         },
         {
-          path: ROUTES.PAYMENT,
-          element: <Payment />,
+          path: ROUTES.EVENTS,
+          element: <Events />,
         },
         {
-          path: ROUTES.BANKTRANSFER,
-          element: <BankTransfer />,
+          path: ROUTES.SINGLE_EVENT,
+          element: <SingleEvent />,
         },
         {
-          path: ROUTES.STUDENTRANSACTION,
-          element: <Transactions />,
+          path: ROUTES.APPLICATION,
+          element: <Application />,
         },
-      ],
-    },
-    {
-      element: <AdminAppLayout />,
-      children: [
         {
-          path: ROUTES.ADMINDASHBOARD,
-          element: <Dashboard />,
+          path: ROUTES.FORM_SUBMITTED,
+          element: <FormSubmitted />,
+        },
+        {
+          path: ROUTES.HOME,
+          element: <Login />,
+        },
+        {
+          element: <AppLayout />,
           children: [
             {
-              index: true,
-              element: <Navigate to={ROUTES.PAYMENTTABLE} />,
+              path: ROUTES.DASHBOARD,
+              element: <Home />,
             },
             {
-              path: ROUTES.PAYMENTTABLE,
-              element: <PaymentsTable />,
+              path: ROUTES.PAYMENT,
+              element: <Payment />,
             },
             {
-              path: ROUTES.APPLICATIONTABLE,
-              element: <ApplicationTable />,
+              path: ROUTES.BANKTRANSFER,
+              element: <BankTransfer />,
             },
             {
-              path: ROUTES.FACULTYTABLE,
-              element: <FacultiesTable />,
+              path: ROUTES.STUDENTRANSACTION,
+              element: <Transactions />,
             },
           ],
         },
         {
-          path: ROUTES.COURSEAPPLICATION,
-          element: <CourseApplications />,
-        },
-        {
-          path: ROUTES.COURSES,
-          element: <AdminCourses />,
+          element: <AdminAppLayout />,
           children: [
             {
-              index: true,
-              element: <Navigate to={ROUTES.ASSIGNMENTSTABLE} />,
+              path: ROUTES.ADMINDASHBOARD,
+              element: <Dashboard />,
+              children: [
+                {
+                  index: true,
+                  element: <Navigate to={ROUTES.PAYMENTTABLE} />,
+                },
+                {
+                  path: ROUTES.PAYMENTTABLE,
+                  element: <PaymentsTable />,
+                },
+                {
+                  path: ROUTES.APPLICATIONTABLE,
+                  element: <ApplicationTable />,
+                },
+                {
+                  path: ROUTES.FACULTYTABLE,
+                  element: <FacultiesTable />,
+                },
+              ],
             },
             {
-              path: ROUTES.ASSIGNMENTSTABLE,
-              element: <CourseAssignmentTable />,
+              path: ROUTES.COURSEAPPLICATION,
+              element: <CourseApplications />,
             },
             {
-              path: ROUTES.CAPSTONESTABLE,
-              element: <CapstonesTable />,
+              path: ROUTES.COURSES,
+              element: <AdminCourses />,
+              children: [
+                {
+                  index: true,
+                  element: <Navigate to={ROUTES.ASSIGNMENTSTABLE} />,
+                },
+                {
+                  path: ROUTES.ASSIGNMENTSTABLE,
+                  element: <CourseAssignmentTable />,
+                },
+                {
+                  path: ROUTES.CAPSTONESTABLE,
+                  element: <CapstonesTable />,
+                },
+                {
+                  path: ROUTES.POLLSTABLE,
+                  element: <PollsTable />,
+                },
+                {
+                  path: ROUTES.QUIZZESTABLE,
+                  element: <QuizzesTable />,
+                },
+              ],
             },
             {
-              path: ROUTES.POLLSTABLE,
-              element: <PollsTable />,
+              path: ROUTES.NEWCOURSE,
+              element: <CreateCourse />,
             },
             {
-              path: ROUTES.QUIZZESTABLE,
-              element: <QuizzesTable />,
+              path: ROUTES.ADMINMANAGEMENT,
+              element: <AdminManagement />,
+            },
+            {
+              path: ROUTES.EVENTMANAGEMENT,
+              element: <EventsManagement />,
             },
           ],
         },
         {
-          path: ROUTES.NEWCOURSE,
-          element: <CreateCourse />,
+          element: <LectureLayout />,
+          children: [
+            {
+              path: ROUTES.LECTURE,
+              element: <Lecture />,
+            },
+            {
+              path: ROUTES.QUIZ,
+              element: <Quiz />,
+            },
+            {
+              path: ROUTES.WORD,
+              element: <WordLecture />,
+            },
+            {
+              path: ROUTES.ASSIGNMENT,
+              element: <Assignment />,
+            },
+            {
+              path: ROUTES.CONGRATULATIONS,
+              element: <Congratulations />,
+            },
+            {
+              path: ROUTES.LECTURECOMPLETE,
+              element: <LectureComplete />,
+            },
+          ],
         },
         {
-          path: ROUTES.ADMINMANAGEMENT,
-          element: <AdminManagement />,
-        },
-        {
-          path: ROUTES.EVENTMANAGEMENT,
-          element: <EventsManagement />,
-        },
-      ],
-    },
-    {
-      element: <LectureLayout />,
-      children: [
-        {
-          path: ROUTES.LECTURE,
-          element: <Lecture />,
-        },
-        {
-          path: ROUTES.QUIZ,
-          element: <Quiz />,
-        },
-        {
-          path: ROUTES.WORD,
-          element: <WordLecture />,
-        },
-        {
-          path: ROUTES.ASSIGNMENT,
-          element: <Assignment />,
-        },
-        {
-          path: ROUTES.CONGRATULATIONS,
-          element: <Congratulations />,
-        },
-        {
-          path: ROUTES.LECTURECOMPLETE,
-          element: <LectureComplete />,
+          path: "*",
+          element: <ErrorPage />,
         },
       ],
     },
@@ -248,7 +259,7 @@ const AppRouter = () => (
     <Suspense
       fallback={
         <div className="w-full h-[100vh] flex justify-center items-center">
-          <LoadingSpinner />
+          <LoadingSpinner size="sm" />
         </div>
       }
     >

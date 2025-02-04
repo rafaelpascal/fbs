@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 
 interface IModalPropsType {
   moduleId: number;
+  lessonId: number;
   isOpen: boolean;
   closeModal: () => void;
   handlecreate: (moduleId: number) => void;
@@ -23,19 +24,24 @@ interface IModalPropsType {
 }
 
 interface FormData {
+  score: string;
+  deadline: string;
   title: string;
   embed: string;
   featuredImages: File[];
 }
 
 const initialFormData = {
+  score: "",
+  deadline: "",
   title: "",
   embed: "",
   featuredImages: [] as File[],
 };
 
-export const NewLessonModal = ({
+export const NewAssignmentModal = ({
   moduleId,
+  lessonId,
   isOpen,
   closeModal,
   handlecreate,
@@ -49,6 +55,8 @@ export const NewLessonModal = ({
   const [selectedMediaFile, setMediaFile] = useState<File | null>(null);
   //   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
+    score: "",
+    deadline: "",
     title: "",
     embed: "",
     featuredImages: [],
@@ -92,10 +100,12 @@ export const NewLessonModal = ({
     const dataToSubmit = new FormData();
     dataToSubmit.append("course_id", courseId?.toString() || "");
     dataToSubmit.append("stream_video_audio", formData.embed);
+    dataToSubmit.append("overall_score", formData.score);
     dataToSubmit.append("module_id", moduleId.toString() || "");
-    dataToSubmit.append("lesson_title", formData.title);
+    dataToSubmit.append("lesson_id", lessonId.toString() || "");
+    dataToSubmit.append("assignment_title", formData.title);
     formData.featuredImages.forEach((file) => {
-      dataToSubmit.append("lesson_image", file);
+      dataToSubmit.append("assignment_image", file);
     });
     if (selectedPdf) {
       dataToSubmit.append("pdf_upload", selectedPdf);
@@ -106,10 +116,9 @@ export const NewLessonModal = ({
     if (selectedMediaFile) {
       dataToSubmit.append("video_audio_upload", selectedMediaFile);
     }
-    const res = await CourseServices.createCourseLesson(dataToSubmit);
+    await CourseServices.createCourseAssignment(dataToSubmit);
     setModuleData((prevData: any) => ({
       ...prevData,
-      moduleId: res.data.data.lesson_id,
       title: formData.title,
     }));
 
@@ -122,11 +131,11 @@ export const NewLessonModal = ({
     <BaseModal
       isOpen={isOpen}
       closeModal={closeModal}
-      className="lg:min-w-[1000px] "
+      className="lg:min-w-[1000px]"
     >
       <div className="w-full flex px-2 justify-between items-center bg-[#b8b6b6] py-3">
         <h2 className="font-DMSans text-[#fff] text-[18px] font-semibold text-center">
-          NEW COURSE LESSON
+          NEW COURSE ASSIGNMENT
         </h2>
         <button onClick={handleclose}>
           <MdCancel className="text-[30px] text-[#F01E00]" />
@@ -135,16 +144,16 @@ export const NewLessonModal = ({
       <div className="flex w-full h-[600px] lg:w-[1000px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
         <div>
           <h2 className="text-[17px] font-DMSans font-semibold">
-            LESSON IMAGE
+            ASSIGNMENT IMAGE
           </h2>
           <ImageUpload onUpload={handleImageUpload} />
         </div>
 
         <div className="my-4 w-full">
           <BaseInput
-            label="Lesson Title"
+            label="Assignment Title"
             type="text"
-            placeholder="Lesson Title"
+            placeholder="Assignment Title"
             containerClassname="w-full"
             labelClassName="text-[17px] font-DMSans font-semibold"
             inputContainerClassName={cn(
@@ -182,6 +191,44 @@ export const NewLessonModal = ({
             value={formData.embed}
             onChange={(e: any) => handleInputChange("embed", e.target.value)}
           />
+        </div>
+        <div className="flex justify-start gap-4 flex-col lg:flex-row flex-wrap items-center">
+          <div className="my-4 w-full lg:w-[30%]">
+            <BaseInput
+              label="Overall Score"
+              type="text"
+              placeholder="100"
+              containerClassname="w-full"
+              labelClassName="text-[17px] font-DMSans font-semibold"
+              inputContainerClassName={cn(
+                "h-[53px] ",
+                theme === "dark"
+                  ? "select-secondary"
+                  : "border-[0.5px] border-[#ddd]"
+              )}
+              value={formData.score}
+              onChange={(e: any) => handleInputChange("score", e.target.value)}
+            />
+          </div>
+          <div className="my-4 w-full lg:w-[50%]">
+            <BaseInput
+              label="Deadline"
+              type="date"
+              placeholder=""
+              containerClassname="w-full"
+              labelClassName="text-[17px] font-DMSans font-semibold"
+              inputContainerClassName={cn(
+                "h-[53px] ",
+                theme === "dark"
+                  ? "select-secondary"
+                  : "border-[0.5px] border-[#ddd]"
+              )}
+              value={formData.deadline}
+              onChange={(e: any) =>
+                handleInputChange("deadline", e.target.value)
+              }
+            />
+          </div>
         </div>
         <div className="flex justify-start items-start gap-4">
           <button

@@ -17,8 +17,6 @@ import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { AuthService } from "~/api/auth";
 import { splitArray } from "~/utils/helpers";
-import { RootState } from "~/redux-store/store";
-import { useSelector } from "react-redux";
 
 type Specification = {
   id: string;
@@ -33,6 +31,7 @@ type ProgramSpecification = {
 };
 
 interface Application {
+  application_status: number;
   applicationid: string;
   course_title: string;
   course_format?: string;
@@ -43,10 +42,6 @@ interface Application {
   end_date?: string;
   duration?: number;
 }
-
-type Program = {
-  course_title: string;
-};
 
 type Module = {
   type: string;
@@ -85,15 +80,17 @@ const Lessons = [
 ];
 const Dashboard = () => {
   const { theme } = useTheme();
-  const courseId = useSelector((state: RootState) => state.course.course_id);
+  // const courseId = useSelector((state: RootState) => state.course.course_id);
+  const courseId = localStorage.getItem("course_id");
   const [loading, setLoading] = useState(false);
+  const [isEnrolled, setisEnrolled] = useState(false);
   const [courses, setcourses] = useState<Module[]>([]);
   const [secondcourses, setsecondcourses] = useState<Module[]>([]);
   const navigate = useNavigate();
   const [programSpecifications, setProgramSpecifications] = useState<
     ProgramSpecification[]
   >([]);
-  const [applications, setapplications] = useState<Program[]>([]);
+  const [applications, setapplications] = useState<Application[]>([]);
   const location = useLocation();
   const [enrolled] = useState(location.state?.enrolled || false);
   const [selectedOption, setSelectedOption] = useState<string | null>(
@@ -126,9 +123,14 @@ const Dashboard = () => {
         userid: Storeduser?.user,
       };
       const res = await CourseServices.fetchApplication(payload);
-
       if (res.data && res.data.data && res.data.data.length > 0) {
         const application = res.data.data;
+        const anyEnrolled: boolean = application.some(
+          (application: Application) => application.application_status === 2
+        );
+        if (anyEnrolled) {
+          setisEnrolled(true);
+        }
         setapplications(application);
         const updatedProgramSpecifications: ProgramSpecification[] =
           application.map((app: Application) => ({
@@ -195,7 +197,6 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    console.log("courseId", courseId);
     if (courseId) {
       fetModules();
     }
@@ -249,32 +250,39 @@ const Dashboard = () => {
                     <p className="text-center font-DMSans text-[20px] font-semibold">
                       Application status:
                     </p>
-                    <span className="text-[#158608] font-DMSans text-[24px] font-semibold">
-                      Accepted
-                    </span>
+                    {program.application_status === 2 ? (
+                      <span className="text-[#158608] font-DMSans text-[24px] font-semibold">
+                        Accepted
+                      </span>
+                    ) : (
+                      <span className="text-[#FF1515] font-DMSans text-[24px] font-semibold">
+                        In review
+                      </span>
+                    )}
                   </div>
-                  {!enrolled && (
-                    <BaseButton
-                      containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[14px] lg:text-[16px] font-bold font-DMSans text-[#fff] `}
-                      hoverScale={1.01}
-                      hoverOpacity={0.8}
-                      tapScale={0.9}
-                      onClick={() =>
-                        handlePayment(
-                          programSpecifications[index]?.applicationid
-                        )
-                      }
-                    >
-                      <p>Proceed with payment</p>
-                    </BaseButton>
-                  )}
+                  {!enrolled ||
+                    (!isEnrolled && (
+                      <BaseButton
+                        containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[14px] lg:text-[16px] font-bold font-DMSans text-[#fff] `}
+                        hoverScale={1.01}
+                        hoverOpacity={0.8}
+                        tapScale={0.9}
+                        onClick={() =>
+                          handlePayment(
+                            programSpecifications[index]?.applicationid
+                          )
+                        }
+                      >
+                        <p>Proceed with payment</p>
+                      </BaseButton>
+                    ))}
                 </div>
               </div>
             </div>
           ))}
         </div>
       </Collapsible>
-      {enrolled ? (
+      {enrolled || isEnrolled ? (
         <>
           <Collapsible title="My Courses" initialState={true}>
             <div className="bg-[#EBEDF0] flex flex-col justify-center items-center w-full p-4 lg:p-10 rounded-[16px]">

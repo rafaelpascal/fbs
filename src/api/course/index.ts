@@ -62,6 +62,25 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static createCourseAssignment = async (payload: any) => {
+    try {
+      const res = await Api.post("/assignment/create-assignment", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static createCourseCapstone = async (payload: any) => {
+    try {
+      const res = await Api.post("/capstone/create-capstone", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static createCourseCohort = async (payload: any) => {
     try {
       const res = await Api.post("/create-cohort", payload);

@@ -58,24 +58,33 @@ export const LectureItems = (props: SideNavProps) => {
   return (
     <div className="w-full">
       {dropdown && children?.length !== 0 ? (
-        <div className="w-full flex flex-col justify-between items-center">
+        <div className="w-full flex px-2 flex-col justify-between items-center">
           <button
-            className="bg-[#FF3B30]/10 py-1 mb-1 flex justify-between items-center text-left w-full  px-4 rounded-md"
+            className={cn(
+              "py-2 mb-1 flex justify-between items-center text-left w-full px-4 rounded-md",
+              playing
+                ? "bg-[#FF3B30]/10"
+                : "bg-transparent border-[2px] border-[#FF3B30]/10"
+            )}
             onClick={handleDropdownClick}
           >
-            <div className="flex gap-5 justify-start items-center">
-              {playing ? (
-                <div className="w-[40px] h-[40px] rounded-full bg-[#FF3B30]/20 flex justify-center items-center">
-                  <FaPlay className={cn("bg-transparent text-[14px]")} />
-                </div>
-              ) : (
-                <div className="w-[40px] h-[40px] rounded-full bg-[#FF3B30]/20 flex justify-center items-center">
-                  <Icon className={cn("bg-transparent text-[24px]")} />
-                </div>
-              )}
-              <span className="text-[12px] lg:text-[14px] w-[90%] bg-transparent font-semibold font-DMSans">
-                {text}
-              </span>
+            <div className="flex justify-start items-center">
+              <div className="">
+                {playing ? (
+                  <div className="w-[40px] h-[40px] rounded-full bg-[#FF3B30]/20 flex justify-center items-center">
+                    <FaPlay className={cn("bg-transparent text-[14px]")} />
+                  </div>
+                ) : (
+                  <div className="w-[40px] h-[40px] rounded-full bg-[#FF3B30]/20 flex justify-center items-center">
+                    <Icon className={cn("bg-transparent text-[24px]")} />
+                  </div>
+                )}
+              </div>
+              <div className="w-[80%]">
+                <p className="w-full ml-2 truncate text-left text-[12px] lg:text-[14px] bg-transparent font-semibold font-DMSans">
+                  {text}
+                </p>
+              </div>
             </div>
             {dropdown && (
               <div className="">

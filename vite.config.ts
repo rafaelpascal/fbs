@@ -16,7 +16,7 @@ export default defineConfig({
       srcDir: "src",
       filename: "manifest.json",
       workbox: {
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
       },
     }),
   ],

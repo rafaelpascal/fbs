@@ -76,7 +76,6 @@ export const NewModuleModal = ({
     setisSubmitting(true);
     const dataToSubmit = new FormData();
 
-    dataToSubmit.append("programme_category_id", "2");
     dataToSubmit.append("course_id", courseId?.toString() || "");
     dataToSubmit.append("module_number", moduleNumber.toString());
     dataToSubmit.append("module_title", formData.title);

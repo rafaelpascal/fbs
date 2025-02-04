@@ -9,12 +9,13 @@ import { LoadingSpinner } from "../ui/loading-spinner";
 import MediaUpload from "../data-inputs/MediaUpload";
 import PDFUpload from "../data-inputs/PDFUpload";
 import WordUpload from "../data-inputs/WordDocUpload";
-// import { CourseServices } from "~/api/course";
+import { CourseServices } from "~/api/course";
 import { RootState } from "~/redux-store/store";
 import { useSelector } from "react-redux";
 
 interface IModalPropsType {
   moduleId: number;
+  lessonId: number;
   isOpen: boolean;
   closeModal: () => void;
   handlecreate: (moduleId: number) => void;
@@ -24,18 +25,21 @@ interface IModalPropsType {
 
 interface FormData {
   title: string;
+  score: string;
   embed: string;
   featuredImages: File[];
 }
 
 const initialFormData = {
   title: "",
+  score: "",
   embed: "",
   featuredImages: [] as File[],
 };
 
 export const NewCapstoneModal = ({
   moduleId,
+  lessonId,
   isOpen,
   closeModal,
   handlecreate,
@@ -51,6 +55,7 @@ export const NewCapstoneModal = ({
   const [formData, setFormData] = useState<FormData>({
     title: "",
     embed: "",
+    score: "",
     featuredImages: [],
   });
   // Close modal
@@ -90,13 +95,14 @@ export const NewCapstoneModal = ({
 
     // Create a new FormData object
     const dataToSubmit = new FormData();
-    dataToSubmit.append("programme_category_id", "2");
     dataToSubmit.append("course_id", courseId?.toString() || "");
     dataToSubmit.append("stream_video_audio", formData.embed);
+    dataToSubmit.append("overall_score", formData.score);
     dataToSubmit.append("module_id", moduleId.toString() || "");
-    dataToSubmit.append("lesson_title", formData.title);
+    dataToSubmit.append("lesson_id", lessonId.toString() || "");
+    dataToSubmit.append("capstone_title", formData.title);
     formData.featuredImages.forEach((file) => {
-      dataToSubmit.append("lesson_image", file);
+      dataToSubmit.append("capstone_image", file);
     });
     if (selectedPdf) {
       dataToSubmit.append("pdf_upload", selectedPdf);
@@ -107,14 +113,10 @@ export const NewCapstoneModal = ({
     if (selectedMediaFile) {
       dataToSubmit.append("video_audio_upload", selectedMediaFile);
     }
-    console.log("FormData Payload:");
-    for (const [key, value] of dataToSubmit.entries()) {
-      console.log(`${key}:`, value);
-    }
-    // const res = await CourseServices.createCourseLesson(dataToSubmit);
+    await CourseServices.createCourseCapstone(dataToSubmit);
     setModuleData((prevData: any) => ({
       ...prevData,
-      title: "formData.title",
+      title: formData.title,
     }));
 
     setisSubmitting(false);
@@ -186,6 +188,42 @@ export const NewCapstoneModal = ({
             value={formData.embed}
             onChange={(e: any) => handleInputChange("embed", e.target.value)}
           />
+        </div>
+        <div className="flex justify-start gap-4 flex-col lg:flex-row flex-wrap items-center">
+          <div className="my-4 w-full lg:w-[30%]">
+            <BaseInput
+              label="Overall Score"
+              type="text"
+              placeholder="100"
+              containerClassname="w-full"
+              labelClassName="text-[17px] font-DMSans font-semibold"
+              inputContainerClassName={cn(
+                "h-[53px] ",
+                theme === "dark"
+                  ? "select-secondary"
+                  : "border-[0.5px] border-[#ddd]"
+              )}
+              value={formData.score}
+              onChange={(e: any) => handleInputChange("score", e.target.value)}
+            />
+          </div>
+          <div className="my-4 w-full lg:w-[50%]">
+            <BaseInput
+              label="Deadline"
+              type="date"
+              placeholder=""
+              containerClassname="w-full"
+              labelClassName="text-[17px] font-DMSans font-semibold"
+              inputContainerClassName={cn(
+                "h-[53px] ",
+                theme === "dark"
+                  ? "select-secondary"
+                  : "border-[0.5px] border-[#ddd]"
+              )}
+              value={formData.embed}
+              onChange={(e: any) => handleInputChange("embed", e.target.value)}
+            />
+          </div>
         </div>
         <div className="flex justify-start items-start gap-4">
           <button

@@ -7,9 +7,10 @@ import ReactPlayer from "react-player";
 import { useEffect, useRef, useState } from "react";
 import { CourseServices } from "~/api/course";
 import { useSidebar } from "~/context/Sidebar_Provider";
-import { FaFilePdf, FaPlayCircle, FaVideo } from "react-icons/fa";
-import PdfViewer from "~/components/Collapsible/pdfViewer";
+import { FaFilePdf } from "react-icons/fa";
+// import PdfViewer from "~/components/Collapsible/pdfViewer";
 import { SideNavProps } from "~/components/lecturesidebar/LectureItems";
+import { GoDotFill } from "react-icons/go";
 
 const Lecture = () => {
   const { updateSidebarData } = useSidebar();
@@ -19,20 +20,7 @@ const Lecture = () => {
   const { id } = useParams<{ id: string }>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const pdfViewerRef = useRef<any>(null);
-
-  // const handleNextPage = () => {
-  //   if (pdfViewerRef.current) {
-  //     pdfViewerRef.current.goToNextPage();
-  //     setCurrentPage(pdfViewerRef.current.getCurrentPageNumber());
-  //   }
-  // };
-
-  // const handlePrevPage = () => {
-  //   if (pdfViewerRef.current) {
-  //     pdfViewerRef.current.goToPrevPage();
-  //     setCurrentPage(pdfViewerRef.current.getCurrentPageNumber());
-  //   }
-  // };
+  const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
 
   useEffect(() => {
     if (pdfViewerRef.current) {
@@ -56,18 +44,22 @@ const Lecture = () => {
     };
     const res = await CourseServices.lessonsByModuleId(payload);
     setlectureTitles(res.data.course_lessons);
+    if (res.data.course_lessons.length > 0) {
+      const firstLesson = res.data.course_lessons[0];
+      setCurrentLessonId(firstLesson.lessonid);
+    }
   };
 
   const updateLecture = () => {
-    if (!lectureTitles.length) return; // Prevent errors if no lectures exist
+    if (!lectureTitles.length) return;
 
     const updatedData: SideNavProps[] = lectureTitles.map(
       (lessonItem: any) => ({
-        href: `/module/${lessonItem.module_id}`, // Dynamic module ID
+        href: `/module/${lessonItem.module_id}`,
         icon: FaFilePdf,
         dropdown: true,
-        playing: true,
-        text: lessonItem.lesson_title || "Untitled Lesson", // Use dynamic lesson title
+        playing: lessonItem.lessonid == currentLessonId,
+        text: lessonItem.lesson_title || "Untitled Lesson",
         children: [
           {
             href:
@@ -75,7 +67,7 @@ const Lecture = () => {
               "https://api.fordaxbschool.com/assets/courses/null"
                 ? lessonItem.upload_pdf
                 : "#",
-            icon: FaFilePdf,
+            icon: GoDotFill,
             dropdown: false,
             text: "Lecture",
           },
@@ -85,7 +77,7 @@ const Lecture = () => {
               "https://api.fordaxbschool.com/assets/courses/null"
                 ? lessonItem.upload_video_audio
                 : "#",
-            icon: FaVideo,
+            icon: GoDotFill,
             dropdown: false,
             text: "Quiz",
           },
@@ -93,7 +85,7 @@ const Lecture = () => {
             href: lessonItem.stream_video_audio
               ? lessonItem.stream_video_audio
               : "#",
-            icon: FaPlayCircle,
+            icon: GoDotFill,
             dropdown: false,
             text: "Assignment",
           },
@@ -113,29 +105,66 @@ const Lecture = () => {
     fetLessons();
   }, [id]);
 
-  const mediaItems = lectureTitles.map((lesson: any) => ({
-    title: lesson.lesson_title,
-    media: [
+  const mediaItems = lectureTitles.flatMap((lesson: any) =>
+    [
       lesson.upload_pdf,
       lesson.upload_video_audio,
       lesson.stream_video_audio,
       lesson.upload_text,
-    ].filter(
-      (item) =>
-        item && item !== "https://api.fordaxbschool.com/assets/courses/null"
-    ),
-  }));
+    ]
+      .filter(
+        (item) =>
+          item && item !== "https://api.fordaxbschool.com/assets/courses/null"
+      )
+      .map((media) => ({ media, lessonId: lesson.lessonid }))
+  );
 
-  const allMediaUrls = mediaItems.flatMap((item) => item.media);
-
-  const handlePrevious = () => {
-    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
-  };
+  const allMediaUrls = mediaItems.map((item) => item.media);
 
   const handleNext = () => {
-    if (currentIndex < allMediaUrls.length - 1)
-      setCurrentIndex(currentIndex + 1);
+    if (currentIndex < allMediaUrls.length - 1) {
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      const nextLessonId = mediaItems[nextIndex]?.lessonId;
+      console.log(nextLessonId);
+
+      if (nextLessonId) {
+        setCurrentLessonId(nextLessonId); // Set only if lessonId exists
+      }
+    }
   };
+
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      const prevIndex = currentIndex - 1;
+      setCurrentIndex(prevIndex);
+      const prevLessonId = mediaItems[prevIndex]?.lessonId;
+      console.log(prevLessonId);
+      if (prevLessonId) {
+        setCurrentLessonId(prevLessonId); // Set only if lessonId exists
+      }
+    }
+  };
+
+  // const handleNext = () => {
+  //   if (currentIndex < allMediaUrls.length - 1) {
+  //     const nextIndex = currentIndex + 1;
+  //     setCurrentIndex(nextIndex);
+  //     setCurrentLessonId(mediaItems[nextIndex]?.lessonId); // ✅ Correctly set the lesson ID
+  //   }
+  // };
+
+  // const handlePrevious = () => {
+  //   if (currentIndex > 0) {
+  //     const prevIndex = currentIndex - 1;
+  //     setCurrentIndex(prevIndex);
+  //     setCurrentLessonId(mediaItems[prevIndex]?.lessonId); // ✅ Correctly set the lesson ID
+  //   }
+  // };
+
+  useEffect(() => {
+    updateLecture();
+  }, [currentLessonId, lectureTitles]);
 
   return (
     <DashboardArea>
@@ -152,15 +181,15 @@ const Lecture = () => {
                         idx === currentIndex ? "block" : "hidden"
                       }`}
                     >
-                      <PdfViewer ref={pdfViewerRef} file={media} />
-                      {/* <iframe
+                      {/* <PdfViewer ref={pdfViewerRef} file={media} /> */}
+                      <iframe
                         src={`https://docs.google.com/gview?url=${encodeURIComponent(
                           media
                         )}&embedded=true`}
                         width="100%"
                         height="600px"
                         className="border rounded-md shadow-lg"
-                      /> */}
+                      />
                     </div>
                   );
                 } else if (media.includes("youtube.com")) {

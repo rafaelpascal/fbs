@@ -93,7 +93,8 @@ const Payment = () => {
         };
 
         const res = await CourseServices.fetchSingleApplication(payload);
-        sessionStorage.setItem("course_id", res.data.data[0].course_id);
+        // sessionStorage.setItem("course_id", res.data.data[0].course_id);
+        localStorage.setItem("course_id", res.data.data[0].course_id);
         if (res.data && res.data.data && res.data.data.length > 0) {
           const application = res.data.data[0];
           setApplicationData(application);
