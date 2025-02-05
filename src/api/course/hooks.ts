@@ -32,3 +32,14 @@ export const fetchlistCourses = () => {
     initialData: undefined,
   });
 };
+
+export const useFetchApplication = () => {
+  return useQuery({
+    queryKey: ["application"],
+    queryFn: async () => {
+      const res = await CourseServices.fetchAllApplication();
+      return res;
+    },
+    initialData: undefined,
+  });
+};

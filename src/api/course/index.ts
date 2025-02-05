@@ -123,6 +123,16 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static fetchAllApplication = async (): Promise<any> => {
+    try {
+      const res = await Api.get<any>("/list-all-applications");
+      return res.data;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static getCourse = async (payload: any) => {
     try {
       const res = await Api.post("/course/list-course-title-id", payload);
@@ -180,9 +190,30 @@ export class CourseServices extends BaseAPIService {
       throw handleError;
     }
   };
+
   static lessonsByModuleId = async (payload: any) => {
     try {
       const res = await Api.post("/course/list-lessons-bymodule", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static acceptApplication = async (payload: any) => {
+    try {
+      const res = await Api.post("/accept-application", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static rejectApplication = async (payload: any) => {
+    try {
+      const res = await Api.post("/reject-application", payload);
       return res;
     } catch (error) {
       const handleError = error;

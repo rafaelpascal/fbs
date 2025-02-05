@@ -4,30 +4,30 @@ import { Avatar } from "~/components/dashboard/Avatar";
 import { useNavigate } from "react-router-dom";
 // import { useCallback, useState } from "react";
 import moment from "moment";
-import { Status } from "~/components/ui/Badge";
-import { statColorCode } from "~/utils/helpers";
-// import TableFilter from "~/components/table/TableFilter";
 import InDataTable from "~/components/table/InDataTable";
-import { paymentData } from "~/components/constants/data";
 import ActionMenu from "~/components/table/ActionMenu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ContactModal } from "~/components/Modal/ContactModal";
+import { useFetchApplication } from "~/api/course/hooks";
 
 interface MerchantTableRow {
-  id: string;
+  applicationid: string;
   avatar: string;
   sn: number;
-  name: string;
+  firstname: string;
+  lastname: string;
   email: string;
   amount: string;
-  program: string;
+  course_title: string;
   createdAt: string;
   status: string;
 }
 
 const ApplicationTable = () => {
   const [isContact, setIscontact] = useState(false);
+  const { data } = useFetchApplication();
   const navigate = useNavigate();
+  const [applicationData, setapplicationData] = useState([]);
   // const [filters, setFilters] = useState({
   //   dateFrom: "",
   //   dateTo: "",
@@ -63,6 +63,12 @@ const ApplicationTable = () => {
   //   [handleFilterChange]
   // );
 
+  useEffect(() => {
+    if (data) {
+      setapplicationData(data?.data);
+    }
+  }, [data]);
+
   // View a Row
   const handleView = (id: string) => {
     navigate(`/admin/dashboard/application/${id}`);
@@ -84,26 +90,26 @@ const ApplicationTable = () => {
     },
     {
       name: "Full name",
-      selector: (row: { name: string }) => row.name,
+      selector: (row: { firstname: string }) => row.firstname,
       sortable: true,
       cell: (row) => (
         <div className="flex justify-start gap-2 items-center">
           <Avatar
             img={row.avatar ?? ""}
-            name={row.name}
+            name={`${row.lastname} ${row.firstname}`}
             avatarClassName="md:h-8 h-8 w-8 md:w-8 rounded-full"
             textClassName="font-medium text-sm max-md:hidden"
             wrapperClassName="max-md:gap-0"
           />
           <h2 className="text-[12px] font-semibold font-CircularStd text-[#515F76]">
-            {row.name}
+            {row.lastname} {row.firstname}
           </h2>
         </div>
       ),
     },
     {
       name: "Program",
-      selector: (row: { program: string }) => row.program,
+      selector: (row: { course_title: string }) => row.course_title,
       sortable: true,
     },
     {
@@ -129,10 +135,13 @@ const ApplicationTable = () => {
       name: "Admission Status",
       selector: (row: { status: string }) => row.status,
       cell: (row) => (
-        <Status
-          status={statColorCode(row?.status?.toString())}
-          text={row?.status?.toString() || ""}
-        />
+        <div>
+          {parseInt(row.status) === 1 ? (
+            <h2 className="text-green-600 font-semibold">Completed</h2>
+          ) : (
+            <h2 className="text-red-600 font-semibold">Incomplete</h2>
+          )}
+        </div>
       ),
       width: "160px",
     },
@@ -141,8 +150,11 @@ const ApplicationTable = () => {
       cell: (row) => (
         <ActionMenu
           actions={[
-            { label: "View", action: () => handleView(row.id) },
-            { label: "Contact Student", action: () => handlecontact(row.id) },
+            { label: "View", action: () => handleView(row.applicationid) },
+            {
+              label: "Contact Student",
+              action: () => handlecontact(row.applicationid),
+            },
           ]}
         />
       ),
@@ -160,7 +172,7 @@ const ApplicationTable = () => {
       <div className="w-[99%]">
         <InDataTable<MerchantTableRow>
           columns={columns}
-          data={paymentData}
+          data={applicationData}
           paginatable={false}
           searchable={false}
           // pagination={false}

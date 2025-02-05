@@ -1,9 +1,12 @@
 import { CiWarning } from "react-icons/ci";
 import { BaseModal } from "./BaseModal";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { LoadingSpinner } from "../ui/loading-spinner";
+import { CourseServices } from "~/api/course";
+import { useNavigate } from "react-router-dom";
 
 interface IModalPropsType {
-  id: string;
+  id: number;
   isOpen: boolean;
   message: string;
   closeModal: () => void;
@@ -15,13 +18,27 @@ export const WarningModal = ({
   isOpen,
   closeModal,
 }: IModalPropsType) => {
+  const [accepting, setAccepting] = useState(false);
+  const navigate = useNavigate();
   // Close modal
   const handleclose = useCallback(() => {
     closeModal();
   }, []);
 
-  const handleReject = () => {
-    console.log(id);
+  const handleReject = async () => {
+    setAccepting(true);
+    try {
+      const payload = {
+        applicationid: id,
+      };
+      await CourseServices.rejectApplication(payload);
+      closeModal();
+      navigate(`/admin/dashboard/application`);
+      setAccepting(false);
+    } catch (error) {
+      setAccepting(false);
+      console.log(error);
+    }
   };
 
   return (
@@ -51,11 +68,12 @@ export const WarningModal = ({
             </button>
             <button
               onClick={handleReject}
-              className="bg-[#F01E00] px-4 py-2 mt-4 rounded-md"
+              className="bg-[#F01E00] flex justify-center items-center gap-2 px-4 py-2 mt-4 rounded-md"
             >
               <p className="font-DMSans font-semibold text-[17px] text-[#fff]">
                 Yes Proceed
               </p>
+              {accepting && <LoadingSpinner size="xs" />}
             </button>
           </div>
         </div>
