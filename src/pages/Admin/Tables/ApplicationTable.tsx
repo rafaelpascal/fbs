@@ -21,6 +21,7 @@ interface MerchantTableRow {
   course_title: string;
   createdAt: string;
   status: string;
+  application_status: number;
 }
 
 const ApplicationTable = () => {
@@ -65,6 +66,8 @@ const ApplicationTable = () => {
 
   useEffect(() => {
     if (data) {
+      console.log(data);
+
       setapplicationData(data?.data);
     }
   }, [data]);
@@ -117,11 +120,11 @@ const ApplicationTable = () => {
       selector: (row: { email: string }) => row.email,
       sortable: true,
     },
-    {
-      name: "Amount",
-      selector: (row: { amount: string }) => row.amount,
-      sortable: true,
-    },
+    // {
+    //   name: "Amount",
+    //   selector: (row: { amount: string }) => row.amount,
+    //   sortable: true,
+    // },
     {
       name: "Application Date",
       selector: (row: { createdAt: string }) => row.createdAt,
@@ -133,6 +136,20 @@ const ApplicationTable = () => {
     },
     {
       name: "Admission Status",
+      selector: (row: { application_status: number }) => row.application_status,
+      cell: (row) => (
+        <div>
+          {row.application_status === 1 ? (
+            <h2 className="text-green-600 font-semibold">Accepted</h2>
+          ) : (
+            <h2 className="text-red-600 font-semibold">Rejected</h2>
+          )}
+        </div>
+      ),
+      width: "160px",
+    },
+    {
+      name: "Application Status",
       selector: (row: { status: string }) => row.status,
       cell: (row) => (
         <div>

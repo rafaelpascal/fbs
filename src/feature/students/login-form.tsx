@@ -73,7 +73,7 @@ const LoginForm = () => {
   });
 
   return (
-    <div className="w-full lg:absolute lg:right-[60%] lg:top-[18%] lg:w-[598px] flex justify-between items-center flex-col bg-[#fff] border-[0.5px] border-[#757575] shadow-xl rounded-[16px] p-4 lg:p-10">
+    <div className="w-full lg:absolute lg:right-[60%] lg:top-[18%] lg:w-[598px] flex justify-between items-center flex-col bg-[#fff] shadow-xl rounded-[16px] p-4 lg:p-10">
       <h2 className="text-[24px] w-full text-left font-bold font-DMSans text-[#03435F]">
         Login
       </h2>
@@ -89,22 +89,22 @@ const LoginForm = () => {
           />
         ))}
       </div>
-      <div className="flex justify-between items-center w-full my-4">
+      <div className="flex justify-between items-center w-full mt-4">
         <div className="flex justify-start items-center gap-2">
           <input type="checkbox" name="" id="" />
-          <p className="text-[14px] text-[#4F547B] font-DMSans font-normal">
+          <p className="text-[16px] text-[#4F547B] font-DMSans font-normal">
             Remember me
           </p>
         </div>
         <Link
           to={"/forgot-password"}
-          className="text-[14px] text-[#6440FB] underline font-DMSans font-normal"
+          className="text-[16px] text-[#6440FB] underline font-DMSans font-normal"
         >
           Forgot Password?
         </Link>
       </div>
       <BaseButton
-        containerCLassName={`mt-4 h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
+        containerCLassName={`mt-4 h-[40px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
           !form.formState.isValid || form.formState.isSubmitting
             ? "cursor-not-allowed opacity-50"
             : ""

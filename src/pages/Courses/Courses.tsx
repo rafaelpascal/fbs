@@ -17,6 +17,8 @@ import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { AuthService } from "~/api/auth";
 import { splitArray } from "~/utils/helpers";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaEye } from "react-icons/fa";
 
 type Specification = {
   id: string;
@@ -41,6 +43,7 @@ interface Application {
   created_at?: string;
   end_date?: string;
   duration?: number;
+  coursesid?: number;
 }
 
 type Module = {
@@ -84,6 +87,7 @@ const Dashboard = () => {
   const courseId = localStorage.getItem("course_id");
   const [loading, setLoading] = useState(false);
   const [isEnrolled, setisEnrolled] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
   const [courses, setcourses] = useState<Module[]>([]);
   const [secondcourses, setsecondcourses] = useState<Module[]>([]);
   const navigate = useNavigate();
@@ -182,10 +186,14 @@ const Dashboard = () => {
     }
   };
 
+  useEffect(() => {
+    setSelectedId(courseId ?? "");
+  }, [courseId]);
+
   const fetModules = async () => {
     try {
       const payload = {
-        courseid: courseId,
+        courseid: selectedId,
       };
       const res = await CourseServices.getModuleByCourseId(payload);
       const [chunk1, chunk2] = splitArray<Module>(res.data.course_modules);
@@ -197,14 +205,19 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (courseId) {
+    if (selectedId) {
       fetModules();
     }
-  }, [courseId]);
+  }, [selectedId]);
 
   useEffect(() => {
     fetchmyapplication();
   }, []);
+
+  const handleViewApplication = (courseId: number | undefined) => {
+    console.log(courseId);
+    setSelectedId(JSON.stringify(courseId));
+  };
 
   return (
     <DashboardArea>
@@ -216,9 +229,20 @@ const Dashboard = () => {
               className="w-full border-[1px] rounded-md my-2 border-[#ddd] py-2 flex justify-center items-center"
             >
               <div className=" lg:w-[90%]">
-                <p className="text-left capitalize font-DMSans text-[20px] font-semibold">
-                  {program.course_title}
-                </p>
+                <div className="flex justify-between items-center">
+                  <p className="text-left capitalize font-DMSans text-[20px] font-semibold">
+                    {program.course_title}
+                  </p>
+                  {program.application_status == 2 && (
+                    <button
+                      className="text-green-400 flex justify-between items-center gap-4 border-[1px] rounded-md border-green-400 px-4 font-DMSans text-[16px] font-semibold"
+                      onClick={() => handleViewApplication(program.coursesid)}
+                    >
+                      <p>View</p>
+                      <FaEye className="size-5" />
+                    </button>
+                  )}
+                </div>
                 {loading ? (
                   <div className="flex justify-center items-center w-full py-6">
                     <LoadingSpinner size="sm" />
@@ -250,13 +274,20 @@ const Dashboard = () => {
                     <p className="text-center font-DMSans text-[20px] font-semibold">
                       Application status:
                     </p>
-                    {program.application_status === 2 ? (
+                    {program.application_status === 2 && (
                       <span className="text-[#158608] font-DMSans text-[24px] font-semibold">
                         Accepted
                       </span>
-                    ) : (
+                    )}
+
+                    {program.application_status === 3 && (
                       <span className="text-[#FF1515] font-DMSans text-[24px] font-semibold">
-                        In review
+                        Rejected
+                      </span>
+                    )}
+                    {program.application_status === 1 && (
+                      <span className="text-yellow-400 font-DMSans text-[24px] font-semibold">
+                        Pending
                       </span>
                     )}
                   </div>
@@ -330,46 +361,56 @@ const Dashboard = () => {
                 </div>
               </div>
               {selectedOption === "MODULES" && (
-                <Carousel>
-                  <div className="grid w-[100%] grid-cols-1 gap-x-20 gap-y-10 sm:grid-cols-2">
-                    {courses.map((course) => (
-                      <CourseCard
-                        moduleNumber={course.module_number}
-                        key={course.moduleid}
-                        title={course.module_title}
-                        description={course.module_description}
-                        lessonsInfo={course.module_objectives}
-                        buttonText="Start Module"
-                        progress="15"
-                        icon={IoMdUnlock}
-                        courseStarted="not started"
-                        onButtonClick={() =>
-                          handleStartCourse("video", course.moduleid)
-                        }
-                      />
-                    ))}
-                  </div>
-                  {secondcourses && secondcourses.length > 0 && (
-                    <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
-                      {secondcourses.map((course) => (
-                        <CourseCard
-                          moduleNumber={course.module_number}
-                          key={course.moduleid}
-                          title={course.module_title}
-                          description={course.module_description}
-                          lessonsInfo={course.module_objectives}
-                          buttonText="Start Module"
-                          progress="15"
-                          icon={IoMdUnlock}
-                          courseStarted="not started"
-                          onButtonClick={() =>
-                            handleStartCourse(course.type, course.moduleid)
-                          }
-                        />
-                      ))}
-                    </div>
-                  )}
-                </Carousel>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedId}
+                    initial={{ opacity: 0, y: 20 }} // Start invisible & slightly below
+                    animate={{ opacity: 1, y: 0 }} // Animate to visible & original position
+                    exit={{ opacity: 0, y: -20 }} // Animate out upwards
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                  >
+                    <Carousel>
+                      <div className="grid w-[100%] grid-cols-1 gap-x-20 gap-y-10 sm:grid-cols-2">
+                        {courses.map((course) => (
+                          <CourseCard
+                            moduleNumber={course.module_number}
+                            key={course.moduleid}
+                            title={course.module_title}
+                            description={course.module_description}
+                            lessonsInfo={course.module_objectives}
+                            buttonText="Start Module"
+                            progress="15"
+                            icon={IoMdUnlock}
+                            courseStarted="not started"
+                            onButtonClick={() =>
+                              handleStartCourse("video", course.moduleid)
+                            }
+                          />
+                        ))}
+                      </div>
+                      {secondcourses && secondcourses.length > 0 && (
+                        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                          {secondcourses.map((course) => (
+                            <CourseCard
+                              moduleNumber={course.module_number}
+                              key={course.moduleid}
+                              title={course.module_title}
+                              description={course.module_description}
+                              lessonsInfo={course.module_objectives}
+                              buttonText="Start Module"
+                              progress="15"
+                              icon={IoMdUnlock}
+                              courseStarted="not started"
+                              onButtonClick={() =>
+                                handleStartCourse(course.type, course.moduleid)
+                              }
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </Carousel>
+                  </motion.div>
+                </AnimatePresence>
               )}
               {selectedOption === "LESSONS" && (
                 <Carousel>

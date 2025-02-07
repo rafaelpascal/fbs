@@ -7,6 +7,18 @@ export const authSchema = Validator.object({
 });
 export type AuthFormPayload = z.infer<typeof authSchema>;
 
+export const forgotSchema = Validator.object({
+  email_address: Validator.email("Email"),
+});
+export type ForgotPasswordPayload = z.infer<typeof forgotSchema>;
+
+export const changePasswordSchema = Validator.object({
+  token: Validator.string("Token"),
+  password: Validator.string("Password"),
+  cpassword: Validator.string("Password"),
+});
+export type ChangePasswordPayload = z.infer<typeof changePasswordSchema>;
+
 export const resendOTPSchema = Validator.object({
   email: Validator.email("Email"),
 });

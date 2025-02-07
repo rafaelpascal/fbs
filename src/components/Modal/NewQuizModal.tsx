@@ -11,17 +11,16 @@ import {
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
-// import { CourseServices } from "~/api/course";
-import { RootState } from "~/redux-store/store";
-import { useSelector } from "react-redux";
-import { LessonItem } from "~/feature/admin/Items";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaChevronDown, FaChevronUp, FaPlusSquare } from "react-icons/fa";
 import { RiDragMove2Fill } from "react-icons/ri";
 import { GiCancel } from "react-icons/gi";
+import { BiDownArrow, BiUpArrow } from "react-icons/bi";
+import { CourseServices } from "~/api/course";
 
 interface IModalPropsType {
   moduleId: number;
+  lessonId: number;
   isOpen: boolean;
   closeModal: () => void;
   handlecreate: (moduleId: number) => void;
@@ -30,28 +29,32 @@ interface IModalPropsType {
 }
 
 interface FormData {
-  title: string;
-  embed: string;
-  featuredImages: File[];
-}
-
-interface Lessons {
-  id: number;
+  question: string;
   title: string;
   description: string;
-  pages: string;
-}
-interface Module {
-  id: number;
-  title: string;
-  description: string;
-  lessons: Lessons[];
+  timelimit: string;
+  feedback: { [key: string]: boolean };
 }
 
-const initialFormData = {
+// interface Lessons {
+//   id: number;
+//   title: string;
+//   description: string;
+//   pages: string;
+// }
+// interface Module {
+//   id: number;
+//   title: string;
+//   description: string;
+//   lessons: Lessons[];
+// }
+
+const initialFormData: FormData = {
+  question: "",
   title: "",
-  embed: "",
-  featuredImages: [] as File[],
+  description: "",
+  timelimit: "",
+  feedback: {},
 };
 
 interface Answer {
@@ -60,21 +63,39 @@ interface Answer {
   score: string;
   isCorrect: boolean;
 }
+
+const feedbackMode = [
+  {
+    id: 1,
+    title: "Answers show after all quiz is completed",
+  },
+  {
+    id: 2,
+    title: "Show results after each quiz attempt",
+  },
+  {
+    id: 3,
+    title: "Allow retry of the quiz",
+  },
+];
 export const NewQuizModal = ({
   moduleId,
+  lessonId,
   isOpen,
   closeModal,
-  handlecreate,
-  setModuleData,
-}: IModalPropsType) => {
+}: //   handlecreate,
+//   setModuleData,
+IModalPropsType) => {
   const { theme } = useTheme();
-  const courseId = useSelector((state: RootState) => state.course.course_id);
-  const [modules, setModules] = useState<Module[]>([]);
+  //   const courseId = useSelector((state: RootState) => state.course.course_id);
+  //   const [modules, setModules] = useState<Module[]>([]);
   const [isSubmitting, setisSubmitting] = useState(false);
-  const [selectedPdf] = useState<File | null>(null);
-  const [selectedWord] = useState<File | null>(null);
-  const [selectedMediaFile] = useState<File | null>(null);
+  const [isNewQuestion, setisNewQuestion] = useState(false);
+  const [isFeedbackMode, setisFeedbackMode] = useState(false);
+  const [IsAnswer, setIsAnswer] = useState(false);
   const [isDropDown, setIsisDropDown] = useState(false);
+  const [questionsubmitting, setQuestionsubmitting] = useState(false);
+  const [isQuizId, setisQuizId] = useState(0);
   const [activeButton, setActiveButton] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([]);
 
@@ -94,9 +115,11 @@ export const NewQuizModal = ({
   };
   //   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
+    question: "",
     title: "",
-    embed: "",
-    featuredImages: [],
+    description: "",
+    feedback: {},
+    timelimit: "",
   });
   // Close modal
   const handleclose = useCallback(() => {
@@ -111,93 +134,56 @@ export const NewQuizModal = ({
     }));
   };
 
-  //   const handleImageUpload = (files: File[]) => {
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       featuredImages: files,
-  //     }));
-  //   };
-
-  //   const handleFileSelect = (file: File | null) => {
-  //     setSelectedFile(file);
-  //   };
-
-  //   const handleWordSelect = (file: File | null) => {
-  //     setSelectedWord(file);
-  //   };
-
-  //   const handleMediaUpload = (file: File | null) => {
-  //     setMediaFile(file);
-  //   };
-
+  const checkedTitles = Object.keys(formData.feedback || {}).filter(
+    (key) => formData.feedback[key]
+  );
   const handleSubmit = async () => {
     setisSubmitting(true);
 
-    // Create a new FormData object
-    const dataToSubmit = new FormData();
-    dataToSubmit.append("programme_category_id", "2");
-    dataToSubmit.append("course_id", courseId?.toString() || "");
-    dataToSubmit.append("stream_video_audio", formData.embed);
-    dataToSubmit.append("module_id", moduleId.toString() || "");
-    dataToSubmit.append("lesson_title", formData.title);
-    formData.featuredImages.forEach((file) => {
-      dataToSubmit.append("lesson_image", file);
-    });
-    if (selectedPdf) {
-      dataToSubmit.append("pdf_upload", selectedPdf);
-    }
-    if (selectedWord) {
-      dataToSubmit.append("word_file", selectedWord);
-    }
-    if (selectedMediaFile) {
-      dataToSubmit.append("video_audio_upload", selectedMediaFile);
-    }
-    console.log("FormData Payload:");
-    for (const [key, value] of dataToSubmit.entries()) {
-      console.log(`${key}:`, value);
-    }
-    // const res = await CourseServices.createCourseLesson(dataToSubmit);
-    setModuleData((prevData: any) => ({
-      ...prevData,
-      title: "formData.title",
-    }));
+    const payload = {
+      course_id: 8,
+      //   course_id: courseId,
+      module_id: moduleId,
+      lesson_id: lessonId,
+      title: formData.title,
+      description: formData.description,
+      time: parseInt(formData.timelimit),
+      display_status: "",
+      point_status: "",
+      feedback_mode: checkedTitles,
+    };
+    const res = await CourseServices.createCourseQuiz(payload);
+    setisQuizId(res.data.data.quiz_id);
+    console.log(res.data.data.quiz_id);
+    // setModuleData((prevData: any) => ({
+    //   ...prevData,
+    //   title: formData.title,
+    // }));
 
     setisSubmitting(false);
-    handlecreate(moduleId);
-    setFormData(initialFormData);
+    // handlecreate(moduleId);
+    // setFormData(initialFormData);
   };
+  const handleQuestionSubmit = async () => {
+    setQuestionsubmitting(true);
 
-  const getAllLessons = () => {
-    return modules.flatMap((module) => module.lessons);
-  };
+    const payload = {
+      quiz_title_id: isQuizId,
+      questions: formData.question,
+      question_type: activeButton,
+    };
+    const res = await CourseServices.createCourseQuizQuestion(payload);
+    setIsAnswer(true);
+    setisQuizId(res.data.data.quiz_id);
+    console.log(res.data.data.quiz_id);
+    // setModuleData((prevData: any) => ({
+    //   ...prevData,
+    //   title: formData.title,
+    // }));
 
-  const moveLesson = (draggedId: number, hoveredIndex: number) => {
-    const allLessons = getAllLessons();
-    const draggedLesson = allLessons.find((lesson) => lesson.id === draggedId);
-
-    if (!draggedLesson) {
-      return;
-    }
-    const updatedLessons = allLessons.filter(
-      (lesson) => lesson.id !== draggedId
-    );
-    updatedLessons.splice(hoveredIndex, 0, draggedLesson);
-
-    let lessonIndex = 0;
-    const updatedModules = modules.map((module) => {
-      const lessonsForModule = updatedLessons.slice(
-        lessonIndex,
-        lessonIndex + module.lessons.length
-      );
-      lessonsForModule.forEach((lesson, index) => {
-        lesson.title = `LESSON ${lessonIndex + index + 1}`;
-      });
-
-      lessonIndex += module.lessons.length;
-      return { ...module, lessons: lessonsForModule };
-    });
-
-    setModules(updatedModules);
+    setQuestionsubmitting(false);
+    // handlecreate(moduleId);
+    // setFormData(initialFormData);
   };
 
   const buttonOptions = [
@@ -249,10 +235,7 @@ export const NewQuizModal = ({
   ];
 
   const handleDragEnd = (result: DropResult) => {
-    console.log(result);
-
     if (!result.destination) return; // If dropped outside, do nothing
-
     const reorderedAnswers = Array.from(answers);
     const [movedItem] = reorderedAnswers.splice(result.source.index, 1);
     reorderedAnswers.splice(result.destination.index, 0, movedItem);
@@ -260,7 +243,26 @@ export const NewQuizModal = ({
     setAnswers(reorderedAnswers); // Update state
   };
 
-  const handleNewQuestion = () => {};
+  const handleNewQuestion = () => {
+    setisNewQuestion(!isNewQuestion);
+  };
+
+  const handleCheckboxChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    title: string
+  ) => {
+    setFormData((prevData) => {
+      const updatedFeedback = {
+        ...prevData.feedback,
+        [title]: e.target.checked,
+      };
+
+      return {
+        ...prevData,
+        feedback: updatedFeedback,
+      };
+    });
+  };
 
   return (
     <BaseModal
@@ -277,45 +279,115 @@ export const NewQuizModal = ({
         </button>
       </div>
       <div className="flex w-full h-[600px] lg:w-[1000px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
-        <div className="py-6 w-full">
-          <div className="my-4 w-full">
-            <BaseInput
-              label="Quiz Title"
-              type="text"
-              placeholder="Quiz Title"
-              containerClassname="w-full"
-              labelClassName="text-[17px] font-DMSans font-semibold"
-              inputContainerClassName={cn(
-                "h-[53px] ",
-                theme === "dark"
-                  ? "select-secondary"
-                  : "border-[0.5px] border-[#ddd]"
+        {isQuizId === 0 && (
+          <>
+            <div className="w-full">
+              <div className="my-4 w-full">
+                <BaseInput
+                  label="Quiz Title"
+                  type="text"
+                  placeholder="Quiz Title"
+                  containerClassname="w-full"
+                  labelClassName="text-[17px] font-DMSans font-semibold"
+                  inputContainerClassName={cn(
+                    "h-[53px] ",
+                    theme === "dark" ? "select-secondary" : ""
+                  )}
+                  value={formData.title}
+                  onChange={(e: any) =>
+                    handleInputChange("title", e.target.value)
+                  }
+                />
+              </div>
+              <div className="my-4 w-full">
+                <BaseInput
+                  label="Instructions"
+                  type="textarea"
+                  placeholder="Instructions"
+                  containerClassname="w-full"
+                  labelClassName="text-[17px] font-DMSans font-semibold"
+                  inputContainerClassName={cn(
+                    "h-[153px] ",
+                    theme === "dark"
+                      ? "select-secondary"
+                      : "border-[0.5px] border-[#ddd]"
+                  )}
+                  value={formData.description}
+                  onChange={(e: any) =>
+                    handleInputChange("description", e.target.value)
+                  }
+                />
+              </div>
+            </div>
+            <div className="w-full lg:w-[20%]">
+              <BaseInput
+                label="TIME LIMIT"
+                type="text"
+                placeholder="TIME LIMIT"
+                containerClassname="w-full"
+                labelClassName="text-[17px] font-DMSans font-semibold"
+                inputContainerClassName={cn(
+                  "h-[53px] ",
+                  theme === "dark"
+                    ? "select-secondary"
+                    : "border-[0.5px] border-[#ddd]"
+                )}
+                value={formData.timelimit}
+                onChange={(e: any) =>
+                  handleInputChange("timelimit", e.target.value)
+                }
+              />
+            </div>
+            <p className="font-DMSans font-semibold text-[16px] my-2">
+              Time limit for this quiz, 0 means no time limit
+            </p>
+            <div className="w-full my-4 border-[1px] border-[#B3B3B3] rounded-md p-4">
+              <button
+                onClick={() => setisFeedbackMode(!isFeedbackMode)}
+                className="w-full p-2 flex justify-between items-center"
+              >
+                <p className="font-DMSans font-semibold text-[18px]">
+                  QUIZ FEEDBACK MODE
+                </p>
+                {isFeedbackMode ? (
+                  <BiUpArrow className="size-[20px]" />
+                ) : (
+                  <BiDownArrow className="size-[20px]" />
+                )}
+              </button>
+              {isFeedbackMode && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  {feedbackMode.map((option, index) => (
+                    <div
+                      key={index}
+                      className="w-full my-4 p-2 rounded-md bg-[#f5f5f5] border-[2px] border-[#ddd]"
+                    >
+                      <label className="flex justify-start items-center gap-4 cursor-pointer label">
+                        <input
+                          type="checkbox"
+                          checked={formData.feedback?.[option.title] || false}
+                          onChange={(e) =>
+                            handleCheckboxChange(e, option.title)
+                          }
+                          className="checkbox checkbox-success [--chkbg:theme(colors.green.600)] [--chkfg:white]"
+                        />
+                        <span className="font-DMSans text-[18px] font-semibold">
+                          {option.title}
+                        </span>
+                      </label>
+                    </div>
+                  ))}
+                </motion.div>
               )}
-              value={formData.title}
-              onChange={(e: any) => handleInputChange("title", e.target.value)}
-            />
-          </div>
-          <div className="my-4 w-full">
-            <BaseInput
-              label="Instructions"
-              type="textarea"
-              placeholder="Instructions"
-              containerClassname="w-full"
-              labelClassName="text-[17px] font-DMSans font-semibold"
-              inputContainerClassName={cn(
-                "h-[153px] ",
-                theme === "dark"
-                  ? "select-secondary"
-                  : "border-[0.5px] border-[#ddd]"
-              )}
-              value={formData.embed}
-              onChange={(e: any) =>
-                handleInputChange("highlight", e.target.value)
-              }
-            />
-          </div>
-        </div>
-        <div className="flex justify-end items-center w-full py-6 border-b-2 border-[#ddd]">
+            </div>
+          </>
+        )}
+        {/* <div className="flex justify-end items-center w-full py-6 ">
           <h1 className="font-DMSans font-bold text-[20px]">
             CREATED QUIZZES{" "}
           </h1>
@@ -332,245 +404,268 @@ export const NewQuizModal = ({
               ))}
             </div>
           ))}
-        </div>
-        <div className="w-full">
-          <div className="my-4 w-full">
-            <BaseInput
-              label="Quiz Question"
-              type="textarea"
-              placeholder="Quiz Question"
-              containerClassname="w-full"
-              labelClassName="text-[17px] font-DMSans font-semibold"
-              inputContainerClassName={cn(
-                "h-[153px] ",
-                theme === "dark"
-                  ? "select-secondary"
-                  : "border-[0.5px] border-[#ddd]"
-              )}
-              value={formData.embed}
-              onChange={(e: any) =>
-                handleInputChange("highlight", e.target.value)
-              }
-            />
-          </div>
+        </div> */}
+        {isNewQuestion && (
           <div className="w-full">
-            <button
-              onClick={() => setIsisDropDown(!isDropDown)}
-              className="w-full flex justify-between items-center bg-[#fff] p-4 border-[1px] border-[#ddd]"
-            >
-              <p className="text-[18px] font-DMSans font-bold">
-                Select Question Type
-              </p>
-              {isDropDown ? (
-                <FaChevronUp className="text-[25px]" />
-              ) : (
-                <FaChevronDown className="text-[25px]" />
-              )}
-            </button>
-            <AnimatePresence>
-              {isDropDown && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="w-full rounded-sm bg-[#FFA396B2] grid grid-cols-2 lg:grid-cols-3 p-4 gap-2 overflow-hidden"
-                >
-                  {buttonOptions.map((option, index) => (
-                    <button
-                      key={index}
-                      className={cn(
-                        "py-2 px-4 rounded-sm",
-                        option.state ? "bg-[#F01E00B2]" : "bg-[#FFFFFF]"
-                      )}
-                      onClick={option.setState}
-                    >
-                      <p
-                        className={cn(
-                          "text-[18px] font-DMSans font-bold",
-                          option.state ? "text-[#ffff]" : "text-[#333]"
-                        )}
-                      >
-                        {option.label}
-                      </p>
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-              {activeButton && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="w-full rounded-sm py-4 overflow-hidden"
-                >
-                  <h2 className="font-DMSans text-[18px] font-bold mb-4">
-                    Quiz Answers
-                  </h2>
-                  <div className="w-full flex justify-between items-center bg-[#F01E00] p-4">
-                    <div className="flex justify-start items-center gap-2">
-                      <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
-                        Ordering
-                      </p>
-                      <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
-                        Answer
-                      </p>
-                    </div>
-                    <div className="flex justify-start items-center gap-2">
-                      <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
-                        Correct
-                      </p>
-                      <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
-                        Point
-                      </p>
-                      <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]"></p>
-                    </div>
-                  </div>
-                  <DragDropContext onDragEnd={handleDragEnd}>
-                    <Droppable
-                      droppableId="answersList"
-                      key={activeButton ? "open" : "closed"}
-                    >
-                      {(provided) => (
-                        <div
-                          className="w-full"
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                        >
-                          {answers.map((answer, index) => (
-                            <Draggable
-                              key={answer.id}
-                              draggableId={String(answer.id)}
-                              index={index}
-                            >
-                              {(provided) => (
-                                <div
-                                  key={answer.id}
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  className="w-full flex justify-between items-center border-b-[1px] border-[#ddd]"
-                                >
-                                  <div className="w-full lg:w-[50%] flex justify-between items-center">
-                                    <button
-                                      {...provided.dragHandleProps}
-                                      className="p-2 rounded text-white"
-                                    >
-                                      <RiDragMove2Fill
-                                        className={cn(
-                                          "text-[25px] cursor-grab",
-                                          theme === "dark"
-                                            ? "text-[#fff]"
-                                            : "text-[#333]"
-                                        )}
-                                      />
-                                    </button>
-                                    <div className="my-4 w-[80%]">
-                                      <BaseInput
-                                        label=""
-                                        type="text"
-                                        placeholder="Answer"
-                                        containerClassname="w-full"
-                                        labelClassName="text-[17px] font-DMSans font-semibold"
-                                        inputContainerClassName={cn(
-                                          "h-[40px] ",
-                                          theme === "dark"
-                                            ? "select-secondary"
-                                            : "border-[0.5px] border-[#ddd]"
-                                        )}
-                                        value={answer.title}
-                                        onChange={(
-                                          e: React.ChangeEvent<HTMLInputElement>
-                                        ) =>
-                                          handleAnswersChange(
-                                            answer.id,
-                                            "title",
-                                            e.target.value
-                                          )
-                                        }
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="w-full flex justify-end gap-4 items-center lg:w-[50%]">
-                                    <input
-                                      type="radio"
-                                      name="radio-8"
-                                      className="radio radio-error"
-                                      checked={answer.isCorrect}
-                                      onChange={(e) =>
-                                        handleAnswersChange(
-                                          answer.id,
-                                          "isCorrect",
-                                          e.target.checked
-                                        )
-                                      }
-                                    />
-                                    <div className="my-4 w-[30%]">
-                                      <BaseInput
-                                        label=""
-                                        type="number"
-                                        placeholder="Score"
-                                        containerClassname="w-full"
-                                        labelClassName="text-[17px] font-DMSans font-semibold"
-                                        inputContainerClassName={cn(
-                                          "h-[40px] ",
-                                          theme === "dark"
-                                            ? "select-secondary"
-                                            : "border-[0.5px] border-[#ddd]"
-                                        )}
-                                        value={answer.score}
-                                        onChange={(
-                                          e: React.ChangeEvent<HTMLInputElement>
-                                        ) =>
-                                          handleAnswersChange(
-                                            answer.id,
-                                            "score",
-                                            e.target.value
-                                          )
-                                        }
-                                      />
-                                    </div>
-                                    <div className="w-[10%]">
-                                      <GiCancel className="text-[25px]" />
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
-
-                  {/* Add an Option Button */}
-                  <button
-                    className="flex justify-start hover:border-[1px] border-[#F01E00] rounded-md p-2 items-center gap-2 my-4"
-                    onClick={handleAddOption}
+            <div className="mb-4 w-full">
+              <BaseInput
+                label="Quiz Question"
+                type="textarea"
+                placeholder="Quiz Question"
+                containerClassname="w-full"
+                labelClassName="text-[17px] font-DMSans font-semibold"
+                inputContainerClassName={cn(
+                  "h-[153px] ",
+                  theme === "dark"
+                    ? "select-secondary"
+                    : "border-[0.5px] border-[#ddd]"
+                )}
+                value={formData.question}
+                onChange={(e: any) =>
+                  handleInputChange("question", e.target.value)
+                }
+              />
+            </div>
+            <div className="w-full">
+              <button
+                onClick={() => setIsisDropDown(!isDropDown)}
+                className="w-full flex justify-between items-center bg-[#fff] p-4 border-[1px] border-[#ddd]"
+              >
+                <p className="text-[18px] font-DMSans font-bold">
+                  Select Question Type
+                </p>
+                {isDropDown ? (
+                  <FaChevronUp className="text-[25px]" />
+                ) : (
+                  <FaChevronDown className="text-[25px]" />
+                )}
+              </button>
+              <AnimatePresence>
+                {isDropDown && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="w-full rounded-sm bg-[#FFA396B2] grid grid-cols-2 lg:grid-cols-3 p-4 gap-2 overflow-hidden"
                   >
-                    <p className="font-DMSans font-bold text-[16px]">
-                      Add an option
-                    </p>
-                    <FaPlusSquare className="text-[#F01E00] text-[20px]" />
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    {buttonOptions.map((option, index) => (
+                      <button
+                        key={index}
+                        className={cn(
+                          "py-2 px-4 rounded-sm",
+                          option.state ? "bg-[#F01E00B2]" : "bg-[#FFFFFF]"
+                        )}
+                        onClick={option.setState}
+                      >
+                        <p
+                          className={cn(
+                            "text-[18px] font-DMSans font-bold",
+                            option.state ? "text-[#ffff]" : "text-[#333]"
+                          )}
+                        >
+                          {option.label}
+                        </p>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <div className="flex justify-end items-center w-full py-6">
+                <button
+                  onClick={handleQuestionSubmit}
+                  className="mb-2 px-4 py-2 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
+                >
+                  <p> Save Question</p>
+                  {questionsubmitting && <LoadingSpinner size="xs" />}
+                </button>
+              </div>
+              <AnimatePresence>
+                {IsAnswer && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="w-full rounded-sm py-4 overflow-hidden"
+                  >
+                    <h2 className="font-DMSans text-[18px] font-bold mb-4">
+                      Quiz Answers
+                    </h2>
+                    <div className="w-full flex justify-between items-center bg-[#F01E00] p-4">
+                      <div className="flex justify-start items-center gap-2">
+                        <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
+                          Ordering
+                        </p>
+                        <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
+                          Answer
+                        </p>
+                      </div>
+                      <div className="flex justify-start items-center gap-2">
+                        <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
+                          Correct
+                        </p>
+                        <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
+                          Point
+                        </p>
+                        <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]"></p>
+                      </div>
+                    </div>
+                    <DragDropContext onDragEnd={handleDragEnd}>
+                      <Droppable
+                        droppableId="answersList"
+                        key={activeButton ? "open" : "closed"}
+                      >
+                        {(provided) => (
+                          <div
+                            className="w-full"
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                          >
+                            {answers.map((answer, index) => (
+                              <Draggable
+                                key={answer.id}
+                                draggableId={String(answer.id)}
+                                index={index}
+                              >
+                                {(provided) => (
+                                  <div
+                                    key={answer.id}
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    className="w-full flex justify-between items-center border-b-[1px] border-[#ddd]"
+                                  >
+                                    <div className="w-full lg:w-[50%] flex justify-between items-center">
+                                      <button
+                                        {...provided.dragHandleProps}
+                                        className="p-2 rounded text-white"
+                                      >
+                                        <RiDragMove2Fill
+                                          className={cn(
+                                            "text-[25px] cursor-grab",
+                                            theme === "dark"
+                                              ? "text-[#fff]"
+                                              : "text-[#333]"
+                                          )}
+                                        />
+                                      </button>
+                                      <div className="my-4 w-[80%]">
+                                        <BaseInput
+                                          label=""
+                                          type="text"
+                                          placeholder="Answer"
+                                          containerClassname="w-full"
+                                          labelClassName="text-[17px] font-DMSans font-semibold"
+                                          inputContainerClassName={cn(
+                                            "h-[40px] ",
+                                            theme === "dark"
+                                              ? "select-secondary"
+                                              : "border-[0.5px] border-[#ddd]"
+                                          )}
+                                          value={answer.title}
+                                          onChange={(
+                                            e: React.ChangeEvent<HTMLInputElement>
+                                          ) =>
+                                            handleAnswersChange(
+                                              answer.id,
+                                              "title",
+                                              e.target.value
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="w-full flex justify-end gap-4 items-center lg:w-[50%]">
+                                      <input
+                                        type="radio"
+                                        name="radio-8"
+                                        className="radio radio-error"
+                                        checked={answer.isCorrect}
+                                        onChange={(e) =>
+                                          handleAnswersChange(
+                                            answer.id,
+                                            "isCorrect",
+                                            e.target.checked
+                                          )
+                                        }
+                                      />
+                                      <div className="my-4 w-[30%]">
+                                        <BaseInput
+                                          label=""
+                                          type="number"
+                                          placeholder="Score"
+                                          containerClassname="w-full"
+                                          labelClassName="text-[17px] font-DMSans font-semibold"
+                                          inputContainerClassName={cn(
+                                            "h-[40px] ",
+                                            theme === "dark"
+                                              ? "select-secondary"
+                                              : "border-[0.5px] border-[#ddd]"
+                                          )}
+                                          value={answer.score}
+                                          onChange={(
+                                            e: React.ChangeEvent<HTMLInputElement>
+                                          ) =>
+                                            handleAnswersChange(
+                                              answer.id,
+                                              "score",
+                                              e.target.value
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                      <div className="w-[10%]">
+                                        <GiCancel className="text-[25px]" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+
+                    {/* Add an Option Button */}
+                    <button
+                      className="flex justify-start hover:border-[1px] border-[#F01E00] rounded-md p-2 items-center gap-2 my-4"
+                      onClick={handleAddOption}
+                    >
+                      <p className="font-DMSans font-bold text-[16px]">
+                        Add an option
+                      </p>
+                      <FaPlusSquare className="text-[#F01E00] text-[20px]" />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
-        </div>
-        <div className="flex justify-end items-center w-full py-6 border-b-2 border-[#ddd]">
-          <button
-            onClick={handleNewQuestion}
-            className="mb-2 px-4 py-2 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
-          >
-            Add Question
-          </button>
-        </div>
+        )}
+        {isQuizId !== 0 && !isDropDown && (
+          <div className="flex justify-end items-center w-full py-6">
+            <button
+              onClick={handleNewQuestion}
+              className="mb-2 px-4 py-2 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
+            >
+              Add Question
+            </button>
+          </div>
+        )}
+
+        {IsAnswer && (
+          <div className="flex justify-end items-center w-full py-6">
+            <button
+              onClick={handleNewQuestion}
+              className="mb-2 px-4 py-2 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
+            >
+              Add Answer
+            </button>
+          </div>
+        )}
         <div className="flex justify-start items-start gap-4">
           <button
             onClick={handleclose}

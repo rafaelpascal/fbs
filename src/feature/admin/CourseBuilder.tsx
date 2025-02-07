@@ -10,7 +10,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { NewLessonModal } from "~/components/Modal/NewLessonModal";
 import { NewCapstoneModal } from "~/components/Modal/NewCapstoneModal";
-import { Assignment, CapstoneItem, LessonItem } from "./Items";
+import { Assignment, CapstoneItem, LessonItem, QuizItems } from "./Items";
 import { NewAssignmentModal } from "~/components/Modal/NewAssignmentModal";
 import { NewQuizModal } from "~/components/Modal/NewQuizModal";
 
@@ -66,6 +66,7 @@ const CourseBuilder = ({ created }: any) => {
   });
   const [newQuiz, setNewQuiz] = useState({
     module: 0,
+    lesson: 0,
     status: false,
   });
   const [selectedModuleId, setSelectedModuleId] = useState(0);
@@ -87,7 +88,7 @@ const CourseBuilder = ({ created }: any) => {
     title: "",
     description: "",
   });
-  const [QuizObj, setQuizObj] = useState<ImoduleProps>({
+  const [quizObj, setQuizObj] = useState<ImoduleProps>({
     title: "",
     description: "",
   });
@@ -198,16 +199,18 @@ const CourseBuilder = ({ created }: any) => {
 
   // Quiz
   useEffect(() => {
+    console.log(quizObj);
+
     const selectedModule = modules.find(
       (module) => module.id === selectedModuleId
     );
-    if (selectedModule && QuizObj.title) {
+    if (selectedModule && quizObj.title) {
       const newQuiz: Lessons = {
         id: Date.now(),
         // title: `ASSIGNMENT ${selectedModule.assignment.length + 1}`,
         title: `QUIZ`,
-        description: QuizObj.title,
-        pages: "13 pages",
+        description: quizObj.title,
+        pages: "",
       };
       setModules((prevModules) =>
         prevModules.map((module) =>
@@ -216,9 +219,9 @@ const CourseBuilder = ({ created }: any) => {
             : module
         )
       );
-      setQuizObj({ title: "", description: "" });
+      // setQuizObj({ title: "", description: "" });
     }
-  }, [assignmentObj]);
+  }, [quizObj]);
 
   const addLesson = async () => {
     setNewLesson({
@@ -309,6 +312,7 @@ const CourseBuilder = ({ created }: any) => {
   const addQuiz = async () => {
     setNewQuiz({
       module: 0,
+      lesson: 0,
       status: false,
     });
     await showAlert(
@@ -360,6 +364,7 @@ const CourseBuilder = ({ created }: any) => {
     });
     setNewQuiz({
       module: 0,
+      lesson: 0,
       status: false,
     });
   };
@@ -476,6 +481,7 @@ const CourseBuilder = ({ created }: any) => {
     } else {
       setNewQuiz({
         module: moduleObj.moduleId || 0,
+        lesson: lessonObj.moduleId || 0,
         status: true,
       });
     }
@@ -543,6 +549,17 @@ const CourseBuilder = ({ created }: any) => {
             <div>
               {module.assignment.map((lesson, index) => (
                 <Assignment
+                  key={`${module.id}-${lesson.id}-${index}`}
+                  capstone={lesson}
+                  index={index}
+                  moveLesson={moveLesson}
+                  theme={theme}
+                />
+              ))}
+            </div>
+            <div>
+              {module.quiz.map((lesson, index) => (
+                <QuizItems
                   key={`${module.id}-${lesson.id}-${index}`}
                   capstone={lesson}
                   index={index}
@@ -655,6 +672,8 @@ const CourseBuilder = ({ created }: any) => {
         />
         <NewQuizModal
           moduleId={newQuiz.module}
+          lessonId={newQuiz.lesson}
+          // isOpen={true}
           isOpen={newQuiz.status}
           closeModal={handleClose}
           handlecreate={addQuiz}

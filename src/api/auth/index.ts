@@ -4,6 +4,8 @@ import {
   ApplicationFormPayload,
   ApplicationOTPFormPayload,
   AuthFormPayload,
+  ChangePasswordPayload,
+  ForgotPasswordPayload,
   ResendOTPPayload,
 } from "~/feature/students/schema";
 import { TypeIs } from "~/utils/packages/type-is";
@@ -81,6 +83,26 @@ export class AuthService extends BaseAPIService {
       );
       const userData = res.data;
       return { userData };
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static forgotpassword = async (payload: ForgotPasswordPayload) => {
+    try {
+      type LOGIN = LoginResponse;
+      const res = await Api.post<LOGIN>("/forgot-password", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static changepassword = async (payload: ChangePasswordPayload) => {
+    try {
+      type LOGIN = LoginResponse;
+      const res = await Api.post<LOGIN>("/reset-password", payload);
+      return res;
     } catch (error) {
       const handleError = error;
       throw handleError;

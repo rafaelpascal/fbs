@@ -1,11 +1,11 @@
 import { FBSlogo } from "~/assets";
-import LoginForm from "../../feature/students/login-form";
 import Slider from "react-slick";
 import { useState } from "react";
+import Forgotpassword from "~/feature/students/forgot-password";
 
 const autoplaySpeed = 3000;
 
-const Login = () => {
+const ForgotPassword = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const settings = {
     dots: false,
@@ -28,7 +28,7 @@ const Login = () => {
         <img src={FBSlogo} alt="FBSlogo" className="py-4" />
         <div className="w-full lg:w-[526px] flex flex-col h-[70%] justify-center items-start">
           <h2 className="text-[26px] lg:text-[45px] font-bold font-DMSans text-[#F01E00] lg:leading-[54.46px]">
-            Sign into your account
+            Forgot your Password ?
           </h2>
           <div className="w-full">
             <Slider {...settings}>
@@ -77,10 +77,10 @@ const Login = () => {
         </div>
       </div>
       <div className="w-full lg:w-[30%] shadow-md p-2 relative bg-[#F01E00] h-full">
-        <LoginForm />
+        <Forgotpassword />
       </div>
     </div>
   );
 };
 
-export default Login;
+export default ForgotPassword;

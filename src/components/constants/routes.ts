@@ -3,6 +3,8 @@ export const ROUTES = {
   APPLICATION: "/application/:title/:id",
   FORM_SUBMITTED: "/submitted",
   HOME: "/login",
+  FORGOTPASSWORD: "/forgot-password",
+  CHANGEPASSWORD: "/reset-password/:token",
   DASHBOARD: "/dashboard",
   ADMINDASHBOARD: "/admin/dashboard",
   PAYMENT: "/payment/:id",

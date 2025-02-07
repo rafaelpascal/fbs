@@ -73,6 +73,8 @@ const FormSubmitted = lazyLoad(
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ErrorPage from "~/pages/ErrorPage.tsx";
+import ForgotPassword from "~/pages/auth/ForgotPassword.tsx";
+import ChangePasswordpage from "~/pages/auth/ChangePasswordpage.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
@@ -104,6 +106,14 @@ const router = createBrowserRouter(
         {
           path: ROUTES.HOME,
           element: <Login />,
+        },
+        {
+          path: ROUTES.FORGOTPASSWORD,
+          element: <ForgotPassword />,
+        },
+        {
+          path: ROUTES.CHANGEPASSWORD,
+          element: <ChangePasswordpage />,
         },
         {
           element: <AppLayout />,
