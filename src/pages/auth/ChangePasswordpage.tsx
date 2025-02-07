@@ -1,7 +1,7 @@
 import { FBSlogo } from "~/assets";
 import Slider from "react-slick";
 import { useState } from "react";
-import ChangePassword from "~/feature/students/Change-password";
+import ChangePasswordForm from "~/feature/students/Change-password";
 
 const autoplaySpeed = 3000;
 
@@ -77,7 +77,7 @@ const ChangePasswordpage = () => {
         </div>
       </div>
       <div className="w-full lg:w-[30%] shadow-md p-2 relative bg-[#F01E00] h-full">
-        <ChangePassword />
+        <ChangePasswordForm />
       </div>
     </div>
   );

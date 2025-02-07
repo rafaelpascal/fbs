@@ -31,7 +31,7 @@ const fields = [
 ];
 
 // Login form
-const ChangePassword = () => {
+const ChangePasswordForm = () => {
   const navigate = useNavigate();
   const { token } = useParams();
   const form = useForm<ChangePasswordPayload>({
@@ -111,4 +111,4 @@ const ChangePassword = () => {
   );
 };
 
-export default ChangePassword;
+export default ChangePasswordForm;
