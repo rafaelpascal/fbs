@@ -173,6 +173,16 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static getModulebyId = async (payload: any) => {
+    try {
+      const res = await Api.post("/module/list-modules-byid", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static getModuleByCourseId = async (payload: any) => {
     try {
       const res = await Api.post("/course/list-modules-bycourse", payload);
@@ -244,6 +254,35 @@ export class CourseServices extends BaseAPIService {
   static rejectApplication = async (payload: any) => {
     try {
       const res = await Api.post("/reject-application", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static fetchQuestions = async (payload: { quiz_id: number | undefined }) => {
+    try {
+      const res = await Api.post("/quiz/list-questions", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static submitAnswer = async (payload: any) => {
+    try {
+      const res = await Api.post("/quiz/create-response", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static listQuiz = async (payload: any) => {
+    try {
+      const res = await Api.post("/quiz/list-quiz", payload);
       return res;
     } catch (error) {
       const handleError = error;

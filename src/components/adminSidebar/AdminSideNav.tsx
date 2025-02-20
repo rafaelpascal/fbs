@@ -66,14 +66,14 @@ export const AdminSidebar = () => {
           "fixed top-0 left-0 h-screen lg:flex lg:flex-col justify-between z-40 transition-transform transform",
           isSidebarOpen ? "translate-x-0 w-[200px]" : "-translate-x-full",
           "lg:translate-x-0 lg:relative",
-          isCollapsed ? "lg:w-[80px]" : "lg:min-w-[230px]",
+          isCollapsed ? "lg:w-[95px]" : "lg:min-w-[230px]",
           theme === "light" ? "bg-[#EEF2F6]" : "bg-[#424141]"
         )}
       >
         <div
           className={cn(
             "flex flex-col h-full w-full",
-            "items-start lg:mx-0 justify-start mr-4 max-lg:py-10 lg:items-start",
+            "items-start lg:mx-0 justify-start max-lg:py-10 lg:items-start",
             isSidebarOpen ? "mx-4" : ""
           )}
         >

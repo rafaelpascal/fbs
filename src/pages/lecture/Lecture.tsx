@@ -58,44 +58,85 @@ const Lecture = () => {
         href: `/module/${lessonItem.module_id}`,
         icon: FaFilePdf,
         dropdown: true,
-        playing: lessonItem.lessonid == currentLessonId,
+        playing: lessonItem.lessonid === currentLessonId,
         text: lessonItem.lesson_title || "Untitled Lesson",
         children: [
           {
-            href:
-              lessonItem.upload_pdf !==
-              "https://api.fordaxbschool.com/assets/courses/null"
-                ? lessonItem.upload_pdf
-                : "#",
+            href: "#",
             icon: GoDotFill,
             dropdown: false,
             text: "Lecture",
           },
-          {
-            href:
-              lessonItem.upload_video_audio !==
-              "https://api.fordaxbschool.com/assets/courses/null"
-                ? lessonItem.upload_video_audio
-                : "#",
-            icon: GoDotFill,
-            dropdown: false,
-            text: "Quiz",
-          },
-          {
-            href: lessonItem.stream_video_audio
-              ? lessonItem.stream_video_audio
-              : "#",
-            icon: GoDotFill,
-            dropdown: false,
-            text: "Assignment",
-          },
+          ...(lessonItem.hasQuiz === 1
+            ? [
+                {
+                  href: `/assignment/${lessonItem.lessonid}`,
+                  icon: GoDotFill,
+                  dropdown: false,
+                  text: "Quiz",
+                },
+              ]
+            : []),
+          ...(lessonItem.assignment_id
+            ? [
+                {
+                  href: lessonItem.stream_video_audio
+                    ? lessonItem.stream_video_audio
+                    : "#",
+                  icon: GoDotFill,
+                  dropdown: false,
+                  text: "Assignment",
+                },
+              ]
+            : []),
         ],
       })
     );
 
-    // Update sidebar state with dynamic data
     updateSidebarData(updatedData);
   };
+
+  // const updateLecture = () => {
+  //   if (!lectureTitles.length) return;
+
+  //   const updatedData: SideNavProps[] = lectureTitles.map(
+  //     (lessonItem: any) => ({
+  //       href: `/module/${lessonItem.module_id}`,
+  //       icon: FaFilePdf,
+  //       dropdown: true,
+  //       playing: lessonItem.lessonid == currentLessonId,
+  //       text: lessonItem.lesson_title || "Untitled Lesson",
+  //       children: [
+  //         {
+  //           href: lessonItem.upload_pdf !== "" ? lessonItem.upload_pdf : "#",
+  //           icon: GoDotFill,
+  //           dropdown: false,
+  //           text: "Lecture",
+  //         },
+  //         {
+  //           href:
+  //             lessonItem.upload_video_audio !== ""
+  //               ? lessonItem.upload_video_audio
+  //               : "#",
+  //           icon: GoDotFill,
+  //           dropdown: false,
+  //           text: "Quiz",
+  //         },
+  //         {
+  //           href: lessonItem.stream_video_audio
+  //             ? lessonItem.stream_video_audio
+  //             : "#",
+  //           icon: GoDotFill,
+  //           dropdown: false,
+  //           text: "Assignment",
+  //         },
+  //       ],
+  //     })
+  //   );
+
+  //   // Update sidebar state with dynamic data
+  //   updateSidebarData(updatedData);
+  // };
 
   useEffect(() => {
     updateLecture();
@@ -116,7 +157,11 @@ const Lecture = () => {
         (item) =>
           item && item !== "https://api.fordaxbschool.com/assets/courses/null"
       )
-      .map((media) => ({ media, lessonId: lesson.lessonid }))
+      .map((media) => ({
+        media,
+        lessonId: lesson.lessonid,
+        title: lesson.lesson_title,
+      }))
   );
 
   const allMediaUrls = mediaItems.map((item) => item.media);
@@ -218,11 +263,11 @@ const Lecture = () => {
             </div>
 
             <div className="flex justify-between items-center py-2 border-b-[2px] border-[#ddd] mb-2">
-              {/* <h2 className="text-[18px] font-DMSans font-semibold text-left">
+              <h2 className="text-[18px] font-DMSans font-semibold text-left">
                 {mediaItems.length > 0
-                  ? mediaItems[currentIndex].title
+                  ? `${currentIndex + 1}. ${mediaItems[currentIndex]?.title}`
                   : "No Content"}
-              </h2> */}
+              </h2>
               <div className="flex justify-end items-center gap-4">
                 <button>
                   <HiOutlineHandThumbUp className="hover:text-[#FF1515] text-[22px]" />
@@ -230,9 +275,28 @@ const Lecture = () => {
                 <button>
                   <HiOutlineHandThumbDown className="hover:text-[#FF1515] text-[22px]" />
                 </button>
-                <button>
-                  <HiDotsHorizontal className="text-[#1B1919] text-[22px]" />
-                </button>
+                <div className="dropdown dropdown-end">
+                  <div tabIndex={0} role="button" className="btn m-1">
+                    <HiDotsHorizontal className="text-[#1B1919] text-[22px]" />
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                  >
+                    <li className="font-DMSans text-[14px] font-semibold">
+                      <a>Add note</a>
+                    </li>
+                    <li className="font-DMSans text-[14px] font-semibold">
+                      <a>Feedback</a>
+                    </li>
+                    <li className="font-DMSans text-[14px] font-semibold">
+                      <a>View Capstone</a>
+                    </li>
+                    <li className="font-DMSans text-[14px] font-semibold">
+                      <a>Open discussion</a>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div className="flex justify-between flex-row flex-wrap items-center">

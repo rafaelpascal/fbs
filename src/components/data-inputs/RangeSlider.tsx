@@ -37,7 +37,7 @@ const RangeSlider = ({
     }));
   };
 
-  const totalAmount = currentStep * baseAmount;
+  const totalAmount = baseAmount / currentStep;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-NG", {
@@ -92,10 +92,10 @@ const RangeSlider = ({
           </div>
           <div className="flex flex-row justify-end items-center gap-4 my-4">
             <p className="font-DMSans text-[14px] lg:text-[16px] font-semibold ">
-              {formatCurrency(baseAmount)}/month
+              {formatCurrency(totalAmount)}/month
             </p>
             <p className="font-DMSans text-[14px] lg:text-[16px] font-semibold text-[#F01E00]">
-              Total: {formatCurrency(totalAmount)}
+              Total: {formatCurrency(baseAmount)}
             </p>
           </div>
         </>

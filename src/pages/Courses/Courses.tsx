@@ -3,7 +3,7 @@
 import { DashboardArea } from "~/layouts/DashboardArea";
 import Collapsible from "~/components/Collapsible/Collapsible";
 import { BaseButton } from "~/components/buttons/BaseButton";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { IoMdUnlock } from "react-icons/io";
 import CourseCard from "~/components/cards/CourseCard";
 import Carousel from "~/components/Carousel/Carousel";
@@ -34,6 +34,7 @@ type ProgramSpecification = {
 
 interface Application {
   application_status: number;
+  payment_status: number;
   applicationid: string;
   course_title: string;
   course_format?: string;
@@ -83,20 +84,22 @@ const Lessons = [
 ];
 const Dashboard = () => {
   const { theme } = useTheme();
-  // const courseId = useSelector((state: RootState) => state.course.course_id);
-  const courseId = localStorage.getItem("course_id");
   const [loading, setLoading] = useState(false);
   const [isEnrolled, setisEnrolled] = useState(false);
   const [selectedId, setSelectedId] = useState("");
+  const [firstCourseId, setfirstCourseId] = useState("");
   const [courses, setcourses] = useState<Module[]>([]);
   const [secondcourses, setsecondcourses] = useState<Module[]>([]);
+  const [lessons, setLessons] = useState<Module[]>([]);
+  const [secondLessons, setSecondLessons] = useState<Module[]>([]);
   const navigate = useNavigate();
+  const [moduleIds, setModuleIds] = useState<number[]>([]);
   const [programSpecifications, setProgramSpecifications] = useState<
     ProgramSpecification[]
   >([]);
   const [applications, setapplications] = useState<Application[]>([]);
-  const location = useLocation();
-  const [enrolled] = useState(location.state?.enrolled || false);
+  // const location = useLocation();
+  // const [enrolled] = useState(location.state?.enrolled || false);
   const [selectedOption, setSelectedOption] = useState<string | null>(
     "MODULES"
   );
@@ -127,10 +130,11 @@ const Dashboard = () => {
         userid: Storeduser?.user,
       };
       const res = await CourseServices.fetchApplication(payload);
+      setfirstCourseId(res.data.data[0].coursesid);
       if (res.data && res.data.data && res.data.data.length > 0) {
         const application = res.data.data;
         const anyEnrolled: boolean = application.some(
-          (application: Application) => application.application_status === 2
+          (application: Application) => application.payment_status === 1
         );
         if (anyEnrolled) {
           setisEnrolled(true);
@@ -187,8 +191,8 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    setSelectedId(courseId ?? "");
-  }, [courseId]);
+    setSelectedId(firstCourseId ?? "");
+  }, [firstCourseId]);
 
   const fetModules = async () => {
     try {
@@ -196,6 +200,12 @@ const Dashboard = () => {
         courseid: selectedId,
       };
       const res = await CourseServices.getModuleByCourseId(payload);
+      if (res.data?.course_modules) {
+        const ids = res.data.course_modules.map(
+          (module: any) => module.moduleid
+        );
+        setModuleIds(ids);
+      }
       const [chunk1, chunk2] = splitArray<Module>(res.data.course_modules);
       setcourses(chunk1);
       setsecondcourses(chunk2);
@@ -214,8 +224,51 @@ const Dashboard = () => {
     fetchmyapplication();
   }, []);
 
+  const fetchLessonsForAllModules = async () => {
+    try {
+      const lessonRequests = moduleIds.map((id) =>
+        CourseServices.lessonsByModuleId({ moduleid: id })
+      );
+
+      const responses = await Promise.all(lessonRequests);
+
+      // Extract and merge lessons from all responses
+      const allLessons = responses.flatMap((res) => res.data.course_lessons);
+
+      // Function to split array into chunks
+      const splitArray = (array: any[], chunkSize: number) => {
+        return array.reduce((result, item, index) => {
+          const chunkIndex = Math.floor(index / chunkSize);
+          if (!result[chunkIndex]) result[chunkIndex] = [];
+          result[chunkIndex].push(item);
+          return result;
+        }, []);
+      };
+
+      // Split lessons into two chunks
+      const [chunk1, chunk2] = splitArray(
+        allLessons,
+        Math.ceil(allLessons.length / 2)
+      );
+
+      // Set lessons into state
+      setLessons(chunk1);
+      setSecondLessons(chunk2);
+
+      console.log("Chunk 1:", chunk1);
+      console.log("Chunk 2:", chunk2);
+    } catch (error) {
+      console.error("Error fetching lessons:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (moduleIds.length > 0) {
+      fetchLessonsForAllModules();
+    }
+  }, [moduleIds]);
+
   const handleViewApplication = (courseId: number | undefined) => {
-    console.log(courseId);
     setSelectedId(JSON.stringify(courseId));
   };
 
@@ -233,7 +286,7 @@ const Dashboard = () => {
                   <p className="text-left capitalize font-DMSans text-[20px] font-semibold">
                     {program.course_title}
                   </p>
-                  {program.application_status == 2 && (
+                  {program.payment_status == 1 && (
                     <button
                       className="text-green-400 flex justify-between items-center gap-4 border-[1px] rounded-md border-green-400 px-4 font-DMSans text-[16px] font-semibold"
                       onClick={() => handleViewApplication(program.coursesid)}
@@ -291,29 +344,28 @@ const Dashboard = () => {
                       </span>
                     )}
                   </div>
-                  {!enrolled ||
-                    (!isEnrolled && (
-                      <BaseButton
-                        containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[14px] lg:text-[16px] font-bold font-DMSans text-[#fff] `}
-                        hoverScale={1.01}
-                        hoverOpacity={0.8}
-                        tapScale={0.9}
-                        onClick={() =>
-                          handlePayment(
-                            programSpecifications[index]?.applicationid
-                          )
-                        }
-                      >
-                        <p>Proceed with payment</p>
-                      </BaseButton>
-                    ))}
+                  {program.payment_status === null && (
+                    <BaseButton
+                      containerCLassName={`mt-4 h-[49px] w-full lg:w-[280px] rounded-[8px] bg-[#FF3B30] text-[14px] lg:text-[16px] font-bold font-DMSans text-[#fff] `}
+                      hoverScale={1.01}
+                      hoverOpacity={0.8}
+                      tapScale={0.9}
+                      onClick={() =>
+                        handlePayment(
+                          programSpecifications[index]?.applicationid
+                        )
+                      }
+                    >
+                      <p>Proceed with payment</p>
+                    </BaseButton>
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </div>
       </Collapsible>
-      {enrolled || isEnrolled ? (
+      {isEnrolled ? (
         <>
           <Collapsible title="My Courses" initialState={true}>
             <div className="bg-[#EBEDF0] flex flex-col justify-center items-center w-full p-4 lg:p-10 rounded-[16px]">
@@ -379,7 +431,7 @@ const Dashboard = () => {
                             description={course.module_description}
                             lessonsInfo={course.module_objectives}
                             buttonText="Start Module"
-                            progress="15"
+                            progress="0/15"
                             icon={IoMdUnlock}
                             courseStarted="not started"
                             onButtonClick={() =>
@@ -398,7 +450,7 @@ const Dashboard = () => {
                               description={course.module_description}
                               lessonsInfo={course.module_objectives}
                               buttonText="Start Module"
-                              progress="15"
+                              progress="0/15"
                               icon={IoMdUnlock}
                               courseStarted="not started"
                               onButtonClick={() =>
@@ -414,19 +466,11 @@ const Dashboard = () => {
               )}
               {selectedOption === "LESSONS" && (
                 <Carousel>
-                  <div className="grid grid-cols-1 mt-8 gap-x-60 sm:grid-cols-2">
-                    <div className="h-[89px] w-full flex justify-start items-center px-4 bg-[#FF1515]">
-                      <h2 className="text-left font-DMSans text-[20px] text-[#fff] font-semibold">
-                        MODULE 1: LEADERSHIP & STRATEGIC MANAGEMENT
-                      </h2>
-                    </div>
-                    <div className="h-[89px] w-full flex justify-start items-center px-4 bg-[#FF1515]">
-                      <h2 className="text-left font-DMSans text-[20px] text-[#fff] font-semibold">
-                        MODULE 1: LEADERSHIP & STRATEGIC MANAGEMENT
-                      </h2>
-                    </div>
-                    {courses.map((course) => (
+                  <div className="grid w-[100%] grid-cols-1 mt-8 gap-x-20 sm:grid-cols-2">
+                    {lessons.map((course) => (
                       <ModuleCards
+                        moduleNumber={course.module_number}
+                        moduleTitle={course.module_title}
                         key={course.moduleid}
                         courseStarted="not started"
                         lesson={course.lesson}
@@ -435,8 +479,10 @@ const Dashboard = () => {
                     ))}
                   </div>
                   <div className="grid grid-cols-1 mt-8 gap-x-60 sm:grid-cols-2">
-                    {courses.map((course) => (
+                    {secondLessons.map((course) => (
                       <ModuleCards
+                        moduleNumber={course.module_number}
+                        moduleTitle={course.module_title}
                         key={course.moduleid}
                         courseStarted="not started"
                         lesson={course.lesson}

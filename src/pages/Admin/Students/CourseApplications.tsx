@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { CiCalendar } from "react-icons/ci";
 import { TbDeviceTabletSearch } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import { CourseServices } from "~/api/course";
 import { WarningModal } from "~/components/Modal/WarningModal";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { useTheme } from "~/context/theme-provider";
+import useToast from "~/hooks/useToast";
 import { DashboardArea } from "~/layouts/DashboardArea";
 import { cn } from "~/utils/helpers";
 
@@ -13,6 +15,10 @@ const CourseApplications = () => {
   const { applicationId } = useParams();
   const navigate = useNavigate();
   const [accepting, setAccepting] = useState(false);
+  const [isFeching, setisFeching] = useState(false);
+  const { success, error } = useToast();
+  const [applicationStatus, setApplicationStatus] = useState(0);
+
   interface ApplicationData {
     key: string;
     value: string;
@@ -44,10 +50,12 @@ const CourseApplications = () => {
   };
 
   const fetchMyApplication = async () => {
+    setisFeching(true);
     try {
       if (applicationId) {
         const payload = { applicationid: applicationId };
         const res = await CourseServices.fetchSingleApplication(payload);
+        setApplicationStatus(res.data.data[0].application_status);
         if (res.data && res.data.data) {
           const data = res.data.data[0];
           const formattedData = [
@@ -80,7 +88,7 @@ const CourseApplications = () => {
               icon: TbDeviceTabletSearch,
             },
           ];
-
+          setisFeching(false);
           setApplicationData(formattedData);
         } else {
           console.log("No data found for this application ID.");
@@ -89,6 +97,7 @@ const CourseApplications = () => {
         console.log("No application ID set.");
       }
     } catch (error) {
+      setisFeching(false);
       console.error("Error fetching application:", error);
     }
   };
@@ -106,51 +115,85 @@ const CourseApplications = () => {
         applicationid: applicationId,
       };
       await CourseServices.acceptApplication(payload);
-      navigate(`/admin/dashboard/application`);
+      success("Application accepted!");
+      setTimeout(() => {
+        navigate(`/admin/dashboard/application`);
+      }, 2000);
       setAccepting(false);
-    } catch (error) {
+    } catch (err) {
+      error("Failed to reject Application|");
       setAccepting(false);
-      console.log(error);
+      console.log(err);
     }
   };
 
   return (
     <DashboardArea>
-      <h2 className="font-DMSans font-semibold text-[18px]">
-        STUDENT APPLICATION REVIEW
-      </h2>
+      <ToastContainer />
+      <div className="flex justify-between items-center">
+        <h2 className="font-DMSans font-semibold text-[18px]">
+          STUDENT APPLICATION REVIEW
+        </h2>
+        {applicationStatus === 2 && (
+          <div>
+            <h2 className="font-DMSans font-semibold text-[18px] text-green-500">
+              Accepted
+            </h2>
+          </div>
+        )}
+        {applicationStatus === 3 && (
+          <div>
+            <h2 className="font-DMSans font-semibold text-[18px] text-red-500">
+              Rejected
+            </h2>
+          </div>
+        )}
+        {applicationStatus === 1 && (
+          <div>
+            <h2 className="font-DMSans font-semibold text-[18px] text-yellow-500">
+              Pending
+            </h2>
+          </div>
+        )}
+      </div>
       <div
         className={cn(
           "p-8 border-[0.5px] border-[#ddd] h-[650px] mt-4 scrollbar-style overflow-y-auto shadow-lg rounded-md",
           theme === "dark" ? "bg-[#333]" : "bg-[#e5e5e5]"
         )}
       >
-        <div className="w-full grid grid-cols-2 gap-4">
-          {application.map((app, index) => (
-            <div key={index} className="w-full">
-              <h2 className="font-DMSans text-[21px] font-semibold text-left">
-                {app.key}
-              </h2>
-              <div
-                className={cn(
-                  "w-full rounded-md mt-3 shadow-md border-[0.5px] border-[#ddd] flex justify-between items-center p-4",
-                  theme === "dark" ? "bg-[#333]" : "bg-[#fff]",
-                  app.phone && "flex gap-4 justify-start items-center"
-                )}
-              >
-                {app.phone && (
+        {isFeching ? (
+          <div className="w-full h-full justify-center flex items-center">
+            <LoadingSpinner />
+          </div>
+        ) : (
+          <div className="w-full grid grid-cols-2 gap-4">
+            {application.map((app, index) => (
+              <div key={index} className="w-full">
+                <h2 className="font-DMSans text-[21px] font-semibold text-left">
+                  {app.key}
+                </h2>
+                <div
+                  className={cn(
+                    "w-full rounded-md mt-3 shadow-md border-[0.5px] border-[#ddd] flex justify-between items-center p-4",
+                    theme === "dark" ? "bg-[#333]" : "bg-[#fff]",
+                    app.phone && "flex gap-4 justify-start items-center"
+                  )}
+                >
+                  {app.phone && (
+                    <p className="font-DMSans text-[18px] font-semibold text-left">
+                      {app.phone}
+                    </p>
+                  )}
                   <p className="font-DMSans text-[18px] font-semibold text-left">
-                    {app.phone}
+                    {app.value}
                   </p>
-                )}
-                <p className="font-DMSans text-[18px] font-semibold text-left">
-                  {app.value}
-                </p>
-                {app.icon && <app.icon />}
+                  {app.icon && <app.icon />}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         <div className="flex justify-start items-center gap-4 mt-4">
           <button
             onClick={handleAccept}

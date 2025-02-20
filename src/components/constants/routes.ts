@@ -10,7 +10,7 @@ export const ROUTES = {
   ADMINDASHBOARD: "/admin/dashboard",
   PAYMENT: "/payment/:id",
   LECTURE: "/lecture/:id",
-  QUIZ: "/assignment",
+  QUIZ: "/assignment/:quizId",
   WORD: "/word",
   ASSIGNMENT: "/module/assignment",
   BANKTRANSFER: "/banktransfer",

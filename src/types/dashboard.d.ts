@@ -43,3 +43,12 @@ type FormRequirementsResponse = {
   message: string;
   requirements: FormRequirements[];
 };
+
+type Answer = {
+  course_id: number;
+  lesson_id: number;
+  user_id: number;
+  quiz_id: number;
+  question_id: number;
+  selected_answer_id: number;
+};

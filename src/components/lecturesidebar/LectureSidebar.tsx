@@ -9,7 +9,10 @@ import { RiHome2Line } from "react-icons/ri";
 import { useSidebar } from "~/context/Sidebar_Provider";
 import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "../ui/loading-spinner";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useDispatch } from "react-redux";
+import { setLessonId } from "~/redux-store/slice/lessonSlice";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -22,10 +25,13 @@ export interface SideNavProps {
 // Sidebar Component
 export const LectureSidebar = () => {
   // const courseId = useSelector((state: RootState) => state.course.course_id);
-  const courseId = localStorage.getItem("course_id");
+  // const courseId = localStorage.getItem("course_id");
+  const dispatch = useDispatch();
   const { theme } = useTheme();
+  const { id } = useParams<{ id: string }>();
+  const { quizId } = useParams<{ quizId: string }>();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isCollapsed] = useState(false);
+  const [isCollapsed, setisCollapsed] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const { sidebarData } = useSidebar();
   const [moduleTitle, setModuleTitle] = useState("");
@@ -40,11 +46,11 @@ export const LectureSidebar = () => {
     setLoading(true);
     try {
       const payload = {
-        courseid: courseId,
+        module_id: JSON.parse(id ?? ""),
       };
-      const res = await CourseServices.getModuleByCourseId(payload);
-      setModuleTitle(res.data.course_modules[0].module_title);
-      setModuleNumber(res.data.course_modules[0].module_number);
+      const res = await CourseServices.getModulebyId(payload);
+      setModuleTitle(res.data.modules[0].module_title);
+      setModuleNumber(res.data.modules[0].module_number);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -53,10 +59,20 @@ export const LectureSidebar = () => {
   };
 
   useEffect(() => {
-    if (courseId) {
+    if (id) {
       fetModules();
     }
-  }, [courseId]);
+  }, [id]);
+
+  const toggleCollapse = () => {
+    setisCollapsed(!isCollapsed);
+  };
+
+  useEffect(() => {
+    if (quizId) {
+      dispatch(setLessonId(JSON.parse(quizId)));
+    }
+  }, [quizId]);
 
   return (
     <>
@@ -102,15 +118,17 @@ export const LectureSidebar = () => {
               className={cn(isCollapsed && "mx-auto")}
             />
           </div>
-          <div className="w-full flex mt-4 flex-row justify-start gap-6 items-center">
-            <Link to="/dashboard">
-              <RiHome2Line className="text-[35px]" />
-            </Link>
-            <h2 className="text-[20px] font-DMSans font-semibold">
-              <span className="text-[#1CB503]">Week 2</span> / 12 weeks
-            </h2>
-          </div>
-          {/* <button
+          {!isCollapsed && (
+            <div className="w-full flex mt-4 flex-row justify-start gap-6 items-center">
+              <Link to="/dashboard">
+                <RiHome2Line className="text-[35px]" />
+              </Link>
+              <h2 className="text-[20px] font-DMSans font-semibold">
+                <span className="text-[#1CB503]">Week 2</span> / 12 weeks
+              </h2>
+            </div>
+          )}
+          <button
             className="absolute top-16 shadow-md right-[-18px] hidden lg:flex items-center p-2 rounded-full bg-[#EEF2F6] text-[#FF3B30]"
             onClick={toggleCollapse}
           >
@@ -119,49 +137,57 @@ export const LectureSidebar = () => {
             ) : (
               <FiChevronLeft size={20} />
             )}
-          </button> */}
+          </button>
 
           {/* Navigation Items */}
-          <div className="w-full shadow-md rounded-md">
-            {isLoading ? (
-              <div className="w-full py-4 flex justify-center items-center">
-                <LoadingSpinner size="xs" />
-              </div>
-            ) : (
-              <h2 className="mx-2 my-4 font-DMSans text-[18px] font-bold w-full">
-                Module {moduleNumber}: {moduleTitle}
-              </h2>
-            )}
-            <ul
-              className={cn(
-                "w-full grid grid-cols-1 overflow-x-hidden overflow-y-auto",
-                "transition-all duration-300",
-                isCollapsed ? "gap-2" : "gap-4",
-                theme === "light" ? "bg-[#EEF2F6]" : "bg-[#424141]"
+          {!isCollapsed && (
+            <div className="w-full shadow-md rounded-md">
+              {isLoading ? (
+                <div className="w-full py-4 flex justify-center items-center">
+                  <LoadingSpinner size="xs" />
+                </div>
+              ) : (
+                <h2 className="mx-2 my-4 font-DMSans text-[18px] font-bold w-full">
+                  Module {moduleNumber}: {moduleTitle}
+                </h2>
               )}
-              style={{ maxHeight: "calc(100vh - 200px)" }}
-            >
-              {sidebarData.map((data) => (
-                <LectureItems
-                  key={data.text}
-                  {...data}
-                  textStyles={cn(
-                    "hidden bg-transparent text-md my-3 lg:block",
-                    isCollapsed && "hidden"
-                  )}
-                  iconOnly={isCollapsed}
-                />
-              ))}
-            </ul>
-          </div>
-          <button className="text-[14px] w-full py-4 rounded-md shadow-md bg-transparent">
-            <p className="font-DMSans font-semibold text-[14px]">My Notes</p>
-          </button>
-          <button className="text-[14px] w-full py-4 rounded-md shadow-md bg-transparent">
-            <p className="font-DMSans font-semibold text-[14px]">
-              Support/Help
-            </p>
-          </button>
+              <ul
+                className={cn(
+                  "w-full grid grid-cols-1 overflow-x-hidden overflow-y-auto",
+                  "transition-all duration-300",
+                  isCollapsed ? "gap-2" : "gap-4",
+                  theme === "light" ? "bg-[#EEF2F6]" : "bg-[#424141]"
+                )}
+                style={{ maxHeight: "calc(100vh - 200px)" }}
+              >
+                {sidebarData.map((data) => (
+                  <LectureItems
+                    key={data.text}
+                    {...data}
+                    textStyles={cn(
+                      "hidden bg-transparent text-md my-3 lg:block",
+                      isCollapsed && "hidden"
+                    )}
+                    iconOnly={isCollapsed}
+                  />
+                ))}
+              </ul>
+            </div>
+          )}
+          {!isCollapsed && (
+            <>
+              <button className="text-[14px] w-full py-4 rounded-md shadow-md bg-transparent">
+                <p className="font-DMSans font-semibold text-[14px]">
+                  My Notes
+                </p>
+              </button>
+              <button className="text-[14px] w-full py-4 rounded-md shadow-md bg-transparent">
+                <p className="font-DMSans font-semibold text-[14px]">
+                  Support/Help
+                </p>
+              </button>
+            </>
+          )}
         </div>
       </aside>
     </>

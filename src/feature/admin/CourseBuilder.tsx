@@ -136,7 +136,7 @@ const CourseBuilder = ({ created }: any) => {
         id: Date.now(),
         title: `LESSON ${selectedModule.lessons.length + 1}`,
         description: lessonObj.title,
-        pages: "13 pages",
+        pages: "",
       };
       setModules((prevModules) =>
         prevModules.map((module) =>
@@ -160,7 +160,7 @@ const CourseBuilder = ({ created }: any) => {
         // title: `CAPSTONE ${selectedModule.capstone.length + 1}`,
         title: `CAPSTONE`,
         description: capstoneObj.title,
-        pages: "13 pages",
+        pages: "",
       };
       setModules((prevModules) =>
         prevModules.map((module) =>
@@ -184,7 +184,7 @@ const CourseBuilder = ({ created }: any) => {
         // title: `ASSIGNMENT ${selectedModule.assignment.length + 1}`,
         title: `ASSIGNMENT`,
         description: assignmentObj.title,
-        pages: "13 pages",
+        pages: "",
       };
       setModules((prevModules) =>
         prevModules.map((module) =>
@@ -200,7 +200,6 @@ const CourseBuilder = ({ created }: any) => {
   // Quiz
   useEffect(() => {
     console.log(quizObj);
-
     const selectedModule = modules.find(
       (module) => module.id === selectedModuleId
     );
@@ -467,7 +466,7 @@ const CourseBuilder = ({ created }: any) => {
     }
   };
 
-  // New Assignment
+  // New Quiz
   const handleNewQuiz = async () => {
     if (modules.length === 0) {
       await showAlert(
@@ -681,9 +680,6 @@ const CourseBuilder = ({ created }: any) => {
           setModuleData={setQuizObj}
         />
         <div className="flex flex-row flex-wrap justify-start items-center gap-4">
-          <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
-            PREVIEW
-          </button>
           <button
             onClick={handlePublish}
             className="h-[52px] bg-[#FF5050] w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2"

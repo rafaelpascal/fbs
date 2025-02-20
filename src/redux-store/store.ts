@@ -3,6 +3,7 @@ import userReducer from "./slice/user.Slice";
 import courseReducer from "./slice/course.slice";
 import courseUrlReducer from "./slice/url.slice";
 import formRequirementsReducer from "./slice/form_requirements.slice";
+import lessonReducer from "./slice/lessonSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     course: courseReducer,
     url: courseUrlReducer,
     formRequirements: formRequirementsReducer,
+    lesson: lessonReducer,
   },
 });
 

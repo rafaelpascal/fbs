@@ -39,7 +39,11 @@ export const CourseCreatedModal = ({
   };
 
   return (
-    <BaseModal isOpen={isOpen} closeModal={closeModal}>
+    <BaseModal
+      isOpen={isOpen}
+      closeModal={closeModal}
+      className="lg:min-w-[746px]"
+    >
       <div className="relative flex w-full lg:w-[746px] h-auto p-6 flex-col items-start justify-start">
         <div className="w-full mb-4 flex justify-between items-start">
           <div className="">

@@ -17,6 +17,8 @@ import { RiDragMove2Fill } from "react-icons/ri";
 import { GiCancel } from "react-icons/gi";
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 import { CourseServices } from "~/api/course";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
 
 interface IModalPropsType {
   moduleId: number;
@@ -72,10 +74,6 @@ const feedbackMode = [
     id: 2,
     title: "Show results after each quiz attempt",
   },
-  {
-    id: 3,
-    title: "Allow retry of the quiz",
-  },
 ];
 export const NewQuizModal = ({
   moduleId,
@@ -86,14 +84,16 @@ export const NewQuizModal = ({
   setModuleData,
 }: IModalPropsType) => {
   const { theme } = useTheme();
-  // const courseId = useSelector((state: RootState) => state.course.course_id);
+  const courseId = useSelector((state: RootState) => state.course.course_id);
   //   const [modules, setModules] = useState<Module[]>([]);
   const [isSubmitting, setisSubmitting] = useState(false);
   const [isFeedbackMode, setisFeedbackMode] = useState(false);
+  const [isquestionSaved, setisquestionSaved] = useState(false);
   const [IsAnswer, setIsAnswer] = useState(false);
   const [isDropDown, setIsisDropDown] = useState(false);
   const [questionsubmitting, setQuestionsubmitting] = useState(false);
   const [answerAdded, setAnswerAdded] = useState(false);
+  const [isAnswerSubmitting, setIsAnswerSubmitting] = useState(false);
   const [isQuizId, setisQuizId] = useState(0);
   const [isQuestionId, setisQuestionId] = useState(0);
   const [activeButton, setActiveButton] = useState<string | null>(null);
@@ -143,8 +143,8 @@ export const NewQuizModal = ({
     setisSubmitting(true);
 
     const payload = {
-      course_id: 8,
-      //   course_id: courseId,
+      // course_id: 8,
+      course_id: courseId,
       module_id: moduleId,
       lesson_id: lessonId,
       title: formData.title,
@@ -155,6 +155,10 @@ export const NewQuizModal = ({
       feedback_mode: checkedTitles,
     };
     const res = await CourseServices.createCourseQuiz(payload);
+    setModuleData((prevData: any) => ({
+      ...prevData,
+      title: formData.title,
+    }));
     setisQuizId(res.data.data.quiz_id);
     const newQuiz = {
       title: formData.title,
@@ -162,11 +166,11 @@ export const NewQuizModal = ({
       timelimit: formData.timelimit,
       feedback: formData.feedback,
     };
-
+    setisquestionSaved(true);
     setQuizzes((prevQuizzes) => [...prevQuizzes, newQuiz]);
     setisSubmitting(false);
-    setFormData(initialFormData);
   };
+
   const handleQuestionSubmit = async () => {
     try {
       setQuestionsubmitting(true);
@@ -177,6 +181,7 @@ export const NewQuizModal = ({
       };
       const res = await CourseServices.createCourseQuizQuestion(payload);
       setIsAnswer(true);
+      setisquestionSaved(false);
       setisQuestionId(res.data.data.question_id);
       const newQuiz = {
         title: formData.question,
@@ -239,38 +244,23 @@ export const NewQuizModal = ({
   ];
 
   const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return; // If dropped outside, do nothing
+    if (!result.destination) return;
     const reorderedAnswers = Array.from(quizanswers);
     const [movedItem] = reorderedAnswers.splice(result.source.index, 1);
     reorderedAnswers.splice(result.destination.index, 0, movedItem);
 
-    setAnswers(reorderedAnswers); // Update state
+    setAnswers(reorderedAnswers);
   };
 
   const handleCheckboxChange = (title: string) => {
     setFormData((prevData) => ({
       ...prevData,
-      feedback: { [title]: true }, // Uncheck all other checkboxes by setting only one key to true
+      feedback: { [title]: true },
     }));
   };
-  //   const handleCheckboxChange = (
-  //     e: React.ChangeEvent<HTMLInputElement>,
-  //     title: string
-  //   ) => {
-  //     setFormData((prevData) => {
-  //       const updatedFeedback = {
-  //         ...prevData.feedback,
-  //         [title]: e.target.checked,
-  //       };
-
-  //       return {
-  //         ...prevData,
-  //         feedback: updatedFeedback,
-  //       };
-  //     });
-  //   };
 
   const handleSubmitAnswers = async () => {
+    setIsAnswerSubmitting(true);
     try {
       const formattedAnswers = quizanswers.map(
         ({ title, isCorrect, score }) => ({
@@ -283,24 +273,22 @@ export const NewQuizModal = ({
       const payload = {
         answers: formattedAnswers,
       };
-      const res = await CourseServices.createCourseQuizAnswers(payload);
+      await CourseServices.createCourseQuizAnswers(payload);
+      setIsAnswerSubmitting(false);
       setAnswerAdded(true);
       setIsAnswer(false);
-      console.log(res);
+      setAnswers([]);
+      setActiveButton(null);
     } catch (error) {
+      setIsAnswerSubmitting(false);
       setQuestionsubmitting(false);
       console.error("Error submitting answers:", error);
     }
   };
 
   const finalize = async () => {
-    setModuleData((prevData: any) => ({
-      ...prevData,
-      title: formData.title,
-    }));
-
     handlecreate(moduleId);
-    // setFormData(initialFormData);
+    setFormData(initialFormData);
     setQuizzes([]);
     setQuestions([]);
     setisQuizId(0);
@@ -384,9 +372,9 @@ export const NewQuizModal = ({
                   />
                 </div>
               </div>
-              <div className="w-full lg:w-[20%]">
+              <div className="w-full flex justify-between lg:w-[20%]">
                 <BaseInput
-                  label="TIME LIMIT"
+                  label="TIME LIMIT (MINUTES)"
                   type="text"
                   placeholder="TIME LIMIT"
                   containerClassname="w-full"
@@ -451,14 +439,15 @@ export const NewQuizModal = ({
                   </motion.div>
                 )}
               </div>
-              <div className="flex justify-end items-center w-full py-6">
+              {/* <div className="flex justify-end items-center w-full py-6">
                 <button
                   onClick={handleSubmit}
-                  className="mb-2 px-4 py-2 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
+                  className="mb-2 px-4 py-2 flex justify-center items-center gap-3 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
                 >
-                  Create Quiz
+                  <p>Create Quiz</p>
+                  {isSubmitting && <LoadingSpinner size="xs" />}
                 </button>
-              </div>
+              </div> */}
             </>
           )}
         </div>
@@ -480,7 +469,8 @@ export const NewQuizModal = ({
             </div>
           </div>
         )}
-        {isQuizId !== 0 && (
+        {/* Question */}
+        {isquestionSaved && (
           <div className="w-full">
             <div className="mb-4 w-full">
               <BaseInput
@@ -555,180 +545,194 @@ export const NewQuizModal = ({
                   {questionsubmitting && <LoadingSpinner size="xs" />}
                 </button>
               </div>
-              <AnimatePresence>
-                {IsAnswer && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="w-full rounded-sm py-4 overflow-hidden"
-                  >
-                    <h2 className="font-DMSans text-[18px] font-bold mb-4">
-                      Quiz Answers
-                    </h2>
-                    <div className="w-full flex justify-between items-center bg-[#F01E00] p-4">
-                      <div className="flex justify-start items-center gap-2">
-                        <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
-                          Ordering
-                        </p>
-                        <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
-                          Answer
-                        </p>
-                      </div>
-                      <div className="flex justify-start items-center gap-2">
-                        <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
-                          Correct
-                        </p>
-                        <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
-                          Point
-                        </p>
-                        <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]"></p>
-                      </div>
-                    </div>
-                    <DragDropContext onDragEnd={handleDragEnd}>
-                      <Droppable
-                        droppableId="answersList"
-                        key={activeButton ? "open" : "closed"}
-                      >
-                        {(provided) => (
-                          <div
-                            className="w-full"
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}
-                          >
-                            {quizanswers.map((answer, index) => (
-                              <Draggable
-                                key={answer.id}
-                                draggableId={String(answer.id)}
-                                index={index}
-                              >
-                                {(provided) => (
-                                  <div
-                                    key={answer.id}
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    className="w-full flex justify-between items-center border-b-[1px] border-[#ddd]"
-                                  >
-                                    <div className="w-full lg:w-[50%] flex justify-between items-center">
-                                      <button
-                                        {...provided.dragHandleProps}
-                                        className="p-2 rounded text-white"
-                                      >
-                                        <RiDragMove2Fill
-                                          className={cn(
-                                            "text-[25px] cursor-grab",
-                                            theme === "dark"
-                                              ? "text-[#fff]"
-                                              : "text-[#333]"
-                                          )}
-                                        />
-                                      </button>
-                                      <div className="my-4 w-[80%]">
-                                        <BaseInput
-                                          label=""
-                                          type="text"
-                                          placeholder="Answer"
-                                          containerClassname="w-full"
-                                          labelClassName="text-[17px] font-DMSans font-semibold"
-                                          inputContainerClassName={cn(
-                                            "h-[40px] ",
-                                            theme === "dark"
-                                              ? "select-secondary"
-                                              : "border-[0.5px] border-[#ddd]"
-                                          )}
-                                          value={answer.title}
-                                          onChange={(
-                                            e: React.ChangeEvent<HTMLInputElement>
-                                          ) =>
-                                            handleAnswersChange(
-                                              answer.id,
-                                              "title",
-                                              e.target.value
-                                            )
-                                          }
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="w-full flex justify-end gap-4 items-center lg:w-[50%]">
-                                      <input
-                                        type="radio"
-                                        name="radio-8"
-                                        className="radio radio-error"
-                                        checked={!!answer.isCorrect}
-                                        onChange={(e) =>
-                                          handleAnswersChange(
-                                            answer.id,
-                                            "isCorrect",
-                                            e.target.checked
-                                          )
-                                        }
-                                      />
-                                      <div className="my-4 w-[30%]">
-                                        <BaseInput
-                                          label=""
-                                          type="number"
-                                          placeholder="Score"
-                                          containerClassname="w-full"
-                                          labelClassName="text-[17px] font-DMSans font-semibold"
-                                          inputContainerClassName={cn(
-                                            "h-[40px] ",
-                                            theme === "dark"
-                                              ? "select-secondary"
-                                              : "border-[0.5px] border-[#ddd]"
-                                          )}
-                                          value={answer.score}
-                                          onChange={(
-                                            e: React.ChangeEvent<HTMLInputElement>
-                                          ) =>
-                                            handleAnswersChange(
-                                              answer.id,
-                                              "score",
-                                              e.target.value
-                                            )
-                                          }
-                                        />
-                                      </div>
-                                      <div className="w-[15%] flex justify-between items-center gap-3">
-                                        <GiCancel className="text-[25px]" />
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-                              </Draggable>
-                            ))}
-                            {provided.placeholder}
-                          </div>
-                        )}
-                      </Droppable>
-                    </DragDropContext>
-
-                    {/* Add an Option Button */}
-
-                    <button
-                      className="flex justify-start hover:border-[1px] border-[#F01E00] rounded-md p-2 items-center gap-2 my-4"
-                      onClick={handleAddOption}
-                    >
-                      <p className="font-DMSans font-bold text-[16px]">
-                        Add an option
-                      </p>
-                      <FaPlusSquare className="text-[#F01E00] text-[20px]" />
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           </div>
         )}
 
-        {IsAnswer && (
+        {/* Answer */}
+        <div className="w-full">
+          <AnimatePresence>
+            {IsAnswer && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="w-full rounded-sm py-4 overflow-hidden"
+              >
+                <h2 className="font-DMSans text-[18px] font-bold mb-4">
+                  Quiz Answers
+                </h2>
+                <div className="w-full flex justify-between items-center bg-[#F01E00] p-4">
+                  <div className="flex justify-start items-center gap-2">
+                    <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
+                      Ordering
+                    </p>
+                    <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
+                      Answer
+                    </p>
+                  </div>
+                  <div className="flex justify-start items-center gap-2">
+                    <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
+                      Correct
+                    </p>
+                    <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]">
+                      Point
+                    </p>
+                    <p className="w-[80px] text-[#fff] font-DMSans font-bold text-[16px]"></p>
+                  </div>
+                </div>
+                <DragDropContext onDragEnd={handleDragEnd}>
+                  <Droppable
+                    droppableId="answersList"
+                    key={activeButton ? "open" : "closed"}
+                  >
+                    {(provided) => (
+                      <div
+                        className="w-full"
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                      >
+                        {quizanswers.map((answer, index) => (
+                          <Draggable
+                            key={answer.id}
+                            draggableId={String(answer.id)}
+                            index={index}
+                          >
+                            {(provided) => (
+                              <div
+                                key={answer.id}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className="w-full flex justify-between items-center border-b-[1px] border-[#ddd]"
+                              >
+                                <div className="w-full lg:w-[50%] flex justify-between items-center">
+                                  <button
+                                    {...provided.dragHandleProps}
+                                    className="p-2 rounded text-white"
+                                  >
+                                    <RiDragMove2Fill
+                                      className={cn(
+                                        "text-[25px] cursor-grab",
+                                        theme === "dark"
+                                          ? "text-[#fff]"
+                                          : "text-[#333]"
+                                      )}
+                                    />
+                                  </button>
+                                  <div className="my-4 w-[80%]">
+                                    <BaseInput
+                                      label=""
+                                      type="text"
+                                      placeholder="Answer"
+                                      containerClassname="w-full"
+                                      labelClassName="text-[17px] font-DMSans font-semibold"
+                                      inputContainerClassName={cn(
+                                        "h-[40px] ",
+                                        theme === "dark"
+                                          ? "select-secondary"
+                                          : "border-[0.5px] border-[#ddd]"
+                                      )}
+                                      value={answer.title}
+                                      onChange={(
+                                        e: React.ChangeEvent<HTMLInputElement>
+                                      ) =>
+                                        handleAnswersChange(
+                                          answer.id,
+                                          "title",
+                                          e.target.value
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                                <div className="w-full flex justify-end gap-4 items-center lg:w-[50%]">
+                                  <input
+                                    type="radio"
+                                    name="radio-8"
+                                    className="radio radio-error"
+                                    checked={!!answer.isCorrect}
+                                    onChange={(e) =>
+                                      handleAnswersChange(
+                                        answer.id,
+                                        "isCorrect",
+                                        e.target.checked
+                                      )
+                                    }
+                                  />
+                                  <div className="my-4 w-[30%]">
+                                    <BaseInput
+                                      label=""
+                                      type="number"
+                                      placeholder="Score"
+                                      containerClassname="w-full"
+                                      labelClassName="text-[17px] font-DMSans font-semibold"
+                                      inputContainerClassName={cn(
+                                        "h-[40px] ",
+                                        theme === "dark"
+                                          ? "select-secondary"
+                                          : "border-[0.5px] border-[#ddd]"
+                                      )}
+                                      value={answer.score}
+                                      onChange={(
+                                        e: React.ChangeEvent<HTMLInputElement>
+                                      ) =>
+                                        handleAnswersChange(
+                                          answer.id,
+                                          "score",
+                                          e.target.value
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                  <div className="w-[15%] flex justify-between items-center gap-3">
+                                    <GiCancel className="text-[25px]" />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+
+                {/* Add an Option Button */}
+
+                <div className="w-full flex justify-between items-center">
+                  <button
+                    className="flex justify-start hover:border-[1px] border-[#F01E00] rounded-md p-2 items-center gap-2 my-4"
+                    onClick={handleAddOption}
+                  >
+                    <p className="font-DMSans font-bold text-[16px]">
+                      Add an option
+                    </p>
+                    <FaPlusSquare className="text-[#F01E00] text-[20px]" />
+                  </button>
+                  <div className="flex justify-end items-center py-6">
+                    <button
+                      onClick={handleSubmitAnswers}
+                      className="mb-2 px-4 py-2 flex justify-between gap-4 items-center font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
+                    >
+                      Save Answer
+                      {isAnswerSubmitting && <LoadingSpinner size="xs" />}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+        {!isquestionSaved && isQuizId !== 0 && (
           <div className="flex justify-end items-center w-full py-6">
             <button
-              onClick={handleSubmitAnswers}
+              onClick={() => setisquestionSaved(true)}
               className="mb-2 px-4 py-2 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
             >
-              Save Answer
+              Add Question
             </button>
           </div>
         )}
@@ -739,6 +743,18 @@ export const NewQuizModal = ({
           >
             Cancel
           </button>
+          {isQuizId === 0 && (
+            <button
+              onClick={handleSubmit}
+              className="w-[151px] text-[#fff] font-semibold flex justify-center items-center gap-2 text-[18px] font-DMSans py-2 bg-[#F01E00] rounded-[4px]"
+            >
+              <p className="font-DMSans font-semibold text-[16px] text-white">
+                {" "}
+                Create Quiz
+              </p>
+              {isSubmitting && <LoadingSpinner size="xs" />}
+            </button>
+          )}
           {answerAdded && (
             <button
               onClick={finalize}

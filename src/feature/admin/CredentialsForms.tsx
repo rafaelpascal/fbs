@@ -165,9 +165,6 @@ const CredentialsForms = ({ created }: any) => {
         <FormRequirements />
       </div>
       <div className="flex flex-col lg:flex-row flex-wrap justify-start items-center">
-        <button className="h-[52px] w-[231px] mr-4 mb-2 px-4 font-DMSans font-semibold text-[16px] rounded-md bg-transparent border-[1px] border-[#ddd]">
-          PREVIEW
-        </button>
         <button
           onClick={handleSubmit}
           className="h-[52px] bg-[#FF5050] w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2"

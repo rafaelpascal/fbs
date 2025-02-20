@@ -68,7 +68,7 @@ export const LectureItems = (props: SideNavProps) => {
             )}
             onClick={handleDropdownClick}
           >
-            <div className="flex justify-start items-center">
+            <div className="flex justify-start w-[80%] items-center">
               <div className="">
                 {playing ? (
                   <div className="w-[40px] h-[40px] rounded-full bg-[#FF3B30]/20 flex justify-center items-center">
@@ -81,20 +81,22 @@ export const LectureItems = (props: SideNavProps) => {
                 )}
               </div>
               <div className="w-[80%]">
-                <p className="w-full ml-2 truncate text-left text-[12px] lg:text-[14px] bg-transparent font-semibold font-DMSans">
+                <p className=" ml-2 truncate w-[80%] text-left text-[12px] lg:text-[14px] bg-transparent font-semibold font-DMSans">
                   {text}
                 </p>
               </div>
             </div>
-            {dropdown && (
-              <div className="">
-                {isClicked ? (
-                  <IoIosArrowUp className="text-[25px]" />
-                ) : (
-                  <IoIosArrowDown className="text-[25px]" />
-                )}
-              </div>
-            )}
+            <div className="w-[20%]">
+              {dropdown && (
+                <div className="">
+                  {isClicked ? (
+                    <IoIosArrowUp className="text-[25px]" />
+                  ) : (
+                    <IoIosArrowDown className="text-[25px]" />
+                  )}
+                </div>
+              )}
+            </div>
           </button>
           {isClicked && children && (
             <motion.div

@@ -169,7 +169,7 @@ const PaymentPlan = ({ formData, setFormData }: PaymentPlanProps) => {
         <div className="w-full">
           <RangeSlider
             title="Installment Plan"
-            baseAmount={75000}
+            baseAmount={formData.nairaAmount}
             formData={formData}
             setFormData={setFormData}
             // currency={formData.currency}

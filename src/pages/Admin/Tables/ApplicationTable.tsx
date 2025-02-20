@@ -139,9 +139,13 @@ const ApplicationTable = () => {
       selector: (row: { application_status: number }) => row.application_status,
       cell: (row) => (
         <div>
-          {row.application_status === 1 ? (
+          {row.application_status === 2 && (
             <h2 className="text-green-600 font-semibold">Accepted</h2>
-          ) : (
+          )}
+          {row.application_status === 1 && (
+            <h2 className="text-yellow-600 font-semibold">Pending</h2>
+          )}
+          {row.application_status === 3 && (
             <h2 className="text-red-600 font-semibold">Rejected</h2>
           )}
         </div>
