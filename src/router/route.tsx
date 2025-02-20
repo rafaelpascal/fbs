@@ -75,6 +75,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ErrorPage from "~/pages/ErrorPage.tsx";
 import ForgotPassword from "~/pages/auth/ForgotPassword.tsx";
 import ChangePasswordpage from "~/pages/auth/ChangePasswordpage.tsx";
+import StudentsManagement from "~/pages/Admin/Students/StudentsManagement.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
@@ -162,12 +163,8 @@ const router = createBrowserRouter(
               ],
             },
             {
-              path: ROUTES.COURSEAPPLICATION,
-              element: <CourseApplications />,
-            },
-            {
-              path: ROUTES.COURSES,
-              element: <AdminCourses />,
+              path: ROUTES.STUDENTSMANAGEMENT,
+              element: <StudentsManagement />,
               children: [
                 {
                   index: true,
@@ -190,6 +187,14 @@ const router = createBrowserRouter(
                   element: <QuizzesTable />,
                 },
               ],
+            },
+            {
+              path: ROUTES.COURSEAPPLICATION,
+              element: <CourseApplications />,
+            },
+            {
+              path: ROUTES.COURSES,
+              element: <AdminCourses />,
             },
             {
               path: ROUTES.NEWCOURSE,

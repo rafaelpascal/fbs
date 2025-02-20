@@ -20,7 +20,7 @@ export const sidebarData: SideNavProps[] = [
     text: "Courses",
   },
   {
-    href: "",
+    href: "/admin/students",
     icon: PiStudentFill,
     dropdown: false,
     text: "Students",

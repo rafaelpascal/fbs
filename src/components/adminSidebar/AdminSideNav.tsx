@@ -73,7 +73,7 @@ export const AdminSidebar = () => {
         <div
           className={cn(
             "flex flex-col h-full w-full",
-            "items-start lg:mx-0 justify-start max-lg:py-10 lg:items-start",
+            "items-start lg:mx-0 justify-start mr-4 max-lg:py-10 lg:items-start",
             isSidebarOpen ? "mx-4" : ""
           )}
         >
@@ -101,7 +101,7 @@ export const AdminSidebar = () => {
           {/* Navigation Items */}
           <ul
             className={cn(
-              "w-full px-4  bg-transparent grid grid-cols-1 overflow-y-auto",
+              "w-full px-4  bg-transparent  grid grid-cols-1 overflow-y-auto",
               "transition-all duration-300",
               isCollapsed ? "gap-2" : "gap-3"
             )}

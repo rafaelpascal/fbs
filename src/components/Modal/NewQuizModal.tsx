@@ -46,7 +46,6 @@ interface FormData {
 //   id: number;
 //   title: string;
 //   description: string;
-//   lessons: Lessons[];
 // }
 
 const initialFormData: FormData = {
@@ -83,37 +82,40 @@ export const NewQuizModal = ({
   lessonId,
   isOpen,
   closeModal,
-}: //   handlecreate,
-//   setModuleData,
-IModalPropsType) => {
+  handlecreate,
+  setModuleData,
+}: IModalPropsType) => {
   const { theme } = useTheme();
-  //   const courseId = useSelector((state: RootState) => state.course.course_id);
+  // const courseId = useSelector((state: RootState) => state.course.course_id);
   //   const [modules, setModules] = useState<Module[]>([]);
   const [isSubmitting, setisSubmitting] = useState(false);
-  const [isNewQuestion, setisNewQuestion] = useState(false);
   const [isFeedbackMode, setisFeedbackMode] = useState(false);
   const [IsAnswer, setIsAnswer] = useState(false);
   const [isDropDown, setIsisDropDown] = useState(false);
   const [questionsubmitting, setQuestionsubmitting] = useState(false);
+  const [answerAdded, setAnswerAdded] = useState(false);
   const [isQuizId, setisQuizId] = useState(0);
+  const [isQuestionId, setisQuestionId] = useState(0);
   const [activeButton, setActiveButton] = useState<string | null>(null);
-  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [quizanswers, setAnswers] = useState<Answer[]>([]);
+  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<any[]>([]);
 
   const handleAddOption = () => {
     setAnswers([
-      ...answers,
+      ...quizanswers,
       { id: Date.now(), title: "", score: "", isCorrect: false },
     ]);
   };
 
-  const handleAnswersChange = (id: number, key: string, value: any) => {
+  const handleAnswersChange = (id: number, field: string, value: any) => {
     setAnswers((prevAnswers) =>
       prevAnswers.map((answer) =>
-        answer.id === id ? { ...answer, [key]: value } : answer
+        answer.id === id ? { ...answer, [field]: value } : answer
       )
     );
   };
-  //   const navigate = useNavigate();
+
   const [formData, setFormData] = useState<FormData>({
     question: "",
     title: "",
@@ -154,36 +156,38 @@ IModalPropsType) => {
     };
     const res = await CourseServices.createCourseQuiz(payload);
     setisQuizId(res.data.data.quiz_id);
-    console.log(res.data.data.quiz_id);
-    // setModuleData((prevData: any) => ({
-    //   ...prevData,
-    //   title: formData.title,
-    // }));
+    const newQuiz = {
+      title: formData.title,
+      description: formData.description,
+      timelimit: formData.timelimit,
+      feedback: formData.feedback,
+    };
 
+    setQuizzes((prevQuizzes) => [...prevQuizzes, newQuiz]);
     setisSubmitting(false);
-    // handlecreate(moduleId);
-    // setFormData(initialFormData);
+    setFormData(initialFormData);
   };
   const handleQuestionSubmit = async () => {
-    setQuestionsubmitting(true);
-
-    const payload = {
-      quiz_title_id: isQuizId,
-      questions: formData.question,
-      question_type: activeButton,
-    };
-    const res = await CourseServices.createCourseQuizQuestion(payload);
-    setIsAnswer(true);
-    setisQuizId(res.data.data.quiz_id);
-    console.log(res.data.data.quiz_id);
-    // setModuleData((prevData: any) => ({
-    //   ...prevData,
-    //   title: formData.title,
-    // }));
-
-    setQuestionsubmitting(false);
-    // handlecreate(moduleId);
-    // setFormData(initialFormData);
+    try {
+      setQuestionsubmitting(true);
+      const payload = {
+        quiz_title_id: isQuizId,
+        questions: formData.question,
+        question_type: activeButton,
+      };
+      const res = await CourseServices.createCourseQuizQuestion(payload);
+      setIsAnswer(true);
+      setisQuestionId(res.data.data.question_id);
+      const newQuiz = {
+        title: formData.question,
+        description: activeButton,
+      };
+      setQuestions((prevQuizzes) => [...prevQuizzes, newQuiz]);
+      setQuestionsubmitting(false);
+      setFormData(initialFormData);
+    } catch (error) {
+      setQuestionsubmitting(false);
+    }
   };
 
   const buttonOptions = [
@@ -236,32 +240,70 @@ IModalPropsType) => {
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return; // If dropped outside, do nothing
-    const reorderedAnswers = Array.from(answers);
+    const reorderedAnswers = Array.from(quizanswers);
     const [movedItem] = reorderedAnswers.splice(result.source.index, 1);
     reorderedAnswers.splice(result.destination.index, 0, movedItem);
 
     setAnswers(reorderedAnswers); // Update state
   };
 
-  const handleNewQuestion = () => {
-    setisNewQuestion(!isNewQuestion);
+  const handleCheckboxChange = (title: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      feedback: { [title]: true }, // Uncheck all other checkboxes by setting only one key to true
+    }));
+  };
+  //   const handleCheckboxChange = (
+  //     e: React.ChangeEvent<HTMLInputElement>,
+  //     title: string
+  //   ) => {
+  //     setFormData((prevData) => {
+  //       const updatedFeedback = {
+  //         ...prevData.feedback,
+  //         [title]: e.target.checked,
+  //       };
+
+  //       return {
+  //         ...prevData,
+  //         feedback: updatedFeedback,
+  //       };
+  //     });
+  //   };
+
+  const handleSubmitAnswers = async () => {
+    try {
+      const formattedAnswers = quizanswers.map(
+        ({ title, isCorrect, score }) => ({
+          question_id: isQuestionId,
+          answer_text: title,
+          is_correct: isCorrect ? 1 : 0,
+          answer_score: Number(score),
+        })
+      );
+      const payload = {
+        answers: formattedAnswers,
+      };
+      const res = await CourseServices.createCourseQuizAnswers(payload);
+      setAnswerAdded(true);
+      setIsAnswer(false);
+      console.log(res);
+    } catch (error) {
+      setQuestionsubmitting(false);
+      console.error("Error submitting answers:", error);
+    }
   };
 
-  const handleCheckboxChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    title: string
-  ) => {
-    setFormData((prevData) => {
-      const updatedFeedback = {
-        ...prevData.feedback,
-        [title]: e.target.checked,
-      };
+  const finalize = async () => {
+    setModuleData((prevData: any) => ({
+      ...prevData,
+      title: formData.title,
+    }));
 
-      return {
-        ...prevData,
-        feedback: updatedFeedback,
-      };
-    });
+    handlecreate(moduleId);
+    // setFormData(initialFormData);
+    setQuizzes([]);
+    setQuestions([]);
+    setisQuizId(0);
   };
 
   return (
@@ -279,133 +321,166 @@ IModalPropsType) => {
         </button>
       </div>
       <div className="flex w-full h-[600px] lg:w-[1000px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
-        {isQuizId === 0 && (
-          <>
+        {quizzes.length !== 0 && (
+          <div className="flex justify-end flex-col items-center w-full py-6 ">
+            <h1 className="font-DMSans text-left w-full font-bold text-[20px]">
+              CREATED QUIZZES{" "}
+            </h1>
             <div className="w-full">
-              <div className="my-4 w-full">
+              {quizzes.map((quiz, index) => (
+                <div
+                  key={index}
+                  className="p-2 border border-gray-300 rounded-md my-2"
+                >
+                  <h2 className="font-semibold text-lg">{quiz.title}</h2>
+                  {/* <p className="text-sm">{quiz.description}</p> */}
+                  <p className="text-sm">
+                    Time Limit:{" "}
+                    {quiz.timelimit === "0" ? "No time limit" : quiz.timelimit}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="w-full">
+          {isQuizId === 0 && (
+            <>
+              <div className="w-full">
+                <div className="my-4 w-full">
+                  <BaseInput
+                    label="Quiz Title"
+                    type="text"
+                    placeholder="Quiz Title"
+                    containerClassname="w-full"
+                    labelClassName="text-[17px] font-DMSans font-semibold"
+                    inputContainerClassName={cn(
+                      "h-[53px] ",
+                      theme === "dark" ? "select-secondary" : ""
+                    )}
+                    value={formData.title}
+                    onChange={(e: any) =>
+                      handleInputChange("title", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="my-4 w-full">
+                  <BaseInput
+                    label="Instructions"
+                    type="textarea"
+                    placeholder="Instructions"
+                    containerClassname="w-full"
+                    labelClassName="text-[17px] font-DMSans font-semibold"
+                    inputContainerClassName={cn(
+                      "h-[153px] ",
+                      theme === "dark"
+                        ? "select-secondary"
+                        : "border-[0.5px] border-[#ddd]"
+                    )}
+                    value={formData.description}
+                    onChange={(e: any) =>
+                      handleInputChange("description", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+              <div className="w-full lg:w-[20%]">
                 <BaseInput
-                  label="Quiz Title"
+                  label="TIME LIMIT"
                   type="text"
-                  placeholder="Quiz Title"
+                  placeholder="TIME LIMIT"
                   containerClassname="w-full"
                   labelClassName="text-[17px] font-DMSans font-semibold"
                   inputContainerClassName={cn(
                     "h-[53px] ",
-                    theme === "dark" ? "select-secondary" : ""
-                  )}
-                  value={formData.title}
-                  onChange={(e: any) =>
-                    handleInputChange("title", e.target.value)
-                  }
-                />
-              </div>
-              <div className="my-4 w-full">
-                <BaseInput
-                  label="Instructions"
-                  type="textarea"
-                  placeholder="Instructions"
-                  containerClassname="w-full"
-                  labelClassName="text-[17px] font-DMSans font-semibold"
-                  inputContainerClassName={cn(
-                    "h-[153px] ",
                     theme === "dark"
                       ? "select-secondary"
                       : "border-[0.5px] border-[#ddd]"
                   )}
-                  value={formData.description}
+                  value={formData.timelimit}
                   onChange={(e: any) =>
-                    handleInputChange("description", e.target.value)
+                    handleInputChange("timelimit", e.target.value)
                   }
                 />
               </div>
-            </div>
-            <div className="w-full lg:w-[20%]">
-              <BaseInput
-                label="TIME LIMIT"
-                type="text"
-                placeholder="TIME LIMIT"
-                containerClassname="w-full"
-                labelClassName="text-[17px] font-DMSans font-semibold"
-                inputContainerClassName={cn(
-                  "h-[53px] ",
-                  theme === "dark"
-                    ? "select-secondary"
-                    : "border-[0.5px] border-[#ddd]"
-                )}
-                value={formData.timelimit}
-                onChange={(e: any) =>
-                  handleInputChange("timelimit", e.target.value)
-                }
-              />
-            </div>
-            <p className="font-DMSans font-semibold text-[16px] my-2">
-              Time limit for this quiz, 0 means no time limit
-            </p>
-            <div className="w-full my-4 border-[1px] border-[#B3B3B3] rounded-md p-4">
-              <button
-                onClick={() => setisFeedbackMode(!isFeedbackMode)}
-                className="w-full p-2 flex justify-between items-center"
-              >
-                <p className="font-DMSans font-semibold text-[18px]">
-                  QUIZ FEEDBACK MODE
-                </p>
-                {isFeedbackMode ? (
-                  <BiUpArrow className="size-[20px]" />
-                ) : (
-                  <BiDownArrow className="size-[20px]" />
-                )}
-              </button>
-              {isFeedbackMode && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
+              <p className="font-DMSans font-semibold text-[16px] my-2">
+                Time limit for this quiz, 0 means no time limit
+              </p>
+              <div className="w-full my-4 border-[1px] border-[#B3B3B3] rounded-md p-4">
+                <button
+                  onClick={() => setisFeedbackMode(!isFeedbackMode)}
+                  className="w-full p-2 flex justify-between items-center"
                 >
-                  {feedbackMode.map((option, index) => (
-                    <div
-                      key={index}
-                      className="w-full my-4 p-2 rounded-md bg-[#f5f5f5] border-[2px] border-[#ddd]"
-                    >
-                      <label className="flex justify-start items-center gap-4 cursor-pointer label">
-                        <input
-                          type="checkbox"
-                          checked={formData.feedback?.[option.title] || false}
-                          onChange={(e) =>
-                            handleCheckboxChange(e, option.title)
-                          }
-                          className="checkbox checkbox-success [--chkbg:theme(colors.green.600)] [--chkfg:white]"
-                        />
-                        <span className="font-DMSans text-[18px] font-semibold">
-                          {option.title}
-                        </span>
-                      </label>
-                    </div>
-                  ))}
-                </motion.div>
-              )}
-            </div>
-          </>
-        )}
-        {/* <div className="flex justify-end items-center w-full py-6 ">
-          <h1 className="font-DMSans font-bold text-[20px]">
-            CREATED QUIZZES{" "}
-          </h1>
-          {modules.map((module) => (
-            <div>
-              {module.lessons.map((lesson, index) => (
-                <LessonItem
-                  key={`${module.id}-${lesson.id}-${index}`}
-                  lesson={lesson}
-                  index={index}
-                  moveLesson={moveLesson}
-                  theme={theme}
-                />
+                  <p className="font-DMSans font-semibold text-[18px]">
+                    QUIZ FEEDBACK MODE
+                  </p>
+                  {isFeedbackMode ? (
+                    <BiUpArrow className="size-[20px]" />
+                  ) : (
+                    <BiDownArrow className="size-[20px]" />
+                  )}
+                </button>
+                {isFeedbackMode && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    {feedbackMode.map((option, index) => (
+                      <div
+                        key={index}
+                        className="w-full my-4 p-2 rounded-md bg-[#f5f5f5] border-[2px] border-[#ddd]"
+                      >
+                        <label className="flex justify-start items-center gap-4 cursor-pointer label">
+                          <input
+                            type="checkbox"
+                            checked={
+                              formData.feedback &&
+                              formData.feedback[option.title] === true
+                            }
+                            onChange={() => handleCheckboxChange(option.title)}
+                            className="checkbox checkbox-success [--chkbg:theme(colors.green.600)] [--chkfg:white]"
+                          />
+                          <span className="font-DMSans text-[18px] font-semibold">
+                            {option.title}
+                          </span>
+                        </label>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+              <div className="flex justify-end items-center w-full py-6">
+                <button
+                  onClick={handleSubmit}
+                  className="mb-2 px-4 py-2 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
+                >
+                  Create Quiz
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+        {questions.length !== 0 && (
+          <div className="flex justify-end flex-col items-center w-full pb-6 ">
+            <h1 className="font-DMSans text-left w-full font-bold text-[20px]">
+              QUIZ QUESTION{" "}
+            </h1>
+            <div className="w-full">
+              {questions.map((quiz, index) => (
+                <div
+                  key={index}
+                  className="p-2 border border-gray-300 rounded-md my-2"
+                >
+                  <h2 className="font-semibold text-lg">{quiz.title}</h2>
+                  <p className="text-sm">{quiz.description}</p>
+                </div>
               ))}
             </div>
-          ))}
-        </div> */}
-        {isNewQuestion && (
+          </div>
+        )}
+        {isQuizId !== 0 && (
           <div className="w-full">
             <div className="mb-4 w-full">
               <BaseInput
@@ -474,7 +549,7 @@ IModalPropsType) => {
               <div className="flex justify-end items-center w-full py-6">
                 <button
                   onClick={handleQuestionSubmit}
-                  className="mb-2 px-4 py-2 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
+                  className="mb-2 px-4 py-2 flex justify-center items-center gap-3 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
                 >
                   <p> Save Question</p>
                   {questionsubmitting && <LoadingSpinner size="xs" />}
@@ -522,7 +597,7 @@ IModalPropsType) => {
                             {...provided.droppableProps}
                             ref={provided.innerRef}
                           >
-                            {answers.map((answer, index) => (
+                            {quizanswers.map((answer, index) => (
                               <Draggable
                                 key={answer.id}
                                 draggableId={String(answer.id)}
@@ -581,7 +656,7 @@ IModalPropsType) => {
                                         type="radio"
                                         name="radio-8"
                                         className="radio radio-error"
-                                        checked={answer.isCorrect}
+                                        checked={!!answer.isCorrect}
                                         onChange={(e) =>
                                           handleAnswersChange(
                                             answer.id,
@@ -615,7 +690,7 @@ IModalPropsType) => {
                                           }
                                         />
                                       </div>
-                                      <div className="w-[10%]">
+                                      <div className="w-[15%] flex justify-between items-center gap-3">
                                         <GiCancel className="text-[25px]" />
                                       </div>
                                     </div>
@@ -630,6 +705,7 @@ IModalPropsType) => {
                     </DragDropContext>
 
                     {/* Add an Option Button */}
+
                     <button
                       className="flex justify-start hover:border-[1px] border-[#F01E00] rounded-md p-2 items-center gap-2 my-4"
                       onClick={handleAddOption}
@@ -645,24 +721,14 @@ IModalPropsType) => {
             </div>
           </div>
         )}
-        {isQuizId !== 0 && !isDropDown && (
-          <div className="flex justify-end items-center w-full py-6">
-            <button
-              onClick={handleNewQuestion}
-              className="mb-2 px-4 py-2 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Add Question
-            </button>
-          </div>
-        )}
 
         {IsAnswer && (
           <div className="flex justify-end items-center w-full py-6">
             <button
-              onClick={handleNewQuestion}
+              onClick={handleSubmitAnswers}
               className="mb-2 px-4 py-2 font-DMSans font-semibold text-[16px] rounded-[4px] bg-[#FF5050] text-white"
             >
-              Add Answer
+              Save Answer
             </button>
           </div>
         )}
@@ -673,16 +739,18 @@ IModalPropsType) => {
           >
             Cancel
           </button>
-          <button
-            onClick={handleSubmit}
-            className="w-[151px] text-[#fff] font-semibold flex justify-center items-center gap-2 text-[18px] font-DMSans py-2 bg-[#F01E00] rounded-[4px]"
-          >
-            <p className="font-DMSans font-semibold text-[16px] text-white">
-              {" "}
-              Save
-            </p>
-            {isSubmitting && <LoadingSpinner size="xs" />}
-          </button>
+          {answerAdded && (
+            <button
+              onClick={finalize}
+              className="w-[151px] text-[#fff] font-semibold flex justify-center items-center gap-2 text-[18px] font-DMSans py-2 bg-[#F01E00] rounded-[4px]"
+            >
+              <p className="font-DMSans font-semibold text-[16px] text-white">
+                {" "}
+                Save
+              </p>
+              {isSubmitting && <LoadingSpinner size="xs" />}
+            </button>
+          )}
         </div>
       </div>
     </BaseModal>

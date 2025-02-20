@@ -41,13 +41,13 @@ const LessonItem = ({ lesson, theme, index, moveLesson }: any) => {
       </button>
       <div
         className={cn(
-          "p-3 w-full shadow-md flex flex-col lg:flex-row justify-between items-start mb-2",
+          "p-3 w-full shadow-md flex flex-row justify-between items-start mb-2",
           theme === "dark"
             ? "bg-transparent border-[0.5px] border-[#ddd]"
             : "bg-[#B3B3B3]/10"
         )}
       >
-        <div className="flex justify-start items-start gap-2">
+        <div className="flex  flex-col lg:flex-row justify-start items-start gap-2">
           <h2 className="font-DMSans font-semibold text-[18px] text-[#FF5050]">
             {lesson.title}:
           </h2>
@@ -104,7 +104,7 @@ const CapstoneItem = ({ capstone, theme, index, moveLesson }: any) => {
       </button>
       <div
         className={cn(
-          "p-3 w-full shadow-md flex flex-col lg:flex-row justify-between items-start mb-2",
+          "p-3 w-full shadow-md flex flex-row justify-between items-start mb-2",
           theme === "dark"
             ? "bg-transparent border-[0.5px] border-[#ddd]"
             : "bg-[#B3B3B3]/10"
@@ -167,7 +167,7 @@ const Assignment = ({ capstone, theme, index, moveLesson }: any) => {
       </button>
       <div
         className={cn(
-          "p-3 w-full shadow-md flex flex-col lg:flex-row justify-between items-start mb-2",
+          "p-3 w-full shadow-md flex flex-row justify-between items-start mb-2",
           theme === "dark"
             ? "bg-transparent border-[0.5px] border-[#ddd]"
             : "bg-[#B3B3B3]/10"
@@ -230,7 +230,7 @@ const QuizItems = ({ capstone, theme, index, moveLesson }: any) => {
       </button>
       <div
         className={cn(
-          "p-3 w-full shadow-md flex flex-col lg:flex-row justify-between items-start mb-2",
+          "p-3 w-full shadow-md flex flex-row justify-between items-start mb-2",
           theme === "dark"
             ? "bg-transparent border-[0.5px] border-[#ddd]"
             : "bg-[#B3B3B3]/10"

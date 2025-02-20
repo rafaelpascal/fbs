@@ -63,7 +63,7 @@ export const SideNav = (props: SideNavProps) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full pr-6">
       {dropdown && children?.length !== 0 ? (
         <div className="w-full flex flex-col px-4 justify-between items-center">
           <button
