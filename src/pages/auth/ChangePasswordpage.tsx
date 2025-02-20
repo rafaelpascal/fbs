@@ -1,7 +1,7 @@
 import { FBSlogo } from "~/assets";
 import Slider from "react-slick";
 import { useState } from "react";
-import ChangePasswordForm from "../../feature/students/Change-password";
+import ChangePasswordForm from "../../feature/students/ChangePassword";
 
 const autoplaySpeed = 3000;
 

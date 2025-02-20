@@ -11,6 +11,7 @@ export const fetchPaymentPlans = () => {
     initialData: undefined,
   });
 };
+
 export const fetchFormRequirements = () => {
   return useQuery({
     queryKey: ["form"],
