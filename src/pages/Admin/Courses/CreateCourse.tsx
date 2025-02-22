@@ -10,9 +10,9 @@ import { DashboardArea } from "~/layouts/DashboardArea";
 const CreateCourse = () => {
   const navigate = useNavigate();
   const [width, setWidth] = useState(10);
-  const [iscreateForm, setiscreateForm] = useState(true);
+  const [iscreateForm, setiscreateForm] = useState(false);
   const [isCredentials, setisCredentials] = useState(false);
-  const [ismodule, setModule] = useState(false);
+  const [ismodule, setModule] = useState(true);
   const [ispublished, setIspublished] = useState(false);
 
   const handleChangeWidth = (newWidth: number) => {

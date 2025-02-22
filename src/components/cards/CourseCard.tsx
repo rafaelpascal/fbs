@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BaseButton } from "../buttons/BaseButton";
 import { cn } from "~/utils/helpers";
+import { CourseServices } from "~/api/course";
 
 interface CourseCardProps {
   title: string;
   moduleNumber: string;
+  moduleId: number;
   description: string;
   lessonsInfo: string;
   courseStarted: string;
@@ -18,13 +20,28 @@ const CourseCard: React.FC<CourseCardProps> = ({
   moduleNumber,
   title,
   description,
+  moduleId,
   lessonsInfo,
   buttonText,
   courseStarted,
-  progress,
   icon: Icon,
   onButtonClick,
 }) => {
+  const [lessonsCount, setLessonsData] = useState(0);
+
+  const fetLessons = async () => {
+    const payload = {
+      moduleid: moduleId,
+    };
+    const res = await CourseServices.lessonsByModuleId(payload);
+    setLessonsData(res.data.course_lessons.length);
+  };
+
+  useEffect(() => {
+    if (moduleId) {
+      fetLessons();
+    }
+  }, [moduleId]);
   return (
     <div className="relative w-full mt-4 h-[325px] bg-[#fff]">
       <div className="p-4 h-[240px] overflow-y-hidden flex justify-between items-start flex-col">
@@ -84,7 +101,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
         onClick={onButtonClick}
       >
         <div className="flex justify-between items-center w-full">
-          <p>{progress}</p>
+          <p>0/{lessonsCount}</p>
           <p>{buttonText}</p>
           <p></p>
         </div>
