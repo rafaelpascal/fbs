@@ -32,6 +32,7 @@ interface Module {
   assignment: Capstone[];
   quiz: Capstone[];
   exam: Capstone[];
+  polls: Capstone[];
 }
 
 interface ImoduleProps {
@@ -72,6 +73,11 @@ const CourseBuilder = ({ created }: any) => {
     lesson: 0,
     status: false,
   });
+  const [newPoll, setNewPoll] = useState({
+    module: 0,
+    lesson: 0,
+    status: false,
+  });
   const [selectedModuleId, setSelectedModuleId] = useState(0);
   const [moduleObj, setmoduleObj] = useState<ImoduleProps>({
     moduleId: 0,
@@ -96,6 +102,10 @@ const CourseBuilder = ({ created }: any) => {
     description: "",
   });
   const [examObj, setExamObj] = useState<ImoduleProps>({
+    title: "",
+    description: "",
+  });
+  const [pollObj, setPollObj] = useState<ImoduleProps>({
     title: "",
     description: "",
   });
@@ -126,6 +136,7 @@ const CourseBuilder = ({ created }: any) => {
         assignment: [],
         quiz: [],
         exam: [],
+        polls: [],
       };
 
       setModules((prevModules) => [...prevModules, newModule]);
@@ -181,6 +192,10 @@ const CourseBuilder = ({ created }: any) => {
     addNewItem("exam", examObj, setExamObj);
   }, [examObj]);
 
+  useEffect(() => {
+    addNewItem("polls", pollObj, setPollObj);
+  }, [pollObj]);
+
   const removeModule = (id: number) => {
     setModules(modules.filter((module) => module.id !== id));
   };
@@ -210,6 +225,11 @@ const CourseBuilder = ({ created }: any) => {
       status: false,
     });
     setNewExam({
+      module: 0,
+      lesson: 0,
+      status: false,
+    });
+    setNewPoll({
       module: 0,
       lesson: 0,
       status: false,
@@ -280,6 +300,8 @@ const CourseBuilder = ({ created }: any) => {
   };
 
   const handleNewItem = async (type: string, setState: Function) => {
+    console.log(type);
+
     if (modules.length === 0) {
       await showAlert(
         "error",
@@ -312,6 +334,11 @@ const CourseBuilder = ({ created }: any) => {
         lesson: lessonObj.moduleId || 0,
         status: true,
       },
+      polls: {
+        module: moduleObj.moduleId || 0,
+        lesson: lessonObj.moduleId || 0,
+        status: true,
+      },
     };
 
     if (!defaultValues[type]) {
@@ -327,6 +354,7 @@ const CourseBuilder = ({ created }: any) => {
     handleNewItem("assignment", setNewAssignment);
   const handleNewQuiz = () => handleNewItem("quiz", setNewQuiz);
   const handleNewExam = () => handleNewItem("exam", setNewExam);
+  const handleNewPoll = () => handleNewItem("polls", setNewPoll);
 
   const addItem = async (type: string, setState: Function) => {
     // Default structure for different items
@@ -336,6 +364,7 @@ const CourseBuilder = ({ created }: any) => {
       assignment: { module: 0, lesson: 0, status: false },
       quiz: { module: 0, lesson: 0, status: false },
       exam: { module: 0, lesson: 0, status: false },
+      polls: { module: 0, lesson: 0, status: false },
     };
 
     if (!defaultValues[type]) {
@@ -375,6 +404,7 @@ const CourseBuilder = ({ created }: any) => {
   const addAssignment = () => addItem("assignment", setNewAssignment);
   const addQuiz = () => addItem("quiz", setNewQuiz);
   const addExam = () => addItem("exam", setNewExam);
+  const addPoll = () => addItem("polls", setNewPoll);
 
   const handlePublish = () => {
     created();
@@ -384,7 +414,7 @@ const CourseBuilder = ({ created }: any) => {
     { label: "Module", onClick: handleNewModule },
     { label: "Lesson", onClick: handleNewLesson },
     { label: "Quiz", onClick: handleNewQuiz },
-    { label: "Polls" },
+    { label: "Polls", onClick: handleNewPoll },
     { label: "Capstone", onClick: handleNewCapstone },
     { label: "Assignments", onClick: handleNewAssignment },
     { label: "Resources" },
@@ -460,6 +490,7 @@ const CourseBuilder = ({ created }: any) => {
             newAssignment,
             newQuiz,
             newExam,
+            newPoll,
           }}
           handleClose={handleClose}
           addModule={addModule}
@@ -468,6 +499,7 @@ const CourseBuilder = ({ created }: any) => {
           addAssignment={addAssignment}
           addQuiz={addQuiz}
           addExam={addExam}
+          addPoll={addPoll}
           moduleObj={moduleObj}
           setModuleObj={setmoduleObj}
           setLessonObj={setlessonObj}
@@ -475,6 +507,7 @@ const CourseBuilder = ({ created }: any) => {
           setAssignmentObj={setAssignmentObj}
           setQuizObj={setQuizObj}
           setExamObj={setExamObj}
+          setPollObj={setPollObj}
         />
 
         <div className="flex flex-row flex-wrap justify-start items-center gap-4">

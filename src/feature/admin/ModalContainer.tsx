@@ -4,6 +4,7 @@ import { NewCapstoneModal } from "~/components/Modal/NewCapstoneModal";
 import { NewExamModal } from "~/components/Modal/NewExamModal";
 import { NewLessonModal } from "~/components/Modal/NewLessonModal";
 import { NewModuleModal } from "~/components/Modal/NewModuleModal";
+import { NewPollModal } from "~/components/Modal/NewPollModal";
 import { NewQuizModal } from "~/components/Modal/NewQuizModal";
 
 interface ModalContainerProps {
@@ -14,6 +15,7 @@ interface ModalContainerProps {
     newAssignment: any;
     newQuiz: any;
     newExam: any;
+    newPoll: any;
   };
   handleClose: () => void;
   addModule: () => void;
@@ -22,6 +24,7 @@ interface ModalContainerProps {
   addAssignment: () => void;
   addQuiz: () => void;
   addExam: () => void;
+  addPoll: () => void;
   moduleObj: any;
   setModuleObj: React.Dispatch<React.SetStateAction<any>>;
   setLessonObj: React.Dispatch<React.SetStateAction<any>>;
@@ -29,6 +32,7 @@ interface ModalContainerProps {
   setAssignmentObj: React.Dispatch<React.SetStateAction<any>>;
   setQuizObj: React.Dispatch<React.SetStateAction<any>>;
   setExamObj: React.Dispatch<React.SetStateAction<any>>;
+  setPollObj: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const ModalContainer: React.FC<ModalContainerProps> = ({
@@ -40,6 +44,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   addAssignment,
   addQuiz,
   addExam,
+  addPoll,
   moduleObj,
   setModuleObj,
   setLessonObj,
@@ -47,6 +52,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   setAssignmentObj,
   setQuizObj,
   setExamObj,
+  setPollObj,
 }) => {
   return (
     <>
@@ -101,6 +107,16 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
         handlecreate={addExam}
         moduleData={moduleObj}
         setModuleData={setExamObj}
+      />
+      <NewPollModal
+        moduleId={modals.newPoll.module}
+        lessonId={modals.newPoll.lesson}
+        // isOpen={modals.newPoll.status}
+        isOpen={true}
+        closeModal={handleClose}
+        handlecreate={addPoll}
+        moduleData={moduleObj}
+        setModuleData={setPollObj}
       />
     </>
   );

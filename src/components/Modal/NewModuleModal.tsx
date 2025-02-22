@@ -6,7 +6,7 @@ import { BaseInput } from "../data-inputs/text-input";
 import { useTheme } from "~/context/theme-provider";
 import ImageUpload from "../data-inputs/ImageUpload";
 import { LoadingSpinner } from "../ui/loading-spinner";
-// import { CourseServices } from "~/api/course";
+import { CourseServices } from "~/api/course";
 import { useSelector } from "react-redux";
 import { RootState } from "~/redux-store/store";
 
@@ -86,11 +86,10 @@ export const NewModuleModal = ({
     formData.featuredImages.forEach((file) => {
       dataToSubmit.append(`module_image`, file);
     });
-    // const res = await CourseServices.createCourseModule(dataToSubmit);
+    const res = await CourseServices.createCourseModule(dataToSubmit);
     setModuleData((prevData: any) => ({
       ...prevData,
-      // moduleId: res.data.data.module_id,
-      moduleId: "1",
+      moduleId: res.data.data.module_id,
       title: formData.title,
       description: formData.description,
     }));
