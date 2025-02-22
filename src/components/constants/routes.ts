@@ -13,7 +13,7 @@ export const ROUTES = {
   QUIZ: "/assignment/:quizId",
   WORD: "/word",
   ASSIGNMENT: "/module/assignment",
-  BANKTRANSFER: "/banktransfer",
+  BANKTRANSFER: "/banktransfer/:id",
   CONGRATULATIONS: "/success",
   LECTURECOMPLETE: "/lecture-success",
   EVENTS: "/events",

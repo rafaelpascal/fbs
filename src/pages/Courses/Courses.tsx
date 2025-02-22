@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { IoMdUnlock } from "react-icons/io";
 import CourseCard from "~/components/cards/CourseCard";
 import Carousel from "~/components/Carousel/Carousel";
-import LessonsCard from "~/components/cards/LessonsCard";
-import ForumsCard from "~/components/cards/ForumsCard";
+// import LessonsCard from "~/components/cards/LessonsCard";
+// import ForumsCard from "~/components/cards/ForumsCard";
 import { useEffect, useState } from "react";
 import { useTheme } from "~/context/theme-provider";
 import { FaChevronDown } from "react-icons/fa6";
@@ -63,24 +63,105 @@ type Module = {
   lesson_title?: string;
 };
 
-const Lessons = [
+const grades = [
   {
-    id: 1,
-    image:
-      "https://s3-alpha-sig.figma.com/img/fca1/b527/3dc913d6a517b22891c56fc7d0adbaf0?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=ONW8A23I~6CcWgzr1HJbjqvEoW3bwT1i55H2QsLoX6DrCNuXcpV5ifNj0SVdmpBroZDrl6Knu0Xzjnh25apBeE9SZpiSH~wKajVVh1ffBoWfbVyCEQj20nzVCsFB6PcSPa9LscnJZgX9XytwfcxmVXGsledYyk1MoXOZpVHrxxzdkvoavhJD5eJ0tgAKoIlWX6V0yuMtpOB6Gj01gDY7dZf8bXWb0Cu7ailML3gouHAbAejeo81EnY7BXRE1Bb5rd7DYS2K7PEv4T9CmKuj4SFzBHYa9~F~ocKgS4btoEtez8xPfN-epO6bOFU0GJEM5S2XG8BPexaksN1XJJfrxIQ__",
-    title: "Complete Python Bootcamp From Zero to Hero in Python",
+    title: "Assignment 1: Foundations of Entrepreneurship",
+    dueDate: "Jan 5 2025",
+    status: "Not Submitted",
+    score: "0/20",
+    rating: "-",
+    bgColor: "bg-[#FFF]",
+    statusColor: "text-red-500",
   },
   {
-    id: 2,
-    image:
-      "https://s3-alpha-sig.figma.com/img/fca1/b527/3dc913d6a517b22891c56fc7d0adbaf0?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=ONW8A23I~6CcWgzr1HJbjqvEoW3bwT1i55H2QsLoX6DrCNuXcpV5ifNj0SVdmpBroZDrl6Knu0Xzjnh25apBeE9SZpiSH~wKajVVh1ffBoWfbVyCEQj20nzVCsFB6PcSPa9LscnJZgX9XytwfcxmVXGsledYyk1MoXOZpVHrxxzdkvoavhJD5eJ0tgAKoIlWX6V0yuMtpOB6Gj01gDY7dZf8bXWb0Cu7ailML3gouHAbAejeo81EnY7BXRE1Bb5rd7DYS2K7PEv4T9CmKuj4SFzBHYa9~F~ocKgS4btoEtez8xPfN-epO6bOFU0GJEM5S2XG8BPexaksN1XJJfrxIQ__",
-    title: "Complete Python Bootcamp From Zero to Hero in Python",
+    title: "Quiz 1: Foundations of Entrepreneurship",
+    dueDate: "Will show the date sub",
+    status: "Submitted",
+    score: "8/15",
+    rating: "A",
+    bgColor: "bg-[#E5F6FF]",
+    statusColor: "text-green-600",
   },
   {
-    id: 3,
-    image:
-      "https://s3-alpha-sig.figma.com/img/fca1/b527/3dc913d6a517b22891c56fc7d0adbaf0?Expires=1733097600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=ONW8A23I~6CcWgzr1HJbjqvEoW3bwT1i55H2QsLoX6DrCNuXcpV5ifNj0SVdmpBroZDrl6Knu0Xzjnh25apBeE9SZpiSH~wKajVVh1ffBoWfbVyCEQj20nzVCsFB6PcSPa9LscnJZgX9XytwfcxmVXGsledYyk1MoXOZpVHrxxzdkvoavhJD5eJ0tgAKoIlWX6V0yuMtpOB6Gj01gDY7dZf8bXWb0Cu7ailML3gouHAbAejeo81EnY7BXRE1Bb5rd7DYS2K7PEv4T9CmKuj4SFzBHYa9~F~ocKgS4btoEtez8xPfN-epO6bOFU0GJEM5S2XG8BPexaksN1XJJfrxIQ__",
-    title: "Complete Python Bootcamp From Zero to Hero in Python",
+    title: "Capstone 1: Foundations of Entrepreneurship",
+    dueDate: "Mar 15 2025",
+    status: "Submitted",
+    score: "20/25",
+    rating: "B",
+    bgColor: "bg-[#E5FFD9]",
+    statusColor: "text-green-600",
+  },
+  {
+    title: "Assignment 2: Building up the flavor guest in a changing world",
+    dueDate: "Mar 15 2025",
+    status: "Submitted",
+    score: "2/15",
+    rating: "D",
+    bgColor: "bg-[#F7F7F7]",
+    statusColor: "text-green-600",
+  },
+  {
+    title: "Quiz 2: Foundations of Entrepreneurship",
+    dueDate: "Will show the date sub",
+    status: "Submitted",
+    score: "8/15",
+    rating: "C",
+    bgColor: "bg-blue-100",
+    statusColor: "text-green-600",
+  },
+  {
+    title: "Exams",
+    dueDate: "April 18 2025",
+    status: "Submitted",
+    score: "15/30",
+    rating: "B",
+    bgColor: "bg-[#FFF]",
+    statusColor: "text-green-600",
+  },
+  {
+    title: "Completed Lessons Bonus",
+    dueDate: "Last lesson date",
+    status: "Submitted",
+    score: "16 points",
+    rating: "-",
+    bgColor: "bg-[#FFF]",
+    statusColor: "text-green-600",
+  },
+];
+
+const updates = [
+  {
+    title: "Started Module 1",
+    description: "Python Bootcamp From Zero to Hero in Python",
+    time: "17:52",
+    date: "Mon. 21 Oct. 2025",
+    points: "0",
+    titleColor: "text-purple-700 font-bold",
+  },
+  {
+    title: "Submitted Quiz",
+    description: "Python Bootcamp From Zero to Hero in Python",
+    time: "17:52",
+    date: "Mon. 21 Oct. 2025",
+    points: "12",
+    titleColor: "text-purple-700 font-bold",
+  },
+  {
+    title: "Conversation",
+    description:
+      "Stephen Jym started a new conversation titled “What must we do to excel?”",
+    time: "17:52",
+    date: "Mon. 21 Oct. 2025",
+    points: "0",
+    titleColor: "text-black font-bold",
+  },
+  {
+    title: "Submitted assignment",
+    description: "Python Bootcamp From Zero to Hero in Python",
+    time: "17:52",
+    date: "Mon. 21 Oct. 2025",
+    points: "N/A",
+    titleColor: "text-purple-700 font-bold",
   },
 ];
 const Dashboard = () => {
@@ -458,27 +539,193 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <Collapsible
-                title="Completed Lessons & Scores"
+                title="My Grades: write the Program title here"
                 initialState={true}
               >
-                {Lessons.map((lessons) => (
-                  <LessonsCard
-                    key={lessons.id}
-                    image={lessons.image}
-                    title={lessons.title}
-                  />
-                ))}
+                <div className="max-w-7xl mx-auto p-3 border-t-2  ">
+                  {/* <h2 className="text-xl font-semibold mb-4">
+                    My Grades for: Write The Program Title Here
+                  </h2> */}
+
+                  <div className="flex justify-between mb-4 mt-5">
+                    <div>
+                      <h1 className="font-semibold">Modules</h1> <br />
+                      <select className="border p-2 rounded w-1/2.5">
+                        <option>Module 1: Introduction to bu...</option>
+                      </select>
+                    </div>
+                    <div>
+                      <h1 className="font-semibold">Arrange by</h1> <br />
+                      <select className="border p-2 rounded w-1/2.5">
+                        <option>All</option>
+                        <option>Quizzes</option>
+                        <option>Assignments</option>
+                        <option>Capstones</option>
+                        <option>Exams</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <table className="w-full border-separate border-spacing-y-4 text-left  ">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="p-2">Title</th>
+                        <th className="p-2">Due Date</th>
+                        <th className="p-2">Status</th>
+                        <th className="p-2">Score</th>
+                        <th className="p-2">Rating</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {grades.map((item, index) => (
+                        <tr
+                          key={index}
+                          // style={{
+                          //   backgroundColor: item.statusColor,
+                          //   borderRadius: "50%",
+                          // }}
+                          className={`${item.bgColor} pb-4 overflow-hidden`}
+                        >
+                          <td className="p-2 rounded-l-lg overflow-hidden font-semibold">
+                            {item.title}
+                          </td>
+                          <td className="p-2 font-normal">{item.dueDate}</td>
+                          <td className={`p-2 font-medium ${item.statusColor}`}>
+                            {item.status}
+                          </td>
+                          <td className="p-2 font-normal">{item.score}</td>
+                          <td className="p-2 font-medium">{item.rating}</td>
+                          <td className="p-7  rounded-r-lg overflow-hidden">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="4"
+                              height="13"
+                              viewBox="0 0 4 13"
+                              fill="none"
+                            >
+                              <path
+                                d="M0.885 2.3C0.885 1.91667 1.00767 1.59467 1.253 1.334C1.51367 1.08867 1.828 0.966 2.196 0.966C2.564 0.966 2.87067 1.08867 3.116 1.334C3.37667 1.59467 3.507 1.91667 3.507 2.3C3.507 2.68333 3.37667 2.99767 3.116 3.243C2.87067 3.48833 2.564 3.611 2.196 3.611C1.828 3.611 1.51367 3.48833 1.253 3.243C1.00767 2.99767 0.885 2.68333 0.885 2.3ZM0.885 6.85957C0.885 6.47624 1.00767 6.15424 1.253 5.89357C1.51367 5.64824 1.828 5.52557 2.196 5.52557C2.564 5.52557 2.87067 5.64824 3.116 5.89357C3.37667 6.15424 3.507 6.47624 3.507 6.85957C3.507 7.2429 3.37667 7.55724 3.116 7.80257C2.87067 8.0479 2.564 8.17057 2.196 8.17057C1.828 8.17057 1.51367 8.0479 1.253 7.80257C1.00767 7.55724 0.885 7.2429 0.885 6.85957ZM0.885 11.4191C0.885 11.0358 1.00767 10.7138 1.253 10.4531C1.51367 10.2078 1.828 10.0851 2.196 10.0851C2.564 10.0851 2.87067 10.2078 3.116 10.4531C3.37667 10.7138 3.507 11.0358 3.507 11.4191C3.507 11.8025 3.37667 12.1168 3.116 12.3621C2.87067 12.6075 2.564 12.7301 2.196 12.7301C1.828 12.7301 1.51367 12.6075 1.253 12.3621C1.00767 12.1168 0.885 11.8025 0.885 11.4191Z"
+                                fill="#555050"
+                              />
+                            </svg>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  <div className="flex justify-between items-center mt-4">
+                    <span className="text-lg font-bold">Total</span>
+                    <span className="text-lg font-bold">54/103 B</span>
+                  </div>
+                </div>
               </Collapsible>
+              <h1 className="mt-5 font-semibold">Download transcript </h1>
             </div>
             <div>
-              <Collapsible title="Forum & Conversations" initialState={true}>
-                {Lessons.map((lessons) => (
-                  <ForumsCard
-                    key={lessons.id}
-                    image={lessons.image}
-                    title={lessons.title}
-                  />
-                ))}
+              <Collapsible title="My Updates" initialState={true}>
+                <div
+                  style={{ fontFamily: "Arial Rounded MT" }}
+                  className="max-w-7xl mx-auto p-4 border-t-2   w-[100%] "
+                >
+                  {/* <div className="flex justify-between items-center border-b pb-3 mb-3">
+                    <h2 className="text-lg font-semibold">Updates</h2>
+                  </div> */}
+                  <div className="flex justify-between mb-4">
+                    <button className="p-2 border rounded-lg flex">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="17"
+                        height="16"
+                        viewBox="0 0 17 16"
+                        fill="none"
+                      >
+                        <path
+                          d="M8.45696 0C4.04579 0 0.457031 3.58869 0.457031 7.99977C0.457031 12.4112 4.04579 16 8.45696 16C12.868 16 16.4567 12.4111 16.4567 7.99977C16.4567 3.58869 12.868 0 8.45696 0ZM8.45696 14.8532C4.67813 14.8532 1.60382 11.7787 1.60382 7.99977C1.60382 4.22102 4.67813 1.14679 8.45696 1.14679C12.2357 1.14679 15.3099 4.22102 15.3099 7.99977C15.3099 11.7787 12.2357 14.8532 8.45696 14.8532Z"
+                          fill="#6A7A99"
+                        />
+                        <path
+                          d="M12.5703 7.86549H8.81085V3.75601C8.81085 3.43935 8.5542 3.18262 8.23746 3.18262C7.92079 3.18262 7.66406 3.43935 7.66406 3.75601V8.43889C7.66406 8.75556 7.92079 9.01228 8.23746 9.01228H12.5703C12.8871 9.01228 13.1437 8.75556 13.1437 8.43889C13.1437 8.12222 12.887 7.86549 12.5703 7.86549Z"
+                          fill="#6A7A99"
+                        />
+                      </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="15"
+                        viewBox="0 0 16 15"
+                        fill="none"
+                      >
+                        <path
+                          d="M8.20171 9.86424L11.989 6.07685C12.0767 5.98925 12.125 5.87231 12.125 5.74763C12.125 5.62294 12.0767 5.50601 11.989 5.41841L11.7102 5.13949C11.5285 4.958 11.2332 4.958 11.0518 5.13949L7.87138 8.31986L4.68748 5.13596C4.59982 5.04837 4.48295 5 4.35833 5C4.23358 5 4.11671 5.04837 4.02898 5.13596L3.7502 5.41488C3.66253 5.50255 3.61423 5.61941 3.61423 5.7441C3.61423 5.86878 3.66253 5.98572 3.7502 6.07332L7.54099 9.86424C7.62893 9.95205 7.74635 10.0003 7.87117 10C7.99648 10.0003 8.11383 9.95205 8.20171 9.86424Z"
+                          fill="#4F547B"
+                        />
+                      </svg>
+                    </button>
+                    <button className="p-2 border rounded-lg flex">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="21"
+                        height="20"
+                        viewBox="0 0 21 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M5.75054 4.375L5.75047 14.115L6.5586 13.3081L7.44248 14.1919L5.12554 16.5089L2.80859 14.1919L3.69248 13.3081L4.50047 14.115L4.50054 4.375H5.75054ZM11.3755 13.75V15H8.25054V13.75H11.3755ZM13.2506 10.625V11.875H8.25054V10.625H13.2506ZM15.1256 7.5V8.75H8.25054V7.5H15.1256ZM17.0006 4.375V5.625H8.25054V4.375H17.0006Z"
+                          fill="#6A7A99"
+                        />
+                      </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="15"
+                        viewBox="0 0 16 15"
+                        fill="none"
+                      >
+                        <path
+                          d="M8.20171 9.86424L11.989 6.07685C12.0767 5.98925 12.125 5.87231 12.125 5.74763C12.125 5.62294 12.0767 5.50601 11.989 5.41841L11.7102 5.13949C11.5285 4.958 11.2332 4.958 11.0518 5.13949L7.87138 8.31986L4.68748 5.13596C4.59982 5.04837 4.48295 5 4.35833 5C4.23358 5 4.11671 5.04837 4.02898 5.13596L3.7502 5.41488C3.66253 5.50255 3.61423 5.61941 3.61423 5.7441C3.61423 5.86878 3.66253 5.98572 3.7502 6.07332L7.54099 9.86424C7.62893 9.95205 7.74635 10.0003 7.87117 10C7.99648 10.0003 8.11383 9.95205 8.20171 9.86424Z"
+                          fill="#4F547B"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <div>
+                    {updates.map((update, index) => (
+                      <div key={index} className="border-b py-3">
+                        <p className={`${update.titleColor} text-[20px]`}>
+                          {update.title}:{" "}
+                          <span className="text-black font-normal text-[18px]">
+                            {update.description}
+                          </span>
+                        </p>
+                        <div className="text-gray-500 text-sm flex space-x-4">
+                          <span>{update.time}</span>
+                          <span>{update.date}</span>
+                          <span className="text-green-600 font-semibold">
+                            Points: {update.points}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3">
+                    <button className="flex items-center space-x-1 p-2 border rounded-lg">
+                      <span>Show 10</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="15"
+                        viewBox="0 0 16 15"
+                        fill="none"
+                      >
+                        <path
+                          d="M8.20171 9.86424L11.989 6.07685C12.0767 5.98925 12.125 5.87231 12.125 5.74763C12.125 5.62294 12.0767 5.50601 11.989 5.41841L11.7102 5.13949C11.5285 4.958 11.2332 4.958 11.0518 5.13949L7.87138 8.31986L4.68748 5.13596C4.59982 5.04837 4.48295 5 4.35833 5C4.23358 5 4.11671 5.04837 4.02898 5.13596L3.7502 5.41488C3.66253 5.50255 3.61423 5.61941 3.61423 5.7441C3.61423 5.86878 3.66253 5.98572 3.7502 6.07332L7.54099 9.86424C7.62893 9.95205 7.74635 10.0003 7.87117 10C7.99648 10.0003 8.11383 9.95205 8.20171 9.86424Z"
+                          fill="#4F547B"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </Collapsible>
             </div>
           </div>

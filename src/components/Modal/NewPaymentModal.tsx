@@ -29,7 +29,7 @@ export const NewPaymentModal = ({
 }: IModalPropsType) => {
   const navigate = useNavigate();
   const [applicationData, setApplicationData] = useState({
-    applicationid: 0,
+    applicationid: 0.5,
     naira_amount: 0,
     usd_amount: 0,
     email: "",
@@ -63,7 +63,7 @@ export const NewPaymentModal = ({
   }, []);
 
   const handleBankTransfer = () => {
-    navigate(ROUTES.BANKTRANSFER);
+    navigate(`/banktransfer/${applicationData.applicationid}`);
   };
 
   useEffect(() => {
@@ -126,7 +126,7 @@ export const NewPaymentModal = ({
     },
     onClose: () => {},
   };
-
+  console.log(applicationData);
   return (
     <BaseModal
       isOpen={isOpen}
