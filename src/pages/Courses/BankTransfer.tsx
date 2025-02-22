@@ -54,6 +54,7 @@ const BankTransfer = () => {
     30
   );
   const [applicationData, setApplicationData] = useState({
+    applicationid: 0,
     naira_amount: 0,
     usd_amount: 0,
     email: "",
