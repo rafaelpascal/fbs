@@ -2,17 +2,14 @@
 import { useEffect, useState } from "react";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineCancel } from "react-icons/md";
-import { NewModuleModal } from "~/components/Modal/NewModuleModal";
 import { useTheme } from "~/context/theme-provider";
 import { cn } from "~/utils/helpers";
 import { showAlert } from "~/utils/sweetAlert";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { NewLessonModal } from "~/components/Modal/NewLessonModal";
-import { NewCapstoneModal } from "~/components/Modal/NewCapstoneModal";
-import { Assignment, CapstoneItem, LessonItem, QuizItems } from "./Items";
-import { NewAssignmentModal } from "~/components/Modal/NewAssignmentModal";
-import { NewQuizModal } from "~/components/Modal/NewQuizModal";
+import { DraggableItem } from "./Items";
+import ButtonGrid from "./BuilderButtons";
+import ModalContainer from "./ModalContainer";
 
 interface Lessons {
   id: number;
@@ -34,6 +31,7 @@ interface Module {
   capstone: Capstone[];
   assignment: Capstone[];
   quiz: Capstone[];
+  exam: Capstone[];
 }
 
 interface ImoduleProps {
@@ -69,6 +67,11 @@ const CourseBuilder = ({ created }: any) => {
     lesson: 0,
     status: false,
   });
+  const [newExam, setNewExam] = useState({
+    module: 0,
+    lesson: 0,
+    status: false,
+  });
   const [selectedModuleId, setSelectedModuleId] = useState(0);
   const [moduleObj, setmoduleObj] = useState<ImoduleProps>({
     moduleId: 0,
@@ -89,6 +92,10 @@ const CourseBuilder = ({ created }: any) => {
     description: "",
   });
   const [quizObj, setQuizObj] = useState<ImoduleProps>({
+    title: "",
+    description: "",
+  });
+  const [examObj, setExamObj] = useState<ImoduleProps>({
     title: "",
     description: "",
   });
@@ -118,6 +125,7 @@ const CourseBuilder = ({ created }: any) => {
         capstone: [],
         assignment: [],
         quiz: [],
+        exam: [],
       };
 
       setModules((prevModules) => [...prevModules, newModule]);
@@ -126,217 +134,52 @@ const CourseBuilder = ({ created }: any) => {
     }
   }, [moduleObj, isNewModule]);
 
-  // Lesson
-  useEffect(() => {
-    const selectedModule = modules.find(
-      (module) => module.id === selectedModuleId
+  const addNewItem = (type: keyof Module, obj: any, setObj: Function) => {
+    if (!obj.title) return;
+
+    setModules((prevModules) =>
+      prevModules.map((module) =>
+        module.id === selectedModuleId
+          ? {
+              ...module,
+              [type]: [
+                ...((module[type] as any[]) || []), // Keep existing items of this module
+                {
+                  id: Date.now(),
+                  moduleId: selectedModuleId, // Store moduleId instead of module
+                  title: type.toUpperCase(),
+                  description: obj.title,
+                  pages: "",
+                },
+              ],
+            }
+          : module
+      )
     );
-    if (selectedModule && lessonObj.title) {
-      const newLesson: Lessons = {
-        id: Date.now(),
-        title: `LESSON ${selectedModule.lessons.length + 1}`,
-        description: lessonObj.title,
-        pages: "",
-      };
-      setModules((prevModules) =>
-        prevModules.map((module) =>
-          module.id === selectedModuleId
-            ? { ...module, lessons: [...module.lessons, newLesson] }
-            : module
-        )
-      );
-      // setlessonObj({ title: "", description: "" });
-    }
+
+    setObj({ title: "", description: "" });
+  };
+
+  // Single useEffect for all item types
+  useEffect(() => {
+    addNewItem("lessons", lessonObj, setlessonObj);
   }, [lessonObj]);
 
-  // capstone
   useEffect(() => {
-    const selectedModule = modules.find(
-      (module) => module.id === selectedModuleId
-    );
-    if (selectedModule && capstoneObj.title) {
-      const newCapstone: Lessons = {
-        id: Date.now(),
-        // title: `CAPSTONE ${selectedModule.capstone.length + 1}`,
-        title: `CAPSTONE`,
-        description: capstoneObj.title,
-        pages: "",
-      };
-      setModules((prevModules) =>
-        prevModules.map((module) =>
-          module.id === selectedModuleId
-            ? { ...module, capstone: [...module.capstone, newCapstone] }
-            : module
-        )
-      );
-      setCapstoneObj({ title: "", description: "" });
-    }
+    addNewItem("capstone", capstoneObj, setCapstoneObj);
   }, [capstoneObj]);
 
-  // assignmentObj
   useEffect(() => {
-    const selectedModule = modules.find(
-      (module) => module.id === selectedModuleId
-    );
-    if (selectedModule && assignmentObj.title) {
-      const newAssignment: Lessons = {
-        id: Date.now(),
-        // title: `ASSIGNMENT ${selectedModule.assignment.length + 1}`,
-        title: `ASSIGNMENT`,
-        description: assignmentObj.title,
-        pages: "",
-      };
-      setModules((prevModules) =>
-        prevModules.map((module) =>
-          module.id === selectedModuleId
-            ? { ...module, assignment: [...module.assignment, newAssignment] }
-            : module
-        )
-      );
-      setAssignmentObj({ title: "", description: "" });
-    }
+    addNewItem("assignment", assignmentObj, setAssignmentObj);
   }, [assignmentObj]);
 
-  // Quiz
   useEffect(() => {
-    console.log(quizObj);
-    const selectedModule = modules.find(
-      (module) => module.id === selectedModuleId
-    );
-    if (selectedModule && quizObj.title) {
-      const newQuiz: Lessons = {
-        id: Date.now(),
-        // title: `ASSIGNMENT ${selectedModule.assignment.length + 1}`,
-        title: `QUIZ`,
-        description: quizObj.title,
-        pages: "",
-      };
-      setModules((prevModules) =>
-        prevModules.map((module) =>
-          module.id === selectedModuleId
-            ? { ...module, quiz: [...module.quiz, newQuiz] }
-            : module
-        )
-      );
-      // setQuizObj({ title: "", description: "" });
-    }
+    addNewItem("quiz", quizObj, setQuizObj);
   }, [quizObj]);
 
-  const addLesson = async () => {
-    setNewLesson({
-      module: 0,
-      status: false,
-    });
-    await showAlert(
-      "success",
-      "Created!",
-      "Lesson Successfully Created!",
-      "Ok",
-      "#03435F"
-    );
-
-    const selectedModule = modules.find(
-      (module) => module.id === selectedModuleId
-    );
-    if (!selectedModule) {
-      await showAlert(
-        "error",
-        "Module Not Found!",
-        "The selected module does not exist.",
-        "Ok",
-        "#FF5050"
-      );
-      return;
-    }
-  };
-
-  const addCapstone = async () => {
-    setNewCapstone({
-      module: 0,
-      lesson: 0,
-      status: false,
-    });
-    await showAlert(
-      "success",
-      "Created!",
-      "Capstone Successfully Created!",
-      "Ok",
-      "#03435F"
-    );
-
-    const selectedModule = modules.find(
-      (module) => module.id === selectedModuleId
-    );
-    if (!selectedModule) {
-      await showAlert(
-        "error",
-        "Module Not Found!",
-        "The selected module does not exist.",
-        "Ok",
-        "#FF5050"
-      );
-      return;
-    }
-  };
-
-  const addAssignment = async () => {
-    setNewAssignment({
-      module: 0,
-      lesson: 0,
-      status: false,
-    });
-    await showAlert(
-      "success",
-      "Created!",
-      "Assignment Successfully Created!",
-      "Ok",
-      "#03435F"
-    );
-
-    const selectedModule = modules.find((module) => {
-      return module.id === selectedModuleId;
-    });
-    if (!selectedModule) {
-      await showAlert(
-        "error",
-        "Module Not Found!",
-        "The selected module does not exist.",
-        "Ok",
-        "#FF5050"
-      );
-      return;
-    }
-  };
-
-  const addQuiz = async () => {
-    setNewQuiz({
-      module: 0,
-      lesson: 0,
-      status: false,
-    });
-    await showAlert(
-      "success",
-      "Created!",
-      "Quiz Successfully Created!",
-      "Ok",
-      "#03435F"
-    );
-
-    const selectedModule = modules.find(
-      (module) => module.id === selectedModuleId
-    );
-
-    if (!selectedModule) {
-      await showAlert(
-        "error",
-        "Module Not Found!",
-        "The selected module does not exist.",
-        "Ok",
-        "#FF5050"
-      );
-      return;
-    }
-  };
+  useEffect(() => {
+    addNewItem("exam", examObj, setExamObj);
+  }, [examObj]);
 
   const removeModule = (id: number) => {
     setModules(modules.filter((module) => module.id !== id));
@@ -366,36 +209,64 @@ const CourseBuilder = ({ created }: any) => {
       lesson: 0,
       status: false,
     });
+    setNewExam({
+      module: 0,
+      lesson: 0,
+      status: false,
+    });
   };
 
-  const getAllLessons = () => {
-    return modules.flatMap((module) => module.lessons);
-  };
-
-  const moveLesson = (draggedId: number, hoveredIndex: number) => {
-    const allLessons = getAllLessons();
-    const draggedLesson = allLessons.find((lesson) => lesson.id === draggedId);
-
-    if (!draggedLesson) {
-      return;
-    }
-    const updatedLessons = allLessons.filter(
-      (lesson) => lesson.id !== draggedId
+  const getAllItems = (moduleId?: number) => {
+    const relevantModules = moduleId
+      ? modules.filter((m) => m.id === moduleId)
+      : modules;
+    return relevantModules.flatMap((module) =>
+      ["lessons", "capstone", "assignment", "quiz", "exam"].flatMap(
+        (category) =>
+          (module as Record<string, any>)[category]?.map((item: any) => ({
+            ...item,
+            category,
+            moduleId: module.id,
+          })) || []
+      )
     );
-    updatedLessons.splice(hoveredIndex, 0, draggedLesson);
+  };
 
-    let lessonIndex = 0;
+  const moveItem = (
+    draggedId: number,
+    hoveredIndex: number,
+    moduleId: number,
+    targetCategory: string
+  ) => {
+    const allItems = getAllItems(moduleId);
+    const draggedItem = allItems.find((item) => item.id === draggedId);
+
+    if (!draggedItem) return;
+    const updatedItem = { ...draggedItem, category: targetCategory };
+    const filteredItems = allItems.filter((item) => item.id !== draggedId);
     const updatedModules = modules.map((module) => {
-      const lessonsForModule = updatedLessons.slice(
-        lessonIndex,
-        lessonIndex + module.lessons.length
-      );
-      lessonsForModule.forEach((lesson, index) => {
-        lesson.title = `LESSON ${lessonIndex + index + 1}`;
-      });
+      if (module.id !== moduleId) return module;
 
-      lessonIndex += module.lessons.length;
-      return { ...module, lessons: lessonsForModule };
+      const newModuleData = { ...module };
+      ["lessons", "capstone", "assignment", "quiz", "exam"].forEach(
+        (category) => {
+          const categoryItems =
+            category === targetCategory
+              ? [...filteredItems.filter((item) => item.category === category)]
+              : filteredItems.filter((item) => item.category === category);
+
+          if (category === targetCategory) {
+            categoryItems.splice(hoveredIndex, 0, updatedItem);
+          }
+          if (category in newModuleData) {
+            (newModuleData as any)[category] = categoryItems.map((item) => ({
+              ...item,
+            }));
+          }
+        }
+      );
+
+      return newModuleData;
     });
 
     setModules(updatedModules);
@@ -408,7 +279,7 @@ const CourseBuilder = ({ created }: any) => {
     });
   };
 
-  const handleNewLesson = async () => {
+  const handleNewItem = async (type: string, setState: Function) => {
     if (modules.length === 0) {
       await showAlert(
         "error",
@@ -418,76 +289,116 @@ const CourseBuilder = ({ created }: any) => {
         "#FF5050"
       );
       return;
-    } else {
-      setNewLesson({
-        module: moduleObj.moduleId || 0,
-        status: true,
-      });
     }
-  };
-
-  // New Capstone
-  const handleNewCapstone = async () => {
-    if (modules.length === 0) {
-      await showAlert(
-        "error",
-        "Unauthorized!",
-        "Please create a module first!",
-        "Ok",
-        "#FF5050"
-      );
-      return;
-    } else {
-      setNewCapstone({
+    const defaultValues: any = {
+      lesson: { module: moduleObj.moduleId || 0, status: true },
+      capstone: {
         module: moduleObj.moduleId || 0,
         lesson: lessonObj.moduleId || 0,
         status: true,
-      });
+      },
+      assignment: {
+        module: moduleObj.moduleId || 0,
+        lesson: lessonObj.moduleId || 0,
+        status: true,
+      },
+      quiz: {
+        module: moduleObj.moduleId || 0,
+        lesson: lessonObj.moduleId || 0,
+        status: true,
+      },
+      exam: {
+        module: moduleObj.moduleId || 0,
+        lesson: lessonObj.moduleId || 0,
+        status: true,
+      },
+    };
+
+    if (!defaultValues[type]) {
+      console.error("Invalid type provided:", type);
+      return;
     }
+    setState(defaultValues[type]);
   };
 
-  // New Assignment
-  const handleNewAssignment = async () => {
-    if (modules.length === 0) {
+  const handleNewLesson = () => handleNewItem("lesson", setNewLesson);
+  const handleNewCapstone = () => handleNewItem("capstone", setNewCapstone);
+  const handleNewAssignment = () =>
+    handleNewItem("assignment", setNewAssignment);
+  const handleNewQuiz = () => handleNewItem("quiz", setNewQuiz);
+  const handleNewExam = () => handleNewItem("exam", setNewExam);
+
+  const addItem = async (type: string, setState: Function) => {
+    // Default structure for different items
+    const defaultValues: any = {
+      lesson: { module: 0, status: false },
+      capstone: { module: 0, lesson: 0, status: false },
+      assignment: { module: 0, lesson: 0, status: false },
+      quiz: { module: 0, lesson: 0, status: false },
+      exam: { module: 0, lesson: 0, status: false },
+    };
+
+    if (!defaultValues[type]) {
+      console.error("Invalid type provided:", type);
+      return;
+    }
+
+    // Set state dynamically
+    setState(defaultValues[type]);
+
+    await showAlert(
+      "success",
+      "Created!",
+      `${type.charAt(0).toUpperCase() + type.slice(1)} Successfully Created!`,
+      "Ok",
+      "#03435F"
+    );
+
+    // Check if the selected module exists
+    const selectedModule = modules.find(
+      (module) => module.id === selectedModuleId
+    );
+    if (!selectedModule) {
       await showAlert(
         "error",
-        "Unauthorized!",
-        "Please create a module first!",
+        "Module Not Found!",
+        "The selected module does not exist.",
         "Ok",
         "#FF5050"
       );
       return;
-    } else {
-      setNewAssignment({
-        module: moduleObj.moduleId || 0,
-        lesson: lessonObj.moduleId || 0,
-        status: true,
-      });
     }
   };
 
-  // New Quiz
-  const handleNewQuiz = async () => {
-    if (modules.length === 0) {
-      await showAlert(
-        "error",
-        "Unauthorized!",
-        "Please create a module first!",
-        "Ok",
-        "#FF5050"
-      );
-      return;
-    } else {
-      setNewQuiz({
-        module: moduleObj.moduleId || 0,
-        lesson: lessonObj.moduleId || 0,
-        status: true,
-      });
-    }
-  };
+  const addLesson = () => addItem("lesson", setNewLesson);
+  const addCapstone = () => addItem("capstone", setNewCapstone);
+  const addAssignment = () => addItem("assignment", setNewAssignment);
+  const addQuiz = () => addItem("quiz", setNewQuiz);
+  const addExam = () => addItem("exam", setNewExam);
 
   const handlePublish = () => {
     created();
+  };
+
+  const buttons = [
+    { label: "Module", onClick: handleNewModule },
+    { label: "Lesson", onClick: handleNewLesson },
+    { label: "Quiz", onClick: handleNewQuiz },
+    { label: "Polls" },
+    { label: "Capstone", onClick: handleNewCapstone },
+    { label: "Assignments", onClick: handleNewAssignment },
+    { label: "Resources" },
+    { label: "Case study" },
+    { label: "Exam", onClick: handleNewExam },
+    { label: "Live streaming" },
+  ];
+
+  const componentMap: Record<string, React.ComponentType<any>> = {
+    lessons: (props) => <DraggableItem {...props} type="LESSON" />,
+    capstone: (props) => <DraggableItem {...props} type="CAPSTONE" />,
+    assignment: (props) => <DraggableItem {...props} type="ASSIGNMENT" />,
+    quiz: (props) => <DraggableItem {...props} type="QUIZ" />,
+    exam: (props) => <DraggableItem {...props} type="EXAM" />,
   };
 
   return (
@@ -506,7 +417,7 @@ const CourseBuilder = ({ created }: any) => {
                   : "bg-[#B3B3B3]/10"
               )}
             >
-              <div className="flex  flex-col lg:flex-row justify-start items-start gap-2">
+              <div className="flex flex-col lg:flex-row justify-start items-start gap-2">
                 <h2 className="font-DMSans font-semibold text-[18px] text-[#FF5050]">
                   {module.title}:
                 </h2>
@@ -524,161 +435,48 @@ const CourseBuilder = ({ created }: any) => {
               </div>
             </div>
             <div>
-              {module.lessons.map((lesson, index) => (
-                <LessonItem
-                  key={`${module.id}-${lesson.id}-${index}`}
-                  lesson={lesson}
-                  index={index}
-                  moveLesson={moveLesson}
-                  theme={theme}
-                />
-              ))}
-            </div>
-            <div>
-              {module.capstone.map((lesson, index) => (
-                <CapstoneItem
-                  key={`${module.id}-${lesson.id}-${index}`}
-                  capstone={lesson}
-                  index={index}
-                  moveLesson={moveLesson}
-                  theme={theme}
-                />
-              ))}
-            </div>
-            <div>
-              {module.assignment.map((lesson, index) => (
-                <Assignment
-                  key={`${module.id}-${lesson.id}-${index}`}
-                  capstone={lesson}
-                  index={index}
-                  moveLesson={moveLesson}
-                  theme={theme}
-                />
-              ))}
-            </div>
-            <div>
-              {module.quiz.map((lesson, index) => (
-                <QuizItems
-                  key={`${module.id}-${lesson.id}-${index}`}
-                  capstone={lesson}
-                  index={index}
-                  moveLesson={moveLesson}
-                  theme={theme}
-                />
-              ))}
+              {getAllItems(module.id).map((item, index) => {
+                const Component = componentMap[item.category];
+                return (
+                  <Component
+                    key={`${item.id}-${index}`}
+                    item={item}
+                    index={index}
+                    moveItem={moveItem}
+                    theme={theme}
+                  />
+                );
+              })}
             </div>
           </div>
         ))}
-        <div className="flex mt-4 justify-center items-center w-full">
-          <div className="w-full lg:w-[80%] grid lg:grid-cols-5 grid-cols-2 gap-4">
-            <button
-              onClick={handleNewModule}
-              className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Module
-            </button>
-            <button
-              onClick={handleNewLesson}
-              className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Lesson
-            </button>
-            <button
-              // onClick={addModule}
-              onClick={handleNewQuiz}
-              className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Quiz
-            </button>
-            <button
-              // onClick={addLesson}
-              className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Polls
-            </button>
-            <button
-              onClick={handleNewCapstone}
-              className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Capstone
-            </button>
-            <button
-              onClick={handleNewAssignment}
-              className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Assignments
-            </button>
-            <button
-              // onClick={addModule}
-              className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Resources
-            </button>
-            <button
-              // onClick={addLesson}
-              className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Case study
-            </button>
-            <button
-              // onClick={addModule}
-              className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Exam
-            </button>
-            <button
-              // onClick={addLesson}
-              className="mb-2 px-4 py-4 rounded-[4px] bg-[#FF5050] text-white"
-            >
-              Live streaming
-            </button>
-          </div>
-        </div>
 
-        <NewModuleModal
-          moduleNumber={newModule.number}
-          isOpen={newModule.status}
-          closeModal={handleClose}
-          handlecreate={addModule}
-          moduleData={moduleObj}
-          setModuleData={setmoduleObj}
+        <ButtonGrid buttons={buttons} />
+        <ModalContainer
+          modals={{
+            newModule,
+            newLesson,
+            newCapstone,
+            newAssignment,
+            newQuiz,
+            newExam,
+          }}
+          handleClose={handleClose}
+          addModule={addModule}
+          addLesson={addLesson}
+          addCapstone={addCapstone}
+          addAssignment={addAssignment}
+          addQuiz={addQuiz}
+          addExam={addExam}
+          moduleObj={moduleObj}
+          setModuleObj={setmoduleObj}
+          setLessonObj={setlessonObj}
+          setCapstoneObj={setCapstoneObj}
+          setAssignmentObj={setAssignmentObj}
+          setQuizObj={setQuizObj}
+          setExamObj={setExamObj}
         />
-        <NewLessonModal
-          moduleId={newLesson.module}
-          isOpen={newLesson.status}
-          closeModal={handleClose}
-          handlecreate={addLesson}
-          moduleData={moduleObj}
-          setModuleData={setlessonObj}
-        />
-        <NewCapstoneModal
-          moduleId={newCapstone.module}
-          lessonId={newCapstone.lesson}
-          isOpen={newCapstone.status}
-          closeModal={handleClose}
-          handlecreate={addCapstone}
-          moduleData={moduleObj}
-          setModuleData={setCapstoneObj}
-        />
-        <NewAssignmentModal
-          moduleId={newAssignment.module}
-          lessonId={newAssignment.lesson}
-          isOpen={newAssignment.status}
-          closeModal={handleClose}
-          handlecreate={addAssignment}
-          moduleData={moduleObj}
-          setModuleData={setAssignmentObj}
-        />
-        <NewQuizModal
-          moduleId={newQuiz.module}
-          lessonId={newQuiz.lesson}
-          // isOpen={true}
-          isOpen={newQuiz.status}
-          closeModal={handleClose}
-          handlecreate={addQuiz}
-          moduleData={moduleObj}
-          setModuleData={setQuizObj}
-        />
+
         <div className="flex flex-row flex-wrap justify-start items-center gap-4">
           <button
             onClick={handlePublish}

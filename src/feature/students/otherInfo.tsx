@@ -107,10 +107,6 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
     setSelectedState(event.target.value);
   };
 
-  useEffect(() => {
-    console.log("formRequirements", formRequirements);
-  }, [formRequirements]);
-
   const options = useMemo(() => {
     return countryList()
       .getData()
@@ -127,11 +123,13 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
   const { unWrapErrors } = Validator.reactHookHandler(form.formState);
 
   const handleFileUpload = (requirement: string, file: File | null) => {
-    switch (requirement) {
+    const normalizedRequirement = requirement.trim().toLowerCase();
+
+    switch (normalizedRequirement) {
       case "olevel":
         setLevelCertificate(file);
         break;
-      case "cv":
+      case "curriculum-vitae":
         setCv(file);
         break;
       case "degree_certificate":
@@ -144,6 +142,10 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
         console.warn(`Unknown requirement: ${requirement}`);
     }
   };
+
+  useEffect(() => {
+    console.log(cv, degreeCertificate, levelCertificate, resume);
+  }, [cv, degreeCertificate, levelCertificate, resume]);
 
   const handleReferalCodeComplete = (otp: string) => {
     setreferralCode(otp);
@@ -212,6 +214,7 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
       )?.value;
       if (howDidYouHear) formData.append("hear_aboutus", howDidYouHear);
       if (isAccepted) formData.append("iagree", isAccepted ? "1" : "0");
+
       if (isSubsequent) {
         await AuthService.subsequentApplication(formData);
         setIsSubmitting(false);

@@ -13,6 +13,7 @@ import { Link, useParams } from "react-router-dom";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { setLessonId } from "~/redux-store/slice/lessonSlice";
+import { fetchlistCoursebyId } from "~/api/course/hooks";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -25,7 +26,7 @@ export interface SideNavProps {
 // Sidebar Component
 export const LectureSidebar = () => {
   // const courseId = useSelector((state: RootState) => state.course.course_id);
-  // const courseId = localStorage.getItem("course_id");
+  const courseId = localStorage.getItem("course_id");
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const { id } = useParams<{ id: string }>();
@@ -36,7 +37,36 @@ export const LectureSidebar = () => {
   const { sidebarData } = useSidebar();
   const [moduleTitle, setModuleTitle] = useState("");
   const [moduleNumber, setModuleNumber] = useState("");
+  const { data } = fetchlistCoursebyId(courseId ?? "");
 
+  const getCourseWeekInfo = (startDate: string, endDate: string) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const now = new Date();
+
+    const totalWeeks = Math.ceil(
+      (end.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000)
+    );
+    const currentWeek =
+      Math.ceil((now.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000)) +
+      1;
+
+    return `Week ${Math.min(
+      Math.max(currentWeek, 1),
+      totalWeeks
+    )} / ${totalWeeks} weeks`;
+  };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
+  const weekInfo = getCourseWeekInfo(
+    data.course_details.course_startdate,
+    data.course_details.course_enddate
+  );
+
+  const [weekNumber, totalWeeks] = weekInfo.split(" / ");
   // Toggle side bar on mobile view
   const toggleSidebar = useCallback(() => {
     setIsSidebarOpen((prevState) => !prevState);
@@ -124,7 +154,8 @@ export const LectureSidebar = () => {
                 <RiHome2Line className="text-[35px]" />
               </Link>
               <h2 className="text-[20px] font-DMSans font-semibold">
-                <span className="text-[#1CB503]">Week 2</span> / 12 weeks
+                <span className="text-[#1CB503]">{weekNumber} /</span>
+                <span> {totalWeeks}</span>
               </h2>
             </div>
           )}
@@ -153,10 +184,10 @@ export const LectureSidebar = () => {
               )}
               <ul
                 className={cn(
-                  "w-full grid grid-cols-1 overflow-x-hidden overflow-y-auto",
+                  "w-full grid grid-cols-1 py-4 rounded-md overflow-x-hidden overflow-y-auto",
                   "transition-all duration-300",
                   isCollapsed ? "gap-2" : "gap-4",
-                  theme === "light" ? "bg-[#EEF2F6]" : "bg-[#424141]"
+                  theme === "light" ? "bg-[#fff]" : "bg-[#424141]"
                 )}
                 style={{ maxHeight: "calc(100vh - 200px)" }}
               >

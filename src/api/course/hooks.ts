@@ -34,6 +34,17 @@ export const fetchlistCourses = () => {
   });
 };
 
+export const fetchlistCoursebyId = (id: string) => {
+  return useQuery({
+    queryKey: ["single_course"],
+    queryFn: async () => {
+      const res = await CourseServices.listCoursebyId(id);
+      return res;
+    },
+    initialData: undefined,
+  });
+};
+
 export const useFetchApplication = () => {
   return useQuery({
     queryKey: ["application"],

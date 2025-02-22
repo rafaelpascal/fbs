@@ -36,7 +36,7 @@ interface FormData {
   examQuestions: ExamQuestion[];
 }
 
-export const NewAssignmentModal = ({
+export const NewExamModal = ({
   moduleId,
   lessonId,
   isOpen,
@@ -178,7 +178,7 @@ export const NewAssignmentModal = ({
     >
       <div className="w-full flex px-2 justify-between items-center bg-[#b8b6b6] py-3">
         <h2 className="font-DMSans text-[#fff] text-[18px] font-semibold text-center">
-          CREATE ASSIGNMENT
+          CREATE EXAMINATION
         </h2>
         <button onClick={handleClose}>
           <MdCancel className="text-[30px] text-[#F01E00]" />
@@ -189,9 +189,9 @@ export const NewAssignmentModal = ({
         {/* Exam Title */}
         <div className="my-4 w-full">
           <BaseInput
-            label="Assignment Title"
+            label="Exam Title"
             type="text"
-            placeholder="Assignment Title"
+            placeholder="Exam Title"
             containerClassname="w-full"
             labelClassName="text-[17px] font-DMSans font-semibold"
             inputContainerClassName={cn(
@@ -208,9 +208,9 @@ export const NewAssignmentModal = ({
         {/* Exam Instructions */}
         <div className="my-4 w-full">
           <BaseInput
-            label="Assignment Instructions"
+            label="Exam Instructions"
             type="textarea"
-            placeholder="Assignment Instructions"
+            placeholder="Exam Instructions"
             containerClassname="w-full"
             labelClassName="text-[17px] font-DMSans font-semibold"
             inputContainerClassName={cn(
@@ -234,7 +234,7 @@ export const NewAssignmentModal = ({
               className="my-4 rounded-md border-[2px] shadow-sm border-[#ddd] p-4 w-full"
             >
               <BaseInput
-                label={`Assignment Question ${index + 1}`}
+                label={`Exam Question ${index + 1}`}
                 type="textarea"
                 placeholder="Enter question"
                 containerClassname="w-full"
@@ -427,10 +427,10 @@ export const NewAssignmentModal = ({
           </button>
           <button
             onClick={handleSubmit}
-            className=" px-2 text-[#fff] font-semibold flex justify-center items-center gap-2 text-[18px] font-DMSans py-2 bg-[#F01E00] rounded-[4px]"
+            className="w-[151px] text-[#fff] font-semibold flex justify-center items-center gap-2 text-[18px] font-DMSans py-2 bg-[#F01E00] rounded-[4px]"
           >
             <p className="font-DMSans font-semibold text-[16px] text-white">
-              PUBLISH ASSIGNMENT
+              PUBLISH EXAM
             </p>
             {isSubmitting && <LoadingSpinner size="xs" />}
           </button>

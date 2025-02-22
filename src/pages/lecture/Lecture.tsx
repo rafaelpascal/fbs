@@ -54,12 +54,14 @@ const Lecture = () => {
     if (!lectureTitles.length) return;
 
     const updatedData: SideNavProps[] = lectureTitles.map(
-      (lessonItem: any) => ({
+      (lessonItem: any, index: number) => ({
         href: `/module/${lessonItem.module_id}`,
         icon: FaFilePdf,
         dropdown: true,
         playing: lessonItem.lessonid === currentLessonId,
-        text: lessonItem.lesson_title || "Untitled Lesson",
+        text:
+          `LESSON ${index + 1}: ${lessonItem.lesson_title}` ||
+          "Untitled Lesson",
         children: [
           {
             href: "#",
@@ -233,7 +235,7 @@ const Lecture = () => {
                         )}&embedded=true`}
                         width="100%"
                         height="600px"
-                        className="border rounded-md shadow-lg"
+                        className="border rounded-md shadow-lg w-full"
                       />
                     </div>
                   );
