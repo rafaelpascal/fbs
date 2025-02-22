@@ -29,7 +29,7 @@ export const NewPaymentModal = ({
 }: IModalPropsType) => {
   const navigate = useNavigate();
   const [applicationData, setApplicationData] = useState({
-    applicationId: 0.5,
+    applicationid: 0.5,
     naira_amount: 0,
     usd_amount: 0,
     email: "",
@@ -63,11 +63,7 @@ export const NewPaymentModal = ({
   }, []);
 
   const handleBankTransfer = () => {
-    if (applicationData?.applicationid === 0.5) {
-      fetchmyapplication();
-    } else {
-      navigate(`/banktransfer/${applicationData.applicationid}`);
-    }
+    navigate(`/banktransfer/${applicationData.applicationid}`);
   };
 
   useEffect(() => {
