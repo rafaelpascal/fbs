@@ -80,8 +80,8 @@ export const LectureItems = (props: SideNavProps) => {
                   </div>
                 )}
               </div>
-              <div className="w-[80%]">
-                <p className=" ml-2 truncate w-[80%] text-left text-[12px] lg:text-[14px] bg-transparent font-semibold font-DMSans">
+              <div className="w-[80%] h-[45px] overflow-y-hidden">
+                <p className=" ml-2 text-left text-[12px] lg:text-[14px] bg-transparent font-semibold font-DMSans">
                   {text}
                 </p>
               </div>

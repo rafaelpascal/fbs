@@ -230,6 +230,16 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static listCoursebyId = async (id: string): Promise<any> => {
+    try {
+      const res = await Api.get<any>(`/course/get-course/${id}`);
+      return res.data;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static modulebyCourseId = async (payload: any) => {
     try {
       const res = await Api.post("/course/list-modules-bycourse", payload);
@@ -292,6 +302,15 @@ export class CourseServices extends BaseAPIService {
   static listQuiz = async (payload: any) => {
     try {
       const res = await Api.post("/quiz/list-quiz", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static listModulebyId = async (payload: any) => {
+    try {
+      const res = await Api.post("/module/list-modules-byid", payload);
       return res;
     } catch (error) {
       const handleError = error;

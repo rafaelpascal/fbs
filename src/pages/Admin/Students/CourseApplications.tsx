@@ -18,6 +18,18 @@ const CourseApplications = () => {
   const [isFeching, setisFeching] = useState(false);
   const { success, error } = useToast();
   const [applicationStatus, setApplicationStatus] = useState(0);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const handlePreview = (url: string) => {
+    setPreviewUrl(url);
+    setIsPreviewOpen(true);
+  };
+
+  const closePreview = () => {
+    setIsPreviewOpen(false);
+    setPreviewUrl(null);
+  };
 
   interface ApplicationData {
     key: string;
@@ -80,6 +92,11 @@ const CourseApplications = () => {
             {
               key: "O'Level Certificate",
               value: data.oLevelCertificate || "N/A",
+              icon: TbDeviceTabletSearch,
+            },
+            {
+              key: "Curriculum Vitae",
+              value: data.cv || "N/A",
               icon: TbDeviceTabletSearch,
             },
             {
@@ -168,7 +185,7 @@ const CourseApplications = () => {
           </div>
         ) : (
           <div className="w-full grid grid-cols-2 gap-4">
-            {application.map((app, index) => (
+            {/* {application.map((app, index) => (
               <div key={index} className="w-full">
                 <h2 className="font-DMSans text-[21px] font-semibold text-left">
                   {app.key}
@@ -191,7 +208,69 @@ const CourseApplications = () => {
                   {app.icon && <app.icon />}
                 </div>
               </div>
+            ))} */}
+            {application.map((app, index) => (
+              <div key={index} className="w-full">
+                <h2 className="font-DMSans text-[21px] font-semibold text-left">
+                  {app.key}
+                </h2>
+                <div
+                  className={cn(
+                    "w-full rounded-md mt-3 shadow-md border-[0.5px] border-[#ddd] flex flex-col justify-start items-left p-4",
+                    theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
+                  )}
+                >
+                  {app.key.includes("Certificate") ||
+                  app.key.includes("Curriculum Vitae") ? (
+                    <>
+                      {app.value && app.value !== "N/A" ? (
+                        <>
+                          <div className=" flex justify-center items-center">
+                            <p className="font-DMSans truncate text-[18px] font-semibold text-left">
+                              {app.value}
+                            </p>
+                            <button onClick={() => handlePreview(app.value)}>
+                              <TbDeviceTabletSearch className="size-8" />
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <p className="font-bold text-red-500">
+                          No certificate uploaded
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="font-DMSans truncate text-[18px] font-semibold text-left">
+                      {app.value}
+                    </p>
+                  )}
+                </div>
+              </div>
             ))}
+
+            {/* Modal for Document Preview */}
+            {isPreviewOpen && previewUrl && (
+              <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-5 rounded-md shadow-lg min-w-[80%] h-[80%] relative">
+                  <button
+                    onClick={closePreview}
+                    className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-md"
+                  >
+                    Close
+                  </button>
+                  {previewUrl.endsWith(".pdf") ? (
+                    <iframe src={previewUrl} className="w-full h-full" />
+                  ) : (
+                    <img
+                      src={previewUrl}
+                      alt="Document Preview"
+                      className="w-full h-auto rounded-md"
+                    />
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
         <div className="flex justify-start items-center gap-4 mt-4">

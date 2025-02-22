@@ -11,6 +11,7 @@ export const fetchPaymentPlans = () => {
     initialData: undefined,
   });
 };
+
 export const fetchFormRequirements = () => {
   return useQuery({
     queryKey: ["form"],
@@ -27,6 +28,17 @@ export const fetchlistCourses = () => {
     queryKey: ["course"],
     queryFn: async () => {
       const res = await CourseServices.listCourses();
+      return res;
+    },
+    initialData: undefined,
+  });
+};
+
+export const fetchlistCoursebyId = (id: string) => {
+  return useQuery({
+    queryKey: ["single_course"],
+    queryFn: async () => {
+      const res = await CourseServices.listCoursebyId(id);
       return res;
     },
     initialData: undefined,
