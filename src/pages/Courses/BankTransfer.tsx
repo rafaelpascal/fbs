@@ -84,22 +84,26 @@ const BankTransfer = () => {
       console.error("Error fetching application:", error);
     }
   };
+
   const submitPayment = async (payload: any) => {
     try {
-      const res = await CourseServices.submitPayment(payload);
-      if (res?.data?.success === true) {
-        setIsFormSubmitted({
-          status: true,
-          message:
-            "Thank you for confirming. Our team will get back to you within 72 hours",
-        });
-      } else {
-        console.log("success not true");
-      }
+      console.log(payload);
+
+      // const res = await CourseServices.submitPayment(payload);
+      // if (res?.data?.success === true) {
+      //   setIsFormSubmitted({
+      //     status: true,
+      //     message:
+      //       "Thank you for confirming. Our team will get back to you within 72 hours",
+      //   });
+      // } else {
+      //   console.log("success not true");
+      // }
     } catch (error) {
       console.error("Error submiting payment:", error);
     }
   };
+
   useEffect(() => {
     fetchmyapplication();
     startCountdown();
