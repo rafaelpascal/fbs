@@ -12,6 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TransferFormPayload, transferSchema } from "~/feature/students/schema";
 import { Validator } from "~/utils/packages/validators";
 import { SucessModal } from "~/components/Modal/SucessModal";
+import { CourseServices } from "~/api/course";
+import { useParams } from "react-router-dom";
 
 const fields = [
   {
@@ -23,7 +25,7 @@ const fields = [
   {
     name: "bankAccount" as const,
     placeholder: "Enter Bank Account",
-    label: "What is the bank’s account number?",
+    label: "What is the bank's account number?",
     type: "text",
   },
   {
@@ -35,6 +37,7 @@ const fields = [
 ];
 
 const BankTransfer = () => {
+  const { id } = useParams();
   const [IsFormSubmitted, setIsFormSubmitted] = useState({
     status: false,
     message: "",
@@ -50,20 +53,73 @@ const BankTransfer = () => {
     30,
     30
   );
+  const [applicationData, setApplicationData] = useState({
+    naira_amount: 0,
+    usd_amount: 0,
+    email: "",
+    firstname: "",
+    lastname: "",
+    phone: "",
+    course_title: "",
+    installment: "",
+    program_plan: "",
+  });
 
+  const fetchmyapplication = async () => {
+    try {
+      if (id) {
+        const payload = {
+          applicationid: id,
+        };
+        const res = await CourseServices.fetchSingleApplication(payload);
+        if (res.data && res.data.data && res.data.data.length > 0) {
+          const application = res.data.data[0];
+          setApplicationData(application);
+        }
+      } else {
+        console.log("No application Id Set");
+      }
+    } catch (error) {
+      console.error("Error fetching application:", error);
+    }
+  };
+  const submitPayment = async (payload: any) => {
+    try {
+      const res = await CourseServices.submitPayment(payload);
+      if (res?.data?.success === true) {
+        setIsFormSubmitted({
+          status: true,
+          message:
+            "Thank you for confirming. Our team will get back to you within 72 hours",
+        });
+      } else {
+        console.log("success not true");
+      }
+    } catch (error) {
+      console.error("Error submiting payment:", error);
+    }
+  };
   useEffect(() => {
+    fetchmyapplication();
     startCountdown();
-  }, [minutes, seconds, resetCountdown]);
+  }, [minutes, seconds, resetCountdown, id]);
 
   const handleTransfered = () => {
     isismadeTransfer(true);
   };
 
-  const handleSubmit = () => {
-    setIsFormSubmitted({
-      status: true,
-      message:
-        "Thank you for confirming. Our team will get back to you within 72 hours",
+  const handleSubmit = (data: TransferFormPayload) => {
+    submitPayment({
+      application_id: applicationData?.applicationid,
+      customer_name: `${applicationData?.firstname} ${applicationData?.lastname} `,
+      email: applicationData?.email,
+      phone_number:
+        applicationData?.phone === null
+          ? "+2348012345678"
+          : applicationData?.phone,
+      bank_name: data.bankName,
+      account_number: data.bankAccount,
+      amount: data.amount,
     });
   };
 
@@ -113,7 +169,7 @@ const BankTransfer = () => {
               hoverScale={1.01}
               hoverOpacity={0.8}
               tapScale={0.9}
-              onClick={handleSubmit}
+              onClick={form.handleSubmit(handleSubmit)}
               disabled={!form.formState.isValid || form.formState.isSubmitting}
               loading={form.formState.isSubmitting}
             >
@@ -170,7 +226,7 @@ const BankTransfer = () => {
               <p>I have made payment</p>
             </BaseButton>
             <p className="text-[14px] w-full lg:w-[393px]  text-[#F01E00] my-2 font-DMSans font-semibold text-center">
-              Please do not click “I have made payment” until you confirm that
+              Please do not click "I have made payment" until you confirm that
               the payment is successful.
             </p>
           </div>

@@ -300,6 +300,7 @@ const Createcourseform = ({ created }: any) => {
       for (const [key, value] of formDataToSend.entries()) {
         console.log(`${key}:`, value);
       }
+      console.log(formDataToSend);
       const res = await CourseServices.createCourse(formDataToSend);
       dispatch(setCourseId(res.data.course_id));
       dispatch(setCourseUrl(res.data.course_url));
