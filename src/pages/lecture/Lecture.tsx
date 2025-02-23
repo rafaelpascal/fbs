@@ -79,6 +79,28 @@ const Lecture = () => {
                 },
               ]
             : []),
+          // remember to change to check
+          ...(lessonItem.lessonid
+            ? [
+                {
+                  href: `/exam/${lessonItem.lessonid}`,
+                  icon: GoDotFill,
+                  dropdown: false,
+                  text: "Exam",
+                },
+              ]
+            : []),
+          // remember to change to check
+          ...(lessonItem.lessonid
+            ? [
+                {
+                  href: `/newassignment/${lessonItem.lessonid}`,
+                  icon: GoDotFill,
+                  dropdown: false,
+                  text: "Assignment",
+                },
+              ]
+            : []),
           ...(lessonItem.assignment_id
             ? [
                 {

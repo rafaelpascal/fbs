@@ -17,7 +17,7 @@ const DraggableItem = ({ item, type, theme, index, moveItem }: any) => {
   });
 
   const [, drop] = useDrop({
-    accept: ["LESSON", "CAPSTONE", "ASSIGNMENT", "QUIZ", "EXAM"],
+    accept: ["LESSON", "CAPSTONE", "ASSIGNMENT", "QUIZ", "EXAM", "POLLS"],
     hover: (draggedItem: any) => {
       if (
         draggedItem.index !== index ||

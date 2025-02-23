@@ -5,7 +5,7 @@ import { cn } from "~/utils/helpers";
 import { BaseInput } from "../data-inputs/text-input";
 import { useTheme } from "~/context/theme-provider";
 import { LoadingSpinner } from "../ui/loading-spinner";
-import { CourseServices } from "~/api/course";
+// import { CourseServices } from "~/api/course";
 import { RootState } from "~/redux-store/store";
 import { useSelector } from "react-redux";
 import QuizAnswers from "../Collapsible/QuizAnswers";
@@ -24,7 +24,7 @@ interface IModalPropsType {
 interface FormData {
   title: string;
   question: string;
-  embed: string;
+  thought: string;
   featuredImages: File[];
 }
 
@@ -38,7 +38,7 @@ interface QuizAnswer {
 const initialFormData = {
   title: "",
   question: "",
-  embed: "",
+  thought: "",
   featuredImages: [] as File[],
 };
 
@@ -56,7 +56,7 @@ export const NewPollModal = ({
   //   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     title: "",
-    embed: "",
+    thought: "",
     question: "",
     featuredImages: [],
   });
@@ -85,7 +85,7 @@ export const NewPollModal = ({
     setQuizAnswers((prevAnswers) => [
       ...prevAnswers,
       {
-        id: prevAnswers.length.toString(),
+        id: Date.now().toString(),
         title: "",
         isCorrect: false,
         score: 0,
@@ -130,7 +130,7 @@ export const NewPollModal = ({
     // Create a new FormData object
     const dataToSubmit = new FormData();
     dataToSubmit.append("course_id", courseId?.toString() || "");
-    dataToSubmit.append("stream_video_audio", formData.embed);
+    dataToSubmit.append("stream_video_audio", formData.thought);
     dataToSubmit.append("overall_score", formData.question);
     dataToSubmit.append("module_id", moduleId.toString() || "");
     dataToSubmit.append("lesson_id", lessonId.toString() || "");
@@ -138,10 +138,10 @@ export const NewPollModal = ({
     formData.featuredImages.forEach((file) => {
       dataToSubmit.append("capstone_image", file);
     });
-    await CourseServices.createCourseCapstone(dataToSubmit);
+    // await CourseServices.createCourseCapstone(dataToSubmit);
     setModuleData((prevData: any) => ({
       ...prevData,
-      title: formData.title,
+      title: formData.question,
     }));
 
     setisSubmitting(false);
@@ -197,9 +197,7 @@ export const NewPollModal = ({
                 : "border-[0.5px] border-[#ddd]"
             )}
             value={formData.question}
-            onChange={(e: any) =>
-              handleInputChange("description", e.target.value)
-            }
+            onChange={(e: any) => handleInputChange("question", e.target.value)}
           />
         </div>
         <QuizAnswers
@@ -227,10 +225,8 @@ export const NewPollModal = ({
                 ? "select-secondary"
                 : "border-[0.5px] border-[#ddd]"
             )}
-            value={formData.question}
-            onChange={(e: any) =>
-              handleInputChange("description", e.target.value)
-            }
+            value={formData.thought}
+            onChange={(e: any) => handleInputChange("thought", e.target.value)}
           />
         </div>
         <div className="flex absolute bottom-2 justify-start items-start gap-4">

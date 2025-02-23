@@ -32,7 +32,7 @@ interface Module {
   assignment: Capstone[];
   quiz: Capstone[];
   exam: Capstone[];
-  polls: Capstone[];
+  poll: Capstone[];
 }
 
 interface ImoduleProps {
@@ -136,7 +136,7 @@ const CourseBuilder = ({ created }: any) => {
         assignment: [],
         quiz: [],
         exam: [],
-        polls: [],
+        poll: [],
       };
 
       setModules((prevModules) => [...prevModules, newModule]);
@@ -157,8 +157,10 @@ const CourseBuilder = ({ created }: any) => {
                 ...((module[type] as any[]) || []), // Keep existing items of this module
                 {
                   id: Date.now(),
-                  moduleId: selectedModuleId, // Store moduleId instead of module
-                  title: type.toUpperCase(),
+                  moduleId: selectedModuleId,
+                  title: `${type.toUpperCase()} ${
+                    ((module[type] as any[]) || []).length + 1
+                  }`, // Add index
                   description: obj.title,
                   pages: "",
                 },
@@ -170,6 +172,32 @@ const CourseBuilder = ({ created }: any) => {
 
     setObj({ title: "", description: "" });
   };
+
+  // const addNewItem = (type: keyof Module, obj: any, setObj: Function) => {
+  //   if (!obj.title) return;
+
+  //   setModules((prevModules) =>
+  //     prevModules.map((module) =>
+  //       module.id === selectedModuleId
+  //         ? {
+  //             ...module,
+  //             [type]: [
+  //               ...((module[type] as any[]) || []), // Keep existing items of this module
+  //               {
+  //                 id: Date.now(),
+  //                 moduleId: selectedModuleId, // Store moduleId instead of module
+  //                 title: type.toUpperCase(),
+  //                 description: obj.title,
+  //                 pages: "",
+  //               },
+  //             ],
+  //           }
+  //         : module
+  //     )
+  //   );
+
+  //   setObj({ title: "", description: "" });
+  // };
 
   // Single useEffect for all item types
   useEffect(() => {
@@ -193,7 +221,7 @@ const CourseBuilder = ({ created }: any) => {
   }, [examObj]);
 
   useEffect(() => {
-    addNewItem("polls", pollObj, setPollObj);
+    addNewItem("poll", pollObj, setPollObj);
   }, [pollObj]);
 
   const removeModule = (id: number) => {
@@ -241,7 +269,7 @@ const CourseBuilder = ({ created }: any) => {
       ? modules.filter((m) => m.id === moduleId)
       : modules;
     return relevantModules.flatMap((module) =>
-      ["lessons", "capstone", "assignment", "quiz", "exam"].flatMap(
+      ["lessons", "capstone", "assignment", "quiz", "exam", "poll"].flatMap(
         (category) =>
           (module as Record<string, any>)[category]?.map((item: any) => ({
             ...item,
@@ -262,27 +290,35 @@ const CourseBuilder = ({ created }: any) => {
     const draggedItem = allItems.find((item) => item.id === draggedId);
 
     if (!draggedItem) return;
+
     const updatedItem = { ...draggedItem, category: targetCategory };
+
+    // Remove dragged item from the list
     const filteredItems = allItems.filter((item) => item.id !== draggedId);
+
     const updatedModules = modules.map((module) => {
       if (module.id !== moduleId) return module;
 
       const newModuleData = { ...module };
-      ["lessons", "capstone", "assignment", "quiz", "exam"].forEach(
-        (category) => {
-          const categoryItems =
-            category === targetCategory
-              ? [...filteredItems.filter((item) => item.category === category)]
-              : filteredItems.filter((item) => item.category === category);
 
+      ["lessons", "capstone", "assignment", "quiz", "exam", "poll"].forEach(
+        (category) => {
+          let categoryItems = filteredItems.filter(
+            (item) => item.category === category
+          );
+
+          // **If this is the target category, insert the dragged item**
           if (category === targetCategory) {
             categoryItems.splice(hoveredIndex, 0, updatedItem);
           }
-          if (category in newModuleData) {
-            (newModuleData as any)[category] = categoryItems.map((item) => ({
-              ...item,
-            }));
-          }
+
+          // ✅ **Update titles while keeping the correct category**
+          categoryItems = categoryItems.map((item, index) => ({
+            ...item,
+            title: `${item.category.toUpperCase()} ${index + 1}`,
+          }));
+
+          (newModuleData as any)[category] = categoryItems;
         }
       );
 
@@ -292,6 +328,46 @@ const CourseBuilder = ({ created }: any) => {
     setModules(updatedModules);
   };
 
+  // const moveItem = (
+  //   draggedId: number,
+  //   hoveredIndex: number,
+  //   moduleId: number,
+  //   targetCategory: string
+  // ) => {
+  //   const allItems = getAllItems(moduleId);
+  //   const draggedItem = allItems.find((item) => item.id === draggedId);
+
+  //   if (!draggedItem) return;
+  //   const updatedItem = { ...draggedItem, category: targetCategory };
+  //   const filteredItems = allItems.filter((item) => item.id !== draggedId);
+  //   const updatedModules = modules.map((module) => {
+  //     if (module.id !== moduleId) return module;
+
+  //     const newModuleData = { ...module };
+  //     ["lessons", "capstone", "assignment", "quiz", "exam", "polls"].forEach(
+  //       (category) => {
+  //         const categoryItems =
+  //           category === targetCategory
+  //             ? [...filteredItems.filter((item) => item.category === category)]
+  //             : filteredItems.filter((item) => item.category === category);
+
+  //         if (category === targetCategory) {
+  //           categoryItems.splice(hoveredIndex, 0, updatedItem);
+  //         }
+  //         if (category in newModuleData) {
+  //           (newModuleData as any)[category] = categoryItems.map((item) => ({
+  //             ...item,
+  //           }));
+  //         }
+  //       }
+  //     );
+
+  //     return newModuleData;
+  //   });
+
+  //   setModules(updatedModules);
+  // };
+
   const handleNewModule = () => {
     setNewModule({
       number: selectedModuleId + 1,
@@ -300,8 +376,6 @@ const CourseBuilder = ({ created }: any) => {
   };
 
   const handleNewItem = async (type: string, setState: Function) => {
-    console.log(type);
-
     if (modules.length === 0) {
       await showAlert(
         "error",
@@ -334,7 +408,7 @@ const CourseBuilder = ({ created }: any) => {
         lesson: lessonObj.moduleId || 0,
         status: true,
       },
-      polls: {
+      poll: {
         module: moduleObj.moduleId || 0,
         lesson: lessonObj.moduleId || 0,
         status: true,
@@ -354,7 +428,7 @@ const CourseBuilder = ({ created }: any) => {
     handleNewItem("assignment", setNewAssignment);
   const handleNewQuiz = () => handleNewItem("quiz", setNewQuiz);
   const handleNewExam = () => handleNewItem("exam", setNewExam);
-  const handleNewPoll = () => handleNewItem("polls", setNewPoll);
+  const handleNewPoll = () => handleNewItem("poll", setNewPoll);
 
   const addItem = async (type: string, setState: Function) => {
     // Default structure for different items
@@ -364,7 +438,7 @@ const CourseBuilder = ({ created }: any) => {
       assignment: { module: 0, lesson: 0, status: false },
       quiz: { module: 0, lesson: 0, status: false },
       exam: { module: 0, lesson: 0, status: false },
-      polls: { module: 0, lesson: 0, status: false },
+      poll: { module: 0, lesson: 0, status: false },
     };
 
     if (!defaultValues[type]) {
@@ -404,7 +478,7 @@ const CourseBuilder = ({ created }: any) => {
   const addAssignment = () => addItem("assignment", setNewAssignment);
   const addQuiz = () => addItem("quiz", setNewQuiz);
   const addExam = () => addItem("exam", setNewExam);
-  const addPoll = () => addItem("polls", setNewPoll);
+  const addPoll = () => addItem("poll", setNewPoll);
 
   const handlePublish = () => {
     created();
@@ -414,7 +488,7 @@ const CourseBuilder = ({ created }: any) => {
     { label: "Module", onClick: handleNewModule },
     { label: "Lesson", onClick: handleNewLesson },
     { label: "Quiz", onClick: handleNewQuiz },
-    { label: "Polls", onClick: handleNewPoll },
+    { label: "Poll", onClick: handleNewPoll },
     { label: "Capstone", onClick: handleNewCapstone },
     { label: "Assignments", onClick: handleNewAssignment },
     { label: "Resources" },
@@ -429,6 +503,7 @@ const CourseBuilder = ({ created }: any) => {
     assignment: (props) => <DraggableItem {...props} type="ASSIGNMENT" />,
     quiz: (props) => <DraggableItem {...props} type="QUIZ" />,
     exam: (props) => <DraggableItem {...props} type="EXAM" />,
+    poll: (props) => <DraggableItem {...props} type="POLL" />,
   };
 
   return (

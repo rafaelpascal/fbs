@@ -111,8 +111,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
       <NewPollModal
         moduleId={modals.newPoll.module}
         lessonId={modals.newPoll.lesson}
-        // isOpen={modals.newPoll.status}
-        isOpen={true}
+        isOpen={modals.newPoll.status}
         closeModal={handleClose}
         handlecreate={addPoll}
         moduleData={moduleObj}

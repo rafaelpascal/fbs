@@ -57,14 +57,12 @@ export const LectureSidebar = () => {
     )} / ${totalWeeks} weeks`;
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
-  const weekInfo = getCourseWeekInfo(
-    data.course_details.course_startdate,
-    data.course_details.course_enddate
-  );
+  const weekInfo = data?.course_details
+    ? getCourseWeekInfo(
+        data.course_details.course_startdate,
+        data.course_details.course_enddate
+      )
+    : "Week 0 / 0 weeks";
 
   const [weekNumber, totalWeeks] = weekInfo.split(" / ");
   // Toggle side bar on mobile view
@@ -79,14 +77,38 @@ export const LectureSidebar = () => {
         module_id: JSON.parse(id ?? ""),
       };
       const res = await CourseServices.getModulebyId(payload);
-      setModuleTitle(res.data.modules[0].module_title);
-      setModuleNumber(res.data.modules[0].module_number);
-      setLoading(false);
+
+      if (res.data?.modules?.length > 0) {
+        setModuleTitle(res.data.modules[0].module_title ?? "Unknown Module");
+        setModuleNumber(res.data.modules[0].module_number ?? "0");
+      } else {
+        setModuleTitle("Module Not Found");
+        setModuleNumber("0");
+      }
     } catch (error) {
+      console.error("Error fetching module:", error);
+      setModuleTitle("Error Loading Module");
+      setModuleNumber("0");
+    } finally {
       setLoading(false);
-      console.log(error);
     }
   };
+
+  // const fetModules = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const payload = {
+  //       module_id: JSON.parse(id ?? ""),
+  //     };
+  //     const res = await CourseServices.getModulebyId(payload);
+  //     setModuleTitle(res.data.modules[0].module_title);
+  //     setModuleNumber(res.data.modules[0].module_number);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
     if (id) {
