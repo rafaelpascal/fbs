@@ -302,6 +302,8 @@ const Dashboard = () => {
   const handleViewApplication = (courseId: number | undefined) => {
     setSelectedId(JSON.stringify(courseId));
   };
+  // console.log(applications);
+  // console.log(courses, secondcourses);
 
   return (
     <DashboardArea>
@@ -539,84 +541,101 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <Collapsible
-                title="My Grades: write the Program title here"
+                title={`My Grades: ${applications[0]?.course_title}`}
                 initialState={true}
               >
-                <div className="max-w-7xl mx-auto p-3 border-t-2  ">
-                  {/* <h2 className="text-xl font-semibold mb-4">
-                    My Grades for: Write The Program Title Here
-                  </h2> */}
+                <div
+                  // className="w-[750px]"
+                  style={{ overflowX: "auto" }}
+                >
+                  <div
+                    className="max-w-7xl mx-auto p-3 border-t-2"
+                    style={{ minWidth: "500px" }}
+                  >
+                    {/* <h2 className="text-xl font-semibold mb-4">
+      My Grades for: Write The Program Title Here
+    </h2> */}
 
-                  <div className="flex justify-between mb-4 mt-5">
-                    <div>
-                      <h1 className="font-semibold">Modules</h1> <br />
-                      <select className="border p-2 rounded w-1/2.5">
-                        <option>Module 1: Introduction to bu...</option>
-                      </select>
+                    <div className="flex justify-between mb-4 mt-5">
+                      <div>
+                        <h1 className="font-semibold">Modules</h1> <br />
+                        <select className="border p-2 rounded w-1/2.5">
+                          {courses.map((course, index) => (
+                            <option key={index}>
+                              {`Module ${course.module_number}: ${course.module_title}`}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <h1 className="font-semibold">Arrange by</h1> <br />
+                        <select className="border p-2 rounded w-1/2.5">
+                          <option>All</option>
+                          <option>Quizzes</option>
+                          <option>Assignments</option>
+                          <option>Capstones</option>
+                          <option>Exams</option>
+                        </select>
+                      </div>
                     </div>
-                    <div>
-                      <h1 className="font-semibold">Arrange by</h1> <br />
-                      <select className="border p-2 rounded w-1/2.5">
-                        <option>All</option>
-                        <option>Quizzes</option>
-                        <option>Assignments</option>
-                        <option>Capstones</option>
-                        <option>Exams</option>
-                      </select>
-                    </div>
-                  </div>
 
-                  <table className="w-full border-separate border-spacing-y-4 text-left  ">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="p-2">Title</th>
-                        <th className="p-2">Due Date</th>
-                        <th className="p-2">Status</th>
-                        <th className="p-2">Score</th>
-                        <th className="p-2">Rating</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {grades.map((item, index) => (
-                        <tr
-                          key={index}
-                          // style={{
-                          //   backgroundColor: item.statusColor,
-                          //   borderRadius: "50%",
-                          // }}
-                          className={`${item.bgColor} pb-4 overflow-hidden`}
-                        >
-                          <td className="p-2 rounded-l-lg overflow-hidden font-semibold">
-                            {item.title}
-                          </td>
-                          <td className="p-2 font-normal">{item.dueDate}</td>
-                          <td className={`p-2 font-medium ${item.statusColor}`}>
-                            {item.status}
-                          </td>
-                          <td className="p-2 font-normal">{item.score}</td>
-                          <td className="p-2 font-medium">{item.rating}</td>
-                          <td className="p-7  rounded-r-lg overflow-hidden">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="4"
-                              height="13"
-                              viewBox="0 0 4 13"
-                              fill="none"
+                    <div style={{ overflowX: "auto" }}>
+                      <table
+                        className="w-full border-separate border-spacing-y-4 text-left"
+                        style={{ minWidth: "500px" }}
+                      >
+                        <thead>
+                          <tr className="border-b">
+                            <th className="p-2">Title</th>
+                            <th className="p-2">Due Date</th>
+                            <th className="p-2">Status</th>
+                            <th className="p-2">Score</th>
+                            <th className="p-2">Rating</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {grades.map((item, index) => (
+                            <tr
+                              key={index}
+                              className={`${item.bgColor} pb-4 overflow-hidden`}
                             >
-                              <path
-                                d="M0.885 2.3C0.885 1.91667 1.00767 1.59467 1.253 1.334C1.51367 1.08867 1.828 0.966 2.196 0.966C2.564 0.966 2.87067 1.08867 3.116 1.334C3.37667 1.59467 3.507 1.91667 3.507 2.3C3.507 2.68333 3.37667 2.99767 3.116 3.243C2.87067 3.48833 2.564 3.611 2.196 3.611C1.828 3.611 1.51367 3.48833 1.253 3.243C1.00767 2.99767 0.885 2.68333 0.885 2.3ZM0.885 6.85957C0.885 6.47624 1.00767 6.15424 1.253 5.89357C1.51367 5.64824 1.828 5.52557 2.196 5.52557C2.564 5.52557 2.87067 5.64824 3.116 5.89357C3.37667 6.15424 3.507 6.47624 3.507 6.85957C3.507 7.2429 3.37667 7.55724 3.116 7.80257C2.87067 8.0479 2.564 8.17057 2.196 8.17057C1.828 8.17057 1.51367 8.0479 1.253 7.80257C1.00767 7.55724 0.885 7.2429 0.885 6.85957ZM0.885 11.4191C0.885 11.0358 1.00767 10.7138 1.253 10.4531C1.51367 10.2078 1.828 10.0851 2.196 10.0851C2.564 10.0851 2.87067 10.2078 3.116 10.4531C3.37667 10.7138 3.507 11.0358 3.507 11.4191C3.507 11.8025 3.37667 12.1168 3.116 12.3621C2.87067 12.6075 2.564 12.7301 2.196 12.7301C1.828 12.7301 1.51367 12.6075 1.253 12.3621C1.00767 12.1168 0.885 11.8025 0.885 11.4191Z"
-                                fill="#555050"
-                              />
-                            </svg>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                              <td className="p-2 rounded-l-lg overflow-hidden font-semibold">
+                                {item.title}
+                              </td>
+                              <td className="p-2 font-normal">
+                                {item.dueDate}
+                              </td>
+                              <td
+                                className={`p-2 font-medium ${item.statusColor}`}
+                              >
+                                {item.status}
+                              </td>
+                              <td className="p-2 font-normal">{item.score}</td>
+                              <td className="p-2 font-medium">{item.rating}</td>
+                              <td className="p-7 rounded-r-lg overflow-hidden">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="4"
+                                  height="13"
+                                  viewBox="0 0 4 13"
+                                  fill="none"
+                                >
+                                  <path
+                                    d="M0.885 2.3C0.885 1.91667 1.00767 1.59467 1.253 1.334C1.51367 1.08867 1.828 0.966 2.196 0.966C2.564 0.966 2.87067 1.08867 3.116 1.334C3.37667 1.59467 3.507 1.91667 3.507 2.3C3.507 2.68333 3.37667 2.99767 3.116 3.243C2.87067 3.48833 2.564 3.611 2.196 3.611C1.828 3.611 1.51367 3.48833 1.253 3.243C1.00767 2.99767 0.885 2.68333 0.885 2.3ZM0.885 6.85957C0.885 6.47624 1.00767 6.15424 1.253 5.89357C1.51367 5.64824 1.828 5.52557 2.196 5.52557C2.564 5.52557 2.87067 5.64824 3.116 5.89357C3.37667 6.15424 3.507 6.47624 3.507 6.85957C3.507 7.2429 3.37667 7.55724 3.116 7.80257C2.87067 8.0479 2.564 8.17057 2.196 8.17057C1.828 8.17057 1.51367 8.0479 1.253 7.80257C1.00767 7.55724 0.885 7.2429 0.885 6.85957ZM0.885 11.4191C0.885 11.0358 1.00767 10.7138 1.253 10.4531C1.51367 10.2078 1.828 10.0851 2.196 10.0851C2.564 10.0851 2.87067 10.2078 3.116 10.4531C3.37667 10.7138 3.507 11.0358 3.507 11.4191C3.507 11.8025 3.37667 12.1168 3.116 12.3621C2.87067 12.6075 2.564 12.7301 2.196 12.7301C1.828 12.7301 1.51367 12.6075 1.253 12.3621C1.00767 12.1168 0.885 11.8025 0.885 11.4191Z"
+                                    fill="#555050"
+                                  />
+                                </svg>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
 
-                  <div className="flex justify-between items-center mt-4">
-                    <span className="text-lg font-bold">Total</span>
-                    <span className="text-lg font-bold">54/103 B</span>
+                    <div className="flex justify-between items-center mt-4">
+                      <span className="text-lg font-bold">Total</span>
+                      <span className="text-lg font-bold">54/103 B</span>
+                    </div>
                   </div>
                 </div>
               </Collapsible>

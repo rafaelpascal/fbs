@@ -117,6 +117,7 @@ export const paymentData = [
     sn: 1,
     name: "Heather Reyes",
     program: "MBA",
+    paid: "₦100,000",
     email: "johnobidi@fordax.com",
     amount: "N100,000",
     createdAt: "Sept 28, 2024 09:00 AM",

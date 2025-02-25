@@ -137,9 +137,9 @@ const Dashboard = () => {
           )}
         >
           <div className="w-auto mb-4 mx-4 overflow-x-auto border-[1px] border-[#F4F5F8] rounded-[8px] p-2 flex justify-start items-center gap-3">
-            <NavLink to="payment" className={getNavLinkClassName}>
+            {/* <NavLink to="payment" className={getNavLinkClassName}>
               Payments
-            </NavLink>
+            </NavLink> */}
             <NavLink to="application" className={getNavLinkClassName}>
               Students/Applications
             </NavLink>

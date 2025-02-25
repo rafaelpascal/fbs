@@ -22,6 +22,36 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static getCreatedCourse = async (payload: any) => {
+    try {
+      const res = await Api.post("/course/edit-course", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static getApplicationPayments = async () => {
+    try {
+      const res = await Api.get("/list-application-payments");
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static updataCreatedCourse = async (payload: any) => {
+    try {
+      const res = await Api.post("/course/update-course", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static createCourseRequirements = async (payload: any) => {
     try {
       const res = await Api.post("/create-course-requirements", payload);

@@ -76,6 +76,7 @@ interface Option {
 
 // Define the type for formData
 interface FormData {
+  courseid?: number;
   courseTitle: string;
   courseType: null | { label: string };
   facilitator: Option[] | null;
@@ -117,53 +118,22 @@ interface FormData {
   selectedMonths: number;
 }
 
-const Createcourseform = ({ created }: any) => {
+interface CreatecourseformProps {
+  created: (data: any) => void;
+  initialData?: any;
+}
+
+const Createcourseform = ({
+  created,
+  initialData = {},
+}: CreatecourseformProps) => {
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const [isSelectDateChecked, setIsSelectDateChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCertType, setIsCertType] = useState(false);
   const [isScheduleDateChecked, setIsScheduleDateChecked] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    courseTitle: "",
-    courseType: null,
-    facilitator: null,
-    editors: null,
-    supervisors: null,
-    description: "",
-    highlight: "",
-    featuredImages: [],
-    featuredVideo: "",
-    orientation: "",
-    //
-    maxStudents: "",
-    courseRun: "Monthly",
-    enrollmentSchedule: "allTime",
-    courseSchedule: "allTime",
-    difficultyLevel: null,
-    courserun: null,
-    instructoreType: null,
-    courseFormat: null,
-    cohortTag: "",
-    enrollmentStartDate: "",
-    enrollmentEndDate: "",
-    courseStartDate: "",
-    courseEndDate: "",
-    //
-    currency: {
-      NGN: false,
-      USD: false,
-    },
-    nairaAmount: "",
-    dollarAmount: "",
-    couponTitle: "",
-    couponValidity: false,
-    paymentplan: null,
-    couponValidTill: "",
-    discountType: "",
-    discountValue: "",
-    selectedMonths: 1,
-  });
+  const [formData, setFormData] = useState<FormData>(initialData);
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsSelectDateChecked(event.target.value === "selectDate");
@@ -172,7 +142,7 @@ const Createcourseform = ({ created }: any) => {
   const handlescheduleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsScheduleDateChecked(event.target.value === "scheduleDate");
   };
-
+  console.log(initialData);
   const handleSelect = (
     field: string,
     option: { label: string; value: string | number }
@@ -295,17 +265,36 @@ const Createcourseform = ({ created }: any) => {
       formDataToSend.append("naira", formData.currency.NGN ? "1" : "0");
       formDataToSend.append("naira_amount", formData.nairaAmount);
       formDataToSend.append("usd_amount", formData.dollarAmount);
+      // console.log("MMMMMMMMMM", formData.selectedMonths);
       formDataToSend.append("installment", formData.selectedMonths.toString());
       console.log("FormData Payload:");
       for (const [key, value] of formDataToSend.entries()) {
         console.log(`${key}:`, value);
       }
-      console.log(formDataToSend);
-      const res = await CourseServices.createCourse(formDataToSend);
+      // const isEmpty = (obj) => Object.keys(obj).length === 0;
+      let res;
+      if (formData.courseid) {
+        formDataToSend.append("courseid", formData.courseid.toString());
+        res = await CourseServices.updataCreatedCourse(formDataToSend);
+        console.log(res);
+      } else {
+        res = await CourseServices.createCourse(formDataToSend);
+      }
+
       dispatch(setCourseId(res.data.course_id));
       dispatch(setCourseUrl(res.data.course_url));
+
+      setFormData((prev) => {
+        const updated = {
+          ...prev,
+          courseid: res?.data?.course_id,
+        };
+        console.log("Updated form data:", updated);
+        return updated;
+      });
       if (res.data.success === true) {
         setIsSubmitting(false);
+        console.log(res?.data?.course_id);
         await showAlert(
           "success",
           "Created!",
@@ -313,7 +302,11 @@ const Createcourseform = ({ created }: any) => {
           "Ok",
           "#03435F"
         );
-        created();
+
+        created({
+          ...formData,
+          courseid: res?.data?.course_id,
+        });
       } else {
         setIsSubmitting(false);
       }

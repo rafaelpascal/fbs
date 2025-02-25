@@ -56,7 +56,7 @@ export const sidebarData: SideNavProps[] = [
     text: "Certificates",
   },
   {
-    href: "",
+    href: "/admin/payments",
     icon: FaCcMastercard,
     dropdown: false,
     text: "Payments",

@@ -189,7 +189,6 @@ const Payment = () => {
 
     setSelectedAmount(formattedAmount);
   }, [currency, applicationData.usd_amount, applicationData.naira_amount]);
-  console.log(applicationData);
 
   return (
     <DashboardArea>
