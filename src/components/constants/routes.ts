@@ -26,6 +26,7 @@ export const ROUTES = {
   FACULTYTABLE: "/admin/dashboard/faculty",
   COURSEAPPLICATION: "/admin/dashboard/application/:applicationId",
   COURSES: "/admin/courses",
+  PAYMENTS: "/admin/payments",
   ASSIGNMENTSTABLE: "/admin/students/assignments",
   CAPSTONESTABLE: "/admin/students/capstone",
   POLLSTABLE: "/admin/students/pollstable",

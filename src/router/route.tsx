@@ -67,6 +67,7 @@ const AppLayout = lazyLoad(() => import("~/layouts/AppLayout.tsx"));
 const Payment = lazyLoad(() => import("~/pages/Courses/Payment.tsx"));
 const NewCourse = lazyLoad(() => import("~/pages/Courses/NewCourse.tsx"));
 const Application = lazyLoad(() => import("~/pages/Courses/Application.tsx"));
+const Pay = lazyLoad(() => import("~/pages/Courses/Payments.tsx"));
 const FormSubmitted = lazyLoad(
   () => import("~/pages/Courses/FormSubmitted.tsx")
 );
@@ -199,6 +200,10 @@ const router = createBrowserRouter(
             {
               path: ROUTES.COURSES,
               element: <AdminCourses />,
+            },
+            {
+              path: ROUTES.PAYMENTS,
+              element: <Pay />,
             },
             {
               path: ROUTES.NEWCOURSE,
