@@ -308,6 +308,7 @@ export class CourseServices extends BaseAPIService {
       throw handleError;
     }
   };
+
   static listModulebyId = async (payload: any) => {
     try {
       const res = await Api.post("/module/list-modules-byid", payload);
