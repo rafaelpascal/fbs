@@ -101,6 +101,16 @@ const Lecture = () => {
                 },
               ]
             : []),
+          ...(lessonItem.lessonid
+            ? [
+                {
+                  href: `/polls/${lessonItem.lessonid}`,
+                  icon: GoDotFill,
+                  dropdown: false,
+                  text: "Polls",
+                },
+              ]
+            : []),
           ...(lessonItem.assignment_id
             ? [
                 {
