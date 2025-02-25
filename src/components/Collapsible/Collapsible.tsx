@@ -28,7 +28,8 @@ const Collapsible = ({
     <div
       className={`shadow-md mt-4 rounded-[8px] collapse ${
         theme === "dark" ? "bg-[#424141]" : ""
-      }`}
+      } `}
+      style={{ overflowX: "auto" }}
     >
       <input
         type="checkbox"
