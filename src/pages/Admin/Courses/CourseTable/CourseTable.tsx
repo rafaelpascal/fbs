@@ -19,6 +19,7 @@ import { LoadingSpinner } from "~/components/ui/loading-spinner";
 // import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
+  coursesid: number;
   id: number;
   avatar: string;
   sn: number;
@@ -89,7 +90,7 @@ const CourseTable = () => {
 
   // View a Row
   const handleView = (id: number) => {
-    navigate(`/admin/dashboard/application/${id}`);
+    navigate(`/admin/courses/edit/${id}`);
   };
 
   // Handle handlecontact
@@ -184,8 +185,8 @@ const CourseTable = () => {
       cell: (row) => (
         <ActionMenu
           actions={[
-            { label: "Edit", action: () => handleView(row.id) },
-            { label: "Delete", action: () => handlecontact(row.id) },
+            { label: "Edit", action: () => handleView(row.coursesid) },
+            { label: "Delete", action: () => handlecontact(row.coursesid) },
             {
               label: "Add Cohort",
               action: () => setIsNewcohort({ courseId: row.id, status: true }),

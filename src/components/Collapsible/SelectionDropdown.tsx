@@ -11,23 +11,27 @@ interface Option {
 
 // Define the props for the SelectionDropdown component
 interface SelectionDropdownProps {
-  label?: string;
-  options: Option[] | undefined;
-  labelClassName?: string;
-  placeholder?: string;
+  label: string;
+  options: Option[];
   onSelect: (option: Option) => void;
+  placeholder: string;
+  labelClassName?: string;
+  initialSelected?: { label: string } | null;
 }
 
-const SelectionDropdown: React.FC<SelectionDropdownProps> = ({
-  options,
+const SelectionDropdown = ({
   label,
-  labelClassName,
-  placeholder = "Select an option",
+  options,
   onSelect,
-}) => {
+  placeholder,
+  labelClassName,
+  initialSelected,
+}: SelectionDropdownProps) => {
   const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const [selectedOption, setSelectedOption] = useState<Option | null>(
+    initialSelected || null
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Function to toggle dropdown visibility
@@ -37,6 +41,7 @@ const SelectionDropdown: React.FC<SelectionDropdownProps> = ({
 
   // Function to handle selection of an option
   const handleSelect = (option: Option) => {
+    console.log(option);
     setSelectedOption(option);
     setIsOpen(false);
     onSelect(option);

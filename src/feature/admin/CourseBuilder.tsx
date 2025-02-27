@@ -10,6 +10,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DraggableItem } from "./Items";
 import ButtonGrid from "./BuilderButtons";
 import ModalContainer from "./ModalContainer";
+import { R } from "node_modules/@tanstack/react-query-devtools/build/modern/ReactQueryDevtools-Cn7cKi7o";
 
 interface Lessons {
   id: number;
@@ -32,6 +33,8 @@ interface Module {
   assignment: Capstone[];
   quiz: Capstone[];
   exam: Capstone[];
+  resources: Capstone[]; // Add this
+  caseStudy: Capstone[]; // Add this
 }
 
 interface ImoduleProps {
@@ -72,6 +75,18 @@ const CourseBuilder = ({ created }: any) => {
     lesson: 0,
     status: false,
   });
+  const [newResources, setNewResources] = useState({
+    module: 0,
+    lesson: 0,
+    status: false,
+  });
+
+  const [newCaseStudy, setNewCaseStudy] = useState({
+    module: 0,
+    lesson: 0,
+    status: false,
+  });
+
   const [selectedModuleId, setSelectedModuleId] = useState(0);
   const [moduleObj, setmoduleObj] = useState<ImoduleProps>({
     moduleId: 0,
@@ -99,6 +114,18 @@ const CourseBuilder = ({ created }: any) => {
     title: "",
     description: "",
   });
+  const [resourcesObj, setResourcesObj] = useState<ImoduleProps>({
+    title: "",
+    description: "",
+  });
+
+  const [caseStudyObj, setCaseStudyObj] = useState<ImoduleProps>({
+    title: "",
+    description: "",
+  });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   const addModule = async () => {
     setIsnewModule(true);
@@ -126,6 +153,8 @@ const CourseBuilder = ({ created }: any) => {
         assignment: [],
         quiz: [],
         exam: [],
+        resources: [], // Add this
+        caseStudy: [], // Add this
       };
 
       setModules((prevModules) => [...prevModules, newModule]);
@@ -164,6 +193,12 @@ const CourseBuilder = ({ created }: any) => {
   useEffect(() => {
     addNewItem("lessons", lessonObj, setlessonObj);
   }, [lessonObj]);
+  useEffect(() => {
+    addNewItem("lessons", resourcesObj, setResourcesObj);
+  }, [resourcesObj]);
+  useEffect(() => {
+    addNewItem("caseStudy", caseStudyObj, setCaseStudyObj);
+  }, [caseStudyObj]);
 
   useEffect(() => {
     addNewItem("capstone", capstoneObj, setCapstoneObj);
@@ -210,6 +245,16 @@ const CourseBuilder = ({ created }: any) => {
       status: false,
     });
     setNewExam({
+      module: 0,
+      lesson: 0,
+      status: false,
+    });
+    setNewResources({
+      module: 0,
+      lesson: 0,
+      status: false,
+    });
+    setNewCaseStudy({
       module: 0,
       lesson: 0,
       status: false,
@@ -312,6 +357,16 @@ const CourseBuilder = ({ created }: any) => {
         lesson: lessonObj.moduleId || 0,
         status: true,
       },
+      resources: {
+        module: moduleObj.moduleId || 0,
+        lesson: lessonObj.moduleId || 0,
+        status: true,
+      },
+      caseStudy: {
+        module: moduleObj.moduleId || 0,
+        lesson: lessonObj.moduleId || 0,
+        status: true,
+      },
     };
 
     if (!defaultValues[type]) {
@@ -327,6 +382,8 @@ const CourseBuilder = ({ created }: any) => {
     handleNewItem("assignment", setNewAssignment);
   const handleNewQuiz = () => handleNewItem("quiz", setNewQuiz);
   const handleNewExam = () => handleNewItem("exam", setNewExam);
+  const handleNewResources = () => handleNewItem("resources", setNewResources);
+  const handleNewCaseStudy = () => handleNewItem("caseStudy", setNewCaseStudy);
 
   const addItem = async (type: string, setState: Function) => {
     // Default structure for different items
@@ -336,6 +393,8 @@ const CourseBuilder = ({ created }: any) => {
       assignment: { module: 0, lesson: 0, status: false },
       quiz: { module: 0, lesson: 0, status: false },
       exam: { module: 0, lesson: 0, status: false },
+      caseStudy: { module: 0, lesson: 0, status: false },
+      resources: { module: 0, lesson: 0, status: false },
     };
 
     if (!defaultValues[type]) {
@@ -375,6 +434,8 @@ const CourseBuilder = ({ created }: any) => {
   const addAssignment = () => addItem("assignment", setNewAssignment);
   const addQuiz = () => addItem("quiz", setNewQuiz);
   const addExam = () => addItem("exam", setNewExam);
+  const addResources = () => addItem("resources", setNewResources);
+  const addCaseStudy = () => addItem("caseStudy", setNewCaseStudy);
 
   const handlePublish = () => {
     created();
@@ -382,14 +443,14 @@ const CourseBuilder = ({ created }: any) => {
 
   const buttons = [
     { label: "Module", onClick: handleNewModule },
-    { label: "Lesson", onClick: handleNewLesson },
-    { label: "Quiz", onClick: handleNewQuiz },
+    // { label: "Lesson", onClick: handleNewLesson },
+    // { label: "Quiz", onClick: handleNewQuiz },
     { label: "Polls" },
-    { label: "Capstone", onClick: handleNewCapstone },
-    { label: "Assignments", onClick: handleNewAssignment },
+    // { label: "Capstone", onClick: handleNewCapstone },
+    // { label: "Assignments", onClick: handleNewAssignment },
     { label: "Resources" },
     { label: "Case study" },
-    { label: "Exam", onClick: handleNewExam },
+    // { label: "Exam", onClick: handleNewExam },
     { label: "Live streaming" },
   ];
 
@@ -399,54 +460,84 @@ const CourseBuilder = ({ created }: any) => {
     assignment: (props) => <DraggableItem {...props} type="ASSIGNMENT" />,
     quiz: (props) => <DraggableItem {...props} type="QUIZ" />,
     exam: (props) => <DraggableItem {...props} type="EXAM" />,
+    caseStudy: (props) => <DraggableItem {...props} type="CASE_STUDY" />,
+    resources: (props) => <DraggableItem {...props} type="RESOURCES" />,
+  };
+
+  const handleOpenSidebar = (module: Module, event: React.MouseEvent) => {
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const isMobile = window.innerWidth < 768;
+
+    const position = {
+      top: rect.bottom + window.scrollY,
+      left: isMobile
+        ? (window.innerWidth - 192) / 2
+        : Math.max(0, rect.right - 80),
+    };
+
+    setMenuPosition(position);
+    setSelectedModule(module);
+    // Add this line to update selectedModuleId
+    setSelectedModuleId(module.id);
+    setIsSidebarOpen(true);
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="">
+      <div className="relative">
         <h2 className="font-DMSans mb-2 text-[18px] font-semibold">
           CONTENT BUILDER
         </h2>
+
         {modules.map((module) => (
-          <div className="my-2" key={module.id}>
-            <div
-              className={cn(
-                "p-3 w-full shadow-md flex flex-row justify-between items-start mb-2",
-                theme === "dark"
-                  ? "bg-transparent border-[0.5px] border-[#ddd]"
-                  : "bg-[#B3B3B3]/10"
-              )}
-            >
-              <div className="flex flex-col lg:flex-row justify-start items-start gap-2">
-                <h2 className="font-DMSans font-semibold text-[18px] text-[#FF5050]">
-                  {module.title}:
-                </h2>
-                <h2 className="font-DMSans font-semibold text-[18px]">
-                  {module.description}
-                </h2>
+          <div className="flex justify-center items-center w-full">
+            <div className="my-2 w-[90%] " key={module.id}>
+              <div
+                className={cn(
+                  "p-3 w-full shadow-md flex flex-row justify-between items-start mb-2 relative bg-[#FF5050]"
+                  // theme === "dark"
+                  //   ? "bg-transparent border-[0.5px] border-[#ddd]"
+                  //   : "bg-[#B3B3B3]/10"
+                )}
+              >
+                <div className="flex flex-col lg:flex-row justify-start items-start gap-2">
+                  <h2 className="font-DMSans font-semibold text-[18px] text-[#FFFFFF]">
+                    {module.title}:
+                  </h2>
+                  <h2 className="font-DMSans font-semibold text-[18px] text-[#FFFFFF]">
+                    {module.description}
+                  </h2>
+                </div>
+                <div className="flex justify-end items-end gap-2">
+                  <button>
+                    <FiEdit className="text-[30px] text-[#FFFFFF]" />
+                  </button>
+                  <button onClick={() => removeModule(module.id)}>
+                    <MdOutlineCancel className="text-[30px] text-[#FFFFFF]" />
+                  </button>
+                  <button
+                    onClick={(e) => handleOpenSidebar(module, e)}
+                    className="px-4 py-2 bg-[#eb4141] text-white rounded-md hover:bg-[#03435F]/80"
+                  >
+                    New
+                  </button>
+                </div>
               </div>
-              <div className="flex justify-end items-end gap-2">
-                <button>
-                  <FiEdit className="text-[30px]" />
-                </button>
-                <button onClick={() => removeModule(module.id)}>
-                  <MdOutlineCancel className="text-[30px]" />
-                </button>
+              <div>
+                {getAllItems(module.id).map((item, index) => {
+                  const Component = componentMap[item.category];
+                  return (
+                    <Component
+                      key={`${item.id}-${index}`}
+                      item={item}
+                      index={index}
+                      moveItem={moveItem}
+                      theme={theme}
+                    />
+                  );
+                })}
               </div>
-            </div>
-            <div>
-              {getAllItems(module.id).map((item, index) => {
-                const Component = componentMap[item.category];
-                return (
-                  <Component
-                    key={`${item.id}-${index}`}
-                    item={item}
-                    index={index}
-                    moveItem={moveItem}
-                    theme={theme}
-                  />
-                );
-              })}
             </div>
           </div>
         ))}
@@ -460,10 +551,14 @@ const CourseBuilder = ({ created }: any) => {
             newAssignment,
             newQuiz,
             newExam,
+            newResources,
+            newCaseStudy,
           }}
           handleClose={handleClose}
           addModule={addModule}
           addLesson={addLesson}
+          addResources={addResources}
+          addCaseStudy={addCaseStudy}
           addCapstone={addCapstone}
           addAssignment={addAssignment}
           addQuiz={addQuiz}
@@ -475,8 +570,78 @@ const CourseBuilder = ({ created }: any) => {
           setAssignmentObj={setAssignmentObj}
           setQuizObj={setQuizObj}
           setExamObj={setExamObj}
+          setResourcesObj={setResourcesObj}
+          setCaseStudyObj={setCaseStudyObj}
         />
-
+        {isSidebarOpen && (
+          <>
+            <div
+              className="fixed inset-0 bg-black/20 z-40"
+              onClick={() => setIsSidebarOpen(false)}
+            />
+            <div
+              className={cn(
+                "fixed z-50 w-48 py-1 rounded-md shadow-lg border border-gray-200",
+                "max-h-[90vh] overflow-y-auto",
+                theme === "dark"
+                  ? "bg-[#FF5050] text-white border-gray-700"
+                  : "bg-[#FF5050]"
+              )}
+              style={{
+                top: `${Math.min(
+                  menuPosition.top,
+                  window.innerHeight - 300
+                )}px`, // Prevent overflow at bottom
+                left: `${menuPosition.left}px`, // Use calculated left position
+              }}
+            >
+              <div className="flex flex-col w-full">
+                <button
+                  onClick={handleNewLesson}
+                  className="w-full text-white px-4 py-3 text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
+                >
+                  Add Lesson
+                </button>
+                <button
+                  onClick={handleNewResources}
+                  className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
+                >
+                  Add Resources
+                </button>
+                <button
+                  onClick={handleNewCaseStudy}
+                  className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
+                >
+                  Add Case Study
+                </button>
+                <button
+                  onClick={handleNewQuiz}
+                  className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
+                >
+                  Add Quiz
+                </button>
+                <button
+                  onClick={handleNewCapstone}
+                  className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
+                >
+                  Add Capstone
+                </button>
+                <button
+                  onClick={handleNewAssignment}
+                  className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
+                >
+                  Add Assignment
+                </button>
+                <button
+                  onClick={handleNewExam}
+                  className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
+                >
+                  Add Exam
+                </button>
+              </div>
+            </div>
+          </>
+        )}
         <div className="flex flex-row flex-wrap justify-start items-center gap-4">
           <button
             onClick={handlePublish}

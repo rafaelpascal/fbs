@@ -61,6 +61,15 @@ export class CourseServices extends BaseAPIService {
       throw handleError;
     }
   };
+  static updateManualPayment = async (payload: any) => {
+    try {
+      const res = await Api.post("/update-manual-payment", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
   static submitPayment = async (payload: any) => {
     try {
       const res = await Api.post("/submit-payment", payload);

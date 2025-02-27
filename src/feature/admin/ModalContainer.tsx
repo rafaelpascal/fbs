@@ -5,6 +5,8 @@ import { NewExamModal } from "~/components/Modal/NewExamModal";
 import { NewLessonModal } from "~/components/Modal/NewLessonModal";
 import { NewModuleModal } from "~/components/Modal/NewModuleModal";
 import { NewQuizModal } from "~/components/Modal/NewQuizModal";
+import { NewResourcesModel } from "~/components/Modal/NewResourcesModel";
+import { NewCaseStudyModel } from "~/components/Modal/NewCaseStudyModel";
 
 interface ModalContainerProps {
   modals: {
@@ -14,10 +16,14 @@ interface ModalContainerProps {
     newAssignment: any;
     newQuiz: any;
     newExam: any;
+    newResources: any;
+    newCaseStudy: any;
   };
   handleClose: () => void;
   addModule: () => void;
   addLesson: () => void;
+  addResources: () => void;
+  addCaseStudy: () => void;
   addCapstone: () => void;
   addAssignment: () => void;
   addQuiz: () => void;
@@ -25,6 +31,8 @@ interface ModalContainerProps {
   moduleObj: any;
   setModuleObj: React.Dispatch<React.SetStateAction<any>>;
   setLessonObj: React.Dispatch<React.SetStateAction<any>>;
+  setResourcesObj: React.Dispatch<React.SetStateAction<any>>;
+  setCaseStudyObj: React.Dispatch<React.SetStateAction<any>>;
   setCapstoneObj: React.Dispatch<React.SetStateAction<any>>;
   setAssignmentObj: React.Dispatch<React.SetStateAction<any>>;
   setQuizObj: React.Dispatch<React.SetStateAction<any>>;
@@ -37,6 +45,8 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   addModule,
   addLesson,
   addCapstone,
+  addResources,
+  addCaseStudy,
   addAssignment,
   addQuiz,
   addExam,
@@ -45,6 +55,8 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   setLessonObj,
   setCapstoneObj,
   setAssignmentObj,
+  setResourcesObj,
+  setCaseStudyObj,
   setQuizObj,
   setExamObj,
 }) => {
@@ -66,6 +78,24 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
         moduleData={moduleObj}
         setModuleData={setLessonObj}
       />
+
+      <NewResourcesModel
+        moduleId={modals.newResources.module}
+        isOpen={modals.newResources.status}
+        closeModal={handleClose}
+        handlecreate={addResources}
+        moduleData={moduleObj}
+        setModuleData={setResourcesObj}
+      />
+      <NewCaseStudyModel
+        moduleId={modals.newCaseStudy.module}
+        isOpen={modals.newCaseStudy.status}
+        closeModal={handleClose}
+        handlecreate={addCaseStudy}
+        moduleData={moduleObj}
+        setModuleData={setCaseStudyObj}
+      />
+
       <NewCapstoneModal
         moduleId={modals.newCapstone.module}
         lessonId={modals.newCapstone.lesson}
