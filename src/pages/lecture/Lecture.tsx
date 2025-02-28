@@ -164,7 +164,7 @@ const Lecture = () => {
       setCurrentIndex(nextIndex);
       const nextLessonId = mediaItems[nextIndex]?.lessonId;
       if (nextLessonId) {
-        setCurrentLessonId(nextLessonId); // Set only if lessonId exists
+        setCurrentLessonId(nextLessonId);
       }
     }
   };
