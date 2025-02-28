@@ -17,9 +17,6 @@ interface ModalContainerProps {
     newAssignment: any;
     newQuiz: any;
     newExam: any;
-    newPoll: any;
-    newResources: any;
-    newCaseStudy: any;
   };
   handleClose: () => void;
   addModule: () => void;
