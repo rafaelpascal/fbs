@@ -6,17 +6,17 @@ import { cn } from "~/utils/helpers";
 // Define the type for a single option
 interface Option {
   label: string;
-  value: string | number;
+  value: any;
 }
 
 // Define the props for the SelectionDropdown component
 interface SelectionDropdownProps {
-  label: string;
-  options: Option[];
+  label?: string;
+  options?: Option[];
   onSelect: (option: Option) => void;
-  placeholder: string;
+  placeholder?: string;
   labelClassName?: string;
-  initialSelected?: { label: string } | null;
+  initialSelected?: any;
 }
 
 const SelectionDropdown = ({

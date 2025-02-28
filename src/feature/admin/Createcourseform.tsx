@@ -220,7 +220,7 @@ const Createcourseform = ({
     }));
   };
 
-  const isFormValid = (): boolean => {
+  const isFormValid = (): any => {
     const requiredFields = [
       "courseTitle",
       "courseType",
@@ -381,12 +381,12 @@ const Createcourseform = ({
     }
   };
 
-  const handleSettingsSelect = (key: string, option: any) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [key]: option.value,
-    }));
-  };
+  // const handleSettingsSelect = (key: string, option: any) => {
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     [key]: option.value,
+  //   }));
+  // };
 
   return (
     <div>

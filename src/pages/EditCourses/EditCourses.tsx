@@ -18,7 +18,10 @@ import { motion } from "framer-motion";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { GrCertificate } from "react-icons/gr";
 import { setCourseUrl } from "~/redux-store/slice/url.slice";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  //  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { DashboardArea } from "~/layouts/DashboardArea";
 const options = [
   { label: "Executive Diploma", value: 1 },
@@ -121,11 +124,11 @@ interface CreatecourseformProps {
   initialData?: any;
 }
 
-const EditCourses = ({ created, initialData = {} }: CreatecourseformProps) => {
+const EditCourses = ({ initialData = {} }: CreatecourseformProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const { id } = useParams();
-  const navigate = useNavigate();
+  //   const navigate = useNavigate();
   const { theme } = useTheme();
   const [isSelectDateChecked, setIsSelectDateChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -195,7 +198,7 @@ const EditCourses = ({ created, initialData = {} }: CreatecourseformProps) => {
           value: creator.creatorid,
         })) || [];
       const mappedSupervisors =
-        courseData.supervisors?.map((supervisor: Supervisor) => ({
+        courseData.supervisors?.map((supervisor: any) => ({
           label: supervisor.supervisor,
           value: supervisor.supervisorid,
         })) || [];
@@ -322,7 +325,7 @@ const EditCourses = ({ created, initialData = {} }: CreatecourseformProps) => {
     }));
   };
 
-  const isFormValid = (): boolean => {
+  const isFormValid = (): any => {
     const requiredFields = [
       "courseTitle",
       "courseType",
@@ -483,12 +486,12 @@ const EditCourses = ({ created, initialData = {} }: CreatecourseformProps) => {
     }
   };
 
-  const handleSettingsSelect = (key: string, option: any) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [key]: option.value,
-    }));
-  };
+  //   const handleSettingsSelect = (key: string, option: any) => {
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       [key]: option.value,
+  //     }));
+  //   };
 
   return (
     <DashboardArea>

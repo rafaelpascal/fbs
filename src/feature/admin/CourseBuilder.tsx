@@ -10,7 +10,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DraggableItem } from "./Items";
 import ButtonGrid from "./BuilderButtons";
 import ModalContainer from "./ModalContainer";
-import { R } from "node_modules/@tanstack/react-query-devtools/build/modern/ReactQueryDevtools-Cn7cKi7o";
+//import { R } from "node_modules/@tanstack/react-query-devtools/build/modern/ReactQueryDevtools-Cn7cKi7o";
 
 interface Lessons {
   id: number;
@@ -126,7 +126,7 @@ const CourseBuilder = ({ created }: any) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
-
+  console.log(selectedModule);
   const addModule = async () => {
     setIsnewModule(true);
     setNewModule({

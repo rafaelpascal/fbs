@@ -38,7 +38,7 @@ interface SettingsProps {
   courseformat: Option[];
   handleSelect: (field: string, option: Option) => void;
   formData: FormData;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  setFormData: any;
   initialValues: {
     courserun: { label: string; value: number } | null;
     difficultyLevel: { label: string; value: number } | null;
@@ -63,8 +63,8 @@ const Settings = ({
   theme,
   isSelectDateChecked,
   isScheduleDateChecked,
-  handleRadioChange,
-  handlescheduleChange,
+  // handleRadioChange,
+  // handlescheduleChange,
   setIsSelectDateChecked,
   setIsScheduleDateChecked,
   deficultyLevel,
@@ -99,15 +99,15 @@ const Settings = ({
     setFormData((prevData: any) => ({ ...prevData, [field]: value }));
   };
 
-  const handleSelectChange = (
-    field: string,
-    option: { label: string; value: string | number }
-  ) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      [field]: option,
-    }));
-  };
+  // const handleSelectChange = (
+  //   field: string,
+  //   option: { label: string; value: string | number }
+  // ) => {
+  //   setFormData((prev: any) => ({
+  //     ...prev,
+  //     [field]: option,
+  //   }));
+  // };
 
   return (
     <div className="border-t-2 border-[#ddd] py-4">
