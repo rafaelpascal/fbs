@@ -21,6 +21,7 @@ export const ROUTES = {
   PAYMENTTABLE: "/admin/dashboard/payment",
   APPLICATIONTABLE: "/admin/dashboard/application",
   FACULTYTABLE: "/admin/dashboard/faculty",
+  EDITCOURSES: "/admin/courses/edit/:id",
   COURSEAPPLICATION: "/admin/dashboard/application/:applicationId",
   COURSES: "/admin/courses",
   PAYMENTS: "/admin/payments",

@@ -37,6 +37,9 @@ const CourseApplications = lazyLoad(
 const AdminCourses = lazyLoad(
   () => import("~/pages/Admin/Courses/AdminCourses.tsx")
 );
+const EditCourses = lazyLoad(
+  () => import("~/pages/EditCourses/EditCourses.tsx")
+);
 const CourseAssignmentTable = lazyLoad(
   () => import("~/pages/Admin/Courses/CourseTable/CourseAssignmentTable.tsx")
 );
@@ -192,6 +195,10 @@ const router = createBrowserRouter(
             {
               path: ROUTES.COURSEAPPLICATION,
               element: <CourseApplications />,
+            },
+            {
+              path: ROUTES.EDITCOURSES,
+              element: <EditCourses />,
             },
             {
               path: ROUTES.COURSES,
