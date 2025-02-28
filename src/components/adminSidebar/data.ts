@@ -26,7 +26,7 @@ export const sidebarData: SideNavProps[] = [
     text: "Students",
   },
   {
-    href: "/events/management",
+    href: "/admin/events",
     icon: MdOutlineEventAvailable,
     dropdown: false,
     text: "Events",

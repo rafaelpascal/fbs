@@ -302,22 +302,22 @@ export const NewAssignmentModal = ({
                       </li>
                       <li onClick={() => handleLimitChange(question.id, 200)}>
                         <p className="font-DMSans py-1 cursor-pointer hover:bg-slate-200 px-2 rounded-box font-semibold text-[16px]">
-                          200
+                          350
                         </p>
                       </li>
                       <li onClick={() => handleLimitChange(question.id, 300)}>
                         <p className="font-DMSans py-1 cursor-pointer hover:bg-slate-200 px-2 rounded-box font-semibold text-[16px]">
-                          300
+                          800
                         </p>
                       </li>
                       <li onClick={() => handleLimitChange(question.id, 400)}>
                         <p className="font-DMSans py-1 cursor-pointer hover:bg-slate-200 px-2 rounded-box font-semibold text-[16px]">
-                          400
+                          1500
                         </p>
                       </li>
                       <li onClick={() => handleLimitChange(question.id, 500)}>
                         <p className="font-DMSans py-1 cursor-pointer hover:bg-slate-200 px-2 rounded-box font-semibold text-[16px]">
-                          500
+                          3000
                         </p>
                       </li>
                     </ul>

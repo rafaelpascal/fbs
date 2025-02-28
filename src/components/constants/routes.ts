@@ -11,6 +11,9 @@ export const ROUTES = {
   PAYMENT: "/payment/:id",
   LECTURE: "/lecture/:id",
   QUIZ: "/assignment/:quizId",
+  EXAM: "/exam/:examId",
+  NEWASSIGNMENT: "/newassignment/:assignmentId",
+  POLLS: "/polls/:pollsId",
   WORD: "/word",
   ASSIGNMENT: "/module/assignment",
   BANKTRANSFER: "/banktransfer/:id",
@@ -33,4 +36,5 @@ export const ROUTES = {
   ADMINMANAGEMENT: "/admin/signup",
   STUDENTRANSACTION: "/transaction",
   EVENTMANAGEMENT: "/events/management",
+  ADMINEVENT: "/admin/events",
 };

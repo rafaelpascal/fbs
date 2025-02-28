@@ -13,7 +13,6 @@ import { Link, useParams } from "react-router-dom";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { setLessonId } from "~/redux-store/slice/lessonSlice";
-import { fetchlistCoursebyId } from "~/api/course/hooks";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -23,10 +22,16 @@ export interface SideNavProps {
   iconOnly?: boolean;
 }
 
+interface CourseDetails {
+  course_startdate: string;
+  course_enddate: string;
+}
+
+interface CourseData {
+  course_details: CourseDetails;
+}
 // Sidebar Component
 export const LectureSidebar = () => {
-  // const courseId = useSelector((state: RootState) => state.course.course_id);
-  const courseId = localStorage.getItem("course_id");
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const { id } = useParams<{ id: string }>();
@@ -34,10 +39,12 @@ export const LectureSidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setisCollapsed] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const [fecthingWeek, setFecthingWeek] = useState(false);
   const { sidebarData } = useSidebar();
   const [moduleTitle, setModuleTitle] = useState("");
   const [moduleNumber, setModuleNumber] = useState("");
-  const { data } = fetchlistCoursebyId(courseId ?? "");
+  const [courseId, setCourseId] = useState("");
+  const [courseData, setCourseData] = useState<CourseData | null>(null);
 
   const getCourseWeekInfo = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
@@ -57,14 +64,12 @@ export const LectureSidebar = () => {
     )} / ${totalWeeks} weeks`;
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
-  const weekInfo = getCourseWeekInfo(
-    data.course_details.course_startdate,
-    data.course_details.course_enddate
-  );
+  const weekInfo = courseData?.course_details
+    ? getCourseWeekInfo(
+        courseData.course_details.course_startdate,
+        courseData.course_details.course_enddate
+      )
+    : "Week 0 / 0 weeks";
 
   const [weekNumber, totalWeeks] = weekInfo.split(" / ");
   // Toggle side bar on mobile view
@@ -79,12 +84,21 @@ export const LectureSidebar = () => {
         module_id: JSON.parse(id ?? ""),
       };
       const res = await CourseServices.getModulebyId(payload);
-      setModuleTitle(res.data.modules[0].module_title);
-      setModuleNumber(res.data.modules[0].module_number);
-      setLoading(false);
+
+      if (res.data?.modules?.length > 0) {
+        setModuleTitle(res.data.modules[0].module_title ?? "Unknown Module");
+        setModuleNumber(res.data.modules[0].module_number ?? "0");
+        setCourseId(res.data.modules[0].course_id);
+      } else {
+        setModuleTitle("Module Not Found");
+        setModuleNumber("0");
+      }
     } catch (error) {
+      console.error("Error fetching module:", error);
+      setModuleTitle("Error Loading Module");
+      setModuleNumber("0");
+    } finally {
       setLoading(false);
-      console.log(error);
     }
   };
 
@@ -93,6 +107,24 @@ export const LectureSidebar = () => {
       fetModules();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (!courseId) return;
+
+    const fetchData = async () => {
+      try {
+        setFecthingWeek(true);
+        const res = await CourseServices.listCoursebyId(courseId);
+        setCourseData(res);
+        setFecthingWeek(false);
+      } catch (error) {
+        setFecthingWeek(false);
+        console.error("Error fetching course:", error);
+      }
+    };
+
+    fetchData();
+  }, [courseId]);
 
   const toggleCollapse = () => {
     setisCollapsed(!isCollapsed);
@@ -153,10 +185,14 @@ export const LectureSidebar = () => {
               <Link to="/dashboard">
                 <RiHome2Line className="text-[35px]" />
               </Link>
-              <h2 className="text-[20px] font-DMSans font-semibold">
-                <span className="text-[#1CB503]">{weekNumber} /</span>
-                <span> {totalWeeks}</span>
-              </h2>
+              {fecthingWeek ? (
+                <LoadingSpinner size="sm" />
+              ) : (
+                <h2 className="text-[20px] font-DMSans font-semibold">
+                  <span className="text-[#1CB503]">{weekNumber} /</span>
+                  <span> {totalWeeks}</span>
+                </h2>
+              )}
             </div>
           )}
           <button

@@ -120,7 +120,6 @@ export const AdminSidebar = () => {
             ))}
           </ul>
 
-          {/* Bottom Settings and Logout */}
           <div className="absolute bottom-0 p-[20px] w-full bg-transparent">
             <button
               onClick={handleLogout}

@@ -80,6 +80,10 @@ import ErrorPage from "~/pages/ErrorPage.tsx";
 import ForgotPassword from "~/pages/auth/ForgotPassword.tsx";
 import ChangePasswordpage from "~/pages/auth/ChangePasswordpage.tsx";
 import StudentsManagement from "~/pages/Admin/Students/StudentsManagement.tsx";
+import Exam from "~/pages/lecture/Exam.tsx";
+import NewAssignment from "~/pages/lecture/NewAssignment.tsx";
+import Polls from "~/pages/lecture/Poll.tsx";
+import AdminEvents from "~/pages/Admin/Events/AdminEvents.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
@@ -220,6 +224,10 @@ const router = createBrowserRouter(
               path: ROUTES.EVENTMANAGEMENT,
               element: <EventsManagement />,
             },
+            {
+              path: ROUTES.ADMINEVENT,
+              element: <AdminEvents />,
+            },
           ],
         },
         {
@@ -232,6 +240,18 @@ const router = createBrowserRouter(
             {
               path: ROUTES.QUIZ,
               element: <Quiz />,
+            },
+            {
+              path: ROUTES.EXAM,
+              element: <Exam />,
+            },
+            {
+              path: ROUTES.NEWASSIGNMENT,
+              element: <NewAssignment />,
+            },
+            {
+              path: ROUTES.POLLS,
+              element: <Polls />,
             },
             {
               path: ROUTES.WORD,
