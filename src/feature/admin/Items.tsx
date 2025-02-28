@@ -17,7 +17,15 @@ const DraggableItem = ({ item, type, theme, index, moveItem }: any) => {
   });
 
   const [, drop] = useDrop({
-    accept: ["LESSON", "CAPSTONE", "ASSIGNMENT", "QUIZ", "EXAM", "POLLS"],
+    accept: [
+      "LESSON",
+      "CAPSTONE",
+      "ASSIGNMENT",
+      "QUIZ",
+      "EXAM",
+      "CASE_STUDY",
+      "RESOURCES",
+    ],
     hover: (draggedItem: any) => {
       if (
         draggedItem.index !== index ||
@@ -30,7 +38,7 @@ const DraggableItem = ({ item, type, theme, index, moveItem }: any) => {
   });
 
   return (
-    <div ref={drop} className="flex justify-between items-center gap-2">
+    <div ref={drop} className="flex justify-between items-center gap-2 w-[90%]">
       <button ref={drag} className="p-2 rounded text-white">
         <RiDragMove2Fill
           className={`text-[30px] ${
@@ -39,25 +47,30 @@ const DraggableItem = ({ item, type, theme, index, moveItem }: any) => {
         />
       </button>
       <div
-        className={`p-3 w-full shadow-md flex justify-between items-start mb-2 ${
+        className={`p-3 w-full shadow-md flex justify-between items-start mb-2 
+        bg-gray-200
+        `} //
+      >
+        {/* ${
           theme === "dark"
             ? "bg-transparent border border-gray-400"
             : "bg-gray-200"
-        }`}
-      >
+        } */}
         <div className="flex flex-col lg:flex-row gap-2">
-          <h2 className="font-semibold text-[18px] text-red-500">
-            {item.title}:
+          <h2 className="font-semibold text-[18px] text-gray-700">
+            {item.title} :
           </h2>
-          <h2 className="font-semibold text-[18px]">{item.description}</h2>
+          <h2 className="font-semibold text-[18px] text-gray-700">
+            {item.description}
+          </h2>
         </div>
         <div className="flex justify-end gap-2">
           <p className="font-normal text-[18px]">{item.pages}</p>
           <button>
-            <FiEdit className="text-[30px]" />
+            <FiEdit className="text-[30px] text-gray-700" />
           </button>
           <button>
-            <MdOutlineCancel className="text-[30px]" />
+            <MdOutlineCancel className="text-[30px] text-gray-700" />
           </button>
         </div>
       </div>

@@ -2,12 +2,13 @@ const sizeClass = {
   default: "h-8 w-8",
   sm: "h-6 w-6",
   xs: "h-4 w-4",
+  lg: "h-12 w-12",
 };
 
 export const LoadingSpinner = ({
   size,
 }: {
-  size?: "default" | "sm" | "xs";
+  size?: "default" | "sm" | "xs" | "lg";
 }) => {
   return (
     <div role="status">
