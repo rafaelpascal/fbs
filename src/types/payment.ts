@@ -1,4 +1,5 @@
 export interface PaymentData {
+  application_id: number;
   payment_id: number;
   fullname: string;
   amountPaid: number;

@@ -10,24 +10,27 @@ interface Option {
 }
 
 // Define the props for the SelectionDropdown component
-interface SelectionDropdownProps {
-  label?: string;
-  options: Option[] | undefined;
+interface MultipleSelectionDropdownProps {
+  label: string;
+  options: Option[];
+  onSelect: (selectedOptions: Option[]) => void;
+  placeholder: string;
   labelClassName?: string;
-  placeholder?: string;
-  onSelect: (selectedOptions: Option[]) => void; // Now expects an array of selected options
+  initialSelected?: Option[];
 }
 
-const MultipleSelectionDropdown: React.FC<SelectionDropdownProps> = ({
-  options,
+const MultipleSelectionDropdown = ({
   label,
-  labelClassName,
-  placeholder = "Select an option",
+  options,
   onSelect,
-}) => {
+  placeholder,
+  labelClassName,
+  initialSelected = [],
+}: MultipleSelectionDropdownProps) => {
   const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedOptions, setSelectedOptions] = useState<Option[]>([]); // Changed to array
+  const [selectedOptions, setSelectedOptions] =
+    useState<Option[]>(initialSelected);
 
   // Function to toggle dropdown visibility
   const handleToggle = () => {
@@ -36,6 +39,7 @@ const MultipleSelectionDropdown: React.FC<SelectionDropdownProps> = ({
 
   // Function to handle selection of an option
   const handleSelect = (option: Option) => {
+    console.log(option);
     const isSelected = selectedOptions.some(
       (selected) => selected.value === option.value
     );
@@ -50,7 +54,7 @@ const MultipleSelectionDropdown: React.FC<SelectionDropdownProps> = ({
       // Add the option to the selection
       updatedOptions = [...selectedOptions, option];
     }
-
+    console.log(updatedOptions);
     setSelectedOptions(updatedOptions);
     onSelect(updatedOptions); // Pass the updated selection to the parent
   };
@@ -110,7 +114,7 @@ const MultipleSelectionDropdown: React.FC<SelectionDropdownProps> = ({
             theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
           )}
         >
-          {options?.map((option) => (
+          {options.map((option) => (
             <li
               key={option.value}
               className={cn(

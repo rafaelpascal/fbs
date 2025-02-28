@@ -78,7 +78,7 @@ interface Option {
 interface FormData {
   courseid?: number;
   courseTitle: string;
-  courseType: null | { label: string };
+  courseType: { label: string; value: number } | null;
   facilitator: Option[] | null;
   editors: Option[] | null;
   supervisors: Option[] | null;
@@ -87,21 +87,19 @@ interface FormData {
   featuredImages: File[];
   featuredVideo: string;
   orientation: string;
-  //
   maxStudents: string;
   courseRun: string;
   enrollmentSchedule: string;
   courseSchedule: string;
-  difficultyLevel: null | { label: string };
-  courserun: null | { label: string };
-  instructoreType: null | { label: string };
-  courseFormat: null | { label: string };
+  difficultyLevel: { label: string; value: number } | null;
+  courserun: { label: string; value: number } | null;
+  instructoreType: { label: string; value: number } | null;
+  courseFormat: { label: string; value: number } | null;
   cohortTag: string;
   enrollmentStartDate: string;
   enrollmentEndDate: string;
   courseStartDate: string;
   courseEndDate: string;
-  //
   currency: {
     NGN: boolean;
     USD: boolean;
@@ -111,10 +109,9 @@ interface FormData {
   couponTitle: string;
   couponValidity: boolean;
   couponValidTill: string;
-  // currentStep: number;
   discountType: string;
   discountValue: string;
-  paymentplan: null | { value: string };
+  paymentplan: { value: string } | null;
   selectedMonths: number;
 }
 
@@ -133,7 +130,42 @@ const Createcourseform = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCertType, setIsCertType] = useState(false);
   const [isScheduleDateChecked, setIsScheduleDateChecked] = useState(false);
-  const [formData, setFormData] = useState<FormData>(initialData);
+  const [formData, setFormData] = useState<FormData>({
+    courseid: initialData.courseid || undefined,
+    courseTitle: initialData.courseTitle || "",
+    courseType: initialData.courseType || null,
+    facilitator: initialData.facilitator || null,
+    editors: initialData.editors || null,
+    supervisors: initialData.supervisors || null,
+    description: initialData.description || "",
+    highlight: initialData.highlight || "",
+    featuredImages: initialData.featuredImages || [],
+    featuredVideo: initialData.featuredVideo || "",
+    orientation: initialData.orientation || "",
+    maxStudents: initialData.maxStudents || "",
+    courseRun: initialData.courseRun || "",
+    enrollmentSchedule: initialData.enrollmentSchedule || "",
+    courseSchedule: initialData.courseSchedule || "",
+    difficultyLevel: initialData.difficultyLevel || null,
+    courserun: initialData.courserun || null,
+    instructoreType: initialData.instructoreType || null,
+    courseFormat: initialData.courseFormat || null,
+    cohortTag: initialData.cohortTag || "",
+    enrollmentStartDate: initialData.enrollmentStartDate || "",
+    enrollmentEndDate: initialData.enrollmentEndDate || "",
+    courseStartDate: initialData.courseStartDate || "",
+    courseEndDate: initialData.courseEndDate || "",
+    currency: initialData.currency || { NGN: false, USD: false },
+    nairaAmount: initialData.nairaAmount || "",
+    dollarAmount: initialData.dollarAmount || "",
+    couponTitle: initialData.couponTitle || "",
+    couponValidity: initialData.couponValidity || false,
+    couponValidTill: initialData.couponValidTill || "",
+    discountType: initialData.discountType || "",
+    discountValue: initialData.discountValue || "",
+    paymentplan: initialData.paymentplan || null,
+    selectedMonths: initialData.selectedMonths || 0,
+  });
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsSelectDateChecked(event.target.value === "selectDate");
@@ -188,50 +220,84 @@ const Createcourseform = ({
     }));
   };
 
-  const isFormValid = (): boolean => {
-    // Required fields to validate
+  const isFormValid = (): any => {
     const requiredFields = [
       "courseTitle",
       "courseType",
       "description",
       "maxStudents",
       "cohortTag",
+      "facilitator",
     ];
-    return requiredFields.every(
-      (field) => formData[field as keyof FormData] !== ""
+
+    const hasValidDates =
+      formData.enrollmentSchedule === "allTime" ||
+      (formData.enrollmentStartDate && formData.enrollmentEndDate);
+
+    const hasValidCourse =
+      formData.courseSchedule === "allTime" ||
+      (formData.courseStartDate && formData.courseEndDate);
+
+    const hasValidPayment =
+      (formData.currency.NGN && formData.nairaAmount) ||
+      (formData.currency.USD && formData.dollarAmount);
+
+    return (
+      requiredFields.every((field) => {
+        const value = formData[field as keyof FormData];
+        return (
+          value !== "" &&
+          value !== null &&
+          (Array.isArray(value) ? value.length > 0 : true)
+        );
+      }) &&
+      hasValidDates &&
+      hasValidCourse &&
+      hasValidPayment
     );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    setIsSubmitting(true);
     e.preventDefault();
+    setIsSubmitting(true);
+
     try {
       const formDataToSend = new FormData();
 
+      // Basic course information
       formDataToSend.append("programme_category_id", "2");
-      formDataToSend.append("course_title", formData.courseTitle);
+      formDataToSend.append("course_title", formData.courseTitle.trim());
       formDataToSend.append("course_type", formData.courseType?.label || "");
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("course_highlight", formData.highlight);
+      formDataToSend.append("description", formData.description.trim());
+      formDataToSend.append("course_highlight", formData.highlight.trim());
 
-      formData.facilitator?.forEach((item) =>
-        formDataToSend.append("facilitators[]", item.label.toString())
-      );
+      // Arrays handling
+      if (formData.facilitator?.length) {
+        formData.facilitator.forEach((item) =>
+          formDataToSend.append("facilitators[]", item.label)
+        );
+      }
 
-      formData.editors?.forEach((item) =>
-        formDataToSend.append("creators[]", item.label.toString())
-      );
-      formData.supervisors?.forEach((item) =>
-        formDataToSend.append("supervisors[]", item.label.toString())
-      );
+      if (formData.editors?.length) {
+        formData.editors.forEach((item) =>
+          formDataToSend.append("creators[]", item.label)
+        );
+      }
+
+      if (formData.supervisors?.length) {
+        formData.supervisors.forEach((item) =>
+          formDataToSend.append("supervisors[]", item.label)
+        );
+      }
+
+      // File handling
       formData.featuredImages.forEach((file) => {
         formDataToSend.append("course_image", file);
       });
 
-      formDataToSend.append("video_url", formData.featuredVideo);
-
+      // Course details
+      formDataToSend.append("video_url", formData.featuredVideo.trim());
       formDataToSend.append("max_students", formData.maxStudents);
-      // formDataToSend.append("course_run", formData.courseRun);
       formDataToSend.append(
         "difficulty_level",
         formData.difficultyLevel?.label || ""
@@ -243,9 +309,9 @@ const Createcourseform = ({
       );
       formDataToSend.append("course_mode", formData.courseFormat?.label || "");
       formDataToSend.append("course_format", "digital");
-      formDataToSend.append("program_fee", "");
-      formDataToSend.append("program_plan", formData.paymentplan?.value || "");
-      formDataToSend.append("usd", formData.currency.USD ? "1" : "0");
+      formDataToSend.append("cohort_title", formData.cohortTag.trim());
+
+      // Dates and schedules
       formDataToSend.append(
         "enrollment_all_times",
         formData.enrollmentSchedule === "allTime" ? "1" : "0"
@@ -255,46 +321,45 @@ const Createcourseform = ({
         formData.enrollmentStartDate
       );
       formDataToSend.append("enrollment_enddate", formData.enrollmentEndDate);
-      formDataToSend.append("cohort_title", formData.cohortTag);
       formDataToSend.append(
         "course_flexible",
         formData.courseSchedule === "allTime" ? "1" : "0"
       );
       formDataToSend.append("course_startdate", formData.courseStartDate);
       formDataToSend.append("course_enddate", formData.courseEndDate);
+
+      // Payment information
       formDataToSend.append("naira", formData.currency.NGN ? "1" : "0");
+      formDataToSend.append("usd", formData.currency.USD ? "1" : "0");
       formDataToSend.append("naira_amount", formData.nairaAmount);
       formDataToSend.append("usd_amount", formData.dollarAmount);
-      // console.log("MMMMMMMMMM", formData.selectedMonths);
       formDataToSend.append("installment", formData.selectedMonths.toString());
-      console.log("FormData Payload:");
-      for (const [key, value] of formDataToSend.entries()) {
-        console.log(`${key}:`, value);
-      }
-      // const isEmpty = (obj) => Object.keys(obj).length === 0;
-      let res;
+      formDataToSend.append("program_plan", formData.paymentplan?.value || "");
+
+      // Handle update vs create
+      let response;
       if (formData.courseid) {
         formDataToSend.append("courseid", formData.courseid.toString());
-        res = await CourseServices.updataCreatedCourse(formDataToSend);
-        console.log(res);
+        for (const [key, value] of formDataToSend.entries()) {
+          console.log(`${key}:`, value);
+        }
+        response = await CourseServices.updataCreatedCourse(formDataToSend);
       } else {
-        res = await CourseServices.createCourse(formDataToSend);
+        for (const [key, value] of formDataToSend.entries()) {
+          console.log(`${key}:`, value);
+        }
+        response = await CourseServices.createCourse(formDataToSend);
       }
 
-      dispatch(setCourseId(res.data.course_id));
-      dispatch(setCourseUrl(res.data.course_url));
+      if (response.data.success) {
+        dispatch(setCourseId(response.data.course_id));
+        dispatch(setCourseUrl(response.data.course_url));
 
-      setFormData((prev) => {
-        const updated = {
+        setFormData((prev) => ({
           ...prev,
-          courseid: res?.data?.course_id,
-        };
-        console.log("Updated form data:", updated);
-        return updated;
-      });
-      if (res.data.success === true) {
-        setIsSubmitting(false);
-        console.log(res?.data?.course_id);
+          courseid: response.data.course_id,
+        }));
+
         await showAlert(
           "success",
           "Created!",
@@ -305,24 +370,23 @@ const Createcourseform = ({
 
         created({
           ...formData,
-          courseid: res?.data?.course_id,
+          courseid: response.data.course_id,
         });
-      } else {
-        setIsSubmitting(false);
       }
     } catch (error) {
-      console.log(error);
-      setIsSubmitting(false);
+      console.error("Form submission error:", error);
       await showAlert("error", "Failed!", "Failed to create!", "Ok", "#FF5050");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleSettingsSelect = (key: string, option: any) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [key]: option.value,
-    }));
-  };
+  // const handleSettingsSelect = (key: string, option: any) => {
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     [key]: option.value,
+  //   }));
+  // };
 
   return (
     <div>
@@ -360,6 +424,7 @@ const Createcourseform = ({
               options={facilitator}
               onSelect={handleMultipleSelect}
               placeholder="Select Facilitators"
+              initialSelected={formData.facilitator || []}
             />
           </div>
         </div>
@@ -371,6 +436,7 @@ const Createcourseform = ({
               options={creators}
               onSelect={handleEditorSelect}
               placeholder="Select Creators/editors"
+              initialSelected={formData.editors || []}
             />
           </div>
           <div className="w-full mb-4">
@@ -380,6 +446,7 @@ const Createcourseform = ({
               options={supervisors}
               onSelect={handleSupervisorSelect}
               placeholder="Select Supervisors"
+              initialSelected={formData.supervisors || []}
             />
           </div>
         </div>
@@ -388,6 +455,23 @@ const Createcourseform = ({
             FEATURED IMAGES
           </h2>
           <ImageUpload multiple onUpload={handleImageUpload} />
+          {formData.featuredImages.length > 0 && (
+            <div className="mt-2 flex gap-2">
+              {formData.featuredImages.map((image, index) => (
+                <div key={index} className="relative w-20 h-20">
+                  <img
+                    src={
+                      typeof image === "string"
+                        ? image
+                        : URL.createObjectURL(image)
+                    }
+                    alt={`Preview ${index}`}
+                    className="w-full h-full object-cover rounded"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div className="my-4">
           <h2 className="text-[17px] font-DMSans font-semibold">
@@ -458,9 +542,19 @@ const Createcourseform = ({
             deficultyLevel={deficultyLevel}
             instructoreType={instructoreType}
             courseformat={courseFormat}
-            handleSelect={handleSettingsSelect}
+            handleSelect={handleSelect}
             formData={formData}
             setFormData={setFormData}
+            initialValues={{
+              courserun: formData.courserun,
+              difficultyLevel: formData.difficultyLevel,
+              instructoreType: formData.instructoreType,
+              courseFormat: formData.courseFormat,
+              selectedMonths: formData.selectedMonths,
+              enrollmentEndDate: formData.enrollmentEndDate,
+              courseStartDate: formData.courseStartDate,
+              courseEndDate: formData.courseEndDate,
+            }}
           />
           <div>
             <PaymentPlan formData={formData} setFormData={setFormData} />
