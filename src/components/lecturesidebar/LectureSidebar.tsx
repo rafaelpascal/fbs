@@ -157,7 +157,7 @@ export const LectureSidebar = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 h-screen lg:flex lg:flex-col justify-between z-40 transition-transform transform",
+          "fixed top-0 left-0 shadow-md h-screen lg:flex lg:flex-col justify-between z-40 transition-transform transform",
           isSidebarOpen ? "translate-x-0 w-[300px]" : "-translate-x-full",
           "lg:translate-x-0 lg:relative",
           isCollapsed ? "lg:w-[80px]" : "lg:w-[600px]",
@@ -208,19 +208,19 @@ export const LectureSidebar = () => {
 
           {/* Navigation Items */}
           {!isCollapsed && (
-            <div className="w-full shadow-md rounded-md">
+            <div className="w-full border border-[#ddd] shadow-md mt-4 rounded-md">
               {isLoading ? (
                 <div className="w-full py-4 flex justify-center items-center">
                   <LoadingSpinner size="xs" />
                 </div>
               ) : (
-                <h2 className="mx-2 my-4 font-DMSans text-[18px] font-bold w-full">
+                <h2 className="mx-2 my-4 w-[90%] font-DMSans text-[18px] font-bold">
                   Module {moduleNumber}: {moduleTitle}
                 </h2>
               )}
               <ul
                 className={cn(
-                  "w-full grid grid-cols-1 py-4 rounded-md overflow-x-hidden overflow-y-auto",
+                  "w-full grid grid-cols-1 h-[400px] scrollbar-style py-4 rounded-md overflow-x-hidden overflow-y-auto",
                   "transition-all duration-300",
                   isCollapsed ? "gap-2" : "gap-4",
                   theme === "light" ? "bg-[#fff]" : "bg-[#424141]"
@@ -242,7 +242,7 @@ export const LectureSidebar = () => {
             </div>
           )}
           {!isCollapsed && (
-            <>
+            <div className="my-4 w-full">
               <button className="text-[14px] w-full py-4 rounded-md shadow-md bg-transparent">
                 <p className="font-DMSans font-semibold text-[14px]">
                   My Notes
@@ -253,7 +253,7 @@ export const LectureSidebar = () => {
                   Support/Help
                 </p>
               </button>
-            </>
+            </div>
           )}
         </div>
       </aside>

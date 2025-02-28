@@ -68,7 +68,7 @@ export const LectureItems = (props: SideNavProps) => {
             )}
             onClick={handleDropdownClick}
           >
-            <div className="flex justify-start w-[80%] items-center">
+            <div className="flex justify-start w-[90%] items-center">
               <div className="">
                 {playing ? (
                   <div className="w-[40px] h-[40px] rounded-full bg-[#FF3B30]/20 flex justify-center items-center">
@@ -86,7 +86,7 @@ export const LectureItems = (props: SideNavProps) => {
                 </p>
               </div>
             </div>
-            <div className="w-[20%]">
+            <div className="w-[10%]">
               {dropdown && (
                 <div className="">
                   {isClicked ? (

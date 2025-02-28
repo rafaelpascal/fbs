@@ -130,48 +130,6 @@ const Lecture = () => {
     updateSidebarData(updatedData);
   };
 
-  // const updateLecture = () => {
-  //   if (!lectureTitles.length) return;
-
-  //   const updatedData: SideNavProps[] = lectureTitles.map(
-  //     (lessonItem: any) => ({
-  //       href: `/module/${lessonItem.module_id}`,
-  //       icon: FaFilePdf,
-  //       dropdown: true,
-  //       playing: lessonItem.lessonid == currentLessonId,
-  //       text: lessonItem.lesson_title || "Untitled Lesson",
-  //       children: [
-  //         {
-  //           href: lessonItem.upload_pdf !== "" ? lessonItem.upload_pdf : "#",
-  //           icon: GoDotFill,
-  //           dropdown: false,
-  //           text: "Lecture",
-  //         },
-  //         {
-  //           href:
-  //             lessonItem.upload_video_audio !== ""
-  //               ? lessonItem.upload_video_audio
-  //               : "#",
-  //           icon: GoDotFill,
-  //           dropdown: false,
-  //           text: "Quiz",
-  //         },
-  //         {
-  //           href: lessonItem.stream_video_audio
-  //             ? lessonItem.stream_video_audio
-  //             : "#",
-  //           icon: GoDotFill,
-  //           dropdown: false,
-  //           text: "Assignment",
-  //         },
-  //       ],
-  //     })
-  //   );
-
-  //   // Update sidebar state with dynamic data
-  //   updateSidebarData(updatedData);
-  // };
-
   useEffect(() => {
     updateLecture();
   }, [id, lectureTitles]);
@@ -205,8 +163,6 @@ const Lecture = () => {
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       const nextLessonId = mediaItems[nextIndex]?.lessonId;
-      console.log(nextLessonId);
-
       if (nextLessonId) {
         setCurrentLessonId(nextLessonId); // Set only if lessonId exists
       }
@@ -224,22 +180,6 @@ const Lecture = () => {
       }
     }
   };
-
-  // const handleNext = () => {
-  //   if (currentIndex < allMediaUrls.length - 1) {
-  //     const nextIndex = currentIndex + 1;
-  //     setCurrentIndex(nextIndex);
-  //     setCurrentLessonId(mediaItems[nextIndex]?.lessonId); // ✅ Correctly set the lesson ID
-  //   }
-  // };
-
-  // const handlePrevious = () => {
-  //   if (currentIndex > 0) {
-  //     const prevIndex = currentIndex - 1;
-  //     setCurrentIndex(prevIndex);
-  //     setCurrentLessonId(mediaItems[prevIndex]?.lessonId); // ✅ Correctly set the lesson ID
-  //   }
-  // };
 
   useEffect(() => {
     updateLecture();
