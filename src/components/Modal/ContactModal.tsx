@@ -4,13 +4,15 @@ import { MdOutlinePhone, MdWhatsapp } from "react-icons/md";
 import { MdEmail } from "react-icons/md";
 
 interface IModalPropsType {
+  id: number;
   isOpen: boolean;
   closeModal: () => void;
 }
 
-export const ContactModal = ({ isOpen, closeModal }: IModalPropsType) => {
+export const ContactModal = ({ isOpen, id, closeModal }: IModalPropsType) => {
   // Close modal
   const handleclose = useCallback(() => {
+    console.log(id);
     closeModal();
   }, []);
 

@@ -340,14 +340,8 @@ const Createcourseform = ({
       let response;
       if (formData.courseid) {
         formDataToSend.append("courseid", formData.courseid.toString());
-        for (const [key, value] of formDataToSend.entries()) {
-          console.log(`${key}:`, value);
-        }
         response = await CourseServices.updataCreatedCourse(formDataToSend);
       } else {
-        for (const [key, value] of formDataToSend.entries()) {
-          console.log(`${key}:`, value);
-        }
         response = await CourseServices.createCourse(formDataToSend);
       }
 

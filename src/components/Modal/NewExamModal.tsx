@@ -300,22 +300,22 @@ export const NewExamModal = ({
                           100
                         </p>
                       </li>
-                      <li onClick={() => handleLimitChange(question.id, 200)}>
+                      <li onClick={() => handleLimitChange(question.id, 350)}>
                         <p className="font-DMSans py-1 cursor-pointer hover:bg-slate-200 px-2 rounded-box font-semibold text-[16px]">
                           350
                         </p>
                       </li>
-                      <li onClick={() => handleLimitChange(question.id, 300)}>
+                      <li onClick={() => handleLimitChange(question.id, 800)}>
                         <p className="font-DMSans py-1 cursor-pointer hover:bg-slate-200 px-2 rounded-box font-semibold text-[16px]">
                           800
                         </p>
                       </li>
-                      <li onClick={() => handleLimitChange(question.id, 400)}>
+                      <li onClick={() => handleLimitChange(question.id, 1500)}>
                         <p className="font-DMSans py-1 cursor-pointer hover:bg-slate-200 px-2 rounded-box font-semibold text-[16px]">
                           1500
                         </p>
                       </li>
-                      <li onClick={() => handleLimitChange(question.id, 500)}>
+                      <li onClick={() => handleLimitChange(question.id, 3000)}>
                         <p className="font-DMSans py-1 cursor-pointer hover:bg-slate-200 px-2 rounded-box font-semibold text-[16px]">
                           3000
                         </p>

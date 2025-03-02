@@ -185,30 +185,6 @@ const CourseApplications = () => {
           </div>
         ) : (
           <div className="w-full grid grid-cols-2 gap-4">
-            {/* {application.map((app, index) => (
-              <div key={index} className="w-full">
-                <h2 className="font-DMSans text-[21px] font-semibold text-left">
-                  {app.key}
-                </h2>
-                <div
-                  className={cn(
-                    "w-full rounded-md mt-3 shadow-md border-[0.5px] border-[#ddd] flex justify-between items-center p-4",
-                    theme === "dark" ? "bg-[#333]" : "bg-[#fff]",
-                    app.phone && "flex gap-4 justify-start items-center"
-                  )}
-                >
-                  {app.phone && (
-                    <p className="font-DMSans text-[18px] font-semibold text-left">
-                      {app.phone}
-                    </p>
-                  )}
-                  <p className="font-DMSans text-[18px] font-semibold text-left">
-                    {app.value}
-                  </p>
-                  {app.icon && <app.icon />}
-                </div>
-              </div>
-            ))} */}
             {application.map((app, index) => (
               <div key={index} className="w-full">
                 <h2 className="font-DMSans text-[21px] font-semibold text-left">

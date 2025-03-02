@@ -7,11 +7,11 @@ import { statColorCode } from "~/utils/helpers";
 // import TableFilter from "~/components/table/TableFilter";
 import InDataTable from "~/components/table/InDataTable";
 import { AssignmentData } from "~/components/constants/data";
-import { useState } from "react";
-import { ContactModal } from "~/components/Modal/ContactModal";
+// import { useState } from "react";
+// import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
-  id: string;
+  id: number;
   avatar: string;
   sn: number;
   name: string;
@@ -23,7 +23,7 @@ interface MerchantTableRow {
 }
 
 const CourseAssignmentTable = () => {
-  const [isContact, setIscontact] = useState(false);
+  // const [isContact, setIscontact] = useState(false);
   // const [filters, setFilters] = useState({
   //   dateFrom: "",
   //   dateTo: "",
@@ -124,9 +124,9 @@ const CourseAssignmentTable = () => {
     },
   ];
 
-  const handleClose = () => {
-    setIscontact(false);
-  };
+  // const handleClose = () => {
+  //   setIscontact(false);
+  // };
 
   return (
     <div className="w-full pb-4 flex justify-center items-center bg-[#fff]">
@@ -139,7 +139,7 @@ const CourseAssignmentTable = () => {
           // pagination={false}
         />
       </div>
-      <ContactModal isOpen={isContact} closeModal={handleClose} />
+      {/* <ContactModal isOpen={isContact} closeModal={handleClose} /> */}
     </div>
   );
 };

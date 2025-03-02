@@ -1,11 +1,20 @@
 import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
 import { FaFilter } from "react-icons/fa6";
-import { NavLink, Outlet } from "react-router-dom";
-import { BsQuestionSquareFill } from "react-icons/bs";
+import { TableColumn } from "react-data-table-component";
 import { useTheme } from "~/context/theme-provider";
-import { useCallback } from "react";
+import { useState } from "react";
 import { cn } from "~/utils/helpers";
 import { DashboardArea } from "~/layouts/DashboardArea";
+import InDataTable from "~/components/table/InDataTable";
+import { AssignmentData } from "~/components/constants/data";
+import { ContactModal } from "~/components/Modal/ContactModal";
+import { LuFileSearch } from "react-icons/lu";
+import ActionMenu from "~/components/table/ActionMenu";
+import { ViewAssignmentModal } from "~/components/Modal/ViewAssignmentModal";
+import { ViewExamModal } from "~/components/Modal/ViewExamModal";
+import { ViewCapstoneModal } from "~/components/Modal/ViewCapstoneModal";
+import { ViewPollModal } from "~/components/Modal/ViewPollModal";
+import { ViewQuizModal } from "~/components/Modal/ViewQuizModal";
 
 const options = [
   { label: "Master of Business Administration 1", value: 1 },
@@ -13,24 +22,318 @@ const options = [
   { label: "Master of Business Administration 3", value: 3 },
 ];
 
+interface MerchantTableRow {
+  id: number;
+  avatar: string;
+  sn: number;
+  name: string;
+  assignments: string;
+  feedback: string;
+  submitted: string;
+  score: string;
+  status: string;
+}
 const StudentsManagement = () => {
   const { theme } = useTheme();
-  const getNavLinkClassName = useCallback(
-    ({ isActive }: { isActive: boolean }) =>
-      isActive
-        ? "bg-[#FFD8E4] text-[20px] h-[170px] shadow-md w-[345px] min-w-[300px] flex flex-col justify-center items-start  rounded-[4px] font-DMSans font-normal p-6 text-[#140342]"
-        : `${cn(
-            "text-[20px] h-[170px] w-[345px] shadow-md min-w-[300px]  flex flex-col  justify-center items-start  font-DMSans font-normal p-6 rounded-lg",
-            theme === "dark"
-              ? "bg-[#333] border-[0.5px] border-[#ddd] shadow-lg text-[#fff]"
-              : "bg-[#FFFFFF] text-[#8F94A8]"
-          )}`,
-    [theme]
-  );
+  const [isContact, setIscontact] = useState({
+    status: false,
+    id: 0,
+  });
+  const [isQuizModal, setIsQuizModal] = useState({
+    status: false,
+    id: 0,
+  });
+  const [isAssignment, setIsAssignment] = useState({
+    status: false,
+    id: 0,
+  });
+  const [isExam, setIsExam] = useState({
+    status: false,
+    id: 0,
+  });
+  const [isCapstone, setisCapstone] = useState({
+    status: false,
+    id: 0,
+  });
+  const [isPollModal, setIsPollModal] = useState({
+    status: false,
+    id: 0,
+  });
 
   const handleSelect = (option: { label: string; value: string | number }) => {
     console.log("Selected option:", option);
   };
+  const columns: TableColumn<MerchantTableRow>[] = [
+    {
+      name: "S/N",
+      selector: (row: { sn: number }) => row.sn,
+      cell: (_row, index: number) => index + 1,
+      width: "60px",
+    },
+    {
+      name: "Name",
+      selector: (row: { name: string }) => row.name,
+      cell: (row) => (
+        <div className="flex justify-center items-center rounded-[4px]">
+          <div className="p-2 gap-1 flex justify-between items-center">
+            <h2 className="font-DMSans text-[#000] text-[16px] font-semibold">
+              {row.name}{" "}
+              <span className="text-[#6440FB]">(1 exam, 1 assignment)</span>
+            </h2>
+          </div>
+        </div>
+      ),
+      width: "350px",
+
+      sortable: true,
+    },
+    {
+      name: "Assignments",
+      selector: (row: { submitted: string }) => row.submitted,
+      cell: (row) => (
+        <div className="flex justify-center items-center rounded-[4px]">
+          <div className="p-2 gap-1 flex justify-between items-center">
+            <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              2
+            </h2>
+            <p className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              /
+            </p>
+            <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              3
+            </h2>
+          </div>
+          <button
+            onClick={() =>
+              setIsAssignment({
+                status: true,
+                id: row.id,
+              })
+            }
+            className="flex justify-center items-center gap-3 hover:border hover:border-[#6440FB] rounded-md p-1"
+          >
+            <p className="text-[#6440FB] font-DMSans text-[16px] font-semibold ">
+              View
+            </p>
+            <LuFileSearch className="text-[#6440FB] size-4" />
+          </button>
+        </div>
+      ),
+      width: "150px",
+      sortable: true,
+    },
+    {
+      name: "Exams",
+      selector: (row: { assignments: string }) => row.assignments,
+      cell: (row) => (
+        <div className="flex justify-center items-center rounded-[4px]">
+          <div className="p-2 gap-1 flex justify-between items-center">
+            <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              2
+            </h2>
+            <p className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              /
+            </p>
+            <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              3
+            </h2>
+          </div>
+          <button
+            onClick={() =>
+              setIsExam({
+                status: true,
+                id: row.id,
+              })
+            }
+            className="flex justify-center items-center gap-3 hover:border hover:border-[#6440FB] rounded-md p-1"
+          >
+            <p className="text-[#6440FB] font-DMSans text-[16px] font-semibold ">
+              View
+            </p>
+            <LuFileSearch className="text-[#6440FB] size-4" />
+          </button>
+        </div>
+      ),
+      width: "150px",
+      sortable: true,
+    },
+    {
+      name: "Capstones",
+      selector: (row: { feedback: string }) => row.feedback,
+      cell: (row) => (
+        <div className="flex justify-center items-center rounded-[4px]">
+          <div className="p-2 gap-1 flex justify-between items-center">
+            <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              2
+            </h2>
+            <p className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              /
+            </p>
+            <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              3
+            </h2>
+          </div>
+          <button
+            onClick={() =>
+              setisCapstone({
+                status: true,
+                id: row.id,
+              })
+            }
+            className="flex justify-center items-center gap-3 hover:border hover:border-[#6440FB] rounded-md p-1"
+          >
+            <p className="text-[#6440FB] font-DMSans text-[16px] font-semibold ">
+              View
+            </p>
+            <LuFileSearch className="text-[#6440FB] size-4" />
+          </button>
+        </div>
+      ),
+      width: "150px",
+      sortable: true,
+    },
+    {
+      name: "Quizzes",
+      selector: (row: { feedback: string }) => row.feedback,
+      cell: (row) => (
+        <div className="flex justify-center items-center rounded-[4px]">
+          <div className="p-2 gap-1 flex justify-between items-center">
+            <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              2
+            </h2>
+            <p className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              /
+            </p>
+            <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              3
+            </h2>
+          </div>
+          <button
+            onClick={() =>
+              setIsQuizModal({
+                status: true,
+                id: row.id,
+              })
+            }
+            className="flex justify-center items-center gap-3 hover:border hover:border-[#6440FB] rounded-md p-1"
+          >
+            <p className="text-[#6440FB] font-DMSans text-[16px] font-semibold ">
+              View
+            </p>
+            <LuFileSearch className="text-[#6440FB] size-4" />
+          </button>
+        </div>
+      ),
+      width: "150px",
+
+      sortable: true,
+    },
+    {
+      name: "Polls",
+      selector: (row: { feedback: string }) => row.feedback,
+      cell: (row) => (
+        <div className="flex justify-center items-center rounded-[4px]">
+          <div className="p-2 gap-1 flex justify-between items-center">
+            <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              2
+            </h2>
+            <p className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              /
+            </p>
+            <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
+              3
+            </h2>
+          </div>
+          <button
+            onClick={() =>
+              setIsPollModal({
+                status: true,
+                id: row.id,
+              })
+            }
+            className="flex justify-center items-center gap-3 hover:border hover:border-[#6440FB] rounded-md p-1"
+          >
+            <p className="text-[#6440FB] font-DMSans text-[16px] font-semibold ">
+              View
+            </p>
+            <LuFileSearch className="text-[#6440FB] size-4" />
+          </button>
+        </div>
+      ),
+      width: "150px",
+      sortable: true,
+    },
+    {
+      name: "Aggregate",
+      selector: (row: { score: string }) => row.score,
+      cell: (row) => (
+        <div className="flex justify-between items-center rounded-[4px]">
+          <div className="p-2 gap-1 flex justify-between items-center">
+            <h2 className="font-DMSans text-[16px] font-bold">0</h2>
+            <p className="font-DMSans text-[16px] font-bold">/</p>
+            <h2 className="text-[16px] font-DMSans font-bold">{row.score}</h2>
+          </div>
+        </div>
+      ),
+      sortable: true,
+      width: "150px",
+    },
+    {
+      name: "Actions",
+      cell: (row) => (
+        <ActionMenu
+          actions={[
+            {
+              label: "Contact",
+              action: () =>
+                setIscontact({
+                  status: true,
+                  id: row.id,
+                }),
+            },
+            {
+              label: "Transcript ",
+              action: () =>
+                setIscontact({
+                  status: true,
+                  id: row.id,
+                }),
+            },
+          ]}
+        />
+      ),
+      width: "110px",
+      ignoreRowClick: true,
+    },
+  ];
+
+  const handleClose = () => {
+    setIscontact({
+      status: false,
+      id: 0,
+    });
+    setIsAssignment({
+      status: false,
+      id: 0,
+    });
+    setIsExam({
+      status: false,
+      id: 0,
+    });
+    setisCapstone({
+      status: false,
+      id: 0,
+    });
+    setIsPollModal({
+      status: false,
+      id: 0,
+    });
+    setIsQuizModal({
+      status: false,
+      id: 0,
+    });
+  };
+
   return (
     <DashboardArea>
       {" "}
@@ -58,53 +361,47 @@ const StudentsManagement = () => {
             <FaFilter className="text-[30px]" />
           </button>
         </div>
-        <div>
-          <div className="w-auto p-1 overflow-x-auto scrollbar-style rounded-[8px] flex justify-start items-center gap-3">
-            <NavLink to="assignments" className={getNavLinkClassName}>
-              <p className="text-[15px]">Assignments</p>
-              <h2 className="text-[24px] my-2 font-semibold">26/50 students</h2>
-              <p className="text-[#FF3B30] text-[15px]">Submitted</p>
-            </NavLink>
-            <NavLink to="capstone" className={getNavLinkClassName}>
-              <p className="text-[15px]">Capstone</p>
-              <h2 className="text-[24px] my-2 font-semibold">26/50 students</h2>
-              <p className="text-[#FF3B30] text-[15px]">Submitted</p>
-            </NavLink>
-            <NavLink to="quizes" className={getNavLinkClassName}>
-              <div className="flex justify-between items-center w-full">
-                <div>
-                  <p className="text-[15px]">Quizzes</p>
-                  <h2 className="text-[24px] my-2 font-semibold">45/50</h2>
-                  <p className="text-[#FF3B30] text-[15px]">Submitted</p>
-                </div>
-                <BsQuestionSquareFill className="text-[#FF3B30] text-[34px]" />
-              </div>
-            </NavLink>
-            <NavLink to="pollstable" className={getNavLinkClassName}>
-              <div className="flex justify-between items-center w-full">
-                <div>
-                  <p className="text-[15px]">Polls</p>
-                  <h2 className="text-[24px] my-2 font-semibold">45/50</h2>
-                  <p className="text-[#FF3B30] text-[15px]">Submitted</p>
-                </div>
-                <BsQuestionSquareFill className="text-[#FF3B30] text-[34px]" />
-              </div>
-            </NavLink>
-            <NavLink to="pollstable" className={getNavLinkClassName}>
-              <div className="flex justify-between items-center w-full">
-                <div>
-                  <p className="text-[15px]">Exams</p>
-                  <h2 className="text-[24px] my-2 font-semibold">45/50</h2>
-                  <p className="text-[#FF3B30] text-[15px]">Submitted</p>
-                </div>
-                <BsQuestionSquareFill className="text-[#FF3B30] text-[34px]" />
-              </div>
-            </NavLink>
-          </div>
-        </div>
       </div>
-      <div className="p-4">
-        <Outlet />
+      <div className="w-full pb-4 flex justify-center items-center bg-[#fff]">
+        <div className="w-[99%]">
+          <InDataTable<MerchantTableRow>
+            columns={columns}
+            data={AssignmentData}
+            paginatable={false}
+            searchable={false}
+            // pagination={false}
+          />
+        </div>
+        <ContactModal
+          isOpen={isContact.status}
+          id={isContact.id}
+          closeModal={handleClose}
+        />
+        <ViewAssignmentModal
+          isOpen={isAssignment.status}
+          id={isAssignment.id}
+          closeModal={handleClose}
+        />
+        <ViewExamModal
+          isOpen={isExam.status}
+          id={isExam.id}
+          closeModal={handleClose}
+        />
+        <ViewCapstoneModal
+          isOpen={isCapstone.status}
+          id={isCapstone.id}
+          closeModal={handleClose}
+        />
+        <ViewPollModal
+          isOpen={isPollModal.status}
+          id={isPollModal.id}
+          closeModal={handleClose}
+        />
+        <ViewQuizModal
+          isOpen={isQuizModal.status}
+          id={isQuizModal.id}
+          closeModal={handleClose}
+        />
       </div>
     </DashboardArea>
   );
