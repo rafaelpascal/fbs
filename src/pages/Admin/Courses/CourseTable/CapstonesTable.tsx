@@ -10,8 +10,6 @@ import { statColorCode } from "~/utils/helpers";
 import InDataTable from "~/components/table/InDataTable";
 import { paymentData } from "~/components/constants/data";
 import ActionMenu from "~/components/table/ActionMenu";
-import { useState } from "react";
-import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
   id: string;
@@ -26,7 +24,6 @@ interface MerchantTableRow {
 }
 
 const CapstonesTable = () => {
-  const [isContact, setIscontact] = useState(false);
   const navigate = useNavigate();
   // const [filters, setFilters] = useState({
   //   dateFrom: "",
@@ -66,12 +63,6 @@ const CapstonesTable = () => {
   // View a Row
   const handleView = (id: string) => {
     navigate(`/admin/dashboard/application/${id}`);
-  };
-
-  // Handle handlecontact
-  const handlecontact = (id: string) => {
-    setIscontact(true);
-    console.log(id);
   };
 
   //   Merchant Table
@@ -140,21 +131,13 @@ const CapstonesTable = () => {
       name: "Actions",
       cell: (row) => (
         <ActionMenu
-          actions={[
-            { label: "View", action: () => handleView(row.id) },
-            { label: "Contact Student", action: () => handlecontact(row.id) },
-          ]}
+          actions={[{ label: "View", action: () => handleView(row.id) }]}
         />
       ),
       width: "100px",
       ignoreRowClick: true,
     },
   ];
-
-  const handleClose = () => {
-    setIscontact(false);
-  };
-
   return (
     <div className="w-full pb-4 flex justify-center items-center bg-[#fff]">
       <div className="w-[99%]">
@@ -166,7 +149,6 @@ const CapstonesTable = () => {
           // pagination={false}
         />
       </div>
-      <ContactModal isOpen={isContact} closeModal={handleClose} />
     </div>
   );
 };

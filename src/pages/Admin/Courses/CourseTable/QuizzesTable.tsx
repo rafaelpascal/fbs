@@ -11,7 +11,7 @@ import { useState } from "react";
 import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
-  id: string;
+  id: number;
   avatar: string;
   sn: number;
   name: string;
@@ -23,7 +23,10 @@ interface MerchantTableRow {
 }
 
 const QuizzesTable = () => {
-  const [isContact, setIscontact] = useState(false);
+  const [isContact, setIscontact] = useState({
+    status: false,
+    id: 0,
+  });
   // const [filters, setFilters] = useState({
   //   dateFrom: "",
   //   dateTo: "",
@@ -125,7 +128,10 @@ const QuizzesTable = () => {
   ];
 
   const handleClose = () => {
-    setIscontact(false);
+    setIscontact({
+      status: false,
+      id: 0,
+    });
   };
 
   return (
@@ -139,7 +145,11 @@ const QuizzesTable = () => {
           // pagination={false}
         />
       </div>
-      <ContactModal isOpen={isContact} closeModal={handleClose} />
+      <ContactModal
+        isOpen={isContact.status}
+        id={isContact.id}
+        closeModal={handleClose}
+      />
     </div>
   );
 };

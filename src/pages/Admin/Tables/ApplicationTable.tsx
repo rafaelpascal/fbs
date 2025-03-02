@@ -25,7 +25,10 @@ interface MerchantTableRow {
 }
 
 const ApplicationTable = () => {
-  const [isContact, setIscontact] = useState(false);
+  const [isContact, setIscontact] = useState({
+    status: false,
+    id: 0,
+  });
   const { data } = useFetchApplication();
   const navigate = useNavigate();
   const [applicationData, setapplicationData] = useState([]);
@@ -79,7 +82,10 @@ const ApplicationTable = () => {
 
   // Handle handlecontact
   const handlecontact = (id: string) => {
-    setIscontact(true);
+    setIscontact({
+      status: true,
+      id: 1,
+    });
     console.log(id);
   };
 
@@ -185,7 +191,10 @@ const ApplicationTable = () => {
   ];
 
   const handleClose = () => {
-    setIscontact(false);
+    setIscontact({
+      status: false,
+      id: 0,
+    });
   };
 
   return (
@@ -199,7 +208,11 @@ const ApplicationTable = () => {
           // pagination={false}
         />
       </div>
-      <ContactModal isOpen={isContact} closeModal={handleClose} />
+      <ContactModal
+        isOpen={isContact.status}
+        id={isContact.id}
+        closeModal={handleClose}
+      />
     </div>
   );
 };
