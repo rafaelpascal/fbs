@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardArea } from "~/layouts/DashboardArea";
 import { useTheme } from "~/context/theme-provider";
 import { cn } from "~/utils/helpers";
@@ -14,6 +14,8 @@ import { FaArrowRightLong } from "react-icons/fa6";
 import { BaseInput } from "~/components/data-inputs/text-input";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { IoDocumentTextOutline } from "react-icons/io5";
+import { CourseServices } from "~/api/course";
+import { useParams } from "react-router-dom";
 
 const ExamInstructions = [
   {
@@ -48,6 +50,7 @@ interface FormData {
 const NewAssignment = () => {
   // const navigate = useNavigate();
   const { theme } = useTheme();
+  const { assignmentId } = useParams<{ assignmentId: string }>();
   //   const courseId = localStorage.getItem("course_id");
   const [examStarted, setexamStarted] = useState(false);
   const [selectedType, setSelectedType] = useState(ExamQuestions[0].type);
@@ -95,6 +98,17 @@ const NewAssignment = () => {
     setexamStarted(true);
     startCountdown();
   };
+
+  const fetchAssignment = async () => {
+    const payload = {
+      lesson_id: JSON.parse(assignmentId ?? ""),
+    };
+    await CourseServices.listAssignment(payload);
+  };
+
+  useEffect(() => {
+    fetchAssignment();
+  }, [assignmentId]);
 
   // const handlesubmit = () => {
   //   navigate(ROUTES.CONGRATULATIONS);

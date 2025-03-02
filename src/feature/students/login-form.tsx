@@ -10,6 +10,7 @@ import { AuthService } from "~/api/auth";
 import { showAlert } from "~/utils/sweetAlert";
 import { setUser } from "~/redux-store/slice/user.Slice";
 import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
 
 const fields = [
   {
@@ -30,6 +31,17 @@ const fields = [
 const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Load saved email if "Remember Me" was previously selected
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("rememberedEmail");
+    if (storedEmail) {
+      form.setValue("email", storedEmail);
+      setRememberMe(true);
+    }
+  }, []);
+
   const form = useForm<AuthFormPayload>({
     resolver: zodResolver(authSchema),
     mode: "onChange",
@@ -51,9 +63,13 @@ const LoginForm = () => {
         form.reset();
         return;
       }
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", data.email);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+      }
       if (res?.userData?.profile?.[0].user_role === 1) {
         navigate(ROUTES.ADMINDASHBOARD);
-        form.reset();
       } else {
         dispatch(
           setUser({
@@ -64,8 +80,8 @@ const LoginForm = () => {
           })
         );
         navigate(ROUTES.DASHBOARD);
-        form.reset();
       }
+      form.reset();
     } catch (error) {
       form.reset();
       console.log(error);
@@ -91,11 +107,17 @@ const LoginForm = () => {
       </div>
       <div className="flex justify-between items-center w-full mt-4">
         <div className="flex justify-start items-center gap-2">
-          <input type="checkbox" name="" id="" />
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={() => setRememberMe(!rememberMe)}
+            className="checkbox checkbox-error"
+          />
           <p className="text-[16px] text-[#4F547B] font-DMSans font-normal">
             Remember me
           </p>
         </div>
+
         <Link
           to={"/forgot-password"}
           className="text-[16px] text-[#6440FB] underline font-DMSans font-normal"
@@ -120,11 +142,14 @@ const LoginForm = () => {
       </BaseButton>
       <div className="flex w-full justify-start items-center my-4 gap-2">
         <p className="text-[14px] text-[#4F547B] font-DMSans font-normal">
-          Don't have an account yet?
+          Don’t have an account yet?
         </p>
-        <button className="text-[#F01E00B2] ext-[14px] font-DMSans font-normal">
-          Sign up for free
-        </button>
+        <Link
+          to="https://fordaxbschool.com/execs"
+          className="text-[#F01E00B2] ext-[14px] font-DMSans font-normal"
+        >
+          Select a program and apply
+        </Link>
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import { LoadingSpinner } from "../ui/loading-spinner";
 import { RootState } from "~/redux-store/store";
 import { useSelector } from "react-redux";
 import { FaPlusSquare } from "react-icons/fa";
+import { CourseServices } from "~/api/course";
 
 interface IModalPropsType {
   moduleId: number;
@@ -29,7 +30,8 @@ interface ExamQuestion {
 
 interface FormData {
   score: string;
-  description: string;
+  total_time: string;
+  instruction: string;
   title: string;
   deadline: string;
   featuredImages: File[];
@@ -50,7 +52,8 @@ export const NewExamModal = ({
 
   const initialFormData = {
     score: "",
-    description: "",
+    total_time: "",
+    instruction: "",
     title: "",
     deadline: "",
     featuredImages: [],
@@ -112,36 +115,38 @@ export const NewExamModal = ({
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
-    const dataToSubmit = new FormData();
-    dataToSubmit.append("course_id", courseId?.toString() || "");
-    dataToSubmit.append("stream_video_audio", formData.deadline);
-    dataToSubmit.append("overall_score", formData.score);
-    dataToSubmit.append("module_id", moduleId.toString() || "");
-    dataToSubmit.append("lesson_id", lessonId.toString() || "");
-    dataToSubmit.append("assignment_title", formData.title);
-    formData.featuredImages.forEach((file) => {
-      dataToSubmit.append("assignment_image", file);
-    });
+    // Construct the JSON payload
+    const dataToSubmit = {
+      course_id: courseId || 0,
+      module_id: moduleId || 0,
+      lesson_id: lessonId || 0,
+      exam_title: formData.title,
+      exam_instruction: formData.instruction,
+      total_time: formData.total_time,
+      submission_deadline: formData.deadline,
+      total_score: formData.score,
+      questions: formData.examQuestions.map((q) => ({
+        questions: q.description,
+        text: q.selectedOption === "text" ? 1 : "",
+        document: q.selectedOption === "document" ? 1 : "",
+        word_count: q.answerLimit,
+      })),
+    };
 
-    // Append exam questions
-    formData.examQuestions.forEach((q, index) => {
-      dataToSubmit.append(`exam_questions[${index}][id]`, q.id.toString());
-      dataToSubmit.append(
-        `exam_questions[${index}][description]`,
-        q.description
-      );
-    });
+    try {
+      await CourseServices.createCourseExam(dataToSubmit);
+      setModuleData((prevData: any) => ({
+        ...prevData,
+        title: formData.title,
+      }));
 
-    // await CourseServices.createCourseAssignment(dataToSubmit);
-
-    setModuleData((prevData: any) => ({
-      ...prevData,
-      title: formData.title,
-    }));
-
-    setIsSubmitting(false);
-    handlecreate(moduleId);
-    setFormData(initialFormData);
+      handlecreate(moduleId);
+      setFormData(initialFormData);
+    } catch (error) {
+      console.error("Error submitting assignment:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   interface OptionChangeHandler {
@@ -219,9 +224,9 @@ export const NewExamModal = ({
                 ? "select-secondary"
                 : "border-[0.5px] border-[#ddd]"
             )}
-            value={formData.description}
+            value={formData.instruction}
             onChange={(e: any) =>
-              handleInputChange("description", e.target.value)
+              handleInputChange("instruction", e.target.value)
             }
           />
         </div>
@@ -369,9 +374,9 @@ export const NewExamModal = ({
                       ? "select-secondary"
                       : "border-[0.5px] border-[#ddd]"
                   )}
-                  value={formData.score}
+                  value={formData.total_time}
                   onChange={(e: any) =>
-                    handleInputChange("score", e.target.value)
+                    handleInputChange("total_time", e.target.value)
                   }
                 />
               </div>

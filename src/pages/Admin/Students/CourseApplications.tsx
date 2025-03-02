@@ -4,6 +4,7 @@ import { TbDeviceTabletSearch } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { CourseServices } from "~/api/course";
+import SendMessageModal from "~/components/Modal/SendMessageModal";
 import { WarningModal } from "~/components/Modal/WarningModal";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { useTheme } from "~/context/theme-provider";
@@ -15,6 +16,10 @@ const CourseApplications = () => {
   const { applicationId } = useParams();
   const navigate = useNavigate();
   const [accepting, setAccepting] = useState(false);
+  const [isSendMessage, setIsSendMessage] = useState({
+    status: false,
+    id: 0,
+  });
   const [isFeching, setisFeching] = useState(false);
   const { success, error } = useToast();
   const [applicationStatus, setApplicationStatus] = useState(0);
@@ -51,6 +56,10 @@ const CourseApplications = () => {
       id: 0,
       status: false,
       message: "",
+    });
+    setIsSendMessage({
+      status: false,
+      id: 0,
     });
   };
   const handleReject = () => {
@@ -132,16 +141,27 @@ const CourseApplications = () => {
         applicationid: applicationId,
       };
       await CourseServices.acceptApplication(payload);
-      success("Application accepted!");
-      setTimeout(() => {
-        navigate(`/admin/dashboard/application`);
-      }, 2000);
+      setIsSendMessage({
+        status: true,
+        id: 1,
+      });
       setAccepting(false);
     } catch (err) {
       error("Failed to reject Application|");
       setAccepting(false);
       console.log(err);
     }
+  };
+
+  const handleSubmit = () => {
+    setIsSendMessage({
+      status: false,
+      id: 0,
+    });
+    success("Application accepted!");
+    setTimeout(() => {
+      navigate(`/admin/dashboard/application`);
+    }, 2000);
   };
 
   return (
@@ -274,6 +294,12 @@ const CourseApplications = () => {
         isOpen={isReject.status}
         message={isReject.message}
         closeModal={handleClose}
+      />
+      <SendMessageModal
+        isOpen={isSendMessage.status}
+        id={isSendMessage.id}
+        closeModal={handleClose}
+        handleSubmit={handleSubmit}
       />
     </DashboardArea>
   );

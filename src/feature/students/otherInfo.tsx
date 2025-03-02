@@ -19,6 +19,8 @@ import { RootState } from "~/redux-store/store";
 import { AuthService } from "~/api/auth";
 import { showAlert } from "~/utils/sweetAlert";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { cn } from "~/utils/helpers";
+import { useTheme } from "~/context/theme-provider";
 
 const fields = [
   {
@@ -53,7 +55,15 @@ const Passwordfields = [
   },
 ];
 
+interface FormData {
+  state: string;
+}
+const initialFormData = {
+  state: "",
+};
+
 const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
+  const { theme } = useTheme();
   const { pathname } = useLocation();
   const decodedPath = decodeURIComponent(pathname);
   const pathSegments = decodedPath
@@ -82,6 +92,21 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
   const [isAccepted, setIsAccepted] = useState(false);
   const [selectedGender, setSelectedGender] = useState("Male");
   const user = useSelector((state: RootState) => state.user);
+  const [selectedCountry, setSelectedCountry] = useState("NG");
+  const [formData, setFormData] = useState<FormData>({
+    state: "",
+  });
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCountry(e.target.value);
+    setSelectedState(""); // Reset state when country changes
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   // Handle checkbox change
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,10 +167,6 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
         console.warn(`Unknown requirement: ${requirement}`);
     }
   };
-
-  useEffect(() => {
-    console.log(cv, degreeCertificate, levelCertificate, resume);
-  }, [cv, degreeCertificate, levelCertificate, resume]);
 
   const handleReferalCodeComplete = (otp: string) => {
     setreferralCode(otp);
@@ -242,6 +263,7 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
           }
         );
       }
+      setFormData(initialFormData);
     } catch (error) {
       setIsSubmitting(false);
       console.log(error);
@@ -300,7 +322,11 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
         <div className="flex justify-between items-center gap-3">
           <div className="w-full lg:w-[50%]">
             <p className="mb-2 text-[18px] font-bold font-DMSans">Country</p>
-            <select className="select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full max-w-xs">
+            <select
+              value={selectedCountry}
+              onChange={handleCountryChange}
+              className="select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full max-w-xs"
+            >
               <option disabled selected>
                 Select Country
               </option>
@@ -311,23 +337,45 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
               ))}
             </select>
           </div>
-          <div className="w-full lg:w-[50%]">
-            <p className="mb-2 text-[18px] font-bold font-DMSans">State</p>
-            <select
-              className="select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full max-w-xs"
-              value={selectedState}
-              onChange={handleStateChange}
-            >
-              <option disabled selected>
-                Select State
-              </option>
-              {states.map((state: string, index: number) => (
-                <option key={index} value={state}>
-                  {state}
+          {selectedCountry === "NG" ? (
+            <div className="w-full lg:w-[50%]">
+              <p className="mb-2 text-[18px] font-bold font-DMSans">State</p>
+              <select
+                className="select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full max-w-xs"
+                value={selectedState}
+                onChange={handleStateChange}
+              >
+                <option disabled selected>
+                  Select State
                 </option>
-              ))}
-            </select>
-          </div>
+                {states.map((state: string, index: number) => (
+                  <option key={index} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className="w-full  lg:w-[50%]">
+              <BaseInput
+                label="State"
+                type="text"
+                placeholder="Type State"
+                containerClassname="w-full m-0"
+                labelClassName="text-[17px] font-DMSans font-semibold"
+                inputContainerClassName={cn(
+                  "h-[67px]",
+                  theme === "dark"
+                    ? "select-secondary"
+                    : "border-[0.5px] border-[#ddd]"
+                )}
+                value={formData.state}
+                onChange={(e: any) =>
+                  handleInputChange("state", e.target.value)
+                }
+              />
+            </div>
+          )}
         </div>
         <div>
           <p className="my-2 text-[18px] font-bold font-DMSans">Gender</p>
@@ -393,8 +441,8 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
             <option disabled selected>
               Select
             </option>
-            <option>Facebook Advert</option>
-            <option>Instagram Advert</option>
+            <option>Facebook advert</option>
+            <option>Instagram advert</option>
           </select>
         </div>
       </div>
@@ -427,22 +475,30 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
       </div>
       {isSubsequent ? (
         <BaseButton
-          containerCLassName="mt-4 h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]"
+          containerCLassName={cn(
+            "mt-4 h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]",
+            isAccepted === false ? "cursor-not-allowed " : ""
+          )}
           hoverScale={1.01}
           hoverOpacity={0.8}
           tapScale={0.9}
           onClick={handleSubmit}
+          disabled={isAccepted === false}
         >
           <p>SUBMIT APPLICATION</p>
           {isSubmitting && <LoadingSpinner size="xs" />}
         </BaseButton>
       ) : (
         <BaseButton
-          containerCLassName="mt-4 h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]"
+          containerCLassName={cn(
+            "mt-4 h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]",
+            isAccepted === false ? "cursor-not-allowed opacity-50" : ""
+          )}
           hoverScale={1.01}
           hoverOpacity={0.8}
           tapScale={0.9}
           onClick={handleSubmit}
+          disabled={isAccepted === false}
         >
           <p>APPLY FOR THE PROGRAM NOW</p>
           {isSubmitting && <LoadingSpinner size="xs" />}

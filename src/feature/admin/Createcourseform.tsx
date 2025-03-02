@@ -174,7 +174,6 @@ const Createcourseform = ({
   const handlescheduleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsScheduleDateChecked(event.target.value === "scheduleDate");
   };
-  console.log(initialData);
   const handleSelect = (
     field: string,
     option: { label: string; value: string | number }

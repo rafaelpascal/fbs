@@ -119,9 +119,30 @@ export class CourseServices extends BaseAPIService {
       throw handleError;
     }
   };
+
+  static createCourseExam = async (payload: any) => {
+    try {
+      const res = await Api.post("/exam/create-exams", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static createCourseCapstone = async (payload: any) => {
     try {
       const res = await Api.post("/capstone/create-capstone", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static createCoursePoll = async (payload: any) => {
+    try {
+      const res = await Api.post("/poll/create-poll", payload);
       return res;
     } catch (error) {
       const handleError = error;
@@ -341,6 +362,15 @@ export class CourseServices extends BaseAPIService {
   static listQuiz = async (payload: any) => {
     try {
       const res = await Api.post("/quiz/list-quiz", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static listAssignment = async (payload: any) => {
+    try {
+      const res = await Api.post("/assignment/list-assignment", payload);
       return res;
     } catch (error) {
       const handleError = error;

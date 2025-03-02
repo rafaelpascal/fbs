@@ -9,6 +9,7 @@ import { LoadingSpinner } from "../ui/loading-spinner";
 import { RootState } from "~/redux-store/store";
 import { useSelector } from "react-redux";
 import { FaPlusSquare } from "react-icons/fa";
+import { CourseServices } from "~/api/course";
 
 interface IModalPropsType {
   moduleId: number;
@@ -29,9 +30,10 @@ interface ExamQuestion {
 
 interface FormData {
   score: string;
-  description: string;
+  instruction: string;
   title: string;
   deadline: string;
+  total_time: string;
   featuredImages: File[];
   examQuestions: ExamQuestion[];
 }
@@ -50,9 +52,10 @@ export const NewAssignmentModal = ({
 
   const initialFormData = {
     score: "",
-    description: "",
+    instruction: "",
     title: "",
     deadline: "",
+    total_time: "",
     featuredImages: [],
     examQuestions: [
       {
@@ -112,36 +115,38 @@ export const NewAssignmentModal = ({
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
-    const dataToSubmit = new FormData();
-    dataToSubmit.append("course_id", courseId?.toString() || "");
-    dataToSubmit.append("stream_video_audio", formData.deadline);
-    dataToSubmit.append("overall_score", formData.score);
-    dataToSubmit.append("module_id", moduleId.toString() || "");
-    dataToSubmit.append("lesson_id", lessonId.toString() || "");
-    dataToSubmit.append("assignment_title", formData.title);
-    formData.featuredImages.forEach((file) => {
-      dataToSubmit.append("assignment_image", file);
-    });
+    // Construct the JSON payload
+    const dataToSubmit = {
+      course_id: courseId || 0,
+      module_id: moduleId || 0,
+      lesson_id: lessonId || 0,
+      assignment_title: formData.title,
+      assignment_instruction: formData.instruction,
+      total_time: formData.total_time,
+      submission_deadline: formData.deadline,
+      total_score: formData.score,
+      questions: formData.examQuestions.map((q) => ({
+        questions: q.description,
+        text: q.selectedOption === "text" ? 1 : "",
+        document: q.selectedOption === "document" ? 1 : "",
+        word_count: q.answerLimit,
+      })),
+    };
 
-    // Append exam questions
-    formData.examQuestions.forEach((q, index) => {
-      dataToSubmit.append(`exam_questions[${index}][id]`, q.id.toString());
-      dataToSubmit.append(
-        `exam_questions[${index}][description]`,
-        q.description
-      );
-    });
+    try {
+      await CourseServices.createCourseAssignment(dataToSubmit);
+      setModuleData((prevData: any) => ({
+        ...prevData,
+        title: formData.title,
+      }));
 
-    // await CourseServices.createCourseAssignment(dataToSubmit);
-
-    setModuleData((prevData: any) => ({
-      ...prevData,
-      title: formData.title,
-    }));
-
-    setIsSubmitting(false);
-    handlecreate(moduleId);
-    setFormData(initialFormData);
+      handlecreate(moduleId);
+      setFormData(initialFormData);
+    } catch (error) {
+      console.error("Error submitting assignment:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   interface OptionChangeHandler {
@@ -219,9 +224,9 @@ export const NewAssignmentModal = ({
                 ? "select-secondary"
                 : "border-[0.5px] border-[#ddd]"
             )}
-            value={formData.description}
+            value={formData.instruction}
             onChange={(e: any) =>
-              handleInputChange("description", e.target.value)
+              handleInputChange("instruction", e.target.value)
             }
           />
         </div>
@@ -250,8 +255,8 @@ export const NewAssignmentModal = ({
                   handleExamQuestionChange(question.id, e.target.value)
                 }
               />
-              <div className="flex justify-between items-center">
-                <div className="flex justify-start gap-4 items-center">
+              <div className="flex justify-between items-start lg:items-center">
+                <div className="flex flex-col lg:flex-row justify-start gap-0 lg:gap-4 items-start w-full lg:items-center">
                   <div className="form-control">
                     <label className="label cursor-pointer gap-2">
                       <span className="font-DMSans font-semibold text-[14px]">
@@ -369,9 +374,9 @@ export const NewAssignmentModal = ({
                       ? "select-secondary"
                       : "border-[0.5px] border-[#ddd]"
                   )}
-                  value={formData.score}
+                  value={formData.total_time}
                   onChange={(e: any) =>
-                    handleInputChange("score", e.target.value)
+                    handleInputChange("total_time", e.target.value)
                   }
                 />
               </div>

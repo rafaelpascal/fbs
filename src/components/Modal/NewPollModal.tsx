@@ -10,6 +10,7 @@ import { RootState } from "~/redux-store/store";
 import { useSelector } from "react-redux";
 import QuizAnswers from "../Collapsible/QuizAnswers";
 import { DropResult } from "react-beautiful-dnd";
+import { CourseServices } from "~/api/course";
 
 interface IModalPropsType {
   moduleId: number;
@@ -22,10 +23,8 @@ interface IModalPropsType {
 }
 
 interface FormData {
-  title: string;
-  question: string;
-  thought: string;
-  featuredImages: File[];
+  poll_questions: string;
+  poll_thought: string;
 }
 
 interface QuizAnswer {
@@ -36,10 +35,8 @@ interface QuizAnswer {
 }
 
 const initialFormData = {
-  title: "",
-  question: "",
-  thought: "",
-  featuredImages: [] as File[],
+  poll_questions: "",
+  poll_thought: "",
 };
 
 export const NewPollModal = ({
@@ -55,10 +52,8 @@ export const NewPollModal = ({
   const [isSubmitting, setisSubmitting] = useState(false);
   //   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
-    title: "",
-    thought: "",
-    question: "",
-    featuredImages: [],
+    poll_questions: "",
+    poll_thought: "",
   });
   //   const [isAnswerOpen, setIsAnswerOpen] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswer[]>([
@@ -107,7 +102,6 @@ export const NewPollModal = ({
   const handleSubmitAnswers = () => {
     setIsAnswerSubmitting(true);
     setTimeout(() => {
-      console.log("Submitted answers:", quizAnswers);
       setIsAnswerSubmitting(false);
     }, 2000);
   };
@@ -127,26 +121,34 @@ export const NewPollModal = ({
   const handleSubmit = async () => {
     setisSubmitting(true);
 
-    // Create a new FormData object
-    const dataToSubmit = new FormData();
-    dataToSubmit.append("course_id", courseId?.toString() || "");
-    dataToSubmit.append("stream_video_audio", formData.thought);
-    dataToSubmit.append("overall_score", formData.question);
-    dataToSubmit.append("module_id", moduleId.toString() || "");
-    dataToSubmit.append("lesson_id", lessonId.toString() || "");
-    dataToSubmit.append("capstone_title", formData.title);
-    formData.featuredImages.forEach((file) => {
-      dataToSubmit.append("capstone_image", file);
-    });
-    // await CourseServices.createCourseCapstone(dataToSubmit);
-    setModuleData((prevData: any) => ({
-      ...prevData,
-      title: formData.question,
-    }));
+    // Construct the JSON payload
+    const dataToSubmit = {
+      course_id: courseId || 0,
+      module_id: moduleId || 0,
+      lesson_id: lessonId || 0,
+      poll_questions: formData.poll_questions,
+      poll_thought: formData.poll_thought,
+      answers: quizAnswers.map((answer) => ({
+        answers: answer.title,
+      })),
+    };
 
-    setisSubmitting(false);
-    handlecreate(moduleId);
-    setFormData(initialFormData);
+    try {
+      console.log("Submitting Payload:", JSON.stringify(dataToSubmit, null, 2));
+
+      await CourseServices.createCoursePoll(dataToSubmit);
+      setModuleData((prevData: any) => ({
+        ...prevData,
+        title: formData.poll_questions,
+      }));
+
+      handlecreate(moduleId);
+      setFormData(initialFormData);
+    } catch (error) {
+      console.error("Error submitting:", error);
+    } finally {
+      setisSubmitting(false);
+    }
   };
 
   const handleDragEnd = (result: DropResult) => {
@@ -196,8 +198,10 @@ export const NewPollModal = ({
                 ? "select-secondary"
                 : "border-[0.5px] border-[#ddd]"
             )}
-            value={formData.question}
-            onChange={(e: any) => handleInputChange("question", e.target.value)}
+            value={formData.poll_questions}
+            onChange={(e: any) =>
+              handleInputChange("poll_questions", e.target.value)
+            }
           />
         </div>
         <QuizAnswers
@@ -225,8 +229,10 @@ export const NewPollModal = ({
                 ? "select-secondary"
                 : "border-[0.5px] border-[#ddd]"
             )}
-            value={formData.thought}
-            onChange={(e: any) => handleInputChange("thought", e.target.value)}
+            value={formData.poll_thought}
+            onChange={(e: any) =>
+              handleInputChange("poll_thought", e.target.value)
+            }
           />
         </div>
         <div className="flex absolute bottom-2 justify-start items-start gap-4">
