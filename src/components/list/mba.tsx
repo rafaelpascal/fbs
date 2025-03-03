@@ -19,17 +19,17 @@ const MbaList = ({ items, ordered, customClass }: FacilitatorsProps) => {
         {items.map((item, index) => (
           <li
             key={index}
-            className="flex justify-between border-b border-[#ddd] px-6 items-center gap-4 py-2"
+            className="flex justify-between border-b border-[#ddd] px-6 items-center w-full py-2"
           >
-            <div className="flex justify-start items-center gap-4">
-              <p className="text-[20px] font-DMSans font-semibold">
+            <div className="flex justify-start items-center w-full gap-4">
+              <p className="text-[18px] font-DMSans font-semibold">
                 {item.icon}
               </p>
-              <p className="text-[20px] font-DMSans font-semibold">
+              <p className="text-[18px] text-right font-DMSans font-semibold">
                 {item.text}
               </p>
             </div>
-            <p className="text-[20px] font-DMSans font-semibold">
+            <p className="text-[18px] text-right w-[30%] font-DMSans font-semibold">
               {item.count}
             </p>
           </li>

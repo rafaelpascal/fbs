@@ -16,6 +16,7 @@ type CourseFormProps = {
 };
 
 const Courseform = ({ name, id }: CourseFormProps) => {
+  const [phone, setPhone] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubsequent, setIsSubsequent] = useState(false);
   const [courseData, setCourseData] = useState({
@@ -94,6 +95,8 @@ const Courseform = ({ name, id }: CourseFormProps) => {
               submitting={submitting}
               coursetitle={courseData.course_title}
               course_id={courseData.course_id}
+              value={phone}
+              setValue={setPhone}
             />
           )}
         </>
@@ -108,7 +111,7 @@ const Courseform = ({ name, id }: CourseFormProps) => {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Otherinfo isSubsequent={isSubsequent} />
+            <Otherinfo phone={phone} isSubsequent={isSubsequent} />
           </motion.div>
         )}
       </AnimatePresence>

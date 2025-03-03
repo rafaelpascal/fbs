@@ -66,6 +66,19 @@ canvas {
   margin-bottom: 8px; /* Adds spacing between items */
 }
 
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  display: flex;
+  animation: scroll 10s linear infinite;
+}
 
 .custom-title {
   font-size: 24px; /* Adjust the title font size */

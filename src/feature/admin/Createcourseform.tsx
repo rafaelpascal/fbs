@@ -343,31 +343,27 @@ const Createcourseform = ({
       } else {
         response = await CourseServices.createCourse(formDataToSend);
       }
+      dispatch(setCourseId(response.data.course_id));
+      dispatch(setCourseUrl(response.data.course_url));
 
-      if (response.data.success) {
-        dispatch(setCourseId(response.data.course_id));
-        dispatch(setCourseUrl(response.data.course_url));
+      setFormData((prev) => ({
+        ...prev,
+        courseid: response.data.course_id,
+      }));
 
-        setFormData((prev) => ({
-          ...prev,
-          courseid: response.data.course_id,
-        }));
+      await showAlert(
+        "success",
+        "Created!",
+        "Proceed with Course requirements!",
+        "Ok",
+        "#03435F"
+      );
 
-        await showAlert(
-          "success",
-          "Created!",
-          "Proceed with Course requirements!",
-          "Ok",
-          "#03435F"
-        );
-
-        created({
-          ...formData,
-          courseid: response.data.course_id,
-        });
-      }
+      created({
+        ...formData,
+        courseid: response.data.course_id,
+      });
     } catch (error) {
-      console.error("Form submission error:", error);
       await showAlert("error", "Failed!", "Failed to create!", "Ok", "#FF5050");
     } finally {
       setIsSubmitting(false);

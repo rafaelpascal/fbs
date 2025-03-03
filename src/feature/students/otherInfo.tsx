@@ -62,7 +62,13 @@ const initialFormData = {
   state: "",
 };
 
-const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
+const Otherinfo = ({
+  isSubsequent,
+  phone,
+}: {
+  isSubsequent: boolean;
+  phone: string | undefined;
+}) => {
   const { theme } = useTheme();
   const { pathname } = useLocation();
   const decodedPath = decodeURIComponent(pathname);
@@ -76,7 +82,7 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
     (state: RootState) => state.formRequirements.form_requirements
   );
   const navigate = useNavigate();
-  const [value, setValue] = useState<string | undefined>(undefined);
+  const [value, setValue] = useState<string | undefined>(phone);
   const [referralCode, setreferralCode] = useState("");
   const [whatappvalue, setWhatsappValue] = useState<string | undefined>(
     undefined
@@ -339,14 +345,16 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
           </div>
           {selectedCountry === "NG" ? (
             <div className="w-full lg:w-[50%]">
-              <p className="mb-2 text-[18px] font-bold font-DMSans">State</p>
+              <p className="mb-2 text-[18px] font-bold font-DMSans">
+                State/Region
+              </p>
               <select
                 className="select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full max-w-xs"
                 value={selectedState}
                 onChange={handleStateChange}
               >
                 <option disabled selected>
-                  Select State
+                  Select State/Region
                 </option>
                 {states.map((state: string, index: number) => (
                   <option key={index} value={state}>
@@ -358,9 +366,9 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
           ) : (
             <div className="w-full  lg:w-[50%]">
               <BaseInput
-                label="State"
+                label="State/Region"
                 type="text"
-                placeholder="Type State"
+                placeholder="Type State/Region"
                 containerClassname="w-full m-0"
                 labelClassName="text-[17px] font-DMSans font-semibold"
                 inputContainerClassName={cn(
@@ -402,11 +410,22 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
               />
               <p className="mt-2 text-[18px] font-bold font-DMSans">Female</p>
             </div>
+            <div className="flex justify-start items-center gap-2">
+              <input
+                type="radio"
+                name="radio-1"
+                value="Others"
+                className="radio mt-2"
+                checked={selectedGender === "Others"}
+                onChange={handleGenderChange}
+              />
+              <p className="mt-2 text-[18px] font-bold font-DMSans">Others</p>
+            </div>
           </div>
         </div>
         {formRequirements.length !== 0 && (
           <div>
-            {formRequirements.map((requirement) => (
+            {formRequirements.map((requirement: any) => (
               <div key={requirement.id} className="py-2 w-full">
                 <div className="flex justify-start gap-2 items-center">
                   <h2 className="text-2xl font-semibold mb-4">
@@ -443,6 +462,11 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
             </option>
             <option>Facebook advert</option>
             <option>Instagram advert</option>
+            <option>Someone told me</option>
+            <option>Google search</option>
+            <option>Online articles/reviews</option>
+            <option>TV/Radio advert </option>
+            <option>Flyers/Billboards/Banners</option>
           </select>
         </div>
       </div>
@@ -477,7 +501,9 @@ const Otherinfo = ({ isSubsequent }: { isSubsequent: boolean }) => {
         <BaseButton
           containerCLassName={cn(
             "mt-4 h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]",
-            isAccepted === false ? "cursor-not-allowed " : ""
+            isAccepted === false && formData.state === ""
+              ? "cursor-not-allowed opacity-50"
+              : ""
           )}
           hoverScale={1.01}
           hoverOpacity={0.8}

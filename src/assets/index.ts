@@ -9,6 +9,9 @@ import FordaxAcre3 from "./image/Fordax-ACcre.svg";
 import mbaimage from "./image/mbaimage.svg";
 import coupon from "./icon/coupon 1.svg";
 import playbtn from "./icon/play-button.svg";
+import LearnOnline from "./icon/online-learning.svg";
+import LearnOnlineTwo from "./icon/secondOnline.svg";
+import graduation from "./icon/graduation.svg";
 export {
   loginprogress,
   FBSlogo,
@@ -21,4 +24,7 @@ export {
   mbaimage,
   coupon,
   playbtn,
+  LearnOnline,
+  LearnOnlineTwo,
+  graduation,
 };

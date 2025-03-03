@@ -1,6 +1,5 @@
 import { useTheme } from "~/context/theme-provider";
 import FooterCard from "../cards/FooterCard";
-import { GiGraduateCap } from "react-icons/gi";
 import { learn } from "~/assets";
 import FooterList from "../list/FooterList";
 import {
@@ -9,6 +8,9 @@ import {
   FordaxAcre,
   FordaxAcre2,
   FordaxAcre3,
+  LearnOnline,
+  graduation,
+  LearnOnlineTwo,
 } from "~/assets";
 import FooterBtnList from "../list/FooterBtnList";
 type FacilitatorsProps = {
@@ -20,32 +22,36 @@ const FooterItems = [
   {
     title: "Mastery, not Just another certificate",
     text: "The Fordax smart courses are for individuals who aim to master critical business skills and also earn a globally recognized certificate that enables them to secure high-paying jobs. It’s your express path to becoming an industry expert.",
-    icon: GiGraduateCap,
+    icon: LearnOnline,
+    containerClass: "bg-[#fff]",
+    textClass: "text-[#000]",
   },
   {
     title: "Expert faculty and thought leaders",
     text: "Learn from the best in the business. Our distinguished faculty and guest speakers are leaders in their respective fields, bringing real-world insights and practical ideas to the classroom. See our faculty (https://fordaxbschool.com/our-faculty)",
-    icon: GiGraduateCap,
+    icon: graduation,
   },
   {
     title: "Cohort of like-minded peers",
     text: "Join a diverse and ambitious group of professionals and entrepreneurs from around the world who share your passion for growth and success.",
-    icon: GiGraduateCap,
+    icon: LearnOnlineTwo,
   },
   {
     title: "Empower your future",
     text: "Whether you’re looking to unlock new career opportunities, propel your startup to the next level, or prepare for higher leadership roles, our programs will empower you to achieve your business goals.",
-    icon: GiGraduateCap,
+    icon: LearnOnline,
+    containerClass: "bg-[#fff]",
+    textClass: "text-[#000]",
   },
   {
     title: "Modern, convenient, and up-to-date curriculum",
     text: "Our courses are designed to reflect the latest business trends and practices, and they are delivered in a way that is both convenient and effective for busy professionals. Students develop the skills and knowledge they need to succeed in today’s rapidly changing business world.",
-    icon: GiGraduateCap,
+    icon: graduation,
   },
   {
     title: "High return on investment",
     text: "With competitive tuition rates and the potential for immediate career advancement, your investment in the Fordax MBA and certificate programs pays off quickly. The school’s high-quality education, strong career services office, and extensive alumni network can help you to achieve your career goals and earn a high ROI on your investment.",
-    icon: GiGraduateCap,
+    icon: LearnOnlineTwo,
   },
 ];
 
@@ -139,6 +145,8 @@ const Footer = () => {
               title={items.title}
               text={items.text}
               icon={items.icon}
+              containerClass={items.containerClass}
+              textClass={items.textClass}
             />
           ))}
         </div>
@@ -162,32 +170,21 @@ const Footer = () => {
       </div>
       <div className="py-10 flex justify-center flex-col items-center bg-[#F5F7FE] w-full">
         <p>Accreditations & Approvals by:</p>
-        <div className="flex flex-col  lg:flex-row items-center gap-4 mt-4 justify-center w-full scroll-snap-x">
-          <img
-            src={FordaxAcre3}
-            alt=""
-            className="min-w-[206px] scroll-snap-align-start"
-          />
-          <img
-            src={FordaxAcre2}
-            alt=""
-            className="min-w-[206px] scroll-snap-align-start"
-          />
-          <img
-            src={FBSworksmed}
-            alt=""
-            className="min-w-[206px] scroll-snap-align-start"
-          />
-          <img
-            src={FBSworkshouse}
-            alt=""
-            className="min-w-[206px] scroll-snap-align-start"
-          />
-          <img
-            src={FordaxAcre}
-            alt=""
-            className="min-w-[206px] scroll-snap-align-start"
-          />
+        <div className="overflow-hidden w-full mt-4">
+          <div className="flex items-center gap-4 justify-center w-max animate-scroll">
+            <img src={FordaxAcre3} alt="" className="min-w-[206px]" />
+            <img src={FordaxAcre2} alt="" className="min-w-[206px]" />
+            <img src={FBSworksmed} alt="" className="min-w-[206px]" />
+            <img src={FBSworkshouse} alt="" className="min-w-[206px]" />
+            <img src={FordaxAcre} alt="" className="min-w-[206px]" />
+
+            {/* Duplicate images for seamless looping */}
+            <img src={FordaxAcre3} alt="" className="min-w-[206px]" />
+            <img src={FordaxAcre2} alt="" className="min-w-[206px]" />
+            <img src={FBSworksmed} alt="" className="min-w-[206px]" />
+            <img src={FBSworkshouse} alt="" className="min-w-[206px]" />
+            <img src={FordaxAcre} alt="" className="min-w-[206px]" />
+          </div>
         </div>
       </div>
       <div className="relative flex flex-col justify-start items-center pt-10 bg-black w-full">

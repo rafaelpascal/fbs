@@ -46,6 +46,8 @@ type PersonalInfoProp = {
   handleOTPComplete: (otp: string) => void;
   handleAlreadyExist: () => void;
   submitting: boolean;
+  value: string | undefined;
+  setValue: (value?: string | undefined) => void;
 };
 
 const PersonalInfo = ({
@@ -53,12 +55,14 @@ const PersonalInfo = ({
   coursetitle,
   handleOTPComplete,
   handleAlreadyExist,
+  value,
+  setValue,
   submitting,
 }: PersonalInfoProp) => {
   const dispatch = useDispatch();
   const { seconds, startCountdown, resetCountdown } = Countdownauth(60);
   const [resendLoading, setresendLoading] = useState(false);
-  const [value, setValue] = useState<string | undefined>(undefined);
+  // const [value, setValue] = useState<string | undefined>(undefined);
   const form = useForm<ApplicationFormPayload>({
     resolver: zodResolver(applicationSchema),
     mode: "onChange",
@@ -156,9 +160,7 @@ const PersonalInfo = ({
       const email = form.getValues("email");
       const payload = { email };
       setresendLoading(true);
-      const res = await AuthService.resendOTP(payload);
-      console.log(res);
-
+      await AuthService.resendOTP(payload);
       await showAlert(
         "success",
         "Resent!",

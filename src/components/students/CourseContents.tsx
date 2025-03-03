@@ -10,17 +10,41 @@ type CourseContentProps = {
 
 const CourseContents = ({ courseId }: CourseContentProps) => {
   const [ismodule, setIsModule] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+  const [lessons, setLessons] = useState(0);
+  const [isModuleCount, setIsModuleCount] = useState(false);
 
   const getModule = async () => {
     try {
-      setLoading(true);
+      setIsModuleCount(true);
       const payload = { courseid: courseId };
-      const module = await CourseServices.getModuleByCourseId(payload);
-      setIsModule(module.data.course_modules);
-      setLoading(false);
+      const moduleResponse = await CourseServices.getModuleByCourseId(payload);
+      const modules = moduleResponse.data.course_modules;
+      setIsModule(modules);
+      if (modules.length > 0) {
+        const lessonCounts: { moduleid: number; lessonCount: number }[] =
+          await Promise.all(
+            modules.map(async (module: { moduleid: number }) => {
+              const lessonPayload = { moduleid: module.moduleid };
+              const lessonsResponse = await CourseServices.getLessonByModuleId(
+                lessonPayload
+              );
+              return {
+                moduleid: module.moduleid,
+                lessonCount: lessonsResponse.data.course_lessons.length,
+              };
+            })
+          );
+        const totalLessons = lessonCounts.reduce(
+          (sum, module) => sum + module.lessonCount,
+          0
+        );
+        setLessons(totalLessons);
+      }
+
+      setIsModuleCount(false);
     } catch (error) {
       console.log(error);
+      setIsModuleCount(false);
     }
   };
 
@@ -30,6 +54,7 @@ const CourseContents = ({ courseId }: CourseContentProps) => {
 
   const accordionItems = ismodule.map((module: any, index: number) => ({
     title: `Module ${module.module_number}: ${module.module_title}`,
+    moduleId: `${module.moduleid}`,
     defaultOpen: index === 0,
     children: (
       <div>
@@ -38,7 +63,7 @@ const CourseContents = ({ courseId }: CourseContentProps) => {
     ),
   }));
 
-  if (isLoading) {
+  if (isModuleCount) {
     return (
       <div className="w-full flex justify-center items-center py-10">
         <LoadingSpinner />
@@ -51,10 +76,11 @@ const CourseContents = ({ courseId }: CourseContentProps) => {
         Description
       </h2>
       <h2 className="mb-4">
-        {ismodule.length} Modules • {}lessons
+        {ismodule.length} Modules • {lessons} Lessons
       </h2>
       <Accordion
-        lessons={0}
+        // moduleId={module.moduleid}
+        lessons={lessons}
         items={accordionItems}
         accordionName="example-accordion"
       />

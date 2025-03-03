@@ -185,7 +185,13 @@ const Header = () => {
             </div>
           </div>
           <div className="flex justify-end items-center gap-3">
-            <p>Apply for a course</p>
+            <Link
+              to="https://fordaxbschool.com/execs"
+              target="_blank"
+              className="text-[20px] font-semibold hover:text-[#FF1515] font-DMSans text-[#757575]"
+            >
+              <p>Apply for a course</p>
+            </Link>
             <button
               onClick={handleLogin}
               className="w-[222px] h-[54px] text-[#fff] bg-[#FF1515] rounded-[8px]"

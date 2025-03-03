@@ -22,6 +22,11 @@ import List from "../list/List";
 import { CourseServices } from "~/api/course";
 import { useEffect, useState } from "react";
 import { LoadingSpinner } from "../ui/loading-spinner";
+import {
+  formatDate,
+  getMonthsBetweenDates,
+  getWeeksBetweenDates,
+} from "~/lib/utils";
 
 const tabsData = [
   { title: "Overview" },
@@ -71,7 +76,7 @@ const facilitatorsData: Facilitator[] = [
 
 const FacilitatorsItem: FacilitatorsProps[] = [
   {
-    Title: "Learning Objectives",
+    Title: "Program Objectives",
     items: [],
   },
   {
@@ -116,8 +121,8 @@ type FooterbtnItem = {
 const Contents = ({ id, name }: CourseProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModuleCount, setIsModuleCount] = useState(false);
-  const [lessons, setLessons] = useState([]);
-  const [moduleId, setModuleId] = useState(0);
+  const [lessons, setLessons] = useState(0);
+  // const [moduleId, setModuleId] = useState(0);
   const [ismodule, setIsModule] = useState([]);
   const [footerBtnItem, setFooterBtnItem] = useState<FooterbtnItem[]>([
     {
@@ -132,7 +137,7 @@ const Contents = ({ id, name }: CourseProps) => {
     cohortid: null,
     cohort_title: "",
     course_format: "",
-    course_flexible: "",
+    course_flexible: 0,
     course_id: null,
     course_mode: "",
     course_run: "",
@@ -160,10 +165,12 @@ const Contents = ({ id, name }: CourseProps) => {
     naira_amount: 0,
     program_fee: 0,
     program_plan: "",
+    course_enddate: "",
     learning_objective: "",
     assessment_method: "",
     career_option: "",
     course_for: "",
+    course_startdate: "",
     course_requirements: "",
     facilitators: "",
     course_structure: "",
@@ -186,7 +193,7 @@ const Contents = ({ id, name }: CourseProps) => {
         items: [courseData.assessment_method],
       };
     }
-    if (facilitator.Title === "Learning Objectives") {
+    if (facilitator.Title === "Program Objectives") {
       return {
         ...facilitator,
         items: [courseData.learning_objective],
@@ -227,8 +234,6 @@ const Contents = ({ id, name }: CourseProps) => {
         courseid: JSON.parse(id),
       };
       const course = await CourseServices.getCourse(payload);
-      console.log("ffff", course);
-
       setCourseData(course.data.course_details[0]);
       setIsLoading(false);
     } catch (error) {
@@ -240,32 +245,42 @@ const Contents = ({ id, name }: CourseProps) => {
     try {
       setIsModuleCount(true);
       const payload = { courseid: courseData.coursesid };
-      const module = await CourseServices.getModuleByCourseId(payload);
-      setIsModule(module.data.course_modules);
-      setModuleId(module.data.course_modules[0].moduleid);
+      const moduleResponse = await CourseServices.getModuleByCourseId(payload);
+
+      const modules = moduleResponse.data.course_modules;
+      setIsModule(modules);
+
+      if (modules.length > 0) {
+        const lessonCounts: { moduleid: number; lessonCount: number }[] =
+          await Promise.all(
+            modules.map(async (module: { moduleid: number }) => {
+              const lessonPayload = { moduleid: module.moduleid };
+              const lessonsResponse = await CourseServices.getLessonByModuleId(
+                lessonPayload
+              );
+              return {
+                moduleid: module.moduleid,
+                lessonCount: lessonsResponse.data.course_lessons.length,
+              };
+            })
+          );
+        const totalLessons = lessonCounts.reduce(
+          (sum, module) => sum + module.lessonCount,
+          0
+        );
+        setLessons(totalLessons);
+      }
+
       setIsModuleCount(false);
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const getLesson = async () => {
-    setIsModuleCount(true);
-    try {
-      const payload = {
-        moduleid: moduleId,
-      };
-      const lessons = await CourseServices.getLessonByModuleId(payload);
-      setLessons(lessons.data.course_lessons);
       setIsModuleCount(false);
-    } catch (error) {
-      console.log(error);
     }
   };
 
-  useEffect(() => {
-    getLesson();
-  }, [moduleId]);
+  // useEffect(() => {
+  //   getLesson();
+  // }, [moduleId]);
 
   useEffect(() => {
     if (courseData.coursesid) {
@@ -294,8 +309,10 @@ const Contents = ({ id, name }: CourseProps) => {
         items: [
           {
             text:
-              courseData.course_flexible === "0"
-                ? `${courseData.start_date} - ${courseData.end_date}`
+              courseData.course_flexible === 0
+                ? `${formatDate(courseData.course_startdate)} - ${formatDate(
+                    courseData.course_enddate
+                  )}`
                 : `Flexible`,
             icon: <CiClock1 />,
           },
@@ -307,18 +324,29 @@ const Contents = ({ id, name }: CourseProps) => {
           {
             text: "Lessons",
             icon: <IoExtensionPuzzleOutline />,
-            count: `${lessons.length}`,
+            count: `${lessons}`,
           },
           {
             text: "Duration",
             icon: <CiClock1 />,
-            count: courseData.course_run || "N/A",
+            count:
+              courseData.course_run === "Weekly"
+                ? `${getWeeksBetweenDates(
+                    courseData.course_startdate,
+                    courseData.course_enddate
+                  )} Weeks`
+                : courseData.course_run === "Monthly"
+                ? `${getMonthsBetweenDates(
+                    courseData.course_startdate,
+                    courseData.course_enddate
+                  )} Months`
+                : "N/A",
           },
           { text: "Case Study", icon: <MdBarChart />, count: "9" },
           {
-            text: "Certificate",
+            text: courseData.course_type,
             icon: <BsAward />,
-            count: courseData.certificate_type || "No",
+            count: "",
           },
         ],
         ordered: false,
@@ -343,14 +371,14 @@ const Contents = ({ id, name }: CourseProps) => {
   }
   return (
     <div className="flex justify-center  mb-[10%] font-DMSans items-center px-4">
-      <div className="w-full lg:w-[80%] flex flex-wrap lg:flex-row justify-center gap-20 items-start">
+      <div className="relative w-full lg:w-[80%] flex flex-wrap lg:flex-row justify-center gap-20 items-start">
         <div className="w-full lg:w-[819px]">
           <h2 className="text-[40px] my-3">{courseData.course_title}</h2>
           <p className="text-[18px] text-left  my-3">
             {courseData.course_highlight}
           </p>
           <p className="text-[20px]">
-            <span className="text-[#FF3B30]">Cohort</span>{" "}
+            <span className="text-[#FF3B30]">Cohort:</span>{" "}
             {courseData.cohort_title}
           </p>
           <p className="text-[20px] my-3">
@@ -358,7 +386,7 @@ const Contents = ({ id, name }: CourseProps) => {
             {courseData.course_type}
           </p>
           <p className="text-[20px] mb-3">
-            <span className="text-[#FF3B30]">Format:</span>{" "}
+            <span className="text-[#FF3B30]">Mode:</span>{" "}
             {courseData.course_mode}
           </p>
           {courseData.video_url ? (
@@ -404,7 +432,7 @@ const Contents = ({ id, name }: CourseProps) => {
               items={facilitator.items}
               title={facilitator.Title}
               ordered={true}
-              customClass="p-2"
+              customClass="p-2 text-[#fff]"
             />
           ))}
           <div className="flex justify-between flex-col lg:flex-row flex-wrap w-full">
@@ -427,9 +455,12 @@ const Contents = ({ id, name }: CourseProps) => {
             </BaseButton>
           </div>
         </div>
-        <div className="w-full lg:w-[443.02px] p-4 rounded-md shadow-md">
+        <div
+          id="side"
+          className="w-full rounded-md lg:w-[443.02px] p-2 lg:sticky top-40 shadow-md"
+        >
           <img src={courseData.images} alt="mbaimage" />
-          <div className="flex py-4 justify-between items-center">
+          <div className="flex py-2 justify-between items-center">
             <p className="font-DMSans font-semibold text-[18px]">
               {new Intl.NumberFormat("en-NG", {
                 style: "currency",
@@ -447,7 +478,7 @@ const Contents = ({ id, name }: CourseProps) => {
           </div>
           <div className="flex flex-col justify-between items-center w-full">
             <BaseButton
-              containerCLassName="mt-4 w-full hover:bg-[#fff] border-[1px] hover:border-[#FF3B30] hover:text-[#FF3B30]  lg:w-[369.19px] h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[24px] font-bold font-DMSans text-[#fff]"
+              containerCLassName="mt-4 w-full hover:bg-[#fff] border-[1px] hover:border-[#FF3B30] hover:text-[#FF3B30]  lg:w-[369.19px] h-[53px] w-full rounded-[8px] bg-[#FF3B30] text-[24px] font-bold font-DMSans text-[#fff]"
               hoverScale={1.01}
               hoverOpacity={0.8}
               tapScale={0.9}
@@ -457,9 +488,10 @@ const Contents = ({ id, name }: CourseProps) => {
             </BaseButton>
             <Link
               to="https://fordaxbschool.com/wish"
-              className="mt-4 w-full lg:w-[369.19px] border-[1px] border-[#000] hover:border-[#FF3B30] hover:text-[#FF3B30] flex justify-center items-center h-[66px] rounded-[8px] text-[24px] font-bold font-DMSans text-[#757575]"
+              target="_blank"
+              className="mt-4 w-full lg:w-[369.19px] border-[1px] border-[#000] hover:border-[#FF3B30] hover:text-[#FF3B30] flex justify-center items-center h-[53px] rounded-[8px] text-[24px] font-bold font-DMSans text-[#757575]"
             >
-              <p>Wishlist</p>
+              <p>Add to wishlist</p>
             </Link>
           </div>
           {footerBtnItem.map((facilitator, index) => (
@@ -471,7 +503,7 @@ const Contents = ({ id, name }: CourseProps) => {
             />
           ))}
           <div className="w-full flex justify-center items-center flex-col">
-            <p className="text-[#FF3B30] font-DMSans font-semibold text-[18px] w-full text-center py-10">
+            <p className="text-[#FF3B30] font-DMSans font-semibold text-[18px] w-full text-center py-4">
               Instalment Plan Available
             </p>
             <div className="flex justify-center gap-2 items-center">

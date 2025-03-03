@@ -167,7 +167,7 @@ const NewAssignment = () => {
                 {/* Conditionally render input fields based on selected type */}
                 {selectedType === "text" && item.type === "text" && (
                   <div className="flex flex-col lg:flex-row justify-between items-center">
-                    <div className="mt-4 w-full lg:w-[90%]">
+                    <div className="mt-4 w-full">
                       <BaseInput
                         label="Answer"
                         type="textarea"
@@ -197,14 +197,6 @@ const NewAssignment = () => {
                         <h2 className="text-[14px] font-normal italic text-[#4F547B] font-DMSans">
                           {maxWords}
                         </h2>
-                      </div>
-                    </div>
-                    <div className="w-auto">
-                      <div className="p-2 rounded-xl shadow-md border-2 border-[#FF1515]">
-                        <IoDocumentTextOutline className="size-8" />
-                      </div>
-                      <div className="p-2">
-                        <FaFilePdf className="size-8" />
                       </div>
                     </div>
                   </div>

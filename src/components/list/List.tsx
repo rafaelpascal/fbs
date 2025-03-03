@@ -19,12 +19,12 @@ const List = ({
 
   return (
     <div>
-      <h2 className="text-[20px] font-DMSans font-semibold mb-4">{title}</h2>
+      <h2 className="text-[20px] font-DMSans font-semibold">{title}</h2>
       <ListTag className={`${customClass}`}>
         {items.map((item, index) => (
           <li
             key={index}
-            className="flex text-left text-[16px] items-start font-DMSans gap-4 py-2"
+            className="flex text-left text-[16px] items-start font-DMSans gap-4"
           >
             {!ordered && <GoDotFill className="mt-1" />}
             <div className="flex-1">

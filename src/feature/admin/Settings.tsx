@@ -349,11 +349,11 @@ const Dropdowns = ({
     <div className="my-4 w-full lg:w-[70%] flex flex-col lg:flex-row flex-wrap justify-between items-center">
       <div className="w-full lg:w-[48%] mb-4">
         <SelectionDropdown
-          label="Course Format"
+          label="Course mode"
           labelClassName="text-[14px] font-DMSans font-semibold mb-2"
           options={courseformat}
           onSelect={(option) => handleSelect("courseFormat", option)}
-          placeholder="Select Course Format"
+          placeholder="Select Course mode"
           initialSelected={formData.courseFormat}
         />
       </div>

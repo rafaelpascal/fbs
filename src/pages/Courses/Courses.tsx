@@ -401,8 +401,13 @@ const Dashboard = () => {
       </Collapsible>
       {isEnrolled ? (
         <>
-          <Collapsible title="My Courses" initialState={true}>
-            <div className="bg-[#EBEDF0] flex flex-col justify-center items-center w-full p-4 lg:p-10 rounded-[16px]">
+          <div className="bg-white shadow-xl  rounded-[8px] mt-3">
+            <div className="w-full px-4 flex justify-start items-center h-[80px]">
+              <h2 className="font-DMSans text-[24px] font-semibold">
+                My Courses
+              </h2>
+            </div>
+            <div className="bg-[#EBEDF0] flex flex-col justify-center items-center w-full p-4 lg:p-10 rounded-[8px]">
               <div className="flex justify-between items-center w-full">
                 <div className="relative">
                   <div
@@ -537,7 +542,7 @@ const Dashboard = () => {
                 </Carousel>
               )}
             </div>
-          </Collapsible>
+          </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <Collapsible
