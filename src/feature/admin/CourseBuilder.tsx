@@ -25,6 +25,7 @@ interface Capstone {
   pages: string;
 }
 interface Module {
+  module_Id: number;
   id: number;
   title: string;
   description: string;
@@ -138,11 +139,11 @@ const CourseBuilder = ({ created }: any) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
-  console.log(selectedModule);
+
   const addModule = async () => {
     setIsnewModule(true);
     setNewModule({
-      number: 0,
+      number: modules.length + 1,
       status: false,
     });
     await showAlert(
@@ -156,47 +157,109 @@ const CourseBuilder = ({ created }: any) => {
 
   useEffect(() => {
     if (isNewModule && moduleObj.title) {
-      const newModule: Module = {
-        id: modules.length + 1,
-        title: `MODULE ${modules.length + 1}`,
-        description: moduleObj.title,
-        lessons: [],
-        capstone: [],
-        assignment: [],
-        quiz: [],
-        exam: [],
-        resources: [], // Add this
-        caseStudy: [], // Add this
-        polls: [], // Add this
-      };
+      setModules((prevModules) => {
+        const newModule: Module = {
+          module_Id: moduleObj.moduleId || 0,
+          id: prevModules.length + 1,
+          title: `MODULE ${prevModules.length + 1}`,
+          description: moduleObj.title,
+          lessons: [],
+          capstone: [],
+          assignment: [],
+          quiz: [],
+          exam: [],
+          resources: [],
+          caseStudy: [],
+          polls: [],
+        };
 
-      setModules((prevModules) => [...prevModules, newModule]);
-      setSelectedModuleId(newModule.id);
+        return [...prevModules, newModule];
+      });
+
+      setSelectedModuleId(modules.length + 1);
       setIsnewModule(false);
+      setmoduleObj({
+        moduleId: 0,
+        title: "",
+        description: "",
+      });
     }
   }, [moduleObj, isNewModule]);
+
+  // useEffect(() => {
+  //   if (isNewModule && moduleObj.title) {
+  //     const newModule: Module = {
+  //       module_Id: moduleObj.moduleId || 0,
+  //       id: modules.length + 1,
+  //       title: `MODULE ${modules.length + 1}`,
+  //       description: moduleObj.title,
+  //       lessons: [],
+  //       capstone: [],
+  //       assignment: [],
+  //       quiz: [],
+  //       exam: [],
+  //       resources: [], // Add this
+  //       caseStudy: [], // Add this
+  //       polls: [], // Add this
+  //     };
+
+  //     setModules((prevModules) => [...prevModules, newModule]);
+  //     setSelectedModuleId(newModule.id);
+  //     setIsnewModule(false);
+  //   }
+  // }, [moduleObj, isNewModule]);
+
+  // const addNewItem = (type: keyof Module, obj: any, setObj: Function) => {
+  //   if (!obj.title) return;
+
+  //   setModules((prevModules) =>
+  //     prevModules.map((module) =>
+  //       module.id === selectedModuleId
+  //         ? {
+  //             ...module,
+  //             [type]: [
+  //               ...((module[type] as any[]) || []),
+  //               {
+  //                 id: Date.now(),
+  //                 moduleId: selectedModuleId,
+  //                 title: type.toUpperCase(),
+  //                 description: obj.title,
+  //                 pages: "",
+  //               },
+  //             ],
+  //           }
+  //         : module
+  //     )
+  //   );
+
+  //   setObj({ title: "", description: "" });
+  // };
 
   const addNewItem = (type: keyof Module, obj: any, setObj: Function) => {
     if (!obj.title) return;
 
     setModules((prevModules) =>
-      prevModules.map((module) =>
-        module.id === selectedModuleId
-          ? {
-              ...module,
-              [type]: [
-                ...((module[type] as any[]) || []),
-                {
-                  id: Date.now(),
-                  moduleId: selectedModuleId,
-                  title: type.toUpperCase(),
-                  description: obj.title,
-                  pages: "",
-                },
-              ],
-            }
-          : module
-      )
+      prevModules.map((module) => {
+        if (module.id === selectedModuleId) {
+          const existingItems = (module[type] as any[]) || [];
+          const newIndex = existingItems.length + 1; // Get index based on array length
+
+          return {
+            ...module,
+            [type]: [
+              ...existingItems,
+              {
+                id: Date.now(),
+                moduleId: selectedModuleId,
+                title: `${type.toUpperCase()} ${newIndex}`, // Attach index to title
+                description: obj.title,
+                pages: "",
+              },
+            ],
+          };
+        }
+        return module;
+      })
     );
 
     setObj({ title: "", description: "" });
@@ -358,39 +421,39 @@ const CourseBuilder = ({ created }: any) => {
       return;
     }
     const defaultValues: any = {
-      lesson: { module: moduleObj.moduleId || 0, status: true },
+      lesson: { module: selectedModule?.module_Id || 0, status: true },
       capstone: {
-        module: moduleObj.moduleId || 0,
+        module: selectedModule?.module_Id || 0,
         lesson: lessonObj.moduleId || 0,
         status: true,
       },
       assignment: {
-        module: moduleObj.moduleId || 0,
+        module: selectedModule?.module_Id || 0,
         lesson: lessonObj.moduleId || 0,
         status: true,
       },
       quiz: {
-        module: moduleObj.moduleId || 0,
+        module: selectedModule?.module_Id || 0,
         lesson: lessonObj.moduleId || 0,
         status: true,
       },
       exam: {
-        module: moduleObj.moduleId || 0,
+        module: selectedModule?.module_Id || 0,
         lesson: lessonObj.moduleId || 0,
         status: true,
       },
       resources: {
-        module: moduleObj.moduleId || 0,
+        module: selectedModule?.module_Id || 0,
         lesson: lessonObj.moduleId || 0,
         status: true,
       },
       caseStudy: {
-        module: moduleObj.moduleId || 0,
+        module: selectedModule?.module_Id || 0,
         lesson: lessonObj.moduleId || 0,
         status: true,
       },
       poll: {
-        module: moduleObj.moduleId || 0,
+        module: selectedModule?.module_Id || 0,
         lesson: lessonObj.moduleId || 0,
         status: true,
       },

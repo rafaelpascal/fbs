@@ -6,9 +6,10 @@ import { Status } from "~/components/ui/Badge";
 import { statColorCode } from "~/utils/helpers";
 import InDataTable from "~/components/table/InDataTable";
 // import { useState } from "react";
-import { BsThreeDotsVertical } from "react-icons/bs";
+// import { BsThreeDotsVertical } from "react-icons/bs";
 import { PaymentData } from "~/types/payment";
 import { CourseServices } from "~/api/course";
+import ActionMenu from "../table/ActionMenu";
 interface PaymentTableRow {
   application_id: number;
   id: string;
@@ -32,7 +33,7 @@ interface OnlinePaymentsTableProps {
 const OnlinePaymentsTable: React.FC<OnlinePaymentsTableProps> = ({
   data = [],
 }) => {
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  // const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [selectedPaymentId, setSelectedPaymentId] = useState<number | null>(
@@ -76,6 +77,18 @@ const OnlinePaymentsTable: React.FC<OnlinePaymentsTableProps> = ({
     phone_number: item.phone_number,
   }));
 
+  const handleView = (id: number) => {
+    setSelectedPaymentId(id);
+    setShowConfirmModal(true);
+    // setOpenMenuId(null);
+  };
+
+  const handleReject = (id: number) => {
+    console.log("Download Receipt", id);
+    setSelectedPaymentId(id);
+    setShowRejectModal(true);
+    // setOpenMenuId(null);
+  };
   const columns: TableColumn<PaymentTableRow>[] = [
     {
       name: "S/N",
@@ -96,7 +109,7 @@ const OnlinePaymentsTable: React.FC<OnlinePaymentsTableProps> = ({
             textClassName="font-medium text-sm max-md:hidden"
             wrapperClassName="max-md:gap-0"
           />
-          <h2 className="text-[12px] font-semibold font-CircularStd text-[#515F76]">
+          <h2 className="text-[12px] capitalize font-semibold font-DMSans text-[#515F76]">
             {row.fullname}
           </h2>
         </div>
@@ -153,48 +166,18 @@ const OnlinePaymentsTable: React.FC<OnlinePaymentsTableProps> = ({
       cell: (row) => (
         <div className="relative">
           {row.paymentMode === "Manual Payment" && (
-            <button
-              className="p-2 hover:bg-gray-100 rounded-full"
-              onClick={() =>
-                setOpenMenuId(openMenuId === row.id ? null : row.id)
-              }
-            >
-              <BsThreeDotsVertical className="h-5 w-5 text-gray-600" />
-            </button>
-          )}
-
-          {openMenuId === row.id && (
-            <>
-              <div
-                className="fixed inset-0 z-10"
-                onClick={() => setOpenMenuId(null)}
-              />
-
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20 py-1">
-                <button
-                  onClick={() => {
-                    setSelectedPaymentId(row.application_id);
-
-                    setShowConfirmModal(true);
-                    setOpenMenuId(null);
-                  }}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Confirm
-                </button>
-                <button
-                  onClick={() => {
-                    console.log("Download Receipt", row.id);
-                    setSelectedPaymentId(row.application_id);
-                    setShowRejectModal(true);
-                    setOpenMenuId(null);
-                  }}
-                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Reject
-                </button>
-              </div>
-            </>
+            <ActionMenu
+              actions={[
+                {
+                  label: "Confirm",
+                  action: () => handleView(row.application_id),
+                },
+                {
+                  label: "Reject",
+                  action: () => handleReject(row.application_id),
+                },
+              ]}
+            />
           )}
         </div>
       ),

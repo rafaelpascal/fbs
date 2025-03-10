@@ -667,6 +667,7 @@ const EditCourses = ({ initialData = {} }: CreatecourseformProps) => {
                       instructoreType: formData.instructoreType,
                       courseFormat: formData.courseFormat,
                       selectedMonths: formData.selectedMonths,
+                      enrollmentStartDate: formData.enrollmentStartDate,
                       enrollmentEndDate: formData.enrollmentEndDate,
                       courseStartDate: formData.courseStartDate,
                       courseEndDate: formData.courseEndDate,

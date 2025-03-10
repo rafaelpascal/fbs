@@ -194,14 +194,8 @@ const Dashboard = () => {
     navigate(`/payment/${applicationId}`);
   };
 
-  const handleStartCourse = (type: string, courseId: number) => {
-    if (type === "word") {
-      navigate(`/word-course/${courseId}`);
-    } else if (type === "video") {
-      navigate(`/lecture/${courseId}`);
-    } else {
-      console.error("Unknown course type");
-    }
+  const handleStartCourse = (courseId: number) => {
+    navigate(`/lecture/${courseId}`);
   };
 
   const fetchmyapplication = async () => {
@@ -417,7 +411,7 @@ const Dashboard = () => {
                     onClick={() => setIsOpen(!isOpen)}
                   >
                     <p className="text-left font-DMSans text-[14px] font-semibold">
-                      MODULES
+                      {selectedOption}
                     </p>
                     <FaChevronDown />
                   </div>
@@ -465,9 +459,9 @@ const Dashboard = () => {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={selectedId}
-                    initial={{ opacity: 0, y: 20 }} // Start invisible & slightly below
-                    animate={{ opacity: 1, y: 0 }} // Animate to visible & original position
-                    exit={{ opacity: 0, y: -20 }} // Animate out upwards
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
                   >
                     <Carousel>
@@ -485,7 +479,7 @@ const Dashboard = () => {
                             icon={IoMdUnlock}
                             courseStarted="not started"
                             onButtonClick={() =>
-                              handleStartCourse("video", course.moduleid)
+                              handleStartCourse(course.moduleid)
                             }
                           />
                         ))}
@@ -505,7 +499,7 @@ const Dashboard = () => {
                               icon={IoMdUnlock}
                               courseStarted="not started"
                               onButtonClick={() =>
-                                handleStartCourse(course.type, course.moduleid)
+                                handleStartCourse(course.moduleid)
                               }
                             />
                           ))}
@@ -517,7 +511,7 @@ const Dashboard = () => {
               )}
               {selectedOption === "LESSONS" && (
                 <Carousel>
-                  <div className="grid w-[100%] grid-cols-1 mt-8 gap-x-20 sm:grid-cols-2">
+                  <div className="grid w-[100%] grid-cols-1 mt-8 gap-x-10 sm:grid-cols-2">
                     {courses.map((course, index) => (
                       <ModuleCards
                         key={index}
@@ -528,7 +522,7 @@ const Dashboard = () => {
                     ))}
                   </div>
                   {secondcourses && secondcourses.length > 0 && (
-                    <div className="grid grid-cols-1 mt-8 gap-x-60 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 mt-8 gap-x-10 sm:grid-cols-2">
                       {secondcourses.map((course, index) => (
                         <ModuleCards
                           key={index}

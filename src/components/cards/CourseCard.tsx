@@ -43,10 +43,10 @@ const CourseCard: React.FC<CourseCardProps> = ({
     }
   }, [moduleId]);
   return (
-    <div className="relative w-full mt-4 h-[325px] bg-[#fff]">
+    <div className="relative lg:min-w-[600px] mt-4 h-[325px] bg-[#fff]">
       <div className="p-4 h-[240px] overflow-y-hidden flex justify-between items-start flex-col">
         <div className="flex justify-between w-full mb-4 items-center">
-          <div className="lg:w-[90%] w-full flex justify-between items-center gap-4">
+          <div className="lg:w-[90%] w-full flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <h2 className="text-[16px]  w-[20%] font-DMSans font-bold text-[#000000]">
               MODULE {moduleNumber}
             </h2>
@@ -54,9 +54,9 @@ const CourseCard: React.FC<CourseCardProps> = ({
               {title}
             </h2>
           </div>
-          <div className="w-[10%] flex justify-end items-center">
+          <div className="w-[30%] flex justify-end items-center">
             {(courseStarted === "completed" || courseStarted === "started") && (
-              <div className="w-[40px] bg-[#EBEDF0] h-[40px] rounded-full flex justify-center items-center">
+              <div className="w-[20%] bg-[#EBEDF0] h-[20%] rounded-full flex justify-center items-center">
                 <Icon
                   className={cn("bg-transparent text-[#000] text-[25px]")}
                 />

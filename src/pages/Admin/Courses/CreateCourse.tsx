@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "~/components/constants/routes";
 import { CourseCreatedModal } from "~/components/Modal/CourseCreatedModal";
@@ -6,14 +6,110 @@ import CourseBuilder from "~/feature/admin/CourseBuilder";
 import Createcourseform from "~/feature/admin/Createcourseform";
 import CredentialsForms from "~/feature/admin/CredentialsForms";
 import { DashboardArea } from "~/layouts/DashboardArea";
+import { useLocation } from "react-router-dom";
+import { CourseServices } from "~/api/course";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
 const CreateCourse = () => {
   const navigate = useNavigate();
   const [width, setWidth] = useState(10);
+  const [loading, setLoading] = useState(true);
+  const [courseData, setCourseData] = useState<{
+    courseid: any;
+    courseTitle: any;
+    courseType: any;
+    facilitator: any;
+    editors: any;
+    supervisors: any;
+    description: any;
+    highlight: any;
+    featuredImages: any[];
+    featuredVideo: any;
+    orientation: any;
+    maxStudents: any;
+    courseRun: any;
+    enrollmentSchedule: any;
+    courseSchedule: any;
+    difficultyLevel: any;
+    courserun: any;
+    instructoreType: any;
+    courseFormat: any;
+    cohortTag: any;
+    enrollmentStartDate: any;
+    enrollmentEndDate: any;
+    courseStartDate: any;
+    courseEndDate: any;
+    currency: any;
+    nairaAmount: any;
+    dollarAmount: any;
+    paymentplan: any;
+    selectedMonths: any;
+  } | null>(null);
+
   const [iscreateForm, setiscreateForm] = useState(true);
   const [isCredentials, setisCredentials] = useState(false);
   const [ismodule, setModule] = useState(false);
   const [ispublished, setIspublished] = useState(false);
+  const location = useLocation();
+  const courseId = location.state?.courseId;
+
+  const fetchCourseData = async (id: string) => {
+    try {
+      const payload = {
+        course_id: id,
+      };
+
+      const res = await CourseServices.getCreatedCourse(payload);
+      const courseDetails = res.data.course_details;
+
+      // Map API response to your form structure
+      const transformedData = {
+        courseid: courseDetails.coursesid,
+        courseTitle: courseDetails.course_title,
+        courseType: courseDetails.course_type,
+        facilitator: courseDetails.facilitators || [],
+        editors: courseDetails.creators || [],
+        supervisors: courseDetails.supervisors || [],
+        description: courseDetails.description,
+        highlight: courseDetails.course_highlight,
+        featuredImages: [courseDetails.modules[0]?.module_image || ""], // Example
+        featuredVideo: courseDetails.video_url,
+        orientation: courseDetails.course_mode,
+        maxStudents: courseDetails.max_students,
+        courseRun: courseDetails.course_run,
+        enrollmentSchedule: courseDetails.enrollment_all_times
+          ? "Always Open"
+          : "Scheduled",
+        courseSchedule: courseDetails.course_flexible ? "Flexible" : "Fixed",
+        difficultyLevel: courseDetails.difficulty_level,
+        courserun: courseDetails.course_run,
+        instructoreType: courseDetails.course_format,
+        courseFormat: courseDetails.course_format,
+        cohortTag: courseDetails.cohort_title,
+        enrollmentStartDate: courseDetails.enrollment_startdate,
+        enrollmentEndDate: courseDetails.enrollment_enddate,
+        courseStartDate: courseDetails.course_startdate,
+        courseEndDate: courseDetails.course_enddate,
+        currency: { NGN: !!courseDetails.naira, USD: !!courseDetails.usd },
+        nairaAmount: courseDetails.naira_amount,
+        dollarAmount: courseDetails.usd_amount,
+        paymentplan: courseDetails.program_plan || "",
+        selectedMonths: courseDetails.installment || 0,
+      };
+
+      setCourseData(transformedData);
+    } catch (error) {
+      console.error("Error fetching course data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (courseId) {
+      fetchCourseData(courseId);
+    }
+  }, [courseId]);
 
   const [formData, setFormData] = useState({
     createForm: {},
@@ -89,6 +185,14 @@ const CreateCourse = () => {
     navigate(ROUTES.COURSES);
     setIspublished(false);
   };
+
+  if (courseId && loading) {
+    return (
+      <div className="w-full h-[100vh] flex justify-center items-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
   return (
     <DashboardArea>
       <div className="relative">
@@ -129,7 +233,8 @@ const CreateCourse = () => {
             <div>
               <Createcourseform
                 created={handleIscredentials}
-                initialData={formData.createForm}
+                // initialData={formData.createForm}
+                initialData={courseData || {}}
               />
             </div>
           )}

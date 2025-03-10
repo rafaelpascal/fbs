@@ -1,5 +1,5 @@
 import { BaseModal } from "./BaseModal";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { cn } from "~/utils/helpers";
 import { BaseInput } from "../data-inputs/text-input";
@@ -84,6 +84,10 @@ export const NewLessonModal = ({
   const handleMediaUpload = (file: File | null) => {
     setMediaFile(file);
   };
+
+  useEffect(() => {
+    console.log("moduleId", moduleId);
+  }, [moduleId]);
 
   const handleSubmit = async () => {
     setisSubmitting(true);

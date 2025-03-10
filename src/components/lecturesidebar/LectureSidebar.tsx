@@ -220,7 +220,7 @@ export const LectureSidebar = () => {
               )}
               <ul
                 className={cn(
-                  "w-full grid grid-cols-1 h-[400px] scrollbar-style py-4 rounded-md overflow-x-hidden overflow-y-auto",
+                  "w-full h-[400px] scrollbar-style py-4 rounded-md overflow-x-hidden overflow-y-auto",
                   "transition-all duration-300",
                   isCollapsed ? "gap-2" : "gap-4",
                   theme === "light" ? "bg-[#fff]" : "bg-[#424141]"

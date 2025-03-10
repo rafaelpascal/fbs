@@ -32,6 +32,7 @@ const SelectionDropdown = ({
   const [selectedOption, setSelectedOption] = useState<Option | null>(
     initialSelected || null
   );
+
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Function to toggle dropdown visibility
@@ -39,9 +40,14 @@ const SelectionDropdown = ({
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    if (initialSelected) {
+      setSelectedOption(initialSelected);
+    }
+  }, [initialSelected]);
+
   // Function to handle selection of an option
   const handleSelect = (option: Option) => {
-    console.log(option);
     setSelectedOption(option);
     setIsOpen(false);
     onSelect(option);
@@ -72,8 +78,9 @@ const SelectionDropdown = ({
         onClick={handleToggle}
       >
         <span className="font-DMSans font-semibold text-[16px]">
-          {selectedOption ? selectedOption.label : placeholder}
+          {selectedOption?.label || placeholder}
         </span>
+
         {isOpen ? <FaChevronUp /> : <FaChevronDown />}
       </div>
 

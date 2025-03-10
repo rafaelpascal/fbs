@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaTimes } from "react-icons/fa";
 import { useTheme } from "~/context/theme-provider";
 import { cn } from "~/utils/helpers";
@@ -37,9 +37,14 @@ const MultipleSelectionDropdown = ({
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    if (initialSelected) {
+      setSelectedOptions(initialSelected);
+    }
+  }, [initialSelected]);
+
   // Function to handle selection of an option
   const handleSelect = (option: Option) => {
-    console.log(option);
     const isSelected = selectedOptions.some(
       (selected) => selected.value === option.value
     );
@@ -54,7 +59,6 @@ const MultipleSelectionDropdown = ({
       // Add the option to the selection
       updatedOptions = [...selectedOptions, option];
     }
-    console.log(updatedOptions);
     setSelectedOptions(updatedOptions);
     onSelect(updatedOptions); // Pass the updated selection to the parent
   };

@@ -89,16 +89,16 @@ const BankTransfer = () => {
     try {
       console.log(payload);
 
-      // const res = await CourseServices.submitPayment(payload);
-      // if (res?.data?.success === true) {
-      //   setIsFormSubmitted({
-      //     status: true,
-      //     message:
-      //       "Thank you for confirming. Our team will get back to you within 72 hours",
-      //   });
-      // } else {
-      //   console.log("success not true");
-      // }
+      const res = await CourseServices.submitPayment(payload);
+      if (res?.data?.success === true) {
+        setIsFormSubmitted({
+          status: true,
+          message:
+            "Thank you for confirming. Our team will get back to you within 72 hours",
+        });
+      } else {
+        console.log("success not true");
+      }
     } catch (error) {
       console.error("Error submiting payment:", error);
     }
@@ -106,6 +106,9 @@ const BankTransfer = () => {
 
   useEffect(() => {
     fetchmyapplication();
+  }, [id]);
+
+  useEffect(() => {
     startCountdown();
   }, [minutes, seconds, resetCountdown, id]);
 
@@ -119,9 +122,7 @@ const BankTransfer = () => {
       customer_name: `${applicationData?.firstname} ${applicationData?.lastname} `,
       email: applicationData?.email,
       phone_number:
-        applicationData?.phone === null
-          ? "+2348012345678"
-          : applicationData?.phone,
+        applicationData?.phone === null ? "" : applicationData?.phone,
       bank_name: data.bankName,
       account_number: data.bankAccount,
       amount: data.amount,

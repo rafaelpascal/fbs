@@ -24,11 +24,11 @@ interface MerchantTableRow {
   avatar: string;
   sn: number;
   course_title: string;
-  start_date: string;
-  end_date: string;
+  course_startdate: string;
+  course_enddate: string;
   application: string;
   creators: string;
-  createdAt: string;
+  created_at: string;
   status: string;
   course_url: string;
 }
@@ -47,8 +47,6 @@ const CourseTable = () => {
 
   useEffect(() => {
     if (data?.course_details) {
-      console.log(data?.course_details);
-
       setCourseData(data?.course_details);
     }
   }, [data]);
@@ -90,7 +88,7 @@ const CourseTable = () => {
 
   // View a Row
   const handleView = (id: number) => {
-    navigate(`/admin/courses/edit/${id}`);
+    navigate("/admin/students/newcourse", { state: { courseId: id } });
   };
 
   // Handle handlecontact
@@ -134,10 +132,10 @@ const CourseTable = () => {
     },
     {
       name: "Date created",
-      selector: (row: { createdAt: string }) => row.createdAt,
+      selector: (row: { created_at: string }) => row.created_at,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
-          {moment(row.createdAt).format("MM/DD/YYYY")}
+          {moment(row.created_at).format("MM/DD/YYYY")}
         </div>
       ),
     },
@@ -159,19 +157,19 @@ const CourseTable = () => {
     },
     {
       name: "Starting",
-      selector: (row: { start_date: string }) => row.start_date,
+      selector: (row: { course_startdate: string }) => row.course_startdate,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
-          {moment(row.start_date).format("MM/DD/YYYY")}
+          {moment(row.course_startdate).format("MM/DD/YYYY")}
         </div>
       ),
     },
     {
       name: "Ending",
-      selector: (row: { end_date: string }) => row.end_date,
+      selector: (row: { course_enddate: string }) => row.course_enddate,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
-          {moment(row.end_date).format("MM/DD/YYYY")}
+          {moment(row.course_enddate).format("MM/DD/YYYY")}
         </div>
       ),
     },

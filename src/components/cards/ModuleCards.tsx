@@ -22,8 +22,8 @@ ModuleCardsProp) => {
   const [newModuleNumber, setModuleNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [lessonData, setLessonsData] = useState<Lessons[]>([]);
+
   const fetModules = async () => {
-    setIsLoading(true);
     try {
       const payload = {
         module_id: moduleNumber,
@@ -31,7 +31,6 @@ ModuleCardsProp) => {
       const res = await CourseServices.listModulebyId(payload);
       setModuleTitle(res.data.modules[0].module_title);
       setModuleNumber(res.data.modules[0].module_number);
-      setIsLoading(false);
     } catch (error) {
       console.log(error);
       setIsLoading(false);
@@ -39,13 +38,11 @@ ModuleCardsProp) => {
   };
 
   const fetLessons = async () => {
-    setIsLoading(true);
     const payload = {
       moduleid: moduleNumber,
     };
     const res = await CourseServices.lessonsByModuleId(payload);
     setLessonsData(res.data.course_lessons);
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -69,7 +66,7 @@ ModuleCardsProp) => {
   }
 
   return (
-    <div>
+    <div className="lg:min-w-[600px] mb-4">
       <div className="h-[89px] w-full flex justify-start items-center px-4 bg-[#FF1515]">
         <h2 className="text-left font-DMSans text-[20px] text-[#fff] font-semibold">
           MODULE {newModuleNumber}: {moduleTitle}

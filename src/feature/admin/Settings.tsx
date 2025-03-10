@@ -46,6 +46,7 @@ interface SettingsProps {
     courseFormat: { label: string; value: number } | null;
     selectedMonths: number;
     enrollmentEndDate: string;
+    enrollmentStartDate: string;
     courseStartDate: string;
     courseEndDate: string;
   };
@@ -58,6 +59,10 @@ const courserun = [
   { label: "Semester", value: 4 },
   { label: "Trimester", value: 5 },
 ];
+const formatDate = (date: string) => {
+  const d = new Date(date);
+  return d.toISOString().split("T")[0];
+};
 
 const Settings = ({
   theme,
@@ -77,10 +82,10 @@ const Settings = ({
 }: SettingsProps) => {
   // When di component mount, check if we get initial dates
   useEffect(() => {
-    if (initialValues.enrollmentEndDate) {
+    if (initialValues.enrollmentEndDate && initialValues.enrollmentStartDate) {
       setIsSelectDateChecked(true);
     }
-    if (initialValues.courseStartDate || initialValues.courseEndDate) {
+    if (initialValues.courseStartDate && initialValues.courseEndDate) {
       setIsScheduleDateChecked(true);
     }
   }, [initialValues]);
@@ -91,23 +96,40 @@ const Settings = ({
     setFormData((prevData: any) => ({ ...prevData, [name]: value }));
   };
 
-  const handlenRadioChange = (
+  useEffect(() => {
+    if (
+      initialValues.enrollmentEndDate &&
+      formData.enrollmentEndDate !== initialValues.enrollmentEndDate
+    ) {
+      setIsSelectDateChecked(true);
+      setFormData((prevData: any) => ({
+        ...prevData,
+        enrollmentStartDate: initialValues.enrollmentStartDate || "",
+        enrollmentEndDate: initialValues.enrollmentEndDate,
+      }));
+    }
+
+    if (
+      (initialValues.courseStartDate || initialValues.courseEndDate) &&
+      (formData.courseStartDate !== initialValues.courseStartDate ||
+        formData.courseEndDate !== initialValues.courseEndDate)
+    ) {
+      setIsScheduleDateChecked(true);
+      setFormData((prevData: any) => ({
+        ...prevData,
+        courseStartDate: initialValues.courseStartDate || "",
+        courseEndDate: initialValues.courseEndDate || "",
+      }));
+    }
+  }, [initialValues, formData]);
+
+  const handleRadioChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: string
   ) => {
     const { value } = e.target;
     setFormData((prevData: any) => ({ ...prevData, [field]: value }));
   };
-
-  // const handleSelectChange = (
-  //   field: string,
-  //   option: { label: string; value: string | number }
-  // ) => {
-  //   setFormData((prev: any) => ({
-  //     ...prev,
-  //     [field]: option,
-  //   }));
-  // };
 
   return (
     <div className="border-t-2 border-[#ddd] py-4">
@@ -138,7 +160,11 @@ const Settings = ({
             options={courserun}
             onSelect={(option) => handleSelect("courserun", option)}
             placeholder="Select Course run"
-            initialSelected={formData.courserun}
+            initialSelected={
+              formData.courserun
+                ? { label: formData.courserun, value: formData.courserun }
+                : null
+            }
           />
         </div>
         <Schedule
@@ -146,8 +172,8 @@ const Settings = ({
           theme={theme}
           isChecked={isSelectDateChecked}
           setIsChecked={setIsSelectDateChecked}
-          selectedValue={formData.enrollmentSchedule}
-          onChange={(e: any) => handlenRadioChange(e, "enrollmentSchedule")}
+          selectedValue={formData.enrollmentSchedule || "allTime"}
+          onChange={(e: any) => handleRadioChange(e, "enrollmentSchedule")}
           startDate={formData.enrollmentStartDate}
           endDate={formData.enrollmentEndDate}
           setStartDate={(date: string) =>
@@ -157,13 +183,14 @@ const Settings = ({
             setFormData({ ...formData, enrollmentEndDate: date })
           }
         />
+
         <Schedule
           title="Course schedule"
           theme={theme}
           isChecked={isScheduleDateChecked}
           setIsChecked={setIsScheduleDateChecked}
-          selectedValue={formData.courseSchedule}
-          onChange={(e: any) => handlenRadioChange(e, "courseSchedule")}
+          selectedValue={formData.courseSchedule || "allTime"}
+          onChange={(e: any) => handleRadioChange(e, "courseSchedule")}
           startDate={formData.courseStartDate}
           endDate={formData.courseEndDate}
           setStartDate={(date: string) =>
@@ -173,6 +200,7 @@ const Settings = ({
             setFormData({ ...formData, courseEndDate: date })
           }
         />
+
         <Dropdowns
           theme={theme}
           options={deficultyLevel}
@@ -212,13 +240,15 @@ const Schedule = ({
             type="radio"
             name={`radio-${title}`}
             className={cn(
-              "radio  radio-success border-[0.5px] checked:bg-green-500",
+              "radio radio-success border-[0.5px] checked:bg-green-500",
               theme === "dark" ? "border-[#fff]" : "border-[#333]"
             )}
             value="allTime"
             checked={selectedValue === "allTime"}
             onChange={(e) => {
               setIsChecked(false);
+              setStartDate("");
+              setEndDate("");
               onChange(e);
             }}
           />
@@ -283,8 +313,10 @@ const DateFields = ({
           "border-[1px] border-[#ddd] p-2 w-full rounded-md",
           theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
         )}
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
+        value={startDate ? formatDate(startDate) : ""}
+        onChange={(e) => {
+          setStartDate(e.target.value);
+        }}
       />
     </div>
     <div className="flex justify-start w-[49%] items-start flex-col">
@@ -297,8 +329,10 @@ const DateFields = ({
           "border-[1px] border-[#ddd] p-2 w-full rounded-md",
           theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
         )}
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
+        value={endDate ? formatDate(endDate) : ""}
+        onChange={(e) => {
+          setEndDate(e.target.value);
+        }}
       />
     </div>
   </div>
@@ -332,7 +366,14 @@ const Dropdowns = ({
           options={options}
           onSelect={(option) => handleSelect("difficultyLevel", option)}
           placeholder="Select Difficulty level"
-          initialSelected={formData.difficultyLevel}
+          initialSelected={
+            formData.difficultyLevel
+              ? {
+                  label: formData.difficultyLevel,
+                  value: formData.difficultyLevel,
+                }
+              : null
+          }
         />
       </div>
       <div className="w-full lg:w-[48%] mb-4">
@@ -342,7 +383,14 @@ const Dropdowns = ({
           options={facilitator}
           onSelect={(option) => handleSelect("instructoreType", option)}
           placeholder="Select Instructor type"
-          initialSelected={formData.instructoreType}
+          initialSelected={
+            formData.instructoreType
+              ? {
+                  label: formData.instructoreType,
+                  value: formData.instructoreType,
+                }
+              : null
+          }
         />
       </div>
     </div>
@@ -354,7 +402,11 @@ const Dropdowns = ({
           options={courseformat}
           onSelect={(option) => handleSelect("courseFormat", option)}
           placeholder="Select Course mode"
-          initialSelected={formData.courseFormat}
+          initialSelected={
+            formData.courseFormat
+              ? { label: formData.courseFormat, value: formData.courseFormat }
+              : null
+          }
         />
       </div>
       <div className="w-full lg:w-[48%] mb-4">

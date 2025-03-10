@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiEdit, FiUpload } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
 import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
@@ -131,41 +131,71 @@ const Createcourseform = ({
   const [isCertType, setIsCertType] = useState(false);
   const [isScheduleDateChecked, setIsScheduleDateChecked] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    courseid: initialData.courseid || undefined,
-    courseTitle: initialData.courseTitle || "",
-    courseType: initialData.courseType || null,
-    facilitator: initialData.facilitator || null,
-    editors: initialData.editors || null,
-    supervisors: initialData.supervisors || null,
-    description: initialData.description || "",
-    highlight: initialData.highlight || "",
-    featuredImages: initialData.featuredImages || [],
-    featuredVideo: initialData.featuredVideo || "",
-    orientation: initialData.orientation || "",
-    maxStudents: initialData.maxStudents || "",
-    courseRun: initialData.courseRun || "",
-    enrollmentSchedule: initialData.enrollmentSchedule || "",
-    courseSchedule: initialData.courseSchedule || "",
-    difficultyLevel: initialData.difficultyLevel || null,
-    courserun: initialData.courserun || null,
-    instructoreType: initialData.instructoreType || null,
-    courseFormat: initialData.courseFormat || null,
-    cohortTag: initialData.cohortTag || "",
-    enrollmentStartDate: initialData.enrollmentStartDate || "",
-    enrollmentEndDate: initialData.enrollmentEndDate || "",
-    courseStartDate: initialData.courseStartDate || "",
-    courseEndDate: initialData.courseEndDate || "",
-    currency: initialData.currency || { NGN: false, USD: false },
-    nairaAmount: initialData.nairaAmount || "",
-    dollarAmount: initialData.dollarAmount || "",
-    couponTitle: initialData.couponTitle || "",
-    couponValidity: initialData.couponValidity || false,
-    couponValidTill: initialData.couponValidTill || "",
-    discountType: initialData.discountType || "",
-    discountValue: initialData.discountValue || "",
-    paymentplan: initialData.paymentplan || null,
-    selectedMonths: initialData.selectedMonths || 0,
+    courseid: undefined,
+    courseTitle: "",
+    courseType: null,
+    facilitator: null,
+    editors: null,
+    supervisors: null,
+    description: "",
+    highlight: "",
+    featuredImages: [],
+    featuredVideo: "",
+    orientation: "",
+    maxStudents: "",
+    courseRun: "",
+    enrollmentSchedule: "",
+    courseSchedule: "",
+    difficultyLevel: null,
+    courserun: null,
+    instructoreType: null,
+    courseFormat: null,
+    cohortTag: "",
+    enrollmentStartDate: "",
+    enrollmentEndDate: "",
+    courseStartDate: "",
+    courseEndDate: "",
+    currency: { NGN: false, USD: false },
+    nairaAmount: "",
+    dollarAmount: "",
+    couponTitle: "",
+    couponValidity: false,
+    couponValidTill: "",
+    discountType: "",
+    discountValue: "",
+    paymentplan: null,
+    selectedMonths: 0,
   });
+
+  useEffect(() => {
+    if (Object.keys(initialData).length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        ...initialData,
+        selectedMonths: initialData.selectedMonths || 0,
+        editors: initialData.editors
+          ? initialData.editors.map((creator: any) => ({
+              label: creator.creator,
+              value: creator.creatorid,
+            }))
+          : [],
+
+        facilitator: initialData.facilitator
+          ? initialData.facilitator.map((facilitator: any) => ({
+              label: facilitator.facilitator_name, // Use the correct key
+              value: facilitator.facilitatorid,
+            }))
+          : [],
+
+        supervisors: initialData.supervisors
+          ? initialData.supervisors.map((supervisor: any) => ({
+              label: supervisor.supervisor,
+              value: supervisor.supervisorid,
+            }))
+          : [],
+      }));
+    }
+  }, [initialData]);
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsSelectDateChecked(event.target.value === "selectDate");
@@ -174,13 +204,14 @@ const Createcourseform = ({
   const handlescheduleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsScheduleDateChecked(event.target.value === "scheduleDate");
   };
+
   const handleSelect = (
     field: string,
     option: { label: string; value: string | number }
   ) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: option,
+      [field]: option.label,
     }));
   };
 
@@ -404,6 +435,11 @@ const Createcourseform = ({
               options={options}
               onSelect={(option) => handleSelect("courseType", option)}
               placeholder="Select course type"
+              initialSelected={
+                formData.courseType
+                  ? { label: formData.courseType, value: formData.courseType }
+                  : null
+              }
             />
           </div>
           <div className="w-full lg:w-[60%] mb-4">
@@ -425,7 +461,7 @@ const Createcourseform = ({
               options={creators}
               onSelect={handleEditorSelect}
               placeholder="Select Creators/editors"
-              initialSelected={formData.editors || []}
+              initialSelected={formData.editors ?? []}
             />
           </div>
           <div className="w-full mb-4">
@@ -540,6 +576,7 @@ const Createcourseform = ({
               instructoreType: formData.instructoreType,
               courseFormat: formData.courseFormat,
               selectedMonths: formData.selectedMonths,
+              enrollmentStartDate: formData.enrollmentStartDate,
               enrollmentEndDate: formData.enrollmentEndDate,
               courseStartDate: formData.courseStartDate,
               courseEndDate: formData.courseEndDate,
