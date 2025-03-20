@@ -200,6 +200,46 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static updateCourseLesson = async (payload: FormData) => {
+    try {
+      const res = await Api.post("/course/update-lesson", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static deleteCourseLesson = async (payload: any) => {
+    try {
+      const res = await Api.post("/lesson/delete-lesson", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static deleteCourseModule = async (payload: any) => {
+    try {
+      const res = await Api.post("/module/delete-module", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static updateCourseModule = async (payload: FormData) => {
+    try {
+      const res = await Api.post("/course/update-module", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static createFormRequirements = async (payload: any) => {
     try {
       const res = await Api.post("/create-form-requirements", payload);
@@ -381,6 +421,16 @@ export class CourseServices extends BaseAPIService {
   static listModulebyId = async (payload: any) => {
     try {
       const res = await Api.post("/module/list-modules-byid", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static listLessonbyId = async (payload: any) => {
+    try {
+      const res = await Api.post("/lesson/list-lesson-byid", payload);
       return res;
     } catch (error) {
       const handleError = error;

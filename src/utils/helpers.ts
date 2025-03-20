@@ -190,20 +190,32 @@ export function formatToCurrency(amount: any, currency: "NGN" | "USD" = "NGN") {
 //   return result;
 // }
 
-export function splitArray<T>(arr: T[]): T[][] {
+// export function splitArray<T>(arr: T[]): T[][] {
+//   const result: T[][] = [];
+//   let start = 0;
+//   const pattern = [4, 1]; // Pattern of chunk sizes: 4, 1, repeat
+
+//   while (start < arr.length) {
+//     for (const chunkSize of pattern) {
+//       if (start < arr.length) {
+//         result.push(arr.slice(start, start + chunkSize));
+//         start += chunkSize;
+//       } else {
+//         break;
+//       }
+//     }
+//   }
+
+//   return result;
+// }
+
+export function splitArray<T>(arr: T[], chunkSize: number): T[][] {
   const result: T[][] = [];
   let start = 0;
-  const pattern = [4, 1]; // Pattern of chunk sizes: 4, 1, repeat
 
   while (start < arr.length) {
-    for (const chunkSize of pattern) {
-      if (start < arr.length) {
-        result.push(arr.slice(start, start + chunkSize));
-        start += chunkSize;
-      } else {
-        break;
-      }
-    }
+    result.push(arr.slice(start, start + chunkSize));
+    start += chunkSize;
   }
 
   return result;

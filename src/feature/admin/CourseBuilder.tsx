@@ -10,6 +10,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DraggableItem } from "./Items";
 import ButtonGrid from "./BuilderButtons";
 import ModalContainer from "./ModalContainer";
+import { CourseServices } from "~/api/course";
 //import { R } from "node_modules/@tanstack/react-query-devtools/build/modern/ReactQueryDevtools-Cn7cKi7o";
 
 interface Lessons {
@@ -26,9 +27,11 @@ interface Capstone {
 }
 interface Module {
   module_Id: number;
+  module_number?: string;
+  course_id?: number;
   id: number;
   title: string;
-  description: string;
+  description?: string;
   lessons: Lessons[];
   capstone: Capstone[];
   assignment: Capstone[];
@@ -36,7 +39,7 @@ interface Module {
   exam: Capstone[];
   resources: Capstone[]; // Add this
   caseStudy: Capstone[]; // Add this
-  polls: Capstone[]; // Add this
+  poll: Capstone[]; // Add this
 }
 
 interface ImoduleProps {
@@ -45,16 +48,28 @@ interface ImoduleProps {
   title: string;
   description: string;
 }
-const CourseBuilder = ({ created }: any) => {
+
+interface CourseBuilderProps {
+  created: any;
+  Initialmodules: any[];
+  Initiallessons: any[];
+}
+const CourseBuilder: React.FC<CourseBuilderProps> = ({
+  created,
+  Initialmodules,
+  Initiallessons,
+}) => {
   const { theme } = useTheme();
   const [modules, setModules] = useState<Module[]>([]);
   const [isNewModule, setIsnewModule] = useState(false);
   const [newModule, setNewModule] = useState({
     number: 0,
+    courseId: 0,
     status: false,
   });
   const [newLesson, setNewLesson] = useState({
     module: 0,
+    lessonId: 0,
     status: false,
   });
   const [newCapstone, setNewCapstone] = useState({
@@ -140,10 +155,34 @@ const CourseBuilder = ({ created }: any) => {
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
+  useEffect(() => {
+    if (Initialmodules?.length > 0 && Initiallessons?.length > 0) {
+      const mappedModules: Module[] = Initialmodules.map((mod) => ({
+        module_Id: mod.moduleid,
+        id: mod.moduleid,
+        title: `MODULE ${mod.module_number}: ${mod.module_title}`,
+        module_number: mod.module_number,
+        course_id: mod.course_id,
+        lessons: Initiallessons.filter(
+          (lesson) => lesson.module_id === mod.moduleid
+        ),
+        capstone: [],
+        assignment: [],
+        quiz: [],
+        exam: [],
+        resources: [],
+        caseStudy: [],
+        poll: [],
+      }));
+      setModules([...mappedModules]);
+    }
+  }, [Initialmodules, Initiallessons]);
+
   const addModule = async () => {
     setIsnewModule(true);
     setNewModule({
       number: modules.length + 1,
+      courseId: 0,
       status: false,
     });
     await showAlert(
@@ -170,7 +209,7 @@ const CourseBuilder = ({ created }: any) => {
           exam: [],
           resources: [],
           caseStudy: [],
-          polls: [],
+          poll: [],
         };
 
         return [...prevModules, newModule];
@@ -186,63 +225,16 @@ const CourseBuilder = ({ created }: any) => {
     }
   }, [moduleObj, isNewModule]);
 
-  // useEffect(() => {
-  //   if (isNewModule && moduleObj.title) {
-  //     const newModule: Module = {
-  //       module_Id: moduleObj.moduleId || 0,
-  //       id: modules.length + 1,
-  //       title: `MODULE ${modules.length + 1}`,
-  //       description: moduleObj.title,
-  //       lessons: [],
-  //       capstone: [],
-  //       assignment: [],
-  //       quiz: [],
-  //       exam: [],
-  //       resources: [], // Add this
-  //       caseStudy: [], // Add this
-  //       polls: [], // Add this
-  //     };
-
-  //     setModules((prevModules) => [...prevModules, newModule]);
-  //     setSelectedModuleId(newModule.id);
-  //     setIsnewModule(false);
-  //   }
-  // }, [moduleObj, isNewModule]);
-
-  // const addNewItem = (type: keyof Module, obj: any, setObj: Function) => {
-  //   if (!obj.title) return;
-
-  //   setModules((prevModules) =>
-  //     prevModules.map((module) =>
-  //       module.id === selectedModuleId
-  //         ? {
-  //             ...module,
-  //             [type]: [
-  //               ...((module[type] as any[]) || []),
-  //               {
-  //                 id: Date.now(),
-  //                 moduleId: selectedModuleId,
-  //                 title: type.toUpperCase(),
-  //                 description: obj.title,
-  //                 pages: "",
-  //               },
-  //             ],
-  //           }
-  //         : module
-  //     )
-  //   );
-
-  //   setObj({ title: "", description: "" });
-  // };
-
   const addNewItem = (type: keyof Module, obj: any, setObj: Function) => {
     if (!obj.title) return;
+    console.log("vvvvvvvvv", type, obj);
 
     setModules((prevModules) =>
       prevModules.map((module) => {
         if (module.id === selectedModuleId) {
           const existingItems = (module[type] as any[]) || [];
           const newIndex = existingItems.length + 1; // Get index based on array length
+          console.log(`${type.toUpperCase()} ${newIndex}`);
 
           return {
             ...module,
@@ -251,7 +243,7 @@ const CourseBuilder = ({ created }: any) => {
               {
                 id: Date.now(),
                 moduleId: selectedModuleId,
-                title: `${type.toUpperCase()} ${newIndex}`, // Attach index to title
+                title: `${type.toUpperCase()} ${newIndex}`,
                 description: obj.title,
                 pages: "",
               },
@@ -270,8 +262,9 @@ const CourseBuilder = ({ created }: any) => {
     addNewItem("lessons", lessonObj, setlessonObj);
   }, [lessonObj]);
   useEffect(() => {
-    addNewItem("lessons", resourcesObj, setResourcesObj);
+    addNewItem("resources", resourcesObj, setResourcesObj);
   }, [resourcesObj]);
+
   useEffect(() => {
     addNewItem("caseStudy", caseStudyObj, setCaseStudyObj);
   }, [caseStudyObj]);
@@ -293,7 +286,7 @@ const CourseBuilder = ({ created }: any) => {
   }, [examObj]);
 
   useEffect(() => {
-    addNewItem("polls", pollObj, setPollObj);
+    addNewItem("poll", pollObj, setPollObj);
   }, [pollObj]);
 
   const removeModule = (id: number) => {
@@ -303,10 +296,12 @@ const CourseBuilder = ({ created }: any) => {
   const handleClose = () => {
     setNewModule({
       number: 0,
+      courseId: 0,
       status: false,
     });
     setNewLesson({
       module: 0,
+      lessonId: 0,
       status: false,
     });
     setNewCapstone({
@@ -351,7 +346,16 @@ const CourseBuilder = ({ created }: any) => {
       ? modules.filter((m) => m.id === moduleId)
       : modules;
     return relevantModules.flatMap((module) =>
-      ["lessons", "capstone", "assignment", "quiz", "exam", "poll"].flatMap(
+      [
+        "lessons",
+        "capstone",
+        "assignment",
+        "caseStudy",
+        "quiz",
+        "exam",
+        "poll",
+        "resources",
+      ].flatMap(
         (category) =>
           (module as Record<string, any>)[category]?.map((item: any) => ({
             ...item,
@@ -378,23 +382,30 @@ const CourseBuilder = ({ created }: any) => {
       if (module.id !== moduleId) return module;
 
       const newModuleData = { ...module };
-      ["lessons", "capstone", "assignment", "quiz", "exam", "poll"].forEach(
-        (category) => {
-          const categoryItems =
-            category === targetCategory
-              ? [...filteredItems.filter((item) => item.category === category)]
-              : filteredItems.filter((item) => item.category === category);
+      [
+        "lessons",
+        "capstone",
+        "assignment",
+        "caseStudy",
+        "quiz",
+        "exam",
+        "poll",
+        "resources",
+      ].forEach((category) => {
+        const categoryItems =
+          category === targetCategory
+            ? [...filteredItems.filter((item) => item.category === category)]
+            : filteredItems.filter((item) => item.category === category);
 
-          if (category === targetCategory) {
-            categoryItems.splice(hoveredIndex, 0, updatedItem);
-          }
-          if (category in newModuleData) {
-            (newModuleData as any)[category] = categoryItems.map((item) => ({
-              ...item,
-            }));
-          }
+        if (category === targetCategory) {
+          categoryItems.splice(hoveredIndex, 0, updatedItem);
         }
-      );
+        if (category in newModuleData) {
+          (newModuleData as any)[category] = categoryItems.map((item) => ({
+            ...item,
+          }));
+        }
+      });
 
       return newModuleData;
     });
@@ -402,14 +413,26 @@ const CourseBuilder = ({ created }: any) => {
     setModules(updatedModules);
   };
 
-  const handleNewModule = () => {
+  const handleNewModule = (
+    moduleNumber?: string | number,
+    courseId?: number
+  ) => {
+    const moduleNum =
+      moduleNumber !== undefined && moduleNumber !== null
+        ? Number(moduleNumber) // Convert to number safely
+        : selectedModuleId + 1; // Use selectedModuleId + 1 as a fallback
     setNewModule({
-      number: selectedModuleId + 1,
+      number: moduleNum,
+      courseId: courseId ?? 0, // Use courseId if available, otherwise default to 0
       status: true,
     });
   };
 
-  const handleNewItem = async (type: string, setState: Function) => {
+  const handleNewItem = async (
+    type: string,
+    setState: Function,
+    item?: any
+  ) => {
     if (modules.length === 0) {
       await showAlert(
         "error",
@@ -420,8 +443,22 @@ const CourseBuilder = ({ created }: any) => {
       );
       return;
     }
+
+    // Update selectedModule if item.module_id exists
+    if (item?.module_id) {
+      setSelectedModuleId(item?.module_id);
+      setSelectedModule((prev) => ({
+        ...(prev as Module),
+        module_Id: item.module_id,
+      }));
+    }
+
     const defaultValues: any = {
-      lesson: { module: selectedModule?.module_Id || 0, status: true },
+      lesson: {
+        module: selectedModule?.module_Id || item.module_id || 0,
+        lessonId: item == undefined ? 0 : item.lessonid || 0,
+        status: true,
+      },
       capstone: {
         module: selectedModule?.module_Id || 0,
         lesson: lessonObj.moduleId || 0,
@@ -466,17 +503,23 @@ const CourseBuilder = ({ created }: any) => {
     setState(defaultValues[type]);
   };
 
-  const handleNewLesson = () => handleNewItem("lesson", setNewLesson);
-  const handleNewCapstone = () => handleNewItem("capstone", setNewCapstone);
-  const handleNewAssignment = () =>
-    handleNewItem("assignment", setNewAssignment);
-  const handleNewQuiz = () => handleNewItem("quiz", setNewQuiz);
-  const handleNewExam = () => handleNewItem("exam", setNewExam);
-  const handleNewResources = () => handleNewItem("resources", setNewResources);
-  const handleNewCaseStudy = () => handleNewItem("caseStudy", setNewCaseStudy);
-  const handleNewPoll = () => handleNewItem("poll", setNewPoll);
+  const handleNewLesson = (item?: any) =>
+    handleNewItem("lesson", setNewLesson, item);
+  const handleNewCapstone = (item?: any) =>
+    handleNewItem("capstone", setNewCapstone, item);
+  const handleNewAssignment = (item?: any) =>
+    handleNewItem("assignment", setNewAssignment, item);
+  const handleNewQuiz = (item?: any) => handleNewItem("quiz", setNewQuiz, item);
+  const handleNewExam = (item?: any) => handleNewItem("exam", setNewExam, item);
+  const handleNewResources = (item?: any) =>
+    handleNewItem("resources", setNewResources, item);
+  const handleNewCaseStudy = (item?: any) =>
+    handleNewItem("caseStudy", setNewCaseStudy, item);
+  const handleNewPoll = (item?: any) => handleNewItem("poll", setNewPoll, item);
 
   const addItem = async (type: string, setState: Function) => {
+    console.log("ggggg", type);
+
     // Default structure for different items
     const defaultValues: any = {
       lesson: { module: 0, status: false },
@@ -506,9 +549,16 @@ const CourseBuilder = ({ created }: any) => {
     );
 
     // Check if the selected module exists
-    const selectedModule = modules.find(
-      (module) => module.id === selectedModuleId
-    );
+    // const selectedModule = modules.find(
+    //   (module) => module.id === selectedModuleId
+    // );
+
+    const selectedModule = modules.find((module) => {
+      console.log(module.id === selectedModuleId);
+
+      return module.id === selectedModuleId;
+    });
+
     if (!selectedModule) {
       await showAlert(
         "error",
@@ -530,34 +580,101 @@ const CourseBuilder = ({ created }: any) => {
   const addCaseStudy = () => addItem("caseStudy", setNewCaseStudy);
   const addPoll = () => addItem("poll", setNewPoll);
 
+  const handleRemoveLesson = async (id: number) => {
+    const payload = { lessonid: id };
+    const res = await CourseServices.deleteCourseLesson(payload);
+    if (res) {
+      await showAlert(
+        "success",
+        "Deleted!",
+        "Lesson Successfully Deleted!",
+        "Ok",
+        "#03435F"
+      );
+    }
+  };
+  const handleRemoveModule = async (id: number) => {
+    const payload = { moduleid: id };
+    const res = await CourseServices.deleteCourseModule(payload);
+    if (res) {
+      await showAlert(
+        "success",
+        "Deleted!",
+        "Module Successfully Deleted!",
+        "Ok",
+        "#03435F"
+      );
+    }
+    removeModule(id);
+  };
   const handlePublish = () => {
     created();
   };
 
   const buttons = [
-    { label: "Module", onClick: handleNewModule },
+    { label: "Module", onClick: () => handleNewModule(undefined, undefined) },
     // { label: "Lesson", onClick: handleNewLesson },
     // { label: "Quiz", onClick: handleNewQuiz },
-    { label: "Polls", onClick: handleNewPoll },
+    // { label: "Polls", onClick: handleNewPoll },
     // { label: "Capstone", onClick: handleNewCapstone },
     // { label: "Assignments", onClick: handleNewAssignment },
-    { label: "Resources" },
-    { label: "Case study" },
+    // { label: "Resources" },
+    // { label: "Case study" },
     // { label: "Exam", onClick: handleNewExam },
     { label: "Live streaming" },
   ];
 
   const componentMap: Record<string, React.ComponentType<any>> = {
-    lessons: (props) => <DraggableItem {...props} type="LESSON" />,
-    capstone: (props) => <DraggableItem {...props} type="CAPSTONE" />,
-    assignment: (props) => <DraggableItem {...props} type="ASSIGNMENT" />,
-    quiz: (props) => <DraggableItem {...props} type="QUIZ" />,
-    exam: (props) => <DraggableItem {...props} type="EXAM" />,
-    caseStudy: (props) => <DraggableItem {...props} type="CASE_STUDY" />,
-    resources: (props) => <DraggableItem {...props} type="RESOURCES" />,
+    lessons: (props) => (
+      <DraggableItem
+        {...props}
+        handleNewLesson={handleNewLesson}
+        handleRemove={handleRemoveLesson}
+        type="LESSON"
+      />
+    ),
+    poll: (props) => (
+      <DraggableItem {...props} handleNewLesson={handleNewPoll} type="POLL" />
+    ),
+    capstone: (props) => (
+      <DraggableItem
+        {...props}
+        handleNewLesson={handleNewCapstone}
+        type="CAPSTONE"
+      />
+    ),
+    assignment: (props) => (
+      <DraggableItem
+        {...props}
+        handleNewLesson={handleNewAssignment}
+        type="ASSIGNMENT"
+      />
+    ),
+    quiz: (props) => (
+      <DraggableItem {...props} handleNewLesson={handleNewQuiz} type="QUIZ" />
+    ),
+    exam: (props) => (
+      <DraggableItem {...props} handleNewLesson={handleNewExam} type="EXAM" />
+    ),
+    caseStudy: (props) => (
+      <DraggableItem
+        {...props}
+        handleNewLesson={handleNewCapstone}
+        type="CASESTUDY"
+      />
+    ),
+    resources: (props) => (
+      <DraggableItem
+        {...props}
+        handleNewLesson={handleNewResources}
+        type="RESOURCES"
+      />
+    ),
   };
 
   const handleOpenSidebar = (module: Module, event: React.MouseEvent) => {
+    console.log(module);
+
     const button = event.currentTarget;
     const rect = button.getBoundingClientRect();
     const isMobile = window.innerWidth < 768;
@@ -599,17 +716,24 @@ const CourseBuilder = ({ created }: any) => {
               >
                 <div className="flex flex-col lg:flex-row justify-start items-start gap-2">
                   <h2 className="font-DMSans font-semibold text-[18px] text-[#FFFFFF]">
-                    {module.title}:
+                    {module.title}
                   </h2>
                   <h2 className="font-DMSans font-semibold text-[18px] text-[#FFFFFF]">
                     {module.description}
                   </h2>
                 </div>
                 <div className="flex justify-end items-end gap-2">
-                  <button>
+                  <button
+                    onClick={() =>
+                      handleNewModule(
+                        module.module_number ? module.module_number : undefined,
+                        module.id
+                      )
+                    }
+                  >
                     <FiEdit className="text-[30px] text-[#FFFFFF]" />
                   </button>
-                  <button onClick={() => removeModule(module.id)}>
+                  <button onClick={() => handleRemoveModule(module.id)}>
                     <MdOutlineCancel className="text-[30px] text-[#FFFFFF]" />
                   </button>
                   <button
@@ -696,43 +820,49 @@ const CourseBuilder = ({ created }: any) => {
             >
               <div className="flex flex-col w-full">
                 <button
-                  onClick={handleNewLesson}
+                  onClick={() => handleNewLesson(undefined)}
                   className="w-full text-white px-4 py-3 text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
                 >
                   Add Lesson
                 </button>
                 <button
-                  onClick={handleNewResources}
+                  onClick={() => handleNewResources(undefined)}
                   className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
                 >
                   Add Resources
                 </button>
                 <button
-                  onClick={handleNewCaseStudy}
+                  onClick={() => handleNewCaseStudy(undefined)}
                   className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
                 >
                   Add Case Study
                 </button>
                 <button
-                  onClick={handleNewQuiz}
+                  onClick={() => handleNewQuiz(undefined)}
                   className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
                 >
                   Add Quiz
                 </button>
                 <button
-                  onClick={handleNewCapstone}
+                  onClick={() => handleNewCapstone(undefined)}
                   className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
                 >
                   Add Capstone
                 </button>
                 <button
-                  onClick={handleNewAssignment}
+                  onClick={() => handleNewAssignment(undefined)}
                   className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
                 >
                   Add Assignment
                 </button>
                 <button
-                  onClick={handleNewExam}
+                  onClick={() => handleNewPoll(undefined)}
+                  className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
+                >
+                  Poll
+                </button>
+                <button
+                  onClick={() => handleNewExam(undefined)}
                   className="w-full px-4 py-3 text-white text-left hover:bg-[#eb4141] dark:hover:bg-[#eb4141]"
                 >
                   Add Exam

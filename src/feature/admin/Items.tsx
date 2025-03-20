@@ -2,9 +2,21 @@ import { useDrag, useDrop } from "react-dnd";
 import { RiDragMove2Fill } from "react-icons/ri";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineCancel } from "react-icons/md";
+import { RemoveItemModal } from "~/components/Modal/RemoveItemModal";
+import { useState } from "react";
 
-const DraggableItem = ({ item, type, theme, index, moveItem }: any) => {
-  if (!item?.id) return null;
+const DraggableItem = ({
+  item,
+  type,
+  theme,
+  index,
+  moveItem,
+  handleNewLesson,
+  handleRemove,
+}: any) => {
+  // if (!item?.lessonid) return null;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  console.log(item);
 
   const [, drag] = useDrag({
     type,
@@ -23,8 +35,10 @@ const DraggableItem = ({ item, type, theme, index, moveItem }: any) => {
       "ASSIGNMENT",
       "QUIZ",
       "EXAM",
-      "CASE_STUDY",
+      "CASESTUDY",
       "RESOURCES",
+      "POLLS",
+      "POLL",
     ],
     hover: (draggedItem: any) => {
       if (
@@ -57,23 +71,39 @@ const DraggableItem = ({ item, type, theme, index, moveItem }: any) => {
             : "bg-gray-200"
         } */}
         <div className="flex flex-col lg:flex-row gap-2">
-          <h2 className="font-semibold text-[18px] text-gray-700">
-            {item.title} :
-          </h2>
+          {item.lesson_title !== undefined ? (
+            <h2 className="font-semibold text-[18px] text-gray-700">
+              LESSON {item.index}: {item.lesson_title}
+            </h2>
+          ) : (
+            <h2 className="font-semibold text-[18px] text-gray-700">
+              {item.title}:
+            </h2>
+          )}
           <h2 className="font-semibold text-[18px] text-gray-700">
             {item.description}
           </h2>
         </div>
         <div className="flex justify-end gap-2">
           <p className="font-normal text-[18px]">{item.pages}</p>
-          <button>
+          <button onClick={() => handleNewLesson(item)}>
             <FiEdit className="text-[30px] text-gray-700" />
           </button>
-          <button>
+          <button onClick={() => setIsModalOpen(true)}>
             <MdOutlineCancel className="text-[30px] text-gray-700" />
           </button>
         </div>
       </div>
+      <RemoveItemModal
+        isOpen={isModalOpen}
+        closeModal={() => setIsModalOpen(false)} // Close only this item's modal
+        id={item.id}
+        message={`Are you sure you want to remove ${item.title} || ${item.lesson_title} || ${item.lessonid}?`}
+        onConfirm={() => {
+          handleRemove(item.lessonid); // Call parent function to remove item
+          setIsModalOpen(false); // Close modal after removal
+        }}
+      />
     </div>
   );
 };

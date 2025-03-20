@@ -8,12 +8,12 @@ import {
   FaArrowLeft,
   FaBell,
   FaCloudUploadAlt,
-  FaFilePdf,
+  // FaFilePdf,
 } from "react-icons/fa";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { BaseInput } from "~/components/data-inputs/text-input";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { IoDocumentTextOutline } from "react-icons/io5";
+// import { IoDocumentTextOutline } from "react-icons/io5";
 
 const ExamInstructions = [
   {
@@ -50,7 +50,7 @@ const Exam = () => {
   const { theme } = useTheme();
   //   const courseId = localStorage.getItem("course_id");
   const [examStarted, setexamStarted] = useState(false);
-  const [selectedType, setSelectedType] = useState(ExamQuestions[0].type);
+  const [selectedType, setSelectedType] = useState("");
   const [formData, setFormData] = useState<FormData>({
     answer: "",
   });
@@ -193,7 +193,7 @@ const Exam = () => {
                     <div className="flex justify-between items-center gap-2 w-full">
                       <label
                         htmlFor="file-upload"
-                        className="flex flex-col items-center justify-center w-full lg:w-[90%] h-[283px] py-4 shadow-md border-2 border-dashed border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                        className="flex flex-col items-center justify-center w-full h-[283px] py-4 shadow-md border-2 border-dashed border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
                       >
                         <FaCloudUploadAlt className="text-[10rem]" />
                         {file ? (
@@ -216,14 +216,14 @@ const Exam = () => {
                           </>
                         )}
                       </label>
-                      <div className="w-auto">
+                      {/* <div className="w-auto">
                         <div className="p-2">
                           <IoDocumentTextOutline className="size-8" />
                         </div>
                         <div className="p-2 rounded-xl shadow-md border-2 border-[#FF1515]">
                           <FaFilePdf className="size-8" />
                         </div>
-                      </div>
+                      </div> */}
                     </div>
 
                     {/* Hidden File Input */}

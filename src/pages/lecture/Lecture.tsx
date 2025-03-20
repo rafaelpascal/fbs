@@ -13,6 +13,7 @@ import { SideNavProps } from "~/components/lecturesidebar/LectureItems";
 import { GoDotFill } from "react-icons/go";
 import { HiOutlineHandThumbDown, HiOutlineHandThumbUp } from "react-icons/hi2";
 import { HiDotsHorizontal } from "react-icons/hi";
+import { Markcomplete } from "~/components/Modal/Markcomplete";
 
 // const Lecture = () => {
 //   const { updateSidebarData } = useSidebar();
@@ -310,6 +311,7 @@ const Lecture = () => {
   const { updateSidebarData } = useSidebar();
   const [currentPage] = useState<number>(1);
   const [lectureTitles, setLectureTitles] = useState<any[]>([]);
+  const [markcomplete, setMarkComplete] = useState(false);
   const [totalPages, setTotalPages] = useState<number>(0);
   const { id } = useParams<{ id: string }>();
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
@@ -344,81 +346,102 @@ const Lecture = () => {
     fetchLessons();
   }, [id]);
 
+  const fetchSingleLesson = () => {
+    if (currentLessonId) {
+      const payload = { lessonid: currentLessonId };
+      CourseServices.listLessonbyId(payload)
+        .then((res) => {
+          console.log(res);
+          // if (res.data && res.data.data && res.data.data.length > 0) {
+          //   const lesson = res.data.data[0];
+          //   setCurrentLessonId(lesson.lessonid);
+          // }
+        })
+        .catch((error) => {
+          console.error("Error fetching single lesson:", error);
+        });
+    }
+  };
+
+  useEffect(() => {
+    fetchSingleLesson();
+  }, [currentLessonId]);
+
   const updateLecture = () => {
     if (!lectureTitles.length) return;
-
     const updatedData: SideNavProps[] = lectureTitles.map(
-      (lessonItem: any, index: number) => ({
-        href: `/module/${lessonItem.module_id}`,
-        icon: FaFilePdf,
-        dropdown: true,
-        playing: lessonItem.lessonid === currentLessonId,
-        text:
-          `LESSON ${index + 1}: ${lessonItem.lesson_title}` ||
-          "Untitled Lesson",
-        children: [
-          {
-            href: "#",
-            icon: GoDotFill,
-            dropdown: false,
-            text: "Lecture",
-          },
-          ...(lessonItem.hasQuiz === 1
-            ? [
-                {
-                  href: `/assignment/${lessonItem.lessonid}`,
-                  icon: GoDotFill,
-                  dropdown: false,
-                  text: "Quiz",
-                },
-              ]
-            : []),
-          // remember to change to check
-          ...(lessonItem.lessonid
-            ? [
-                {
-                  href: `/exam/${lessonItem.lessonid}`,
-                  icon: GoDotFill,
-                  dropdown: false,
-                  text: "Exam",
-                },
-              ]
-            : []),
-          // remember to change to check
-          ...(lessonItem.lessonid
-            ? [
-                {
-                  href: `/newassignment/${lessonItem.lessonid}`,
-                  icon: GoDotFill,
-                  dropdown: false,
-                  text: "Assignment",
-                },
-              ]
-            : []),
-          ...(lessonItem.lessonid
-            ? [
-                {
-                  href: `/polls/${lessonItem.lessonid}`,
-                  icon: GoDotFill,
-                  dropdown: false,
-                  text: "Polls",
-                },
-              ]
-            : []),
-          ...(lessonItem.assignment_id
-            ? [
-                {
-                  href: lessonItem.stream_video_audio
-                    ? lessonItem.stream_video_audio
-                    : "#",
-                  icon: GoDotFill,
-                  dropdown: false,
-                  text: "Assignment",
-                },
-              ]
-            : []),
-        ],
-      })
+      (lessonItem: any, index: number) => {
+        const isPlaying = lessonItem.lessonid === currentLessonId;
+        return {
+          href: `/module/${lessonItem.module_id}`,
+          icon: FaFilePdf,
+          dropdown: true,
+          playing: isPlaying,
+          text:
+            `LESSON ${index + 1}: ${lessonItem.lesson_title}` ||
+            "Untitled Lesson",
+          children: [
+            {
+              href: `/lecture/${lessonItem.module_id}`,
+              icon: GoDotFill,
+              dropdown: false,
+              text: "Lecture",
+            },
+            ...(lessonItem.hasQuiz === 0
+              ? [
+                  {
+                    href: `/assignment/${lessonItem.module_id}`,
+                    icon: GoDotFill,
+                    dropdown: false,
+                    text: "Quiz",
+                  },
+                ]
+              : []),
+            ...(lessonItem.lessonid
+              ? [
+                  {
+                    href: `/exam/${lessonItem.lessonid}`,
+                    icon: GoDotFill,
+                    dropdown: false,
+                    text: "Exam",
+                  },
+                ]
+              : []),
+            ...(lessonItem.lessonid
+              ? [
+                  {
+                    href: `/newassignment/${lessonItem.lessonid}`,
+                    icon: GoDotFill,
+                    dropdown: false,
+                    text: "Assignment",
+                  },
+                ]
+              : []),
+            ...(lessonItem.lessonid
+              ? [
+                  {
+                    href: `/polls/${lessonItem.lessonid}`,
+                    icon: GoDotFill,
+                    dropdown: false,
+                    text: "Polls",
+                  },
+                ]
+              : []),
+            ...(lessonItem.assignment_id
+              ? [
+                  {
+                    href: lessonItem.stream_video_audio
+                      ? lessonItem.stream_video_audio
+                      : "#",
+                    icon: GoDotFill,
+                    dropdown: false,
+                    text: "Assignment",
+                  },
+                ]
+              : []),
+          ],
+        };
+      }
     );
 
     updateSidebarData(updatedData);
@@ -426,7 +449,7 @@ const Lecture = () => {
 
   useEffect(() => {
     updateLecture();
-  }, [id, lectureTitles]);
+  }, [currentLessonId, lectureTitles]);
 
   const lessonMedia = lectureTitles.map((lesson) => ({
     lessonId: lesson.lessonid,
@@ -447,10 +470,10 @@ const Lecture = () => {
   const handleNextMedia = () => {
     if (currentMediaIndex < currentLesson.media.length - 1) {
       setCurrentMediaIndex((prev) => prev + 1);
+      setCurrentLessonId(currentLesson.lessonId);
     } else if (currentLessonIndex < lessonMedia.length - 1) {
-      const nextLesson = lessonMedia[currentLessonIndex + 1];
       setCurrentLessonIndex((prev) => prev + 1);
-      setCurrentLessonId(nextLesson.lessonId); // Update lesson ID
+      setCurrentLessonId(currentLesson.lessonId);
       setCurrentMediaIndex(0);
     }
   };
@@ -468,17 +491,17 @@ const Lecture = () => {
 
   const markLessonComplete = () => {
     setCompletedLessons((prev) => new Set(prev).add(currentLesson.lessonId));
-
-    // Move to next lesson if available
+    setCurrentLessonId(currentLesson.lessonId);
     if (currentLessonIndex < lessonMedia.length - 1) {
+      setCurrentLessonId(currentLesson.lessonId);
       setCurrentLessonIndex((prev) => prev + 1);
-      setCurrentMediaIndex(0); // Reset media index for the new lesson
+      setCurrentMediaIndex(0);
     }
   };
 
-  // const handlePDFLoad = () => {
-  //   setLoading(false);
-  // };
+  const handleclose = () => {
+    setMarkComplete(false);
+  };
 
   return (
     <DashboardArea>
@@ -585,7 +608,8 @@ const Lecture = () => {
 
               {currentMediaIndex === currentLesson.media.length - 1 ? (
                 <button
-                  onClick={markLessonComplete}
+                  // onClick={markLessonComplete}
+                  onClick={() => setMarkComplete(true)}
                   className="bg-[#FF1515] rounded-md text-white font-bold py-2 px-4"
                 >
                   Mark Complete
@@ -611,6 +635,16 @@ const Lecture = () => {
           </>
         )}
       </div>
+      <Markcomplete
+        id={currentLessonId}
+        message="Have you completed this topic?"
+        isOpen={markcomplete}
+        closeModal={handleclose}
+        handleMarkComplete={() => {
+          markLessonComplete();
+          setMarkComplete(false);
+        }}
+      />
     </DashboardArea>
   );
 };

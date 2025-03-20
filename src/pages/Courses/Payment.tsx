@@ -27,7 +27,7 @@ const Payment = () => {
   const { id } = useParams();
   const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
-  const [paymentPlan, setPaymentPlan] = useState(0);
+  const [paymentPlan, setPaymentPlan] = useState(1);
   const [currency, setCurrency] = useState<"NGN" | "USD">("NGN");
   const [formattedAmount, setFormattedAmount] = useState("");
   const [selectedAmount, setSelectedAmount] = useState("");
@@ -228,9 +228,16 @@ const Payment = () => {
                 Choose A Payment Plan
               </p>
               <div className="w-full lg:w-[399px]">
-                <SelectionDropdown
+                {/* <SelectionDropdown
                   options={PaymentPlan}
                   onSelect={handleSelect}
+                /> */}
+                <SelectionDropdown
+                  label=""
+                  labelClassName="text-[14px] font-DMSans font-semibold mb-2"
+                  options={PaymentPlan}
+                  onSelect={handleSelect}
+                  placeholder="Full Payment"
                 />
               </div>
               <div className="flex items-center justify-start gap-4 my-4">

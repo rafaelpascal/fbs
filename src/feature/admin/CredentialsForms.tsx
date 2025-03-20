@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "~/redux-store/store";
 import FormRequirements from "./FormRequirements";
@@ -13,9 +13,39 @@ type CustomElement = {
   children: { text: string }[];
 };
 
+export interface CourseRequirement {
+  requirementid: number;
+  course_id: number;
+  course_requirements: string;
+  learning_objective: string;
+  assessment_method: string;
+  career_option: string;
+  course_structure: string;
+  course_for: string;
+}
+
+interface CredentialsFormsProps {
+  initialCourseId: number;
+  initialData: CourseRequirement[];
+  created: any; // You can replace `any` with a specific type if you know what `created` is.
+}
+
 type CustomDescendant = CustomElement & Descendant;
 
-const CredentialsForms = ({ created }: any) => {
+const parseHtmlToText = (htmlString: string): CustomDescendant[] => {
+  // Temporary element to extract text
+  const tempElement = document.createElement("div");
+  tempElement.innerHTML = htmlString;
+  return [
+    { type: "paragraph", children: [{ text: tempElement.innerText || "" }] },
+  ];
+};
+
+const CredentialsForms: React.FC<CredentialsFormsProps> = ({
+  initialCourseId,
+  initialData,
+  created,
+}) => {
   const courseId = useSelector((state: RootState) => state.course.course_id);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [admissionRequirements, setAdmissionRequirements] = useState<
@@ -37,6 +67,21 @@ const CredentialsForms = ({ created }: any) => {
     { type: "paragraph", children: [{ text: "" }] },
   ]);
 
+  useEffect(() => {
+    if (initialData && initialData.length > 0) {
+      console.log(initialData);
+
+      setAdmissionRequirements(
+        parseHtmlToText(initialData[0].course_requirements)
+      );
+      setLearningObjectives(parseHtmlToText(initialData[0].learning_objective));
+      setAssessmentMethods(parseHtmlToText(initialData[0].assessment_method));
+      setCareerOptions(parseHtmlToText(initialData[0].career_option));
+      setCourseStructure(parseHtmlToText(initialData[0].course_structure));
+      setCourseFor(parseHtmlToText(initialData[0].course_for));
+    }
+  }, [initialData]);
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     const extractText = (nodes: CustomDescendant[]): string => {
@@ -46,7 +91,7 @@ const CredentialsForms = ({ created }: any) => {
     };
 
     const payload = {
-      course_id: courseId,
+      course_id: courseId || initialCourseId,
       course_requirments: extractText(admissionRequirements),
       learning_objective: extractText(learningObjectives),
       assessment_method: extractText(assessmentMethods),
@@ -54,8 +99,6 @@ const CredentialsForms = ({ created }: any) => {
       course_structure: extractText(courseStructure),
       course_for: extractText(courseFor),
     };
-    console.log(payload);
-
     try {
       const res = await CourseServices.createCourseRequirements(payload);
       console.log("Response:", res);
@@ -93,7 +136,7 @@ const CredentialsForms = ({ created }: any) => {
       </div>
       <div className="mt-6">
         <h2 className="font-DMSans mb-2 text-[16px] font-semibold">
-          LEARNING OBJECTIVES
+          PROGRAM OBJECTIVES
         </h2>
         <RichTextEditor
           value={learningObjectives

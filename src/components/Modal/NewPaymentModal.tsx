@@ -63,7 +63,14 @@ export const NewPaymentModal = ({
   }, []);
 
   const handleBankTransfer = () => {
-    navigate(`/banktransfer/${applicationData.applicationid}`);
+    navigate(`/banktransfer/${applicationData.applicationid}`, {
+      state: {
+        formattedAmount: formattedAmount,
+        fullAmount: fullAmount,
+        paymentPlan: paymentPlan,
+        Paymeny_currency: currency,
+      },
+    });
   };
 
   useEffect(() => {
@@ -126,7 +133,6 @@ export const NewPaymentModal = ({
     },
     onClose: () => {},
   };
-  console.log(applicationData);
   return (
     <BaseModal
       isOpen={isOpen}

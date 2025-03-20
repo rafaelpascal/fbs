@@ -126,7 +126,7 @@ export const NewCaseStudyModel = ({
     >
       <div className="w-full flex px-2 justify-between items-center bg-[#b8b6b6] py-3">
         <h2 className="font-DMSans text-[#fff] text-[18px] font-semibold text-center">
-          NEW COURSE LESSON
+          NEW COURSE CASE STUDY
         </h2>
         <button onClick={handleclose}>
           <MdCancel className="text-[30px] text-[#F01E00]" />
@@ -135,16 +135,16 @@ export const NewCaseStudyModel = ({
       <div className="flex w-full h-[600px] lg:w-[1000px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
         <div>
           <h2 className="text-[17px] font-DMSans font-semibold">
-            LESSON IMAGE
+            CASE STUDY IMAGE
           </h2>
           <ImageUpload onUpload={handleImageUpload} />
         </div>
 
         <div className="my-4 w-full">
           <BaseInput
-            label="Lesson Title"
+            label="Case study Title"
             type="text"
-            placeholder="Lesson Title"
+            placeholder="Case study Title"
             containerClassname="w-full"
             labelClassName="text-[17px] font-DMSans font-semibold"
             inputContainerClassName={cn(

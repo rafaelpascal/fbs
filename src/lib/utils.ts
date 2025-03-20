@@ -15,6 +15,8 @@ export const formatDate = (dateString: string) => {
 };
 
 export const getWeeksBetweenDates = (start: string, end: string): number => {
+  console.log(start, end);
+
   const startDate: Date = new Date(start);
   const endDate: Date = new Date(end);
   const timeDiff: number = endDate.getTime() - startDate.getTime();
@@ -23,6 +25,7 @@ export const getWeeksBetweenDates = (start: string, end: string): number => {
 };
 
 export const getMonthsBetweenDates = (start: string, end: string): number => {
+  console.log(start, end);
   const startDate: Date = new Date(start);
   const endDate: Date = new Date(end);
 

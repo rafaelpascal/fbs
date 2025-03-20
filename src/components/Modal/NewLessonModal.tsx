@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 
 interface IModalPropsType {
   moduleId: number;
+  lessonId?: number;
   isOpen: boolean;
   closeModal: () => void;
   handlecreate: (moduleId: number) => void;
@@ -36,6 +37,7 @@ const initialFormData = {
 
 export const NewLessonModal = ({
   moduleId,
+  lessonId,
   isOpen,
   closeModal,
   handlecreate,
@@ -85,9 +87,39 @@ export const NewLessonModal = ({
     setMediaFile(file);
   };
 
+  const fetchSingleLesson = async () => {
+    if (lessonId && moduleId) {
+      const payload = { lesson_id: lessonId };
+      const res = await CourseServices.listLessonbyId(payload);
+
+      if (res?.data?.success && res?.data?.lessons?.length > 0) {
+        const lesson = res.data.lessons[0]; // Get the first lesson
+
+        setFormData((prev) => ({
+          ...prev,
+          title: lesson.lesson_title || "",
+          embed: lesson.stream_video_audio || "",
+          featuredImages: lesson.lesson_image ? [lesson.lesson_image] : [],
+        }));
+
+        setSelectedFile(
+          lesson.upload_pdf ? new File([], lesson.upload_pdf) : null
+        );
+        setSelectedWord(
+          lesson.upload_text ? new File([], lesson.upload_text) : null
+        );
+        setMediaFile(
+          lesson.upload_video_audio
+            ? new File([], lesson.upload_video_audio)
+            : null
+        );
+      }
+    }
+  };
+
   useEffect(() => {
-    console.log("moduleId", moduleId);
-  }, [moduleId]);
+    fetchSingleLesson();
+  }, [lessonId, moduleId]);
 
   const handleSubmit = async () => {
     setisSubmitting(true);
@@ -110,12 +142,25 @@ export const NewLessonModal = ({
     if (selectedMediaFile) {
       dataToSubmit.append("video_audio_upload", selectedMediaFile);
     }
-    const res = await CourseServices.createCourseLesson(dataToSubmit);
-    setModuleData((prevData: any) => ({
-      ...prevData,
-      moduleId: res.data.data.lesson_id,
-      title: formData.title,
-    }));
+
+    if (lessonId) {
+      dataToSubmit.append("lessonid", lessonId.toString());
+    }
+    if (lessonId) {
+      await CourseServices.updateCourseLesson(dataToSubmit);
+      setModuleData((prevData: any) => ({
+        ...prevData,
+        moduleId: moduleId,
+        title: formData.title,
+      }));
+    } else {
+      const res = await CourseServices.createCourseLesson(dataToSubmit);
+      setModuleData((prevData: any) => ({
+        ...prevData,
+        moduleId: res.data.data.lesson_id,
+        title: formData.title,
+      }));
+    }
 
     setisSubmitting(false);
     handlecreate(moduleId);

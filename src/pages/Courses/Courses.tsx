@@ -19,6 +19,7 @@ import { AuthService } from "~/api/auth";
 import { splitArray } from "~/utils/helpers";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEye } from "react-icons/fa";
+import { getMonthsBetweenDates, getWeeksBetweenDates } from "~/lib/utils";
 
 type Specification = {
   id: string;
@@ -37,6 +38,7 @@ interface Application {
   payment_status: number;
   applicationid: string;
   course_title: string;
+  course_mode: string;
   course_format?: string;
   course_flexible?: number;
   start_date?: string;
@@ -45,6 +47,9 @@ interface Application {
   end_date?: string;
   duration?: number;
   coursesid?: number;
+  course_run?: string;
+  course_startdate?: string;
+  course_enddate?: string;
 }
 
 type Module = {
@@ -222,7 +227,7 @@ const Dashboard = () => {
             specifications: [
               {
                 title: "Format",
-                duration: app.course_format || "N/A",
+                duration: app.course_mode || "N/A",
               },
               {
                 title: "Course Starting",
@@ -251,9 +256,20 @@ const Dashboard = () => {
               {
                 title: "Duration",
                 duration:
-                  app.duration && app.duration > 0
-                    ? `${app.duration} week(s)`
+                  (app.course_run?.replace(/"/g, "") ?? "") === "Weekly"
+                    ? `${getWeeksBetweenDates(
+                        app.course_startdate ?? "",
+                        app.course_enddate ?? ""
+                      )} Weeks`
+                    : app.course_run === "Monthly"
+                    ? `${getMonthsBetweenDates(
+                        app.course_startdate ?? "",
+                        app.course_enddate ?? ""
+                      )} Months`
                     : "N/A",
+                // app.duration && app.duration > 0
+                //   ? `${app.duration} week(s)`
+                //   : "N/A",
               },
             ],
           }));
@@ -275,7 +291,9 @@ const Dashboard = () => {
         courseid: selectedId,
       };
       const res = await CourseServices.getModuleByCourseId(payload);
-      const [chunk1, chunk2] = splitArray<Module>(res.data.course_modules);
+      console.log("jjjjjj", res);
+
+      const [chunk1, chunk2] = splitArray<Module>(res.data.course_modules, 4);
       setcourses(chunk1);
       setsecondcourses(chunk2);
     } catch (error) {

@@ -78,7 +78,7 @@ const SelectionDropdown = ({
         onClick={handleToggle}
       >
         <span className="font-DMSans font-semibold text-[16px]">
-          {selectedOption?.label || placeholder}
+          {selectedOption?.label.replace(/['"]+/g, "") || placeholder}
         </span>
 
         {isOpen ? <FaChevronUp /> : <FaChevronDown />}

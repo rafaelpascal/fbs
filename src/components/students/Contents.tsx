@@ -330,7 +330,7 @@ const Contents = ({ id, name }: CourseProps) => {
             text: "Duration",
             icon: <CiClock1 />,
             count:
-              courseData.course_run === "Weekly"
+              (courseData.course_run.replace(/"/g, "") ?? "") === "Weekly"
                 ? `${getWeeksBetweenDates(
                     courseData.course_startdate,
                     courseData.course_enddate
@@ -383,11 +383,11 @@ const Contents = ({ id, name }: CourseProps) => {
           </p>
           <p className="text-[20px] my-3">
             <span className="text-[#FF3B30]">Program:</span>{" "}
-            {courseData.course_type}
+            {courseData.course_type.replace(/"/g, "")}
           </p>
           <p className="text-[20px] mb-3">
             <span className="text-[#FF3B30]">Mode:</span>{" "}
-            {courseData.course_mode}
+            {courseData.course_mode.replace(/"/g, "")}
           </p>
           {courseData.video_url ? (
             <div

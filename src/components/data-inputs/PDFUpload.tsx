@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BiTrash } from "react-icons/bi";
 import { FaFilePdf } from "react-icons/fa";
 import { HiOutlineDocumentMagnifyingGlass } from "react-icons/hi2";
 import { LiaUndoSolid } from "react-icons/lia";
@@ -43,7 +44,12 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onFileSelect }) => {
   //     console.log("Uploading file:", file);
   //     alert("File uploaded successfully!");
   //   };
-
+  // Handle file removal
+  const handleRemoveFile = () => {
+    setFile(null);
+    onFileSelect(null);
+    setshowpreview(false);
+  };
   return (
     <div className="mb-4 w-full">
       {showpreview ? (
@@ -61,13 +67,23 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onFileSelect }) => {
       />
       {showpreview ? (
         <div className="mb-4 w-full">
-          <button
-            onClick={() => setshowpreview(false)}
-            className="rounded-[8px] border-[0.5px] border-[#ddd] mb-4 flex justify-start items-center gap-2 shadow-md px-2 py-2"
-          >
-            <LiaUndoSolid className="text-[20px]" />
-            <h2 className="text-[14px] font-semibold">Back</h2>
-          </button>
+          <div className="flex justify-start items-center mb-4 gap-4">
+            <button
+              onClick={() => setshowpreview(false)}
+              className="rounded-[8px] border-[0.5px] border-[#ddd] flex justify-start items-center gap-2 shadow-md px-2 py-2"
+            >
+              <LiaUndoSolid className="text-[20px]" />
+              <h2 className="text-[14px] font-semibold">Back</h2>
+            </button>
+            <button
+              onClick={handleRemoveFile}
+              className="rounded-[8px] border-[0.5px] border-red-500 flex justify-center items-center gap-2 shadow-md px-2 py-2 bg-red-100"
+            >
+              <span className="text-[14px] font-semibold text-red-500">
+                <BiTrash className="text-[20px]" />
+              </span>
+            </button>
+          </div>
           {file && (
             <div className="mb-4">
               <iframe
@@ -81,7 +97,7 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onFileSelect }) => {
       ) : (
         <label
           htmlFor="pdfInput"
-          className="w-full flex justify-between p-4 items-center h-[140px] border-[0.5px] border-[#B3B3B3] rounded-md"
+          className="w-full cursor-pointer flex justify-between p-4 items-center h-[140px] border-[0.5px] border-[#B3B3B3] rounded-md"
         >
           <div className="flex justify-start items-center gap-4">
             <div className="w-[40px] flex justify-center items-center h-[40px] rounded-full border-[0.5px] border-[#B3B3B3]">
@@ -97,29 +113,24 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onFileSelect }) => {
               </p>
             )}
           </div>
-          <button onClick={() => setshowpreview(true)} className="">
-            <HiOutlineDocumentMagnifyingGlass className="text-[50px]" />
-          </button>
+          {file !== null && (
+            <div className="flex justify-between items-center gap-2">
+              <button
+                onClick={handleRemoveFile}
+                className="rounded-[8px] border-[0.5px] border-red-500 flex justify-center items-center gap-2 shadow-md px-2 py-2 bg-red-100"
+              >
+                <span className="text-[14px] font-semibold text-red-500">
+                  <BiTrash className="text-[20px]" />
+                </span>
+              </button>
+              <button onClick={() => setshowpreview(true)} className="">
+                <HiOutlineDocumentMagnifyingGlass className="text-[50px]" />
+              </button>
+            </div>
+          )}
         </label>
       )}
-
-      {/* Error message */}
       {error && <p className="text-red-500">{error}</p>}
-
-      {/* File preview */}
-
-      {/* Upload button */}
-      {/* <button
-        onClick={handleUpload}
-        disabled={!file}
-        className={`px-4 py-2 rounded ${
-          file
-            ? "bg-blue-500 hover:bg-blue-600 text-white"
-            : "bg-gray-300 text-gray-500"
-        }`}
-      >
-        Upload
-      </button> */}
     </div>
   );
 };

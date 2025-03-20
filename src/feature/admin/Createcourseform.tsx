@@ -88,7 +88,6 @@ interface FormData {
   featuredVideo: string;
   orientation: string;
   maxStudents: string;
-  courseRun: string;
   enrollmentSchedule: string;
   courseSchedule: string;
   difficultyLevel: { label: string; value: number } | null;
@@ -143,7 +142,6 @@ const Createcourseform = ({
     featuredVideo: "",
     orientation: "",
     maxStudents: "",
-    courseRun: "",
     enrollmentSchedule: "",
     courseSchedule: "",
     difficultyLevel: null,
@@ -211,7 +209,7 @@ const Createcourseform = ({
   ) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: option.label,
+      [field]: option?.label,
     }));
   };
 
@@ -297,7 +295,9 @@ const Createcourseform = ({
       // Basic course information
       formDataToSend.append("programme_category_id", "2");
       formDataToSend.append("course_title", formData.courseTitle.trim());
-      formDataToSend.append("course_type", formData.courseType?.label || "");
+      if (formData.courseType) {
+        formDataToSend.append("course_type", String(formData.courseType));
+      }
       formDataToSend.append("description", formData.description.trim());
       formDataToSend.append("course_highlight", formData.highlight.trim());
 
@@ -332,12 +332,16 @@ const Createcourseform = ({
         "difficulty_level",
         formData.difficultyLevel?.label || ""
       );
-      formDataToSend.append("course_run", formData.courserun?.label || "");
+      if (formData.courserun) {
+        formDataToSend.append("course_run", String(formData?.courserun));
+      }
       formDataToSend.append(
         "instructoreType",
         formData.instructoreType?.label || ""
       );
-      formDataToSend.append("course_mode", formData.courseFormat?.label || "");
+      if (formData.courseFormat) {
+        formDataToSend.append("course_mode", String(formData.courseFormat));
+      }
       formDataToSend.append("course_format", "digital");
       formDataToSend.append("cohort_title", formData.cohortTag.trim());
 
@@ -364,12 +368,17 @@ const Createcourseform = ({
       formDataToSend.append("naira_amount", formData.nairaAmount);
       formDataToSend.append("usd_amount", formData.dollarAmount);
       formDataToSend.append("installment", formData.selectedMonths.toString());
-      formDataToSend.append("program_plan", formData.paymentplan?.value || "");
+      if (formData.paymentplan) {
+        formDataToSend.append("program_plan", formData.paymentplan?.value);
+      }
 
       // Handle update vs create
-      let response;
       if (formData.courseid) {
         formDataToSend.append("courseid", formData.courseid.toString());
+      }
+
+      let response;
+      if (formData.courseid) {
         response = await CourseServices.updataCreatedCourse(formDataToSend);
       } else {
         response = await CourseServices.createCourse(formDataToSend);

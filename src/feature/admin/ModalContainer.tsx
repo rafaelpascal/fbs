@@ -70,6 +70,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
     <>
       <NewModuleModal
         moduleNumber={modals.newModule.number}
+        initialModuleId={modals.newModule.courseId}
         isOpen={modals.newModule.status}
         closeModal={handleClose}
         handlecreate={addModule}
@@ -78,6 +79,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
       />
       <NewLessonModal
         moduleId={modals.newLesson.module}
+        lessonId={modals.newLesson.lessonId}
         isOpen={modals.newLesson.status}
         closeModal={handleClose}
         handlecreate={addLesson}

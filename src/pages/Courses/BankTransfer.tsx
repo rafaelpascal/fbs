@@ -13,7 +13,8 @@ import { TransferFormPayload, transferSchema } from "~/feature/students/schema";
 import { Validator } from "~/utils/packages/validators";
 import { SucessModal } from "~/components/Modal/SucessModal";
 import { CourseServices } from "~/api/course";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
 const fields = [
   {
@@ -37,6 +38,35 @@ const fields = [
 ];
 
 const BankTransfer = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { paymentPlan, fullAmount, formattedAmount, Paymeny_currency } =
+    location.state || {};
+  const [isAmount, setisAmount] = useState(0);
+  const [currency, setCurrency] = useState("");
+
+  useEffect(() => {
+    if (Paymeny_currency === "NGN" && paymentPlan === 1) {
+      console.log(formattedAmount, fullAmount);
+      setCurrency("NGN");
+      setisAmount(fullAmount);
+    }
+
+    if (Paymeny_currency === "USD" && paymentPlan === 1) {
+      setCurrency("USD");
+      setisAmount(fullAmount);
+    }
+    if (Paymeny_currency === "NGN" && paymentPlan === 2) {
+      setCurrency("NGN");
+      setisAmount(formattedAmount);
+    }
+
+    if (Paymeny_currency === "USD" && paymentPlan === 2) {
+      setCurrency("USD");
+      setisAmount(formattedAmount);
+    }
+  }, []);
+
   const { id } = useParams();
   const [IsFormSubmitted, setIsFormSubmitted] = useState({
     status: false,
@@ -138,7 +168,10 @@ const BankTransfer = () => {
 
   return (
     <DashboardArea>
-      <button className="bg-[#6440FB]/10 hover:shadow-md flex justify-between items-center gap-2 p-2 rounded-sm">
+      <button
+        onClick={() => navigate(-1)}
+        className="bg-[#6440FB]/10 hover:shadow-md flex justify-between items-center gap-2 p-2 rounded-sm"
+      >
         <IoArrowBack className="text-[#6440FB]" />
         <p className="text-[14px] font-DMSans font-semibold text-left text-[#6440FB]">
           Back
@@ -192,11 +225,17 @@ const BankTransfer = () => {
             <h2 className="text-[28.69px] text-center font-DMSans font-semibold">
               Direct Bank Transfer/Deposit
             </h2>
-            <p className="text-[18px] text-center font-DMSans font-semibold">
-              Pay or transfer the sum of{" "}
-              <span className="text-[#6440FB]">N75,000</span> to the following
-              account Details:
-            </p>
+            {!currency ? (
+              <div>
+                <LoadingSpinner />
+              </div>
+            ) : (
+              <p className="text-[18px] text-center font-DMSans font-semibold">
+                Pay or transfer the sum of{" "}
+                <span className="text-[#6440FB]">{isAmount}</span> to the
+                following account details:
+              </p>
+            )}
             <div className="w-[391px] flex justify-between items-center p-2 bg-[#6440FB]">
               <p className="text-[18px] font-DMSans font-normal text-left text-[#fff]">
                 Account Number: 20009837694

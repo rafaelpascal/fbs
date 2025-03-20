@@ -4,7 +4,9 @@ import { ROUTES } from "~/components/constants/routes";
 import { CourseCreatedModal } from "~/components/Modal/CourseCreatedModal";
 import CourseBuilder from "~/feature/admin/CourseBuilder";
 import Createcourseform from "~/feature/admin/Createcourseform";
-import CredentialsForms from "~/feature/admin/CredentialsForms";
+import CredentialsForms, {
+  CourseRequirement,
+} from "~/feature/admin/CredentialsForms";
 import { DashboardArea } from "~/layouts/DashboardArea";
 import { useLocation } from "react-router-dom";
 import { CourseServices } from "~/api/course";
@@ -14,6 +16,12 @@ const CreateCourse = () => {
   const navigate = useNavigate();
   const [width, setWidth] = useState(10);
   const [loading, setLoading] = useState(true);
+  const [initialCourseId, setInitialCourseId] = useState<number>(0);
+  const [courseRequirements, setCourseRequirements] = useState<
+    CourseRequirement[]
+  >([]);
+  const [modules, setModules] = useState([]);
+  const [lessons, setLessons] = useState([]);
   const [courseData, setCourseData] = useState<{
     courseid: any;
     courseTitle: any;
@@ -60,8 +68,8 @@ const CreateCourse = () => {
       };
 
       const res = await CourseServices.getCreatedCourse(payload);
-      const courseDetails = res.data.course_details;
 
+      const courseDetails = res.data.course_details;
       // Map API response to your form structure
       const transformedData = {
         courseid: courseDetails.coursesid,
@@ -98,6 +106,10 @@ const CreateCourse = () => {
       };
 
       setCourseData(transformedData);
+      setInitialCourseId(courseDetails.coursesid);
+      setCourseRequirements(courseDetails.course_requirements);
+      setLessons(courseDetails.lessons);
+      setModules(courseDetails.modules);
     } catch (error) {
       console.error("Error fetching course data:", error);
     } finally {
@@ -111,7 +123,7 @@ const CreateCourse = () => {
     }
   }, [courseId]);
 
-  const [formData, setFormData] = useState({
+  const [, setFormData] = useState({
     createForm: {},
     credentials: {},
     courseBuilder: {},
@@ -250,7 +262,8 @@ const CreateCourse = () => {
               </div>
               <CredentialsForms
                 created={handleIsModule}
-                initialData={formData.credentials}
+                initialCourseId={initialCourseId || 0}
+                initialData={courseRequirements || {}}
               />
             </div>
           )}
@@ -266,7 +279,8 @@ const CreateCourse = () => {
               </div>
               <CourseBuilder
                 created={handlePublish}
-                initialData={formData.courseBuilder}
+                Initialmodules={modules || []}
+                Initiallessons={lessons || []}
               />
             </div>
           )}

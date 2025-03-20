@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { LiaUndoSolid } from "react-icons/lia";
 import { HiOutlineDocumentMagnifyingGlass } from "react-icons/hi2";
 import { TbPlayerPlayFilled } from "react-icons/tb";
+import { BiTrash } from "react-icons/bi";
 
 interface MediaUploadProps {
   onMediaUpload: (file: File | null) => void;
@@ -38,6 +39,12 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onMediaUpload }) => {
     onMediaUpload(selectedFile);
   };
 
+  const handleRemoveFile = () => {
+    setFile(null);
+    onMediaUpload(null);
+    setshowpreview(false);
+  };
+
   return (
     <div className="mb-4 flex flex-col justify-between items-start w-full ">
       {showpreview ? (
@@ -55,13 +62,23 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onMediaUpload }) => {
 
       {showpreview ? (
         <div className="mb-4 w-full">
-          <button
-            onClick={() => setshowpreview(false)}
-            className="rounded-[8px] border-[0.5px] border-[#ddd] mb-4 flex justify-start items-center gap-2 shadow-md px-2 py-2"
-          >
-            <LiaUndoSolid className="text-[20px]" />
-            <h2 className="text-[14px] font-semibold">Back</h2>
-          </button>
+          <div className="flex justify-start items-center mb-4 gap-4">
+            <button
+              onClick={() => setshowpreview(false)}
+              className="rounded-[8px] border-[0.5px] border-[#ddd] flex justify-start items-center gap-2 shadow-md px-2 py-2"
+            >
+              <LiaUndoSolid className="text-[20px]" />
+              <h2 className="text-[14px] font-semibold">Back</h2>
+            </button>
+            <button
+              onClick={handleRemoveFile}
+              className="rounded-[8px] border-[0.5px] border-red-500 flex justify-center items-center gap-2 shadow-md px-2 py-2 bg-red-100"
+            >
+              <span className="text-[14px] font-semibold text-red-500">
+                <BiTrash className="text-[20px]" />
+              </span>
+            </button>
+          </div>
           {file?.type.startsWith("video/") ? (
             <video controls className="w-full max-h-64">
               <source src={preview ?? ""} type={file.type} />
@@ -77,7 +94,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onMediaUpload }) => {
       ) : (
         <label
           htmlFor="fileInput"
-          className="w-full flex justify-between p-4 items-center h-[140px] border-[0.5px] border-[#B3B3B3] rounded-md"
+          className="w-full cursor-pointer flex justify-between p-4 items-center h-[140px] border-[0.5px] border-[#B3B3B3] rounded-md"
         >
           <div className="flex justify-start items-center gap-4">
             <div className="w-[40px] flex justify-center items-center h-[40px] rounded-full border-[0.5px] border-[#B3B3B3]">
@@ -93,9 +110,21 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onMediaUpload }) => {
               </p>
             )}
           </div>
-          <button onClick={() => setshowpreview(true)} className="">
-            <HiOutlineDocumentMagnifyingGlass className="text-[50px]" />
-          </button>
+          {file !== null && (
+            <div className="flex justify-between items-center gap-2">
+              <button
+                onClick={handleRemoveFile}
+                className="rounded-[8px] border-[0.5px] border-red-500 flex justify-center items-center gap-2 shadow-md px-2 py-2 bg-red-100"
+              >
+                <span className="text-[14px] font-semibold text-red-500">
+                  <BiTrash className="text-[20px]" />
+                </span>
+              </button>
+              <button onClick={() => setshowpreview(true)} className="">
+                <HiOutlineDocumentMagnifyingGlass className="text-[50px]" />
+              </button>
+            </div>
+          )}
         </label>
       )}
 
