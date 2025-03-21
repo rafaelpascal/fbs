@@ -97,7 +97,8 @@ export const NewPaymentModal = ({
   };
 
   const config = {
-    public_key: "FLWPUBK_TEST-512e73fbe507f41f6ebbdd13dcc57537-X",
+    // public_key: "FLWPUBK_TEST-512e73fbe507f41f6ebbdd13dcc57537-X",
+    public_key: "FLWPUBK-70d168a179166f3222d4254ab3e40769-X",
     tx_ref: Date.now().toString(),
     amount:
       paymentPlan === 2
