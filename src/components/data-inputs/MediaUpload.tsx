@@ -18,8 +18,6 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onMediaUpload }) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
     const selectedFile = event.target.files?.[0];
-
-    console.log(selectedFile?.name);
     if (!selectedFile) {
       setFile(null);
       setPreview(null);

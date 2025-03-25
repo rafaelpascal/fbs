@@ -47,7 +47,6 @@ const BankTransfer = () => {
 
   useEffect(() => {
     if (Paymeny_currency === "NGN" && paymentPlan === 1) {
-      console.log(formattedAmount, fullAmount);
       setCurrency("NGN");
       setisAmount(fullAmount);
     }
@@ -117,8 +116,6 @@ const BankTransfer = () => {
 
   const submitPayment = async (payload: any) => {
     try {
-      console.log(payload);
-
       const res = await CourseServices.submitPayment(payload);
       if (res?.data?.success === true) {
         setIsFormSubmitted({

@@ -1,5 +1,5 @@
 import { BaseModal } from "./BaseModal";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { cn } from "~/utils/helpers";
 import { BaseInput } from "../data-inputs/text-input";
@@ -135,10 +135,6 @@ export const NewQuizModal = ({
       [field]: value,
     }));
   };
-
-  useEffect(() => {
-    console.log(lessonId, "lessonId");
-  }, [lessonId]);
 
   const checkedTitles = Object.keys(formData.feedback || {}).filter(
     (key) => formData.feedback[key]

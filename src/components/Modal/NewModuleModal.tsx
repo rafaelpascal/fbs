@@ -23,6 +23,7 @@ interface IModalPropsType {
 }
 
 interface FormData {
+  course_id?: number;
   title: string;
   description: string;
   objectives: string;
@@ -31,6 +32,7 @@ interface FormData {
 }
 
 const initialFormData = {
+  course_id: 0,
   title: "",
   description: "",
   objectives: "",
@@ -52,6 +54,7 @@ export const NewModuleModal = ({
   const [isSubmitting, setisSubmitting] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
+    course_id: 0,
     title: "",
     description: "",
     objectives: "",
@@ -83,6 +86,7 @@ export const NewModuleModal = ({
         const module = res.data.modules[0]; // Assuming you're fetching a single module
         dispatch(setCourseId(res.data.modules[0].course_id));
         setFormData({
+          course_id: module.course_id || "",
           title: module.module_title || "",
           description: module.module_description || "",
           objectives: module.module_objectives || "",
@@ -114,7 +118,10 @@ export const NewModuleModal = ({
     setisSubmitting(true);
     const dataToSubmit = new FormData();
 
-    dataToSubmit.append("course_id", courseId?.toString() || "");
+    dataToSubmit.append(
+      "course_id",
+      courseId?.toString() || String(formData.course_id) || ""
+    );
     dataToSubmit.append("module_number", moduleNumber.toString());
     dataToSubmit.append("module_title", formData.title);
     dataToSubmit.append("module_description", formData.description);
@@ -127,6 +134,7 @@ export const NewModuleModal = ({
     if (initialModuleId) {
       dataToSubmit.append("moduleid", initialModuleId.toString());
     }
+
     if (initialModuleId) {
       await CourseServices.updateCourseModule(dataToSubmit);
       setModuleData((prevData: any) => ({

@@ -54,6 +54,7 @@ const CreateCourse = () => {
     selectedMonths: any;
   } | null>(null);
 
+  const [refreshKey, setRefreshKey] = useState(0);
   const [iscreateForm, setiscreateForm] = useState(true);
   const [isCredentials, setisCredentials] = useState(false);
   const [ismodule, setModule] = useState(false);
@@ -121,7 +122,7 @@ const CreateCourse = () => {
     if (courseId) {
       fetchCourseData(courseId);
     }
-  }, [courseId]);
+  }, [courseId, refreshKey]);
 
   const [, setFormData] = useState({
     createForm: {},
@@ -196,6 +197,10 @@ const CreateCourse = () => {
   const handleclose = () => {
     navigate(ROUTES.COURSES);
     setIspublished(false);
+  };
+
+  const CreatedNewItem = () => {
+    setRefreshKey((prev) => prev + 1);
   };
 
   if (courseId && loading) {
@@ -279,6 +284,7 @@ const CreateCourse = () => {
               </div>
               <CourseBuilder
                 created={handlePublish}
+                CreatedNewItem={CreatedNewItem}
                 Initialmodules={modules || []}
                 Initiallessons={lessons || []}
               />

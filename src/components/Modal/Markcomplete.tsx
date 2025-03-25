@@ -2,7 +2,7 @@ import { CiWarning } from "react-icons/ci";
 import { BaseModal } from "./BaseModal";
 
 interface IModalPropsType {
-  id: string | null;
+  id: number | null;
   isOpen: boolean;
   message: string;
   closeModal: () => void;

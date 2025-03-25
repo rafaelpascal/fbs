@@ -9,19 +9,32 @@ import { RiHome2Line } from "react-icons/ri";
 import { useSidebar } from "~/context/Sidebar_Provider";
 import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "../ui/loading-spinner";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { setLessonId } from "~/redux-store/slice/lessonSlice";
+import { GoDotFill } from "react-icons/go";
+import { FaFilePdf } from "react-icons/fa";
+import { RootState } from "~/redux-store/store";
+import { useSelector } from "react-redux";
+import { resetModuleId } from "../../redux-store/slice/module.slice";
+import { Button } from "../buttons/BaseButton";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
 
 export interface SideNavProps {
+  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  text: string;
+  dropdown?: boolean;
+  children?: SideNavProps[];
+  href: string;
+  textStyles?: string;
   className?: ClassName | string;
+  permission?: string;
   iconOnly?: boolean;
+  playing?: boolean;
 }
-
 interface CourseDetails {
   course_startdate: string;
   course_enddate: string;
@@ -32,19 +45,25 @@ interface CourseData {
 }
 // Sidebar Component
 export const LectureSidebar = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const { id } = useParams<{ id: string }>();
+  // const moduleId = useSelector((state: RootState) => state.module.module_id);
   const { quizId } = useParams<{ quizId: string }>();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setisCollapsed] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [fecthingWeek, setFecthingWeek] = useState(false);
-  const { sidebarData } = useSidebar();
+  const { sidebarData, updateSidebarData } = useSidebar();
   const [moduleTitle, setModuleTitle] = useState("");
   const [moduleNumber, setModuleNumber] = useState("");
   const [courseId, setCourseId] = useState("");
   const [courseData, setCourseData] = useState<CourseData | null>(null);
+  const [lectureTitles, setLectureTitles] = useState<any[]>([]);
+  const [lessonIds, setLessonIds] = useState<string[]>([]);
+  const lessonId = useSelector((state: RootState) => state.lesson.lessonId);
+  const storedModuleId = localStorage.getItem("moduleId");
 
   const getCourseWeekInfo = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
@@ -81,10 +100,10 @@ export const LectureSidebar = () => {
     setLoading(true);
     try {
       const payload = {
-        module_id: JSON.parse(id ?? ""),
+        module_id: storedModuleId,
       };
       const res = await CourseServices.getModulebyId(payload);
-
+      // setLectureTitles(res.data.course_lessons);
       if (res.data?.modules?.length > 0) {
         setModuleTitle(res.data.modules[0].module_title ?? "Unknown Module");
         setModuleNumber(res.data.modules[0].module_number ?? "0");
@@ -102,11 +121,130 @@ export const LectureSidebar = () => {
     }
   };
 
+  const fetchLessons = async () => {
+    try {
+      const payload = { moduleid: storedModuleId };
+      const res = await CourseServices.lessonsByModuleId(payload);
+      setLectureTitles(res.data.course_lessons);
+      const extractedLessonIds = res.data.course_lessons.map(
+        (lesson: any) => lesson.lessonid
+      );
+      setLessonIds(extractedLessonIds);
+      navigate(`/lecture/${res.data.course_lessons[0].lessonid}`, {
+        replace: true,
+      });
+    } catch (error) {
+      console.error("Error fetching lessons:", error);
+    }
+  };
+
   useEffect(() => {
-    if (id) {
+    fetchLessons();
+  }, [storedModuleId]);
+
+  useEffect(() => {
+    if (lessonId) {
+      const currentId = Number(lessonId);
+      const lessonIdsNumbers = lessonIds.map(Number);
+      const currentIndex = lessonIdsNumbers.indexOf(currentId);
+
+      if (currentIndex !== -1) {
+        const nextIndex = (currentIndex + 1) % lessonIdsNumbers.length;
+        const nextLessonId = lessonIdsNumbers[nextIndex];
+        navigate(`/lecture/${nextLessonId}`, { replace: true });
+      }
+    }
+  }, [lessonId]);
+
+  const updateLecture = () => {
+    if (!lectureTitles.length) return;
+    const updatedData: SideNavProps[] = lectureTitles.map(
+      (lessonItem: any, index: number) => {
+        const isPlaying = lessonItem.lessonid == id;
+        return {
+          href: `/module/${lessonItem.module_id}`,
+          icon: FaFilePdf,
+          dropdown: true,
+          playing: isPlaying,
+          text:
+            `LESSON ${index + 1}: ${lessonItem.lesson_title}` ||
+            "Untitled Lesson",
+          children: [
+            {
+              href: `/lecture/${lessonItem.lessonid}`,
+              icon: GoDotFill,
+              dropdown: false,
+              text: "Lecture",
+            },
+            ...(lessonItem.hasQuiz === 0
+              ? [
+                  {
+                    href: `/assignment/${lessonItem.module_id}`,
+                    icon: GoDotFill,
+                    dropdown: false,
+                    text: "Quiz",
+                  },
+                ]
+              : []),
+            ...(lessonItem.lessonid
+              ? [
+                  {
+                    href: `/exam/${lessonItem.lessonid}`,
+                    icon: GoDotFill,
+                    dropdown: false,
+                    text: "Exam",
+                  },
+                ]
+              : []),
+            ...(lessonItem.lessonid
+              ? [
+                  {
+                    href: `/newassignment/${lessonItem.lessonid}`,
+                    icon: GoDotFill,
+                    dropdown: false,
+                    text: "Assignment",
+                  },
+                ]
+              : []),
+            ...(lessonItem.lessonid
+              ? [
+                  {
+                    href: `/polls/${lessonItem.lessonid}`,
+                    icon: GoDotFill,
+                    dropdown: false,
+                    text: "Polls",
+                  },
+                ]
+              : []),
+            ...(lessonItem.assignment_id
+              ? [
+                  {
+                    href: lessonItem.stream_video_audio
+                      ? lessonItem.stream_video_audio
+                      : "#",
+                    icon: GoDotFill,
+                    dropdown: false,
+                    text: "Assignment",
+                  },
+                ]
+              : []),
+          ],
+        };
+      }
+    );
+
+    updateSidebarData(updatedData);
+  };
+
+  useEffect(() => {
+    updateLecture();
+  }, [id, lectureTitles]);
+
+  useEffect(() => {
+    if (storedModuleId) {
       fetModules();
     }
-  }, [id]);
+  }, [storedModuleId]);
 
   useEffect(() => {
     if (!courseId) return;
@@ -135,6 +273,11 @@ export const LectureSidebar = () => {
       dispatch(setLessonId(JSON.parse(quizId)));
     }
   }, [quizId]);
+
+  const handleHomeNavigation = () => {
+    dispatch(resetModuleId());
+    navigate("/dashboard");
+  };
 
   return (
     <>
@@ -182,13 +325,13 @@ export const LectureSidebar = () => {
           </div>
           {!isCollapsed && (
             <div className="w-full flex mt-4 flex-row justify-start gap-6 items-center">
-              <Link to="/dashboard">
+              <Button className="w-[20%]" onClick={handleHomeNavigation}>
                 <RiHome2Line className="text-[35px]" />
-              </Link>
+              </Button>
               {fecthingWeek ? (
                 <LoadingSpinner size="sm" />
               ) : (
-                <h2 className="text-[20px] font-DMSans font-semibold">
+                <h2 className="text-[20px] w-[80%] font-DMSans font-semibold">
                   <span className="text-[#1CB503]">{weekNumber} /</span>
                   <span> {totalWeeks}</span>
                 </h2>

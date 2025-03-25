@@ -96,7 +96,6 @@ const Quiz = () => {
       lesson_id: JSON.parse(quizId ?? ""),
     };
     const response = await CourseServices.listQuiz(payload);
-    console.log(response.data.data[0].quizid);
     setQuizId(response.data.data[0].quizid);
     setQuizTime(response.data.data[0].time); // Add this line
   };
@@ -113,8 +112,6 @@ const Quiz = () => {
       };
       const res = await CourseServices.fetchQuestions(payload);
       const quizData: QuizResponse = res.data;
-      console.log(quizData.data.length);
-
       setQuestionlength(quizData.data.length);
       setmodule1quiz(quizData.data);
       setQuizLoading(false);
@@ -140,12 +137,11 @@ const Quiz = () => {
         selected_answer_id: JSON.parse(selectedAnswer ?? ""),
       };
 
-      const res = await CourseServices.submitAnswer(payload);
+      await CourseServices.submitAnswer(payload);
       setActiveIndex((prev) =>
         prev < module1quiz.length - 1 ? prev + 1 : prev
       );
       resetCountdown();
-      console.log(res);
     } catch (error) {
       console.log(error);
     }

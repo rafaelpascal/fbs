@@ -24,7 +24,6 @@ const initialFormData = {
 };
 
 export const ViewAssignmentModal = ({
-  id,
   isOpen,
   closeModal,
 }: IModalPropsType) => {
@@ -52,7 +51,6 @@ export const ViewAssignmentModal = ({
   };
 
   const handleSubmit = async () => {
-    console.log(id);
     setisSubmitting(true);
 
     // Create a new FormData object

@@ -46,7 +46,6 @@ const EventsContents = () => {
   const navigate = useNavigate();
 
   const registerevent = (id: string) => {
-    console.log("SINGLE EVENT", id);
     navigate(`/event/${id}`);
   };
 

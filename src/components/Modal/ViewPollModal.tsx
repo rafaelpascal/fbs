@@ -46,10 +46,9 @@ const CustomLegend = (props: any) => {
   );
 };
 
-export const ViewPollModal = ({ id, isOpen, closeModal }: IModalPropsType) => {
+export const ViewPollModal = ({ isOpen, closeModal }: IModalPropsType) => {
   // Close modal
   const handleclose = useCallback(() => {
-    console.log(id);
     closeModal();
   }, []);
 

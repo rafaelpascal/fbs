@@ -93,8 +93,8 @@ const CourseTable = () => {
 
   // Handle handlecontact
   const handlecontact = (id: number) => {
-    setIscontact(true);
     console.log(id);
+    setIscontact(true);
   };
 
   const handleCopyLink = (courseUrl: string) => {

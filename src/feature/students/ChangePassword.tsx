@@ -44,8 +44,6 @@ const ChangePasswordForm = () => {
   const handleLogin = form.handleSubmit(async (data: ChangePasswordPayload) => {
     try {
       const res = await AuthService.changepassword(data);
-      console.log(res);
-
       if (res.data.success === true) {
         await showAlert(
           "success",

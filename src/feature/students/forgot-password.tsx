@@ -31,7 +31,6 @@ const Forgotpassword = () => {
   const handleLogin = form.handleSubmit(async (data: ForgotPasswordPayload) => {
     try {
       const res = await AuthService.forgotpassword(data);
-      console.log(res.data.success);
       if (res.data.success === false) {
         await showAlert("error", "Failed!", res.data.message, "Ok", "#ED342B");
         form.reset();

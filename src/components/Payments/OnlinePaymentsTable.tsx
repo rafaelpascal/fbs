@@ -84,7 +84,6 @@ const OnlinePaymentsTable: React.FC<OnlinePaymentsTableProps> = ({
   };
 
   const handleReject = (id: number) => {
-    console.log("Download Receipt", id);
     setSelectedPaymentId(id);
     setShowRejectModal(true);
     // setOpenMenuId(null);

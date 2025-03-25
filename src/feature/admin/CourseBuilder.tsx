@@ -53,11 +53,13 @@ interface CourseBuilderProps {
   created: any;
   Initialmodules: any[];
   Initiallessons: any[];
+  CreatedNewItem: () => void;
 }
 const CourseBuilder: React.FC<CourseBuilderProps> = ({
   created,
   Initialmodules,
   Initiallessons,
+  CreatedNewItem,
 }) => {
   const { theme } = useTheme();
   const [modules, setModules] = useState<Module[]>([]);
@@ -156,7 +158,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
-    if (Initialmodules?.length > 0 && Initiallessons?.length > 0) {
+    if (Initialmodules?.length > 0) {
       const mappedModules: Module[] = Initialmodules.map((mod) => ({
         module_Id: mod.moduleid,
         id: mod.moduleid,
@@ -179,6 +181,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   }, [Initialmodules, Initiallessons]);
 
   const addModule = async () => {
+    CreatedNewItem();
     setIsnewModule(true);
     setNewModule({
       number: modules.length + 1,
@@ -227,40 +230,80 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
 
   const addNewItem = (type: keyof Module, obj: any, setObj: Function) => {
     if (!obj.title) return;
-    console.log("vvvvvvvvv", type, obj);
-
     setModules((prevModules) =>
       prevModules.map((module) => {
         if (module.id === selectedModuleId) {
           const existingItems = (module[type] as any[]) || [];
-          const newIndex = existingItems.length + 1; // Get index based on array length
-          console.log(`${type.toUpperCase()} ${newIndex}`);
-
-          return {
-            ...module,
-            [type]: [
-              ...existingItems,
-              {
-                id: Date.now(),
-                moduleId: selectedModuleId,
-                title: `${type.toUpperCase()} ${newIndex}`,
-                description: obj.title,
-                pages: "",
-              },
-            ],
-          };
+          // Find an existing item using `module_id` and `title`
+          const existingItem = existingItems.find(
+            (item) => item.module_id === obj.moduleId
+          );
+          const updatedItems = existingItem
+            ? existingItems.map(
+                (item) =>
+                  item.module_id === obj.moduleId && {
+                    ...item,
+                    title: obj.title,
+                    description: obj.description,
+                  }
+              )
+            : [
+                // Otherwise, add a new item
+                ...existingItems,
+                {
+                  id: Date.now(), // Generate a unique ID
+                  module_id: selectedModuleId,
+                  title: obj.title,
+                  description: obj.description || "",
+                  pages: "",
+                },
+              ];
+          return { ...module, [type]: updatedItems };
         }
         return module;
       })
     );
 
+    // Reset input object after adding/updating
     setObj({ title: "", description: "" });
+    CreatedNewItem();
   };
+
+  // const addNewItem = (type: keyof Module, obj: any, setObj: Function) => {
+  //   if (!obj.title) return;
+  //   setModules((prevModules) =>
+  //     prevModules.map((module) => {
+  //       if (module.id === selectedModuleId) {
+  //         const existingItems = (module[type] as any[]) || [];
+  //         const newIndex = existingItems.length + 1;
+
+  //         return {
+  //           ...module,
+  //           [type]: [
+  //             ...existingItems,
+  //             {
+  //               id: Date.now(),
+  //               moduleId: selectedModuleId,
+  //               title: `${type.toUpperCase()} ${newIndex}`,
+  //               description: obj.title,
+  //               pages: "",
+  //             },
+  //           ],
+  //         };
+  //       }
+  //       return module;
+  //     })
+  //   );
+
+  //   setObj({ title: "", description: "" });
+  //   // setRefreshKey((prev) => prev + 1);
+  // };
 
   // Single useEffect for all item types
   useEffect(() => {
     addNewItem("lessons", lessonObj, setlessonObj);
   }, [lessonObj]);
+
   useEffect(() => {
     addNewItem("resources", resourcesObj, setResourcesObj);
   }, [resourcesObj]);
@@ -497,7 +540,6 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
     };
 
     if (!defaultValues[type]) {
-      console.error("Invalid type provided:", type);
       return;
     }
     setState(defaultValues[type]);
@@ -518,8 +560,6 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   const handleNewPoll = (item?: any) => handleNewItem("poll", setNewPoll, item);
 
   const addItem = async (type: string, setState: Function) => {
-    console.log("ggggg", type);
-
     // Default structure for different items
     const defaultValues: any = {
       lesson: { module: 0, status: false },
@@ -545,7 +585,8 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
       "Created!",
       `${type.charAt(0).toUpperCase() + type.slice(1)} Successfully Created!`,
       "Ok",
-      "#03435F"
+      "#03435F",
+      () => CreatedNewItem()
     );
 
     // Check if the selected module exists
@@ -554,8 +595,6 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
     // );
 
     const selectedModule = modules.find((module) => {
-      console.log(module.id === selectedModuleId);
-
       return module.id === selectedModuleId;
     });
 
@@ -673,8 +712,6 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   };
 
   const handleOpenSidebar = (module: Module, event: React.MouseEvent) => {
-    console.log(module);
-
     const button = event.currentTarget;
     const rect = button.getBoundingClientRect();
     const isMobile = window.innerWidth < 768;

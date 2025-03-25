@@ -134,8 +134,6 @@ export const NewPollModal = ({
     };
 
     try {
-      console.log("Submitting Payload:", JSON.stringify(dataToSubmit, null, 2));
-
       await CourseServices.createCoursePoll(dataToSubmit);
       setModuleData((prevData: any) => ({
         ...prevData,

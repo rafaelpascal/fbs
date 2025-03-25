@@ -20,6 +20,8 @@ import { splitArray } from "~/utils/helpers";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEye } from "react-icons/fa";
 import { getMonthsBetweenDates, getWeeksBetweenDates } from "~/lib/utils";
+import { setModuleId } from "../../redux-store/slice/module.slice";
+import { useDispatch } from "react-redux";
 
 type Specification = {
   id: string;
@@ -170,6 +172,7 @@ const updates = [
   },
 ];
 const Dashboard = () => {
+  const dispatch = useDispatch();
   const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
   const [isEnrolled, setisEnrolled] = useState(false);
@@ -200,6 +203,8 @@ const Dashboard = () => {
   };
 
   const handleStartCourse = (courseId: number) => {
+    localStorage.setItem("moduleId", courseId.toString()); // Save to local storage
+    dispatch(setModuleId(courseId));
     navigate(`/lecture/${courseId}`);
   };
 
@@ -291,8 +296,6 @@ const Dashboard = () => {
         courseid: selectedId,
       };
       const res = await CourseServices.getModuleByCourseId(payload);
-      console.log("jjjjjj", res);
-
       const [chunk1, chunk2] = splitArray<Module>(res.data.course_modules, 4);
       setcourses(chunk1);
       setsecondcourses(chunk2);
@@ -314,8 +317,6 @@ const Dashboard = () => {
   const handleViewApplication = (courseId: number | undefined) => {
     setSelectedId(JSON.stringify(courseId));
   };
-  // console.log(applications);
-  // console.log(courses, secondcourses);
 
   return (
     <DashboardArea>

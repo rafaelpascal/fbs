@@ -23,11 +23,7 @@ const initialFormData = {
   score: "",
 };
 
-export const ViewCapstoneModal = ({
-  id,
-  isOpen,
-  closeModal,
-}: IModalPropsType) => {
+export const ViewCapstoneModal = ({ isOpen, closeModal }: IModalPropsType) => {
   const [isConfirmScore, setisConfirmScore] = useState(false);
   //   const { theme } = useTheme();
   const courseId = useSelector((state: RootState) => state.course.course_id);
@@ -51,7 +47,6 @@ export const ViewCapstoneModal = ({
   };
 
   const handleSubmit = async () => {
-    console.log(id);
     setisSubmitting(true);
 
     // Create a new FormData object

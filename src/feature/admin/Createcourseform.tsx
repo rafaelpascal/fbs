@@ -167,6 +167,8 @@ const Createcourseform = ({
 
   useEffect(() => {
     if (Object.keys(initialData).length > 0) {
+      dispatch(setCourseId(initialData.courseid));
+
       setFormData((prev) => ({
         ...prev,
         ...initialData,

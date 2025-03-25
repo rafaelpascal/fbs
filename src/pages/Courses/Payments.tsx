@@ -58,7 +58,6 @@ const Payments = () => {
     try {
       const res = await CourseServices.getApplicationPayments();
       if (res.data && res.data.data && res.data.data.length > 0) {
-        console.log(res.data.data);
         setListOfPayments(res.data.data);
       }
     } catch (error) {

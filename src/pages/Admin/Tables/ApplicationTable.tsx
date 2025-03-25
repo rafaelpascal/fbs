@@ -69,8 +69,6 @@ const ApplicationTable = () => {
 
   useEffect(() => {
     if (data) {
-      console.log(data);
-
       setapplicationData(data?.data);
     }
   }, [data]);

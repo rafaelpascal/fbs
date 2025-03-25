@@ -23,7 +23,7 @@ const initialFormData = {
   score: "",
 };
 
-export const ViewExamModal = ({ id, isOpen, closeModal }: IModalPropsType) => {
+export const ViewExamModal = ({ isOpen, closeModal }: IModalPropsType) => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [isConfirmScore, setisConfirmScore] = useState(false);
   //   const { theme } = useTheme();
@@ -48,7 +48,6 @@ export const ViewExamModal = ({ id, isOpen, closeModal }: IModalPropsType) => {
   };
 
   const handleSubmit = async () => {
-    console.log(id);
     setisSubmitting(true);
 
     // Create a new FormData object

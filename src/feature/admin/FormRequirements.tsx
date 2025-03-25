@@ -70,8 +70,6 @@ const FormRequirements = () => {
 
     try {
       const res = await CourseServices.createFormRequirements(payload);
-      console.log(res);
-
       if (res.data.success === true) {
         await showAlert(
           "success",

@@ -63,7 +63,6 @@ export class AuthService extends BaseAPIService {
         "/subsequent-application",
         payload
       );
-      console.log(res);
       return res;
     } catch (error) {
       const handleError = error;

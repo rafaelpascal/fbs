@@ -44,7 +44,7 @@ const Questions = [
   },
 ];
 
-export const ViewQuizModal = ({ id, isOpen, closeModal }: IModalPropsType) => {
+export const ViewQuizModal = ({ isOpen, closeModal }: IModalPropsType) => {
   const [isConfirmScore, setisConfirmScore] = useState(false);
   //   const { theme } = useTheme();
   const courseId = useSelector((state: RootState) => state.course.course_id);
@@ -68,7 +68,6 @@ export const ViewQuizModal = ({ id, isOpen, closeModal }: IModalPropsType) => {
   };
 
   const handleSubmit = async () => {
-    console.log(id);
     setisSubmitting(true);
 
     // Create a new FormData object

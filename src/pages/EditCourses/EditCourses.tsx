@@ -185,7 +185,6 @@ const EditCourses = ({ initialData = {} }: CreatecourseformProps) => {
       if (!res?.data?.success) {
         throw new Error("Failed to fetch course data");
       }
-      console.log(res?.data?.course_details);
       const courseData = res?.data?.course_details;
       const Facilitators =
         courseData.facilitators?.map((facilitator: any) => ({

@@ -119,6 +119,7 @@ type FooterbtnItem = {
 };
 
 const Contents = ({ id, name }: CourseProps) => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isModuleCount, setIsModuleCount] = useState(false);
   const [lessons, setLessons] = useState(0);
@@ -183,8 +184,6 @@ const Contents = ({ id, name }: CourseProps) => {
     usd_amount: 100,
     video_url: "",
   });
-
-  const navigate = useNavigate();
 
   const updatedFacilitatorsItem = FacilitatorsItem.map((facilitator) => {
     if (facilitator.Title === "Assessment Methods") {
@@ -445,14 +444,13 @@ const Contents = ({ id, name }: CourseProps) => {
             >
               <p>Apply Now</p>
             </BaseButton>
-            <BaseButton
-              containerCLassName="mt-4 w-full lg:w-[369.19px] h-[66px] w-full rounded-[8px] border-[1px] border-[#000] text-[24px] font-bold font-DMSans text-[#757575]"
-              hoverScale={1.01}
-              hoverOpacity={0.8}
-              tapScale={0.9}
+            <Link
+              to="https://fordaxbschool.com/contact"
+              className="mt-4 w-full lg:w-[369.19px] h-[66px] rounded-[8px] border-[1px] border-[#000] text-[24px] font-bold font-DMSans text-[#757575]"
+              target="_blank"
             >
               <p>Contact us</p>
-            </BaseButton>
+            </Link>
           </div>
         </div>
         <div

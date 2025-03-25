@@ -9,10 +9,9 @@ interface IModalPropsType {
   closeModal: () => void;
 }
 
-export const ContactModal = ({ isOpen, id, closeModal }: IModalPropsType) => {
+export const ContactModal = ({ isOpen, closeModal }: IModalPropsType) => {
   // Close modal
   const handleclose = useCallback(() => {
-    console.log(id);
     closeModal();
   }, []);
 

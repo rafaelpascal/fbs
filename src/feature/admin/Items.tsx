@@ -16,7 +16,6 @@ const DraggableItem = ({
 }: any) => {
   // if (!item?.lessonid) return null;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  console.log(item);
 
   const [, drag] = useDrag({
     type,
@@ -71,13 +70,13 @@ const DraggableItem = ({
             : "bg-gray-200"
         } */}
         <div className="flex flex-col lg:flex-row gap-2">
-          {item.lesson_title !== undefined ? (
+          {item.title ? (
             <h2 className="font-semibold text-[18px] text-gray-700">
-              LESSON {item.index}: {item.lesson_title}
+              LESSON {item.index}: {item.title}
             </h2>
           ) : (
             <h2 className="font-semibold text-[18px] text-gray-700">
-              {item.title}:
+              LESSON {item.index}: {item.lesson_title}
             </h2>
           )}
           <h2 className="font-semibold text-[18px] text-gray-700">

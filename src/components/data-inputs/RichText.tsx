@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { createEditor, Descendant, Text } from "slate";
 import { Slate, Editable, withReact, useSlate } from "slate-react";
 import { Transforms, Editor } from "slate";
@@ -114,7 +114,6 @@ const isListActive = (
       (n as CustomElement).type === format,
   });
   const isActive = !!match; // Determine if the format is active
-  console.log(isActive); // Log the active state
   return isActive; // Return the active state
 };
 
@@ -125,14 +124,8 @@ const ListButton: React.FC<{
   const editor = useSlate();
   const isActive = isListActive(editor, format); // Use the custom isListActive function
 
-  useEffect(() => {
-    console.log("Editor state updated:", isActive);
-  }, [isActive]); // Log whenever the active state changes
-
   const toggleList = () => {
     const isListCurrentlyActive = isListActive(editor, format);
-    console.log("Before toggle:", isListCurrentlyActive);
-
     if (isListCurrentlyActive) {
       Transforms.unwrapNodes(editor, {
         match: (n) =>

@@ -24,12 +24,14 @@ interface IModalPropsType {
 }
 
 interface FormData {
+  course_id?: number;
   title: string;
   embed: string;
   featuredImages: File[];
 }
 
 const initialFormData = {
+  course_id: 0,
   title: "",
   embed: "",
   featuredImages: [] as File[],
@@ -49,8 +51,10 @@ export const NewLessonModal = ({
   const [selectedPdf, setSelectedFile] = useState<File | null>(null);
   const [selectedWord, setSelectedWord] = useState<File | null>(null);
   const [selectedMediaFile, setMediaFile] = useState<File | null>(null);
+  const [isLoading, setIsloading] = useState(false);
   //   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
+    course_id: 0,
     title: "",
     embed: "",
     featuredImages: [],
@@ -88,6 +92,7 @@ export const NewLessonModal = ({
   };
 
   const fetchSingleLesson = async () => {
+    setIsloading(true);
     if (lessonId && moduleId) {
       const payload = { lesson_id: lessonId };
       const res = await CourseServices.listLessonbyId(payload);
@@ -97,6 +102,7 @@ export const NewLessonModal = ({
 
         setFormData((prev) => ({
           ...prev,
+          course_id: lesson.course_id || "",
           title: lesson.lesson_title || "",
           embed: lesson.stream_video_audio || "",
           featuredImages: lesson.lesson_image ? [lesson.lesson_image] : [],
@@ -114,11 +120,14 @@ export const NewLessonModal = ({
             : null
         );
       }
+      setIsloading(false);
     }
   };
 
   useEffect(() => {
-    fetchSingleLesson();
+    if (lessonId && moduleId) {
+      fetchSingleLesson();
+    }
   }, [lessonId, moduleId]);
 
   const handleSubmit = async () => {
@@ -126,7 +135,10 @@ export const NewLessonModal = ({
 
     // Create a new FormData object
     const dataToSubmit = new FormData();
-    dataToSubmit.append("course_id", courseId?.toString() || "");
+    dataToSubmit.append(
+      "course_id",
+      courseId?.toString() || String(formData.course_id) || ""
+    );
     dataToSubmit.append("stream_video_audio", formData.embed);
     dataToSubmit.append("module_id", moduleId.toString() || "");
     dataToSubmit.append("lesson_title", formData.title);
@@ -146,6 +158,7 @@ export const NewLessonModal = ({
     if (lessonId) {
       dataToSubmit.append("lessonid", lessonId.toString());
     }
+
     if (lessonId) {
       await CourseServices.updateCourseLesson(dataToSubmit);
       setModuleData((prevData: any) => ({
@@ -181,76 +194,82 @@ export const NewLessonModal = ({
           <MdCancel className="text-[30px] text-[#F01E00]" />
         </button>
       </div>
-      <div className="flex w-full h-[600px] lg:w-[1000px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
-        <div>
-          <h2 className="text-[17px] font-DMSans font-semibold">
-            LESSON IMAGE
-          </h2>
-          <ImageUpload onUpload={handleImageUpload} />
+      {isLoading ? (
+        <div className="flex w-full h-[600px] p-6 flex-col items-center justify-center">
+          <LoadingSpinner />
         </div>
+      ) : (
+        <div className="flex w-full h-[600px] lg:w-[1000px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
+          <div>
+            <h2 className="text-[17px] font-DMSans font-semibold">
+              LESSON IMAGE
+            </h2>
+            <ImageUpload onUpload={handleImageUpload} />
+          </div>
 
-        <div className="my-4 w-full">
-          <BaseInput
-            label="Lesson Title"
-            type="text"
-            placeholder="Lesson Title"
-            containerClassname="w-full"
-            labelClassName="text-[17px] font-DMSans font-semibold"
-            inputContainerClassName={cn(
-              "h-[53px] ",
-              theme === "dark"
-                ? "select-secondary"
-                : "border-[0.5px] border-[#ddd]"
-            )}
-            value={formData.title}
-            onChange={(e: any) => handleInputChange("title", e.target.value)}
-          />
+          <div className="my-4 w-full">
+            <BaseInput
+              label="Lesson Title"
+              type="text"
+              placeholder="Lesson Title"
+              containerClassname="w-full"
+              labelClassName="text-[17px] font-DMSans font-semibold"
+              inputContainerClassName={cn(
+                "h-[53px] ",
+                theme === "dark"
+                  ? "select-secondary"
+                  : "border-[0.5px] border-[#ddd]"
+              )}
+              value={formData.title}
+              onChange={(e: any) => handleInputChange("title", e.target.value)}
+            />
+          </div>
+          <div className="w-full">
+            <PDFUpload onFileSelect={handleFileSelect} />
+          </div>
+          <div className="w-full">
+            <MediaUpload onMediaUpload={handleMediaUpload} />
+          </div>
+          <div className="w-full">
+            <WordUpload onFileSelect={handleWordSelect} />
+          </div>
+          <div className="my-4 w-full">
+            <BaseInput
+              label="EMBED VIDEO/AUDIO"
+              type="text"
+              placeholder="EMBED VIDEO/AUDIO"
+              containerClassname="w-full"
+              labelClassName="text-[17px] font-DMSans font-semibold"
+              inputContainerClassName={cn(
+                "h-[53px] ",
+                theme === "dark"
+                  ? "select-secondary"
+                  : "border-[0.5px] border-[#ddd]"
+              )}
+              value={formData.embed}
+              onChange={(e: any) => handleInputChange("embed", e.target.value)}
+            />
+          </div>
+          <div className="flex justify-start items-start gap-4">
+            <button
+              onClick={handleclose}
+              className="w-[151px] text-[#fff] font-semibold text-[18px] font-DMSans py-2 bg-[#928d8d] rounded-[4px]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="w-[151px] text-[#fff] font-semibold flex justify-center items-center gap-2 text-[18px] font-DMSans py-2 bg-[#F01E00] rounded-[4px]"
+            >
+              <p className="font-DMSans font-semibold text-[16px] text-white">
+                {" "}
+                Save
+              </p>
+              {isSubmitting && <LoadingSpinner size="xs" />}
+            </button>
+          </div>
         </div>
-        <div className="w-full">
-          <PDFUpload onFileSelect={handleFileSelect} />
-        </div>
-        <div className="w-full">
-          <MediaUpload onMediaUpload={handleMediaUpload} />
-        </div>
-        <div className="w-full">
-          <WordUpload onFileSelect={handleWordSelect} />
-        </div>
-        <div className="my-4 w-full">
-          <BaseInput
-            label="EMBED VIDEO/AUDIO"
-            type="text"
-            placeholder="EMBED VIDEO/AUDIO"
-            containerClassname="w-full"
-            labelClassName="text-[17px] font-DMSans font-semibold"
-            inputContainerClassName={cn(
-              "h-[53px] ",
-              theme === "dark"
-                ? "select-secondary"
-                : "border-[0.5px] border-[#ddd]"
-            )}
-            value={formData.embed}
-            onChange={(e: any) => handleInputChange("embed", e.target.value)}
-          />
-        </div>
-        <div className="flex justify-start items-start gap-4">
-          <button
-            onClick={handleclose}
-            className="w-[151px] text-[#fff] font-semibold text-[18px] font-DMSans py-2 bg-[#928d8d] rounded-[4px]"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="w-[151px] text-[#fff] font-semibold flex justify-center items-center gap-2 text-[18px] font-DMSans py-2 bg-[#F01E00] rounded-[4px]"
-          >
-            <p className="font-DMSans font-semibold text-[16px] text-white">
-              {" "}
-              Save
-            </p>
-            {isSubmitting && <LoadingSpinner size="xs" />}
-          </button>
-        </div>
-      </div>
+      )}
     </BaseModal>
   );
 };

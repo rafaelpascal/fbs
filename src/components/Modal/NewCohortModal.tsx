@@ -205,10 +205,7 @@ export const NewCohortModal = ({
         installment: formData?.paymentplan?.label,
         duration: formData.selectedMonths,
       };
-
-      console.log(payload);
-      const res = await CourseServices.createCourseCohort(payload);
-      console.log(res);
+      await CourseServices.createCourseCohort(payload);
       setisSubmitting(false);
       handlecreate();
       setFormData(initialFormData);

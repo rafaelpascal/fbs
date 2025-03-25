@@ -83,8 +83,6 @@ const ApiTable = <T extends object>({
 
       try {
         const response = await Api.get(url);
-        console.log(response.data.users);
-
         if (response.data) {
           setData(response.data);
           // setTotalRows(response.data.totalItems);

@@ -6,14 +6,12 @@ import { useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
 import { useEffect, useRef, useState } from "react";
 import { CourseServices } from "~/api/course";
-import { useSidebar } from "~/context/Sidebar_Provider";
-import { FaFilePdf } from "react-icons/fa";
-// import PdfViewer from "~/components/Collapsible/pdfViewer";
-import { SideNavProps } from "~/components/lecturesidebar/LectureItems";
-import { GoDotFill } from "react-icons/go";
 import { HiOutlineHandThumbDown, HiOutlineHandThumbUp } from "react-icons/hi2";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Markcomplete } from "~/components/Modal/Markcomplete";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { useDispatch } from "react-redux";
+import { setLessonId } from "~/redux-store/slice/lessonSlice";
 
 // const Lecture = () => {
 //   const { updateSidebarData } = useSidebar();
@@ -307,20 +305,18 @@ import { Markcomplete } from "~/components/Modal/Markcomplete";
 // };
 
 const Lecture = () => {
-  // const [loading, setLoading] = useState(true);
-  const { updateSidebarData } = useSidebar();
+  const dispatch = useDispatch();
   const [currentPage] = useState<number>(1);
   const [lectureTitles, setLectureTitles] = useState<any[]>([]);
   const [markcomplete, setMarkComplete] = useState(false);
   const [totalPages, setTotalPages] = useState<number>(0);
   const { id } = useParams<{ id: string }>();
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
-  const [currentMediaIndex, setCurrentMediaIndex] = useState(0); // Track media index
+  const [loading, setLoading] = useState(true);
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const pdfViewerRef = useRef<any>(null);
-  const [completedLessons, setCompletedLessons] = useState<Set<number>>(
-    new Set()
-  );
-  const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
+  const [completedLessons] = useState<Set<number>>(new Set());
+  const [currentLessonId, setCurrentLessonId] = useState<number | null>(null);
 
   useEffect(() => {
     if (pdfViewerRef.current) {
@@ -332,7 +328,7 @@ const Lecture = () => {
     try {
       const payload = { moduleid: JSON.parse(id ?? "") };
       const res = await CourseServices.lessonsByModuleId(payload);
-      setLectureTitles(res.data.course_lessons);
+      // setLectureTitles(res.data.course_lessons);
       if (res.data.course_lessons.length > 0) {
         const firstLesson = res.data.course_lessons[0];
         setCurrentLessonId(firstLesson.lessonid);
@@ -347,15 +343,13 @@ const Lecture = () => {
   }, [id]);
 
   const fetchSingleLesson = () => {
-    if (currentLessonId) {
-      const payload = { lessonid: currentLessonId };
+    setLoading(true);
+    if (id) {
+      const payload = { lesson_id: id };
       CourseServices.listLessonbyId(payload)
         .then((res) => {
-          console.log(res);
-          // if (res.data && res.data.data && res.data.data.length > 0) {
-          //   const lesson = res.data.data[0];
-          //   setCurrentLessonId(lesson.lessonid);
-          // }
+          setLectureTitles(res.data.lessons);
+          setCurrentLessonId(res.data.lessons[0].lessonid);
         })
         .catch((error) => {
           console.error("Error fetching single lesson:", error);
@@ -365,91 +359,7 @@ const Lecture = () => {
 
   useEffect(() => {
     fetchSingleLesson();
-  }, [currentLessonId]);
-
-  const updateLecture = () => {
-    if (!lectureTitles.length) return;
-    const updatedData: SideNavProps[] = lectureTitles.map(
-      (lessonItem: any, index: number) => {
-        const isPlaying = lessonItem.lessonid === currentLessonId;
-        return {
-          href: `/module/${lessonItem.module_id}`,
-          icon: FaFilePdf,
-          dropdown: true,
-          playing: isPlaying,
-          text:
-            `LESSON ${index + 1}: ${lessonItem.lesson_title}` ||
-            "Untitled Lesson",
-          children: [
-            {
-              href: `/lecture/${lessonItem.module_id}`,
-              icon: GoDotFill,
-              dropdown: false,
-              text: "Lecture",
-            },
-            ...(lessonItem.hasQuiz === 0
-              ? [
-                  {
-                    href: `/assignment/${lessonItem.module_id}`,
-                    icon: GoDotFill,
-                    dropdown: false,
-                    text: "Quiz",
-                  },
-                ]
-              : []),
-            ...(lessonItem.lessonid
-              ? [
-                  {
-                    href: `/exam/${lessonItem.lessonid}`,
-                    icon: GoDotFill,
-                    dropdown: false,
-                    text: "Exam",
-                  },
-                ]
-              : []),
-            ...(lessonItem.lessonid
-              ? [
-                  {
-                    href: `/newassignment/${lessonItem.lessonid}`,
-                    icon: GoDotFill,
-                    dropdown: false,
-                    text: "Assignment",
-                  },
-                ]
-              : []),
-            ...(lessonItem.lessonid
-              ? [
-                  {
-                    href: `/polls/${lessonItem.lessonid}`,
-                    icon: GoDotFill,
-                    dropdown: false,
-                    text: "Polls",
-                  },
-                ]
-              : []),
-            ...(lessonItem.assignment_id
-              ? [
-                  {
-                    href: lessonItem.stream_video_audio
-                      ? lessonItem.stream_video_audio
-                      : "#",
-                    icon: GoDotFill,
-                    dropdown: false,
-                    text: "Assignment",
-                  },
-                ]
-              : []),
-          ],
-        };
-      }
-    );
-
-    updateSidebarData(updatedData);
-  };
-
-  useEffect(() => {
-    updateLecture();
-  }, [currentLessonId, lectureTitles]);
+  }, [id]);
 
   const lessonMedia = lectureTitles.map((lesson) => ({
     lessonId: lesson.lessonid,
@@ -489,14 +399,17 @@ const Lecture = () => {
     }
   };
 
-  const markLessonComplete = () => {
-    setCompletedLessons((prev) => new Set(prev).add(currentLesson.lessonId));
-    setCurrentLessonId(currentLesson.lessonId);
-    if (currentLessonIndex < lessonMedia.length - 1) {
-      setCurrentLessonId(currentLesson.lessonId);
-      setCurrentLessonIndex((prev) => prev + 1);
-      setCurrentMediaIndex(0);
+  const markLessonComplete = (id: number | null) => {
+    if (id) {
+      dispatch(setLessonId(id));
     }
+    // setCompletedLessons((prev) => new Set(prev).add(currentLesson.lessonId));
+    // setCurrentLessonId(currentLesson.lessonId);
+    // if (currentLessonIndex < lessonMedia.length - 1) {
+    //   setCurrentLessonId(currentLesson.lessonId);
+    //   setCurrentLessonIndex((prev) => prev + 1);
+    //   setCurrentMediaIndex(0);
+    // }
   };
 
   const handleclose = () => {
@@ -516,8 +429,13 @@ const Lecture = () => {
                   return (
                     <div
                       key={idx}
-                      className="w-full flex justify-center items-center bg-white"
+                      className="relative w-full flex justify-center items-center bg-white"
                     >
+                      {loading && (
+                        <div className="absolute inset-0 flex justify-center items-center bg-[#fff] shadow-lg z-10">
+                          <LoadingSpinner />
+                        </div>
+                      )}
                       <iframe
                         src={`https://docs.google.com/gview?url=${encodeURIComponent(
                           media
@@ -525,6 +443,8 @@ const Lecture = () => {
                         width="100%"
                         height="600px"
                         className="border rounded-md shadow-lg w-full"
+                        onLoad={() => setLoading(false)}
+                        onError={() => setLoading(false)}
                       />
                     </div>
                   );
@@ -608,7 +528,6 @@ const Lecture = () => {
 
               {currentMediaIndex === currentLesson.media.length - 1 ? (
                 <button
-                  // onClick={markLessonComplete}
                   onClick={() => setMarkComplete(true)}
                   className="bg-[#FF1515] rounded-md text-white font-bold py-2 px-4"
                 >
@@ -641,7 +560,7 @@ const Lecture = () => {
         isOpen={markcomplete}
         closeModal={handleclose}
         handleMarkComplete={() => {
-          markLessonComplete();
+          markLessonComplete(currentLessonId);
           setMarkComplete(false);
         }}
       />

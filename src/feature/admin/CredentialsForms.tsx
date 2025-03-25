@@ -69,8 +69,6 @@ const CredentialsForms: React.FC<CredentialsFormsProps> = ({
 
   useEffect(() => {
     if (initialData && initialData.length > 0) {
-      console.log(initialData);
-
       setAdmissionRequirements(
         parseHtmlToText(initialData[0].course_requirements)
       );
@@ -100,8 +98,7 @@ const CredentialsForms: React.FC<CredentialsFormsProps> = ({
       course_for: extractText(courseFor),
     };
     try {
-      const res = await CourseServices.createCourseRequirements(payload);
-      console.log("Response:", res);
+      await CourseServices.createCourseRequirements(payload);
       setIsSubmitting(false);
       await showAlert(
         "success",
