@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaTimes } from "react-icons/fa";
 import { useTheme } from "~/context/theme-provider";
 import { cn } from "~/utils/helpers";
@@ -31,7 +31,7 @@ const MultipleSelectionDropdown = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOptions, setSelectedOptions] =
     useState<Option[]>(initialSelected);
-
+  const dropdownRef = useRef<HTMLDivElement>(null);
   // Function to toggle dropdown visibility
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -43,6 +43,22 @@ const MultipleSelectionDropdown = ({
     }
   }, [initialSelected]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   // Function to handle selection of an option
   const handleSelect = (option: Option) => {
     const isSelected = selectedOptions.some(
@@ -51,16 +67,15 @@ const MultipleSelectionDropdown = ({
 
     let updatedOptions;
     if (isSelected) {
-      // Remove the option if it is already selected
       updatedOptions = selectedOptions.filter(
         (selected) => selected.value !== option.value
       );
     } else {
-      // Add the option to the selection
       updatedOptions = [...selectedOptions, option];
     }
     setSelectedOptions(updatedOptions);
-    onSelect(updatedOptions); // Pass the updated selection to the parent
+    onSelect(updatedOptions);
+    setIsOpen(false);
   };
 
   // Function to remove a specific option

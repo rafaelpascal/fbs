@@ -34,6 +34,17 @@ export const fetchlistCourses = () => {
   });
 };
 
+export const fetchlistUsers = () => {
+  return useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const res = await CourseServices.listUsers();
+      return res;
+    },
+    initialData: undefined,
+  });
+};
+
 export const fetchlistCoursebyId = (id: string) => {
   return useQuery({
     queryKey: ["single_course"],
@@ -50,6 +61,17 @@ export const useFetchApplication = () => {
     queryKey: ["application"],
     queryFn: async () => {
       const res = await CourseServices.fetchAllApplication();
+      return res;
+    },
+    initialData: undefined,
+  });
+};
+
+export const useFetchEvent = () => {
+  return useQuery({
+    queryKey: ["event"],
+    queryFn: async () => {
+      const res = await CourseServices.fetchAllEvent();
       return res;
     },
     initialData: undefined,

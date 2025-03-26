@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoLogoUsd, IoTimer } from "react-icons/io5";
 import { LuUpload } from "react-icons/lu";
 import { TbCurrencyNaira } from "react-icons/tb";
 import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BaseInput } from "~/components/data-inputs/text-input";
 import { useTheme } from "~/context/theme-provider";
 import { DashboardArea } from "~/layouts/DashboardArea";
@@ -14,6 +14,8 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import EventMultiselect from "~/components/Collapsible/EventMultiselect";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { EventPublished } from "~/components/Modal/EventPublished";
+import { BiArrowBack } from "react-icons/bi";
+import { CourseServices } from "~/api/course";
 
 interface FormData {
   title: string;
@@ -60,9 +62,13 @@ const tabsData = [
 //   featuredImages: [] as File[],
 // };
 
-const ImageUploadLabel = () => {
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-
+const ImageUploadLabel = ({
+  uploadedFile,
+  setUploadedFile,
+}: {
+  uploadedFile: File | null;
+  setUploadedFile: React.Dispatch<React.SetStateAction<File | null>>;
+}) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
@@ -101,13 +107,14 @@ const ImageUploadLabel = () => {
 };
 
 const Events = () => {
+  const { id } = useParams();
   const { theme } = useTheme();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [fetchingEvent, setFetchingEvent] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [, setIsNewEvent] = useState(false);
   const [ispublished, setIspublished] = useState(false);
-  const [, setIsEventType] = useState(false);
-
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     embed: "",
@@ -140,10 +147,7 @@ const Events = () => {
       (field) => formData[field as keyof FormData] !== ""
     );
   };
-  const handleNewEvent = () => {
-    // navigate(ROUTES.PAYMENT);
-    setIsNewEvent(true);
-  };
+
   const handleRadioChange = (e: any, type: any) => {
     setFormData({ ...formData, eventype: e.target.value });
     if (type === "publicevent") {
@@ -162,37 +166,138 @@ const Events = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIspublished(true);
-    }, 1000);
-    setIsSubmitting(false);
-  };
+  useEffect(() => {
+    if (id) {
+      setFetchingEvent(true);
+      const getEvent = async () => {
+        try {
+          const payload = { eventid: Number(id) };
+          const res = await CourseServices.getEvent(payload);
+
+          if (res.data.success && res.data.data.length > 0) {
+            const eventData = res.data.data[0];
+            let parsedSpeakers: string[] = [];
+            try {
+              parsedSpeakers = eventData.speakers
+                .replace(/^{|}$/g, "")
+                .replace(/"/g, "")
+                .split(",");
+            } catch (error) {
+              console.error("Error parsing speakers:", error);
+            }
+
+            setFormData((prev) => ({
+              ...prev,
+              title: eventData.title || "",
+              embed: eventData.embed || "",
+              eventype: eventData.type || "",
+              location: eventData.location || "",
+              eventDate: eventData.date || "",
+              totalNumber: eventData.number_accepted?.toString() || "",
+              naira: eventData.naira_fee?.toString() || "",
+              dollar: eventData.usd_fee?.toString() || "",
+              description: eventData.description || "",
+              link: eventData.external_link || "",
+              startTime: eventData.start_time || "",
+              endTime: eventData.end_time || "",
+              program: eventData.programme || null,
+              eventType: eventData.type || null,
+              featuredImages: eventData.image_url ? [eventData.image_url] : [],
+            }));
+            setSelectedItems(parsedSpeakers);
+          }
+          setFetchingEvent(false);
+        } catch (error) {
+          console.error("Error fetching event:", error);
+        }
+      };
+
+      getEvent();
+    }
+  }, [id]);
 
   const handleclose = () => {
     setIspublished(false);
   };
 
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    try {
+      const formDataToSend = new FormData();
+
+      // Append all fields except files
+      if (formData.title) formDataToSend.append("title", formData.title);
+      if (formData.embed) formDataToSend.append("embed", formData.embed);
+      if (formData.eventype) formDataToSend.append("type", formData.eventype);
+      if (formData.location)
+        formDataToSend.append("location", formData.location);
+      if (formData.eventDate) formDataToSend.append("date", formData.eventDate);
+      if (formData.totalNumber)
+        formDataToSend.append("number_accepted", formData.totalNumber);
+      if (formData.naira) formDataToSend.append("naira_fee", formData.naira);
+      if (formData.dollar) formDataToSend.append("usd_fee", formData.dollar);
+      if (formData.startTime)
+        formDataToSend.append("start_time", formData.startTime);
+      if (formData.endTime) formDataToSend.append("end_time", formData.endTime);
+      if (formData.description)
+        formDataToSend.append("description", formData.description);
+      if (formData.link) formDataToSend.append("external_link", formData.link);
+
+      // Append program and event type if they are objects
+      if (formData.program && formData.program) {
+        formDataToSend.append("programme", formData.program.label.toString());
+      }
+      if (formData.eventType && formData.eventType) {
+        formDataToSend.append("nature", formData.eventType.label.toString());
+      }
+
+      if (selectedItems.length > 0) {
+        formDataToSend.append("speakers", JSON.stringify(selectedItems));
+      }
+      // if (uploadedFile) {
+      //   formDataToSend.append("event_image", uploadedFile);
+      // }
+
+      await CourseServices.createEvent(formDataToSend);
+      setIspublished(true);
+    } catch (error) {
+      console.error("Error submitting event:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (fetchingEvent) {
+    return (
+      <DashboardArea>
+        <div className="w-full h-[100vh] flex justify-center items-center">
+          <LoadingSpinner />
+        </div>
+      </DashboardArea>
+    );
+  }
+
   return (
     <DashboardArea>
-      <div className="w-full flex justify-between items-center ">
-        <h2 className="text-[25px] font-DMSans font-semibold">Events</h2>
+      <div className="w-full flex justify-start gap-4 items-center ">
         <button
-          onClick={handleNewEvent}
-          className="py-2 px-4 bg-[#FF1515] rounded-md"
+          onClick={() => navigate(-1)}
+          className="py-2 px-2 bg-[#FF1515] flex justify-between items-center gap-2 rounded-md"
         >
+          <BiArrowBack className="size-6 text-white" />
           <h2 className="text-[14px] font-DMSans font-semibold text-[#fff]">
-            Create New Event
+            Back
           </h2>
         </button>
+        <h2 className="text-[25px] font-DMSans font-semibold">New Event</h2>
       </div>
       <div className="p-4 rounded-md mt-6  w-full h-full">
         <div className="my-4 w-full">
           <BaseInput
-            label="Module Title"
+            label="Event Title"
             type="text"
-            placeholder="Module Title"
+            placeholder="Event Title"
             containerClassname="w-full"
             labelClassName="text-[17px] font-DMSans font-semibold"
             inputContainerClassName={cn(
@@ -205,7 +310,10 @@ const Events = () => {
             onChange={(e: any) => handleInputChange("title", e.target.value)}
           />
         </div>
-        <ImageUploadLabel />
+        <ImageUploadLabel
+          uploadedFile={uploadedFile}
+          setUploadedFile={setUploadedFile}
+        />
         <div className="border-[1px] p-4 rounded-md mt-6 border-[#ddd]">
           <h2 className="text-[18px] font-DMSans font-semibold">
             Event Details
@@ -223,7 +331,7 @@ const Events = () => {
                   value="publicevent"
                   checked={formData.eventype === "publicevent"}
                   onChange={(e) => {
-                    setIsEventType(false);
+                    // setIsEventType(false);
                     handleRadioChange(e, "publicevent");
                   }}
                 />
@@ -244,7 +352,7 @@ const Events = () => {
                   value="exclusive"
                   checked={formData.eventype === "exclusive"}
                   onChange={(e) => {
-                    setIsEventType(true);
+                    // setIsEventType(true);
                     handleRadioChange(e, "exclusive");
                   }}
                 />
@@ -261,6 +369,11 @@ const Events = () => {
               options={options}
               onSelect={(option) => handleSelect("program", option)}
               placeholder="Select Program/Course"
+              initialSelected={
+                formData.program
+                  ? { label: formData.program, value: formData.program }
+                  : null
+              }
             />
           </div>
           <div className="w-full lg:w-[50%] mb-4">
@@ -270,6 +383,11 @@ const Events = () => {
               options={Evemt_Type}
               onSelect={(option) => handleSelect("eventType", option)}
               placeholder="Select Event Type"
+              initialSelected={
+                formData.eventType
+                  ? { label: formData.eventType, value: formData.eventType }
+                  : null
+              }
             />
           </div>
           <div className="w-full flex flex-col lg:flex-row flex-wrap justify-start items-center gap-2">
@@ -488,7 +606,10 @@ const Events = () => {
           <h2 className="text-[18px] w-full font-DMSans font-semibold">
             Add guest speakers
           </h2>
-          <EventMultiselect />
+          <EventMultiselect
+            selectedItems={selectedItems}
+            setSelectedItems={setSelectedItems}
+          />
         </div>
         <button
           onClick={handleSubmit}

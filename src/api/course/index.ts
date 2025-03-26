@@ -22,6 +22,26 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static createAdmin = async (payload: FormData) => {
+    try {
+      const res = await Api.post("/user/create-users", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static updateAdmin = async (payload: FormData) => {
+    try {
+      const res = await Api.post("/user/update-users", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static getCreatedCourse = async (payload: any) => {
     try {
       const res = await Api.post("/course/edit-course", payload);
@@ -103,6 +123,16 @@ export class CourseServices extends BaseAPIService {
   static createCourseModule = async (payload: any) => {
     try {
       const res = await Api.post("/create-modules", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static createEvent = async (payload: any) => {
+    try {
+      const res = await Api.post("/event/create-event", payload);
       return res;
     } catch (error) {
       const handleError = error;
@@ -272,6 +302,16 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static fetchAllEvent = async (): Promise<any> => {
+    try {
+      const res = await Api.get<any>("/event/list-event");
+      return res.data;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static getCourse = async (payload: any) => {
     try {
       const res = await Api.post("/course/list-course-title-id", payload);
@@ -282,9 +322,28 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static getEvent = async (payload: any) => {
+    try {
+      const res = await Api.post("/event/edit-event", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static getModulebyId = async (payload: any) => {
     try {
       const res = await Api.post("/module/list-modules-byid", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static getUserbyId = async (payload: any) => {
+    try {
+      const res = await Api.post("/user/edit-users", payload);
       return res;
     } catch (error) {
       const handleError = error;
@@ -323,6 +382,16 @@ export class CourseServices extends BaseAPIService {
   static listCourses = async (): Promise<any> => {
     try {
       const res = await Api.get<any>("/course/list-courses");
+      return res.data;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static listUsers = async (): Promise<any> => {
+    try {
+      const res = await Api.get<any>("/user/list-users");
       return res.data;
     } catch (error) {
       const handleError = error;

@@ -225,6 +225,10 @@ const router = createBrowserRouter(
               element: <EventsManagement />,
             },
             {
+              path: ROUTES.EVENTEDIT,
+              element: <EventsManagement />,
+            },
+            {
               path: ROUTES.ADMINEVENT,
               element: <AdminEvents />,
             },

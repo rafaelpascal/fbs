@@ -18,6 +18,7 @@ import { motion } from "framer-motion";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { GrCertificate } from "react-icons/gr";
 import { setCourseUrl } from "~/redux-store/slice/url.slice";
+import { fetchlistUsers } from "~/api/course/hooks";
 
 const options = [
   { label: "Executive Diploma", value: 1 },
@@ -27,22 +28,9 @@ const options = [
   { label: "Advanced Certificate", value: 5 },
 ];
 
-const facilitator = [
-  { label: "JohnPual Aruna", value: 1 },
-  { label: "JYma Luka", value: 2 },
-  { label: "James Kuka", value: 3 },
-];
-
-const creators = [
-  { label: "JohnPual Aruna", value: 1 },
-  { label: "JYma Pascal", value: 2 },
-  { label: "Raphael Pascal", value: 3 },
-];
-const supervisors = [
-  { label: "JohnPual Aruna", value: 1 },
-  { label: "JYma Pascal", value: 2 },
-  { label: "Raphael Pascal", value: 3 },
-];
+const facilitator: Option[] = [];
+const creators: Option[] = [];
+const supervisors: Option[] = [];
 
 const deficultyLevel = [
   { label: "Beginner", value: 1 },
@@ -127,6 +115,7 @@ const Createcourseform = ({
   const { theme } = useTheme();
   const [isSelectDateChecked, setIsSelectDateChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: adminList } = fetchlistUsers();
   const [isCertType, setIsCertType] = useState(false);
   const [isScheduleDateChecked, setIsScheduleDateChecked] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -164,6 +153,29 @@ const Createcourseform = ({
     paymentplan: null,
     selectedMonths: 0,
   });
+
+  useEffect(() => {
+    if (adminList && adminList.data) {
+      // Clear previous arrays before populating with new data
+      facilitator.length = 0;
+      creators.length = 0;
+      supervisors.length = 0;
+
+      adminList.data.forEach(
+        (user: { firstname: string; lastname: string; user_id: number }) => {
+          // Populate all arrays with the user information
+          const userObj = {
+            label: `${user.firstname} ${user.lastname}`,
+            value: user.user_id,
+          };
+
+          facilitator.push(userObj); // Push to facilitator array
+          creators.push(userObj); // Push to creators array
+          supervisors.push(userObj); // Push to supervisors array
+        }
+      );
+    }
+  }, [adminList]);
 
   useEffect(() => {
     if (Object.keys(initialData).length > 0) {

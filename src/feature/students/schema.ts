@@ -69,12 +69,12 @@ export const registerSchema = Validator.object({
 export type RegisterFormPayload = z.infer<typeof registerSchema>;
 
 export const createAdminSchema = Validator.object({
-  email: Validator.email("Email"),
-  firstName: Validator.string("First Name"),
-  lastName: Validator.string("Last Name"),
-  phone: Validator.string("Phone Number"),
-  otherName: Validator.string("Other Name"),
-  password: Validator.string("Password"),
+  email_address: Validator.email("Email"),
+  firstname: Validator.string("First Name"),
+  lastname: Validator.string("Last Name"),
+  phone_number: Validator.string("Phone Number"),
+  othernames: Validator.string("Other Name"),
+  temp_password: Validator.string("Password"),
 });
 
 export type CreateAdminFormPayload = z.infer<typeof createAdminSchema>;

@@ -2,8 +2,13 @@ import React, { useState, useRef } from "react";
 
 const options = ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"];
 
-const EventMultiselect = () => {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+const EventMultiselect = ({
+  selectedItems,
+  setSelectedItems,
+}: {
+  selectedItems: string[];
+  setSelectedItems: React.Dispatch<React.SetStateAction<string[]>>;
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

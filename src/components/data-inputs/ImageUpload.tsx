@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { CiCamera } from "react-icons/ci";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer } from "react-toastify";
@@ -8,14 +8,30 @@ import useToast from "~/hooks/useToast";
 interface ImageUploadProps {
   multiple?: boolean;
   onUpload: (files: File[]) => void;
+  initialImages?: File[];
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
   multiple = false,
   onUpload,
+  initialImages = [],
 }) => {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const { error } = useToast();
+
+  useEffect(() => {
+    if (initialImages && initialImages.length > 0) {
+      // If initialImages is different from the current selectedImages, update it
+      const initialImageUrls = initialImages.map((file) =>
+        URL.createObjectURL(file)
+      );
+      // Only update if the image URLs are different
+      if (initialImageUrls.join(",") !== selectedImages.join(",")) {
+        setSelectedImages(initialImageUrls);
+      }
+    }
+  }, [initialImages, selectedImages]);
+
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const filesArray = Array.from(event.target.files);

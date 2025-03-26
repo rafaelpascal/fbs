@@ -1,12 +1,22 @@
 import { useState } from "react";
 import { NewAdminModal } from "~/components/Modal/NewAdminModal";
 import { DashboardArea } from "~/layouts/DashboardArea";
+import AccountTable from "./AccountTable/AccountTable";
+import { showAlert } from "~/utils/sweetAlert";
 
 const AdminManagement = () => {
-  const [isNewAdmin, setisNewAdmin] = useState(true);
+  const [isNewAdmin, setisNewAdmin] = useState(false);
+  const [created, setCreated] = useState(false);
 
   const handleSuccess = () => {
-    console.log("Success");
+    setCreated(true);
+    showAlert(
+      "success",
+      "Created!",
+      "Admin Successfully Created!",
+      "Ok",
+      "#03435F"
+    );
   };
 
   const handleClose = () => {
@@ -25,6 +35,7 @@ const AdminManagement = () => {
           </h2>
         </button>
       </div>
+      <AccountTable created={created} />
       <NewAdminModal
         isOpen={isNewAdmin}
         handlecreate={handleSuccess}

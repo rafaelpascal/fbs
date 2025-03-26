@@ -1,60 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { HiDotsVertical } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import { useFetchEvent } from "~/api/course/hooks";
 import { ROUTES } from "~/components/constants/routes";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { DashboardArea } from "~/layouts/DashboardArea";
 
-const data = [
-  {
-    date: "JUL. 12",
-    image:
-      "https://s3-alpha-sig.figma.com/img/aa7a/4a9c/996f7f9ec33dc08441531168ad8ee98d?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WUNYnk2gUAgJgyVuDGDT1ow0Fi0JOibTkfQe2ovgoFZP44~kDYcCVFmlfne23TjwfIQPeaFkk1wWir8WEOAb9Bru2hB96xPeZ2kOR5wyQtb3YJBgZCB41~GJXF58LaX3eq9g-RVD783VwdaS6nK75l3nYT~D6jdWFRMPxcYoji8XLOdhy83adpJWEOPAYewWvWfj8YhXPrZbsEr0SxHObJyBmD7~IUsM1F3sJXnnix8ZODRdo92HCa969w1nlNlXIYQ2onDEGWzt5UUbGfDnE4ZqLhFumEC7CJgnhWPsmYSk4XBKht~T92wIvwqa7TAX3-PO5vrsVhVl8KjCsuA6YQ__",
-    title: "How to start & Manage an Enterprise ",
-    type: "Exclusive Event",
-    paid: "Free",
-    dateType: "Single Date",
-    exactDate: "Saturday December 12 2024 at 03:15 PM",
-    totalReg: "12",
-    totalRev: "N100.00",
-    status: "On-going",
-  },
-  {
-    date: "JUL. 12",
-    image:
-      "https://s3-alpha-sig.figma.com/img/aa7a/4a9c/996f7f9ec33dc08441531168ad8ee98d?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WUNYnk2gUAgJgyVuDGDT1ow0Fi0JOibTkfQe2ovgoFZP44~kDYcCVFmlfne23TjwfIQPeaFkk1wWir8WEOAb9Bru2hB96xPeZ2kOR5wyQtb3YJBgZCB41~GJXF58LaX3eq9g-RVD783VwdaS6nK75l3nYT~D6jdWFRMPxcYoji8XLOdhy83adpJWEOPAYewWvWfj8YhXPrZbsEr0SxHObJyBmD7~IUsM1F3sJXnnix8ZODRdo92HCa969w1nlNlXIYQ2onDEGWzt5UUbGfDnE4ZqLhFumEC7CJgnhWPsmYSk4XBKht~T92wIvwqa7TAX3-PO5vrsVhVl8KjCsuA6YQ__",
-    title: "How to start & Manage an Enterprise ",
-    type: "Exclusive Event",
-    paid: "Free",
-    dateType: "Single Date",
-    exactDate: "Saturday December 12 2024 at 03:15 PM",
-    totalReg: "12",
-    totalRev: "N100.00",
-    status: "On-going",
-  },
-  {
-    date: "JUL. 12",
-    image:
-      "https://s3-alpha-sig.figma.com/img/aa7a/4a9c/996f7f9ec33dc08441531168ad8ee98d?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WUNYnk2gUAgJgyVuDGDT1ow0Fi0JOibTkfQe2ovgoFZP44~kDYcCVFmlfne23TjwfIQPeaFkk1wWir8WEOAb9Bru2hB96xPeZ2kOR5wyQtb3YJBgZCB41~GJXF58LaX3eq9g-RVD783VwdaS6nK75l3nYT~D6jdWFRMPxcYoji8XLOdhy83adpJWEOPAYewWvWfj8YhXPrZbsEr0SxHObJyBmD7~IUsM1F3sJXnnix8ZODRdo92HCa969w1nlNlXIYQ2onDEGWzt5UUbGfDnE4ZqLhFumEC7CJgnhWPsmYSk4XBKht~T92wIvwqa7TAX3-PO5vrsVhVl8KjCsuA6YQ__",
-    title: "How to start & Manage an Enterprise ",
-    type: "Exclusive Event",
-    paid: "Free",
-    dateType: "Single Date",
-    exactDate: "Saturday December 12 2024 at 03:15 PM",
-    totalReg: "12",
-    totalRev: "N100.00",
-    status: "On-going",
-  },
-];
 const AdminEvents = () => {
+  const { data: eventsData, isLoading: eventsLoading } = useFetchEvent();
   const [searchQuery, setSearchQuery] = useState("");
   const [eventTypeFilter, setEventTypeFilter] = useState("All");
-  const [filteredEvents] = useState(data);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
-  const eventTypes = ["All", ...new Set(data.map((event) => event.type))];
-
+  const eventTypes = ["All", "Webinar", "Workshop", "Seminar", "Conference"];
+  const events = eventsData?.data || [];
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -71,6 +32,48 @@ const AdminEvents = () => {
     };
   }, []);
 
+  interface Event {
+    id: number;
+    date: string;
+    image_url: string;
+    title: string;
+    type: string;
+    naira_fee: number;
+    start_time: string;
+    number_accepted: number;
+  }
+
+  interface TransformedEvent {
+    id: number;
+    date: string;
+    image: string;
+    title: string;
+    type: string;
+    paid: string;
+    dateType: string;
+    exactDate: string;
+    totalReg: string;
+    totalRev: string;
+    status: string;
+  }
+
+  const transformedEvents: TransformedEvent[] = events.map((event: Event) => ({
+    date: new Date(event.date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+    }),
+    id: event.id,
+    image: event.image_url || "",
+    title: event.title,
+    type: event.type,
+    paid: event.naira_fee > 0 ? `N${event.naira_fee}` : "Free",
+    dateType: "Single Date",
+    exactDate: `${new Date(event.date).toDateString()} at ${event.start_time}`,
+    totalReg: event.number_accepted?.toString() || "0",
+    totalRev: `N${event.naira_fee || "0.00"}`,
+    status: "Upcoming",
+  }));
+
   const toggleDropdown = (index: number) => {
     setOpenDropdown(openDropdown === index ? null : index);
   };
@@ -79,6 +82,19 @@ const AdminEvents = () => {
     navigate(ROUTES.EVENTMANAGEMENT);
   };
 
+  const handleEditEvent = (eventId: number) => {
+    navigate(`/admin/events/${eventId}`);
+  };
+
+  if (eventsLoading) {
+    return (
+      <DashboardArea>
+        <div className="w-full h-[100vh] flex justify-center items-center">
+          <LoadingSpinner />
+        </div>
+      </DashboardArea>
+    );
+  }
   return (
     <DashboardArea>
       <div className="flex justify-between items-center">
@@ -137,8 +153,8 @@ const AdminEvents = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredEvents.length > 0 ? (
-              filteredEvents.map((event, index) => (
+            {transformedEvents.length > 0 ? (
+              transformedEvents.map((event, index) => (
                 <tr key={index} className="border-y-2 border-[#757575]">
                   <th className="w-1/2 py-8">
                     <div className="flex justify-start flex-col lg:flex-row items-start lg:items-center gap-4">
@@ -200,7 +216,10 @@ const AdminEvents = () => {
                           <li className="px-4 py-2 font-DMSans text-[14px] font-semibold hover:bg-gray-100 cursor-pointer">
                             View registrations
                           </li>
-                          <li className="px-4 py-2 font-DMSans text-[14px] font-semibold hover:bg-gray-100 cursor-pointer">
+                          <li
+                            onClick={() => handleEditEvent(event.id)}
+                            className="px-4 py-2 font-DMSans text-[14px] font-semibold hover:bg-gray-100 cursor-pointer"
+                          >
                             Edit
                           </li>
                           <li className="px-4 py-2 font-DMSans text-[14px] font-semibold hover:bg-gray-100 cursor-pointer">
