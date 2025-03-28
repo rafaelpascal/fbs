@@ -408,15 +408,15 @@ const Contents = ({ id, name }: CourseProps) => {
             <img src={courseData.images} alt="Video" className="rounded-lg" />
           )}
           <Tabs tabs={tabsData}>
-            <div>
+            <>
               <Description description={courseData.description} />
-            </div>
-            <div>
+            </>
+            <>
               <CourseContents courseId={id} />
-            </div>
-            <div>
+            </>
+            <>
               <Facilitators facilitatorsData={facilitatorsData} />
-            </div>
+            </>
             <div className="">
               <Fee
                 naira={courseData.naira_amount}
@@ -431,7 +431,7 @@ const Contents = ({ id, name }: CourseProps) => {
               items={facilitator.items}
               title={facilitator.Title}
               ordered={true}
-              customClass="p-2 text-[#fff]"
+              customClass="text-[#fff]"
             />
           ))}
           <div className="flex justify-between flex-col lg:flex-row flex-wrap w-full">
@@ -446,7 +446,7 @@ const Contents = ({ id, name }: CourseProps) => {
             </BaseButton>
             <Link
               to="https://fordaxbschool.com/contact"
-              className="mt-4 w-full lg:w-[369.19px] h-[66px] rounded-[8px] border-[1px] border-[#000] text-[24px] font-bold font-DMSans text-[#757575]"
+              className="mt-4 w-full lg:w-[369.19px] h-[66px] flex justify-center items-center rounded-[8px] border-[1px] border-[#000] text-[24px] font-bold font-DMSans text-[#757575]"
               target="_blank"
             >
               <p>Contact us</p>

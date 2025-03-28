@@ -51,44 +51,9 @@ const CourseTable = () => {
     }
   }, [data]);
 
-  // const [filters, setFilters] = useState({
-  //   dateFrom: "",
-  //   dateTo: "",
-  //   status: "",
-  // });
-
-  // const handleStatusChange = useCallback(
-  //   (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-  //     setFilters((prev) => ({
-  //       ...prev,
-  //       status: event.target.value,
-  //     }));
-  //   },
-  //   []
-  // );
-
-  // handleToggleAction
-  // const handleFilterChange = useCallback(
-  //   (filter: { dateFrom?: string; dateTo?: string; status?: string }) => {
-  //     setFilters((prev) => ({
-  //       ...prev,
-  //       ...filter,
-  //     }));
-  //   },
-  //   []
-  // );
-
-  // // handle Date Change
-  // const handleDateChange = useCallback(
-  //   (dateFrom: string, dateTo: string) => {
-  //     handleFilterChange({ dateFrom, dateTo });
-  //   },
-  //   [handleFilterChange]
-  // );
-
   // View a Row
   const handleView = (id: number) => {
-    navigate("/admin/students/newcourse", { state: { courseId: id } });
+    navigate("/admin/courses/newcourse", { state: { courseId: id } });
   };
 
   // Handle handlecontact

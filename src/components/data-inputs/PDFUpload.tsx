@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiTrash } from "react-icons/bi";
 import { FaFilePdf } from "react-icons/fa";
 import { HiOutlineDocumentMagnifyingGlass } from "react-icons/hi2";
@@ -6,12 +6,21 @@ import { LiaUndoSolid } from "react-icons/lia";
 
 interface PDFUploadProps {
   onFileSelect: (file: File | null) => void;
+  initialFile?: File | null;
 }
 
-const PDFUpload: React.FC<PDFUploadProps> = ({ onFileSelect }) => {
+const PDFUpload: React.FC<PDFUploadProps> = ({ onFileSelect, initialFile }) => {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string>("");
   const [showpreview, setshowpreview] = useState(false);
+
+  useEffect(() => {
+    if (initialFile && typeof initialFile === "string") {
+      setFile(null);
+    } else if (initialFile instanceof File) {
+      setFile(initialFile);
+    }
+  }, [initialFile]);
 
   // Handle file selection
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,23 +42,15 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onFileSelect }) => {
     onFileSelect(selectedFile);
   };
 
-  // Handle file upload
-  //   const handleUpload = () => {
-  //     if (!file) {
-  //       alert("No file selected.");
-  //       return;
-  //     }
-
-  //     // Mock upload
-  //     console.log("Uploading file:", file);
-  //     alert("File uploaded successfully!");
-  //   };
   // Handle file removal
   const handleRemoveFile = () => {
     setFile(null);
     onFileSelect(null);
     setshowpreview(false);
   };
+
+  const filePreview =
+    file || (typeof initialFile === "string" ? initialFile : null);
   return (
     <div className="mb-4 w-full">
       {showpreview ? (
@@ -84,7 +85,7 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onFileSelect }) => {
               </span>
             </button>
           </div>
-          {file && (
+          {/* {file && (
             <div className="mb-4">
               <iframe
                 src={URL.createObjectURL(file)}
@@ -92,7 +93,20 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onFileSelect }) => {
                 title="PDF Preview"
               />
             </div>
-          )}
+          )} */}
+          {filePreview ? (
+            <div className="mb-4">
+              <iframe
+                src={
+                  typeof filePreview === "string"
+                    ? filePreview
+                    : URL.createObjectURL(filePreview)
+                }
+                className="w-full h-[400px] border"
+                title="PDF Preview"
+              />
+            </div>
+          ) : null}
         </div>
       ) : (
         <label

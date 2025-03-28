@@ -11,7 +11,8 @@ import { DraggableItem } from "./Items";
 import ButtonGrid from "./BuilderButtons";
 import ModalContainer from "./ModalContainer";
 import { CourseServices } from "~/api/course";
-//import { R } from "node_modules/@tanstack/react-query-devtools/build/modern/ReactQueryDevtools-Cn7cKi7o";
+import { useDispatch } from "react-redux";
+import { setBooleanState } from "~/redux-store/slice/booleanSlice";
 
 interface Lessons {
   id: number;
@@ -43,6 +44,7 @@ interface Module {
 }
 
 interface ImoduleProps {
+  number?: number;
   moduleId?: number;
   selectedModule?: number;
   title: string;
@@ -62,6 +64,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   CreatedNewItem,
 }) => {
   const { theme } = useTheme();
+  const dispatch = useDispatch();
   const [modules, setModules] = useState<Module[]>([]);
   const [isNewModule, setIsnewModule] = useState(false);
   const [newModule, setNewModule] = useState({
@@ -70,6 +73,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
     status: false,
   });
   const [newLesson, setNewLesson] = useState({
+    number: 0,
     module: 0,
     lessonId: 0,
     status: false,
@@ -119,6 +123,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
     description: "",
   });
   const [lessonObj, setlessonObj] = useState<ImoduleProps>({
+    number: 0,
     moduleId: 0,
     title: "",
     description: "",
@@ -159,6 +164,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
 
   useEffect(() => {
     if (Initialmodules?.length > 0) {
+      setSelectedModuleId(Initialmodules.length);
       const mappedModules: Module[] = Initialmodules.map((mod) => ({
         module_Id: mod.moduleid,
         id: mod.moduleid,
@@ -269,36 +275,6 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
     CreatedNewItem();
   };
 
-  // const addNewItem = (type: keyof Module, obj: any, setObj: Function) => {
-  //   if (!obj.title) return;
-  //   setModules((prevModules) =>
-  //     prevModules.map((module) => {
-  //       if (module.id === selectedModuleId) {
-  //         const existingItems = (module[type] as any[]) || [];
-  //         const newIndex = existingItems.length + 1;
-
-  //         return {
-  //           ...module,
-  //           [type]: [
-  //             ...existingItems,
-  //             {
-  //               id: Date.now(),
-  //               moduleId: selectedModuleId,
-  //               title: `${type.toUpperCase()} ${newIndex}`,
-  //               description: obj.title,
-  //               pages: "",
-  //             },
-  //           ],
-  //         };
-  //       }
-  //       return module;
-  //     })
-  //   );
-
-  //   setObj({ title: "", description: "" });
-  //   // setRefreshKey((prev) => prev + 1);
-  // };
-
   // Single useEffect for all item types
   useEffect(() => {
     addNewItem("lessons", lessonObj, setlessonObj);
@@ -343,6 +319,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
       status: false,
     });
     setNewLesson({
+      number: 0,
       module: 0,
       lessonId: 0,
       status: false,
@@ -462,8 +439,8 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   ) => {
     const moduleNum =
       moduleNumber !== undefined && moduleNumber !== null
-        ? Number(moduleNumber) // Convert to number safely
-        : selectedModuleId + 1; // Use selectedModuleId + 1 as a fallback
+        ? Number(moduleNumber)
+        : selectedModuleId + 1;
     setNewModule({
       number: moduleNum,
       courseId: courseId ?? 0, // Use courseId if available, otherwise default to 0
@@ -498,6 +475,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
 
     const defaultValues: any = {
       lesson: {
+        number: (selectedModule?.lessons?.length ?? 0) + 1,
         module: selectedModule?.module_Id || item.module_id || 0,
         lessonId: item == undefined ? 0 : item.lessonid || 0,
         status: true,
@@ -562,7 +540,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   const addItem = async (type: string, setState: Function) => {
     // Default structure for different items
     const defaultValues: any = {
-      lesson: { module: 0, status: false },
+      lesson: { number: 0, module: 0, status: false },
       capstone: { module: 0, lesson: 0, status: false },
       assignment: { module: 0, lesson: 0, status: false },
       quiz: { module: 0, lesson: 0, status: false },
@@ -622,6 +600,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   const handleRemoveLesson = async (id: number) => {
     const payload = { lessonid: id };
     const res = await CourseServices.deleteCourseLesson(payload);
+    dispatch(setBooleanState(true));
     if (res) {
       await showAlert(
         "success",

@@ -1,6 +1,8 @@
+import { useEffect } from "react";
+
 type FacilitatorsProps = {
   title: string;
-  items: string[];
+  items: (string | { title: string; link: string })[];
   ordered: boolean;
   customClass: string;
 };
@@ -14,6 +16,10 @@ const FooterBtnList = ({
   // Choose the list type based on the `ordered` prop
   const ListTag = ordered ? "ol" : "ul";
 
+  useEffect(() => {
+    console.log(items);
+  }, [items]);
+
   return (
     <div className="">
       <h2 className="text-[17px] my-4 lg:mb-10 text-white text-center lg:text-left w-full font-DMSans font-semibold">
@@ -25,9 +31,13 @@ const FooterBtnList = ({
             key={index}
             className="flex justify-center lg:justify-start  text-white items-center gap-4 py-2 lg:py-4"
           >
-            <button className="text-[15px] font-DMSans font-semibold">
-              {item}
-            </button>
+            {typeof item === "object" && "link" in item && "title" in item ? (
+              <a href={item.link} target="_blank">
+                {item.title}
+              </a>
+            ) : (
+              item
+            )}
           </li>
         ))}
       </ListTag>

@@ -78,6 +78,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
         setModuleData={setModuleObj}
       />
       <NewLessonModal
+        lessonNumber={modals.newLesson.number}
         moduleId={modals.newLesson.module}
         lessonId={modals.newLesson.lessonId}
         isOpen={modals.newLesson.status}

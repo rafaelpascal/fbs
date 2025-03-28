@@ -18,6 +18,11 @@ type FacilitatorsProps = {
   items: string[];
 };
 
+type FooterProps = {
+  Title: string;
+  items: (string | { title: string; link: string })[];
+};
+
 const FooterItems = [
   {
     title: "Mastery, not Just another certificate",
@@ -68,24 +73,32 @@ const FacilitatorsItem: FacilitatorsProps[] = [
     ],
   },
 ];
-const FooterbtnItem: FacilitatorsProps[] = [
+const FooterbtnItem: FooterProps[] = [
   {
     Title: "ABOUT",
     items: [
-      "About Us",
-      "Learner Stories",
-      "Careers",
-      "Leadership",
-      "Contact Us",
+      { title: "Home", link: "https://fordaxbschool.com/" },
+      { title: "About us", link: "https://fordaxbschool.com/about" },
+      { title: "Login", link: "https://class.fordaxbschool.com/login" },
+      { title: "Contact", link: "https://fordaxbschool.com/contact" },
+      { title: "Wishlist", link: "https://fordaxbschool.com/wish" },
     ],
   },
   {
     Title: "CATEGORIES",
     items: [
-      "Development",
-      "Business",
-      "Finance & Accounting",
-      "Office Productivity",
+      { title: "MBA", link: "" },
+      { title: "Kids MBA", link: "" },
+      { title: "Certificates", link: "" },
+      {
+        title: "Entrepreneurship",
+        link: "",
+      },
+      { title: "Case studies", link: "" },
+      { title: "Finance", link: "" },
+      { title: "Leadership", link: "" },
+      { title: "Management", link: "" },
+      { title: "Strategy", link: "" },
     ],
   },
   {
@@ -101,7 +114,11 @@ const FooterbtnItem: FacilitatorsProps[] = [
   },
   {
     Title: "SUPPORT",
-    items: ["Documentation", "FAQS", "Dashboard", "Contact"],
+    items: [
+      { title: "Blog", link: "https://fordaxbschool.com/blog" },
+      { title: "FAQs", link: "https://fordaxbschool.com/faq" },
+      { title: "Resources ", link: "https://fordaxbschool.com/resources" },
+    ],
   },
 ];
 

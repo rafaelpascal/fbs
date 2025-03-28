@@ -83,6 +83,7 @@ const Otherinfo = ({
   );
   const navigate = useNavigate();
   const [value, setValue] = useState<string | undefined>(phone);
+  const [isFormValid, setIsFormValid] = useState(false);
   const [referralCode, setreferralCode] = useState("");
   const [whatappvalue, setWhatsappValue] = useState<string | undefined>(
     undefined
@@ -279,6 +280,17 @@ const Otherinfo = ({
   const handleClearOtp = useCallback(() => {
     setreferralCode("");
   }, [setreferralCode]);
+
+  useEffect(() => {
+    const requiredFields = [...fields, ...Passwordfields]
+      .filter((field) => field.compulsory)
+      .map((field) => field.name);
+    const allFieldsFilled = requiredFields.every((field) => {
+      const value = form.getValues(field);
+      return value && value.trim() !== "";
+    });
+    setIsFormValid(allFieldsFilled && isAccepted);
+  }, [form.watch(), isAccepted]);
 
   return (
     <div>
@@ -518,13 +530,13 @@ const Otherinfo = ({
         <BaseButton
           containerCLassName={cn(
             "mt-4 h-[66px] w-full rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff]",
-            isAccepted === false ? "cursor-not-allowed opacity-50" : ""
+            !isFormValid ? "cursor-not-allowed opacity-50" : ""
           )}
           hoverScale={1.01}
           hoverOpacity={0.8}
           tapScale={0.9}
           onClick={handleSubmit}
-          disabled={isAccepted === false}
+          disabled={!isFormValid}
         >
           <p>APPLY FOR THE PROGRAM NOW</p>
           {isSubmitting && <LoadingSpinner size="xs" />}

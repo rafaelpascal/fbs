@@ -154,7 +154,7 @@ const router = createBrowserRouter(
               children: [
                 {
                   index: true,
-                  element: <Navigate to={ROUTES.PAYMENTTABLE} />,
+                  element: <Navigate to={ROUTES.APPLICATIONTABLE} />,
                 },
                 {
                   path: ROUTES.PAYMENTTABLE,

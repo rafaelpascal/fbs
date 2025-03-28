@@ -23,7 +23,7 @@ const Description = ({ description }: DescriptionProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease: "easeInOut" }}
-          className="text-left font-DMSans font-normal text-[18px] leading-[26px]"
+          className="text-left font-DMSans font-normal text-[19px] leading-[26px]"
         >
           {isExpanded || description.length <= MAX_LENGTH
             ? description

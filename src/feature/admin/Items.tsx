@@ -76,7 +76,7 @@ const DraggableItem = ({
             </h2>
           ) : (
             <h2 className="font-semibold text-[18px] text-gray-700">
-              LESSON {item.index}: {item.lesson_title}
+              LESSON {item.lesson_number}: {item.lesson_title}
             </h2>
           )}
           <h2 className="font-semibold text-[18px] text-gray-700">
@@ -95,12 +95,14 @@ const DraggableItem = ({
       </div>
       <RemoveItemModal
         isOpen={isModalOpen}
-        closeModal={() => setIsModalOpen(false)} // Close only this item's modal
+        closeModal={() => setIsModalOpen(false)}
         id={item.id}
-        message={`Are you sure you want to remove ${item.title} || ${item.lesson_title} || ${item.lessonid}?`}
+        message={`Are you sure you want to remove ${
+          item.title || item.lesson_title
+        }?`}
         onConfirm={() => {
-          handleRemove(item.lessonid); // Call parent function to remove item
-          setIsModalOpen(false); // Close modal after removal
+          handleRemove(item.lessonid);
+          setIsModalOpen(false);
         }}
       />
     </div>

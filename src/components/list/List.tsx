@@ -1,6 +1,7 @@
 import { GoDotFill } from "react-icons/go";
 import RichText from "./RichText";
 import DOMPurify from "dompurify";
+import { cn } from "~/utils/helpers";
 
 type FacilitatorsProps = {
   title: string;
@@ -16,15 +17,24 @@ const List = ({
   customClass = "",
 }: FacilitatorsProps) => {
   const ListTag = ordered ? "ol" : "ul";
+  console.log(ordered);
 
   return (
     <div>
-      <h2 className="text-[20px] font-DMSans font-semibold">{title}</h2>
+      <h2
+        className={cn(
+          "text-[23px] font-DMSans font-semibold",
+          title === "Who is this course for ?" ? "mt-8" : "",
+          title === "Career Options & Opportunities" ? "mt-8" : ""
+        )}
+      >
+        {title}
+      </h2>
       <ListTag className={`${customClass}`}>
         {items.map((item, index) => (
           <li
             key={index}
-            className="flex text-left text-[16px] items-start font-DMSans gap-4"
+            className="flex text-left text-[19px] items-start font-DMSans gap-4"
           >
             {!ordered && <GoDotFill className="mt-1" />}
             <div className="flex-1">

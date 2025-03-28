@@ -11,6 +11,7 @@ import { DashboardArea } from "~/layouts/DashboardArea";
 import { useLocation } from "react-router-dom";
 import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { useSelector } from "react-redux";
 
 const CreateCourse = () => {
   const navigate = useNavigate();
@@ -61,6 +62,7 @@ const CreateCourse = () => {
   const [ispublished, setIspublished] = useState(false);
   const location = useLocation();
   const courseId = location.state?.courseId;
+  const booleanState = useSelector((state: any) => state.boolean.value);
 
   const fetchCourseData = async (id: string) => {
     try {
@@ -122,7 +124,7 @@ const CreateCourse = () => {
     if (courseId) {
       fetchCourseData(courseId);
     }
-  }, [courseId, refreshKey]);
+  }, [courseId, refreshKey, booleanState]);
 
   const [, setFormData] = useState({
     createForm: {},

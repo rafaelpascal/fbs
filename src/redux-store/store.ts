@@ -5,6 +5,7 @@ import courseUrlReducer from "./slice/url.slice";
 import formRequirementsReducer from "./slice/form_requirements.slice";
 import lessonReducer from "./slice/lessonSlice";
 import moduleReducer from "./slice/module.slice";
+import booleanReducer from "./slice/booleanSlice";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     formRequirements: formRequirementsReducer,
     lesson: lessonReducer,
     module: moduleReducer,
+    boolean: booleanReducer,
   },
 });
 

@@ -62,7 +62,6 @@ const PersonalInfo = ({
   const dispatch = useDispatch();
   const { seconds, startCountdown, resetCountdown } = Countdownauth(60);
   const [resendLoading, setresendLoading] = useState(false);
-  // const [value, setValue] = useState<string | undefined>(undefined);
   const form = useForm<ApplicationFormPayload>({
     resolver: zodResolver(applicationSchema),
     mode: "onChange",
@@ -80,11 +79,12 @@ const PersonalInfo = ({
         ...data,
       };
       const res = await AuthService.verificationcode(payload);
+      const emailValue = form.getValues("email");
       if (res?.data?.response?.is_email_verified === 2) {
         dispatch(
           setUser({
             userid: res?.data?.response?.userid,
-            email: "",
+            email: emailValue,
           })
         );
         await showAlert(
@@ -120,40 +120,6 @@ const PersonalInfo = ({
       console.error("Unknown error:", error);
     }
   };
-
-  // const handleEmailverification = async (data: ApplicationFormPayload) => {
-  //   startCountdown();
-  //   try {
-  //     const payload = {
-  //       programmeid: course_id,
-  //       ...data,
-  //     };
-  //     const res = await AuthService.verificationcode(payload);
-  //     dispatch(setFormRequirements(res.data.form_requirements));
-  //     dispatch(
-  //       setUser({
-  //         userid: res?.data?.userid,
-  //         email: res?.data?.email,
-  //       })
-  //     );
-  //     await showAlert(
-  //       "success",
-  //       "Successful!",
-  //       "OTP has been sent to your email!",
-  //       "Ok",
-  //       "#03435F",
-  //       () => {
-  //         setisCodeSent(true);
-  //       }
-  //     );
-  //   } catch (error) {
-  //     // form.reset();
-  //     // setisCodeSent(false);
-  //     if (error == "User already exists in our database") {
-  //       console.log("ccccccc", error);
-  //     }
-  //   }
-  // };
 
   const handleResend = async () => {
     try {
@@ -291,21 +257,23 @@ const PersonalInfo = ({
             </div>
           )}
         </div>
-        <BaseButton
-          containerCLassName={`mt-16 h-[46px] w-auto rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
-            !form.formState.isValid || form.formState.isSubmitting
-              ? "cursor-not-allowed opacity-50"
-              : ""
-          }`}
-          hoverScale={1.01}
-          hoverOpacity={0.8}
-          tapScale={0.9}
-          disabled={!form.formState.isValid || form.formState.isSubmitting}
-          loading={form.formState.isSubmitting}
-          type="submit"
-        >
-          <p>Verify Email</p>
-        </BaseButton>
+        {!isCodeSent && (
+          <BaseButton
+            containerCLassName={`mt-6 h-[46px] w-auto rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
+              !form.formState.isValid || form.formState.isSubmitting
+                ? "cursor-not-allowed opacity-50"
+                : ""
+            }`}
+            hoverScale={1.01}
+            hoverOpacity={0.8}
+            tapScale={0.9}
+            disabled={!form.formState.isValid || form.formState.isSubmitting}
+            loading={form.formState.isSubmitting}
+            type="submit"
+          >
+            <p>Get OTP</p>
+          </BaseButton>
+        )}
       </form>
     </div>
   );

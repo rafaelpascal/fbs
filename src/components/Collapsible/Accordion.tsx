@@ -28,9 +28,9 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       }`}
     >
       <input type="radio" name={name} defaultChecked={defaultOpen} />
-      <div className="collapse-title h-[60px] flex w-full justify-between items-center">
-        <p className="text-xl font-medium w-[80%]">{title}</p>
-        <p className="text-sm font-medium w-[20%] text-right">
+      <div className="collapse-title flex flex-col lg:flex-row w-full justify-between items-start lg:items-center">
+        <p className="text-xl font-medium w-full lg:w-[80%]">{title}</p>
+        <p className="text-xl lg:text-sm font-medium w-full lg:w-[20%] text-left lg:text-right">
           {lessons} lectures{" "}
         </p>
       </div>
@@ -102,7 +102,7 @@ const Accordion: React.FC<AccordionProps> = ({
           name={accordionName}
           defaultOpen={item.defaultOpen}
         >
-          {item.children} {/* Pass children here */}
+          {item.children}
         </AccordionItem>
       ))}
     </div>

@@ -14,6 +14,7 @@ import { RootState } from "~/redux-store/store";
 import { useSelector } from "react-redux";
 
 interface IModalPropsType {
+  lessonNumber?: number;
   moduleId: number;
   lessonId?: number;
   isOpen: boolean;
@@ -38,6 +39,7 @@ const initialFormData = {
 };
 
 export const NewLessonModal = ({
+  lessonNumber,
   moduleId,
   lessonId,
   isOpen,
@@ -140,6 +142,7 @@ export const NewLessonModal = ({
       courseId?.toString() || String(formData.course_id) || ""
     );
     dataToSubmit.append("stream_video_audio", formData.embed);
+    dataToSubmit.append("lesson_number", String(lessonNumber));
     dataToSubmit.append("module_id", moduleId.toString() || "");
     dataToSubmit.append("lesson_title", formData.title);
     formData.featuredImages.forEach((file) => {
@@ -163,6 +166,7 @@ export const NewLessonModal = ({
       await CourseServices.updateCourseLesson(dataToSubmit);
       setModuleData((prevData: any) => ({
         ...prevData,
+        number: lessonNumber,
         moduleId: moduleId,
         title: formData.title,
       }));
@@ -170,6 +174,7 @@ export const NewLessonModal = ({
       const res = await CourseServices.createCourseLesson(dataToSubmit);
       setModuleData((prevData: any) => ({
         ...prevData,
+        number: res.data.data.lesson_number,
         moduleId: res.data.data.lesson_id,
         title: formData.title,
       }));
@@ -224,8 +229,16 @@ export const NewLessonModal = ({
               onChange={(e: any) => handleInputChange("title", e.target.value)}
             />
           </div>
+          <div className="mb-4">
+            <h2 className="font-DMSans font-semibold text-[18px]">
+              LESSON NUMBER : {lessonNumber}
+            </h2>
+          </div>
           <div className="w-full">
-            <PDFUpload onFileSelect={handleFileSelect} />
+            <PDFUpload
+              initialFile={selectedPdf}
+              onFileSelect={handleFileSelect}
+            />
           </div>
           <div className="w-full">
             <MediaUpload onMediaUpload={handleMediaUpload} />

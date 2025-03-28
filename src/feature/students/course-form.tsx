@@ -9,6 +9,8 @@ import { RootState } from "~/redux-store/store";
 import { setUser } from "~/redux-store/slice/user.Slice";
 import { CourseServices } from "~/api/course";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { showAlert } from "~/utils/sweetAlert";
+import { ConfirmPassword } from "~/components/Modal/ConfirmPassword";
 
 type CourseFormProps = {
   name: string;
@@ -18,6 +20,7 @@ type CourseFormProps = {
 const Courseform = ({ name, id }: CourseFormProps) => {
   const [phone, setPhone] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmPassword, setComfirmPassword] = useState(false);
   const [isSubsequent, setIsSubsequent] = useState(false);
   const [courseData, setCourseData] = useState({
     course_id: 0,
@@ -49,16 +52,27 @@ const Courseform = ({ name, id }: CourseFormProps) => {
       setEmail(true);
       isSubmitted(false);
     } catch (error) {
+      await showAlert(
+        "success",
+        "Link sent!",
+        "OTP verification failed, please try again",
+        "Ok",
+        "#03435F"
+      );
+      isSubmitted(false);
       console.log(error);
     }
   };
 
   const handleAlreadyExist = () => {
+    setComfirmPassword(true);
+  };
+
+  const handlePasswordConfirmed = () => {
     setIsSubsequent(true);
     setEmail(true);
     isSubmitted(false);
   };
-
   const getCourse = async () => {
     try {
       setIsLoading(true);
@@ -115,6 +129,11 @@ const Courseform = ({ name, id }: CourseFormProps) => {
           </motion.div>
         )}
       </AnimatePresence>
+      <ConfirmPassword
+        closeModal={() => setComfirmPassword(false)}
+        handleSuccess={handlePasswordConfirmed}
+        isOpen={confirmPassword}
+      />
     </div>
   );
 };

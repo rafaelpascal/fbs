@@ -32,7 +32,7 @@ export const ROUTES = {
   CAPSTONESTABLE: "/admin/students/capstone",
   POLLSTABLE: "/admin/students/pollstable",
   QUIZZESTABLE: "/admin/students/quizes",
-  NEWCOURSE: "/admin/students/newcourse",
+  NEWCOURSE: "/admin/courses/newcourse",
   ADMINMANAGEMENT: "/admin/signup",
   STUDENTRANSACTION: "/transaction",
   EVENTMANAGEMENT: "/admin/events/management",
