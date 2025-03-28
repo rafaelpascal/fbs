@@ -2,33 +2,42 @@ import { DashboardArea } from "~/layouts/DashboardArea";
 import { GrLinkPrevious, GrLinkNext } from "react-icons/gr";
 import { useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { CourseServices } from "~/api/course";
 import { HiOutlineHandThumbDown, HiOutlineHandThumbUp } from "react-icons/hi2";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Markcomplete } from "~/components/Modal/Markcomplete";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { useDispatch } from "react-redux";
-import { setLessonId } from "~/redux-store/slice/lessonSlice";
+import {
+  setLessonId,
+  setNewCurrentLessonIndex,
+  setTotalLessons,
+} from "~/redux-store/slice/lessonSlice";
 import { cn } from "~/utils/helpers";
 import { useTheme } from "~/context/theme-provider";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
 
 const Lecture = () => {
   const { theme } = useTheme();
   const dispatch = useDispatch();
-  const [currentPage] = useState<number>(1);
   const [lectureTitles, setLectureTitles] = useState<any[]>([]);
   const [markcomplete, setMarkComplete] = useState(false);
-  const [totalPages, setTotalPages] = useState<number>(0);
   const { id } = useParams<{ id: string }>();
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [Moduleloading, setModuleLoading] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
-  const [completedLessons] = useState<Set<number>>(new Set());
+  // const [completedLessons] = useState<Set<number>>(new Set());
   const [lessonStarted, setLessonStarted] = useState(false);
   const [currentLessonId, setCurrentLessonId] = useState<number | null>(null);
-  const totalPagesSet = useRef(false);
+  const totalLessons = useSelector(
+    (state: RootState) => state.lesson.totalLessons
+  );
+  const newLessonIndex = useSelector(
+    (state: RootState) => state.lesson.currentLessonIndex
+  );
   const [moduleDetails, setModuleDetails] = useState({
     moduleid: 0,
     module_number: 0,
@@ -48,7 +57,7 @@ const Lecture = () => {
       // setLectureTitles(res.data.course_lessons);
       if (res.data.course_lessons.length > 0) {
         setTimeout(() => {
-          setTotalPages(res.data.course_lessons.length);
+          dispatch(setTotalLessons(res.data.course_lessons.length));
           const firstLesson = res.data.course_lessons[0];
           setCurrentLessonId(firstLesson.lessonid);
         }, 500);
@@ -176,6 +185,7 @@ const Lecture = () => {
   };
 
   const handleStartLesson = () => {
+    dispatch(setNewCurrentLessonIndex(1));
     setLessonStarted(true);
   };
 
@@ -266,7 +276,7 @@ const Lecture = () => {
                 PREVIOUS
               </p>
             </button>
-            <div>0 of {totalPages}</div>
+            <div>0 of {totalLessons}</div>
             <button
               onClick={handleStartLesson}
               className="bg-[#FF1515] rounded-md flex justify-center gap-4 lg:gap-8 items-center p-2"
@@ -389,7 +399,7 @@ const Lecture = () => {
                 </button>
 
                 <div>
-                  {currentLessonIndex + 1} of {totalPages}
+                  {newLessonIndex} of {totalLessons}
                 </div>
 
                 {currentMediaIndex === currentLesson.media.length - 1 ? (

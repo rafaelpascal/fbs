@@ -12,7 +12,10 @@ import { LoadingSpinner } from "../ui/loading-spinner";
 import { useNavigate, useParams } from "react-router-dom";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useDispatch } from "react-redux";
-import { setLessonId } from "~/redux-store/slice/lessonSlice";
+import {
+  setNewCurrentLessonIndex,
+  setLessonId,
+} from "~/redux-store/slice/lessonSlice";
 import { GoDotFill } from "react-icons/go";
 import { FaFilePdf } from "react-icons/fa";
 import { RootState } from "~/redux-store/store";
@@ -147,6 +150,7 @@ export const LectureSidebar = () => {
       const currentId = Number(lessonId);
       const lessonIdsNumbers = lessonIds.map(Number);
       const currentIndex = lessonIdsNumbers.indexOf(currentId);
+      dispatch(setNewCurrentLessonIndex(currentIndex + 2));
 
       if (currentIndex !== -1) {
         const nextIndex = (currentIndex + 1) % lessonIdsNumbers.length;
