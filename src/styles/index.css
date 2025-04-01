@@ -57,13 +57,30 @@ canvas {
   scrollbar-color: #888;
 }
 
-.rich-text-content ol {
-  list-style-type: disc; /* Ensures dots are used */
-  margin-left: 20px; /* Adds indentation for nested lists */
+.rich-text-content-light ol {
+  color: #333 !important;
+  list-style-type: disc;
+  margin-left: 20px;
+}
+.rich-text-content-dark ol {
+  color: white !important;
+  list-style-type: disc;
+  margin-left: 20px;
+}
+.rich-text-content-light li {
+  color: #333 !important;
+  list-style-type: disc;
+  margin-left: 20px;
+}
+.rich-text-content-dark li {
+  color: white !important;
+  list-style-type: disc;
+  margin-left: 20px;
 }
 
 .rich-text-content li {
-  margin-bottom: 8px; /* Adds spacing between items */
+  margin-bottom: 8px;
+  color: inherit !important;
 }
 
 @keyframes scroll {

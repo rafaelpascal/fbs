@@ -35,7 +35,7 @@ const CourseItem = ({ moduleId }: LessonProps) => {
       {lessons.map((item, index) => (
         <div key={index} className="flex justify-between items-center mb-4">
           <div className="flex justify-start gap-4 items-center">
-            <div className="h-6 w-6 flex justify-center items-center rounded-full bg-[#FF3B30]/10">
+            <div className="h-6 min-w-6 flex justify-center items-center rounded-full bg-[#FF3B30]/10">
               <FaPlay className="text-[#FF3B30] text-[10px]" />
             </div>
             <h2 className="font-DMSans font-semibold text-[18px]">

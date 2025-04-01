@@ -35,6 +35,7 @@ const Lecture = () => {
   const totalLessons = useSelector(
     (state: RootState) => state.lesson.totalLessons
   );
+  const storedModuleId = localStorage.getItem("moduleId");
   const newLessonIndex = useSelector(
     (state: RootState) => state.lesson.currentLessonIndex
   );
@@ -94,7 +95,7 @@ const Lecture = () => {
     setModuleLoading(true);
     try {
       const payload = {
-        module_id: 1,
+        module_id: storedModuleId,
       };
       const res = await CourseServices.getModulebyId(payload);
 
@@ -133,7 +134,7 @@ const Lecture = () => {
 
   useEffect(() => {
     fetModules();
-  }, [id]);
+  }, [storedModuleId]);
 
   const lessonMedia = lectureTitles.map((lesson) => ({
     lessonId: lesson.lessonid,

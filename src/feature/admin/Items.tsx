@@ -72,11 +72,13 @@ const DraggableItem = ({
         <div className="flex flex-col lg:flex-row gap-2">
           {item.title ? (
             <h2 className="font-semibold text-[18px] text-gray-700">
-              LESSON {item.index}: {item.title}
+              {type}
+              {item.index}: {item.title}
             </h2>
           ) : (
             <h2 className="font-semibold text-[18px] text-gray-700">
-              LESSON {item.lesson_number}: {item.lesson_title}
+              {type}
+              {item.lesson_number}: {item.lesson_title}
             </h2>
           )}
           <h2 className="font-semibold text-[18px] text-gray-700">

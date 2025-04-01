@@ -279,6 +279,9 @@ export const LectureSidebar = () => {
   }, [quizId]);
 
   const handleHomeNavigation = () => {
+    updateSidebarData([]);
+    setLectureTitles([]);
+    localStorage.removeItem("moduleId");
     dispatch(resetModuleId());
     navigate("/dashboard");
   };

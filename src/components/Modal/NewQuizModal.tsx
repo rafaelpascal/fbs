@@ -127,6 +127,10 @@ export const NewQuizModal = ({
   const handleclose = useCallback(() => {
     setFormData(initialFormData);
     closeModal();
+    setAnswerAdded(false);
+    setIsAnswer(false);
+    setisquestionSaved(false);
+    setIsisDropDown(false);
   }, []);
 
   const handleInputChange = (field: string, value: string) => {
@@ -292,6 +296,7 @@ export const NewQuizModal = ({
     setQuizzes([]);
     setQuestions([]);
     setisQuizId(0);
+    setAnswerAdded(false);
   };
 
   return (

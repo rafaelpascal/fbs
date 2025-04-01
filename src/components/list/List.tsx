@@ -2,6 +2,7 @@ import { GoDotFill } from "react-icons/go";
 import RichText from "./RichText";
 import DOMPurify from "dompurify";
 import { cn } from "~/utils/helpers";
+import { useTheme } from "~/context/theme-provider";
 
 type FacilitatorsProps = {
   title: string;
@@ -16,8 +17,8 @@ const List = ({
   ordered = false,
   customClass = "",
 }: FacilitatorsProps) => {
+  const { theme } = useTheme();
   const ListTag = ordered ? "ol" : "ul";
-  console.log(ordered);
 
   return (
     <div>
@@ -36,7 +37,14 @@ const List = ({
             key={index}
             className="flex text-left text-[19px] items-start font-DMSans gap-4"
           >
-            {!ordered && <GoDotFill className="mt-1" />}
+            {!ordered && (
+              <GoDotFill
+                className={cn(
+                  "mt-1 text-[#FF3B30] text-[20px]",
+                  theme === "dark" ? "text-[#fff]" : "text-[#000]"
+                )}
+              />
+            )}
             <div className="flex-1">
               {/* Use RichText for advanced rendering or sanitize directly */}
               <RichText content={DOMPurify.sanitize(item)} />

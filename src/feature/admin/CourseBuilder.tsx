@@ -13,6 +13,7 @@ import ModalContainer from "./ModalContainer";
 import { CourseServices } from "~/api/course";
 import { useDispatch } from "react-redux";
 import { setBooleanState } from "~/redux-store/slice/booleanSlice";
+import { RemoveItemModal } from "~/components/Modal/RemoveItemModal";
 
 interface Lessons {
   id: number;
@@ -67,6 +68,10 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   const dispatch = useDispatch();
   const [modules, setModules] = useState<Module[]>([]);
   const [isNewModule, setIsnewModule] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState({
+    id: 0,
+    status: false,
+  });
   const [newModule, setNewModule] = useState({
     number: 0,
     courseId: 0,
@@ -164,7 +169,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
 
   useEffect(() => {
     if (Initialmodules?.length > 0) {
-      setSelectedModuleId(Initialmodules.length);
+      // setSelectedModuleId(Initialmodules.length);
       const mappedModules: Module[] = Initialmodules.map((mod) => ({
         module_Id: mod.moduleid,
         id: mod.moduleid,
@@ -187,7 +192,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   }, [Initialmodules, Initiallessons]);
 
   const addModule = async () => {
-    CreatedNewItem();
+    // CreatedNewItem();
     setIsnewModule(true);
     setNewModule({
       number: modules.length + 1,
@@ -272,7 +277,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
 
     // Reset input object after adding/updating
     setObj({ title: "", description: "" });
-    CreatedNewItem();
+    // CreatedNewItem();
   };
 
   // Single useEffect for all item types
@@ -443,7 +448,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
         : selectedModuleId + 1;
     setNewModule({
       number: moduleNum,
-      courseId: courseId ?? 0, // Use courseId if available, otherwise default to 0
+      courseId: courseId ?? 0,
       status: true,
     });
   };
@@ -551,7 +556,6 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
     };
 
     if (!defaultValues[type]) {
-      console.error("Invalid type provided:", type);
       return;
     }
 
@@ -749,7 +753,14 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
                   >
                     <FiEdit className="text-[30px] text-[#FFFFFF]" />
                   </button>
-                  <button onClick={() => handleRemoveModule(module.id)}>
+                  <button
+                    onClick={() =>
+                      setIsModalOpen({
+                        id: module.id,
+                        status: true,
+                      })
+                    }
+                  >
                     <MdOutlineCancel className="text-[30px] text-[#FFFFFF]" />
                   </button>
                   <button
@@ -830,8 +841,8 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
                 top: `${Math.min(
                   menuPosition.top,
                   window.innerHeight - 300
-                )}px`, // Prevent overflow at bottom
-                left: `${menuPosition.left}px`, // Use calculated left position
+                )}px`,
+                left: `${menuPosition.left}px`,
               }}
             >
               <div className="flex flex-col w-full">
@@ -899,6 +910,24 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
           </button>
         </div>
       </div>
+      <RemoveItemModal
+        isOpen={isModalOpen.status}
+        closeModal={() =>
+          setIsModalOpen({
+            id: 0,
+            status: false,
+          })
+        }
+        id={0}
+        message={`Are you sure you want to remove?`}
+        onConfirm={() => {
+          handleRemoveModule(isModalOpen.id);
+          setIsModalOpen({
+            id: 0,
+            status: false,
+          });
+        }}
+      />
     </DndProvider>
   );
 };
