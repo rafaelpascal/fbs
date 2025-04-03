@@ -103,7 +103,8 @@ const NewAssignment = () => {
     const payload = {
       lesson_id: JSON.parse(assignmentId ?? ""),
     };
-    await CourseServices.listAssignment(payload);
+    const res = await CourseServices.listAssignment(payload);
+    console.log(res);
   };
 
   useEffect(() => {

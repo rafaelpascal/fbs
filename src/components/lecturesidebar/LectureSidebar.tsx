@@ -22,6 +22,7 @@ import { RootState } from "~/redux-store/store";
 import { useSelector } from "react-redux";
 import { resetModuleId } from "../../redux-store/slice/module.slice";
 import { Button } from "../buttons/BaseButton";
+import { HiClipboardDocumentList } from "react-icons/hi2";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -160,84 +161,152 @@ export const LectureSidebar = () => {
     }
   }, [lessonId]);
 
+  // const updateLecture = () => {
+  //   if (!lectureTitles.length) return;
+  //   const updatedData: SideNavProps[] = lectureTitles.map(
+  //     (lessonItem: any, index: number) => {
+  //       const isPlaying = lessonItem.lessonid == id;
+  //       return {
+  //         href: `/module/${lessonItem.module_id}`,
+  //         icon: FaFilePdf,
+  //         dropdown: true,
+  //         playing: isPlaying,
+  //         text:
+  //           `LESSON ${index + 1}: ${lessonItem.lesson_title}` ||
+  //           "Untitled Lesson",
+  //         children: [
+  //           {
+  //             href: `/lecture/${lessonItem.lessonid}`,
+  //             icon: GoDotFill,
+  //             dropdown: false,
+  //             text: "Lecture",
+  //           },
+  //           ...(lessonItem.hasQuiz === 0
+  //             ? [
+  //                 {
+  //                   href: `/assignment/${lessonItem.module_id}`,
+  //                   icon: GoDotFill,
+  //                   dropdown: false,
+  //                   text: "Quiz",
+  //                 },
+  //               ]
+  //             : []),
+  //           // ...(lessonItem.lessonid
+  //           //   ? [
+  //           //       {
+  //           //         href: `/exam/${lessonItem.lessonid}`,
+  //           //         icon: GoDotFill,
+  //           //         dropdown: false,
+  //           //         text: "Exam",
+  //           //       },
+  //           //     ]
+  //           //   : []),
+  //           // ...(lessonItem.lessonid
+  //           //   ? [
+  //           //       {
+  //           //         href: `/newassignment/${lessonItem.lessonid}`,
+  //           //         icon: GoDotFill,
+  //           //         dropdown: false,
+  //           //         text: "Assignment",
+  //           //       },
+  //           //     ]
+  //           //   : []),
+  //           ...(lessonItem.lessonid
+  //             ? [
+  //                 {
+  //                   href: `/polls/${lessonItem.lessonid}`,
+  //                   icon: GoDotFill,
+  //                   dropdown: false,
+  //                   text: "Polls",
+  //                 },
+  //               ]
+  //             : []),
+  //           ...(lessonItem.assignment_id
+  //             ? [
+  //                 {
+  //                   href: lessonItem.stream_video_audio
+  //                     ? lessonItem.stream_video_audio
+  //                     : "#",
+  //                   icon: GoDotFill,
+  //                   dropdown: false,
+  //                   text: "Assignment",
+  //                 },
+  //               ]
+  //             : []),
+  //         ],
+  //       };
+  //     }
+  //   );
+
+  //   updateSidebarData(updatedData);
+  // };
   const updateLecture = () => {
     if (!lectureTitles.length) return;
-    const updatedData: SideNavProps[] = lectureTitles.map(
-      (lessonItem: any, index: number) => {
-        const isPlaying = lessonItem.lessonid == id;
-        return {
-          href: `/module/${lessonItem.module_id}`,
-          icon: FaFilePdf,
-          dropdown: true,
-          playing: isPlaying,
-          text:
-            `LESSON ${index + 1}: ${lessonItem.lesson_title}` ||
-            "Untitled Lesson",
-          children: [
-            {
-              href: `/lecture/${lessonItem.lessonid}`,
-              icon: GoDotFill,
-              dropdown: false,
-              text: "Lecture",
-            },
-            ...(lessonItem.hasQuiz === 0
-              ? [
-                  {
-                    href: `/assignment/${lessonItem.module_id}`,
-                    icon: GoDotFill,
-                    dropdown: false,
-                    text: "Quiz",
-                  },
-                ]
-              : []),
-            ...(lessonItem.lessonid
-              ? [
-                  {
-                    href: `/exam/${lessonItem.lessonid}`,
-                    icon: GoDotFill,
-                    dropdown: false,
-                    text: "Exam",
-                  },
-                ]
-              : []),
-            ...(lessonItem.lessonid
-              ? [
-                  {
-                    href: `/newassignment/${lessonItem.lessonid}`,
-                    icon: GoDotFill,
-                    dropdown: false,
-                    text: "Assignment",
-                  },
-                ]
-              : []),
-            ...(lessonItem.lessonid
-              ? [
-                  {
-                    href: `/polls/${lessonItem.lessonid}`,
-                    icon: GoDotFill,
-                    dropdown: false,
-                    text: "Polls",
-                  },
-                ]
-              : []),
-            ...(lessonItem.assignment_id
-              ? [
-                  {
-                    href: lessonItem.stream_video_audio
-                      ? lessonItem.stream_video_audio
-                      : "#",
-                    icon: GoDotFill,
-                    dropdown: false,
-                    text: "Assignment",
-                  },
-                ]
-              : []),
-          ],
-        };
-      }
+    const lectureItems: SideNavProps[] = lectureTitles.map(
+      (lessonItem, index) => ({
+        href: `/module/${lessonItem.module_id}`,
+        icon: FaFilePdf,
+        dropdown: true,
+        playing: lessonItem.lessonid == id,
+        text:
+          `LESSON ${index + 1}: ${lessonItem.lesson_title}` ||
+          "Untitled Lesson",
+        children: [
+          {
+            href: `/lecture/${lessonItem.lessonid}`,
+            icon: GoDotFill,
+            dropdown: false,
+            text: "Lecture",
+          },
+          ...(lessonItem.lessonid
+            ? [
+                {
+                  href: `/polls/${lessonItem.lessonid}`,
+                  icon: GoDotFill,
+                  dropdown: false,
+                  text: "Polls",
+                },
+              ]
+            : []),
+        ],
+      })
     );
 
-    updateSidebarData(updatedData);
+    // Get the first module_id (assuming all lessons belong to the same module)
+    const firstModuleId = lectureTitles.length
+      ? lectureTitles[0].module_id
+      : "";
+
+    // Create a parent "Assessments" menu
+    const assessments: SideNavProps = {
+      href: "",
+      icon: HiClipboardDocumentList,
+      dropdown: true,
+      playing: false,
+      text: "Assessments",
+      children: [
+        {
+          href: `/assignment/${firstModuleId}`,
+          icon: GoDotFill,
+          dropdown: false,
+          text: "Quiz",
+        },
+        {
+          href: `/exam/${firstModuleId}`,
+          icon: GoDotFill,
+          dropdown: false,
+          text: "Exam",
+        },
+        {
+          href: `/newassignment/${firstModuleId}`,
+          icon: GoDotFill,
+          dropdown: false,
+          text: "Assignment",
+        },
+      ],
+    };
+
+    updateSidebarData([...lectureItems, assessments]);
   };
 
   useEffect(() => {
@@ -389,20 +458,6 @@ export const LectureSidebar = () => {
                   />
                 ))}
               </ul>
-            </div>
-          )}
-          {!isCollapsed && (
-            <div className="my-4 w-full">
-              <button className="text-[14px] w-full py-4 rounded-md shadow-md bg-transparent">
-                <p className="font-DMSans font-semibold text-[14px]">
-                  My Notes
-                </p>
-              </button>
-              <button className="text-[14px] w-full py-4 rounded-md shadow-md bg-transparent">
-                <p className="font-DMSans font-semibold text-[14px]">
-                  Support/Help
-                </p>
-              </button>
             </div>
           )}
         </div>

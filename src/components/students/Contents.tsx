@@ -27,6 +27,8 @@ import {
   getMonthsBetweenDates,
   getWeeksBetweenDates,
 } from "~/lib/utils";
+import { cn } from "~/utils/helpers";
+import { useTheme } from "~/context/theme-provider";
 
 const tabsData = [
   { title: "Overview" },
@@ -119,6 +121,7 @@ type FooterbtnItem = {
 };
 
 const Contents = ({ id, name }: CourseProps) => {
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isModuleCount, setIsModuleCount] = useState(false);
@@ -446,7 +449,12 @@ const Contents = ({ id, name }: CourseProps) => {
             </BaseButton>
             <Link
               to="https://fordaxbschool.com/contact"
-              className="mt-4 w-full lg:w-[369.19px] h-[66px] flex justify-center items-center rounded-[8px] border-[1px] border-[#000] text-[24px] font-bold font-DMSans text-[#757575]"
+              className={cn(
+                "mt-4 w-full lg:w-[369.19px] h-[66px] flex justify-center items-center rounded-[8px] border-[1px]  text-[24px] font-bold font-DMSans ",
+                theme === "dark"
+                  ? "border-[#fff] text-[#fff]"
+                  : "border-[#000] text-[#757575]"
+              )}
               target="_blank"
             >
               <p>Contact us</p>
@@ -474,7 +482,7 @@ const Contents = ({ id, name }: CourseProps) => {
               }).format(courseData.naira_amount)}
             </p>
           </div>
-          <div className="flex flex-col justify-between items-center w-full">
+          <div className="flex mb-10 flex-col justify-between items-center w-full">
             <BaseButton
               containerCLassName="mt-4 w-full hover:bg-[#fff] border-[1px] hover:border-[#FF3B30] hover:text-[#FF3B30]  lg:w-[369.19px] h-[53px] w-full rounded-[8px] bg-[#FF3B30] text-[24px] font-bold font-DMSans text-[#fff]"
               hoverScale={1.01}
@@ -487,7 +495,12 @@ const Contents = ({ id, name }: CourseProps) => {
             <Link
               to="https://fordaxbschool.com/wish"
               target="_blank"
-              className="mt-4 w-full lg:w-[369.19px] border-[1px] border-[#000] hover:border-[#FF3B30] hover:text-[#FF3B30] flex justify-center items-center h-[53px] rounded-[8px] text-[24px] font-bold font-DMSans text-[#757575]"
+              className={cn(
+                "mt-4 w-full lg:w-[369.19px] border-[1px] hover:border-[#FF3B30] hover:text-[#FF3B30] flex justify-center items-center h-[53px] rounded-[8px] text-[24px] font-bold font-DMSans",
+                theme === "dark"
+                  ? "border-[#fff] text-[#fff]"
+                  : "border-[#000] text-[#757575]"
+              )}
             >
               <p>Add to wishlist</p>
             </Link>
@@ -509,25 +522,25 @@ const Contents = ({ id, name }: CourseProps) => {
                 to="https://web.facebook.com/fordaxbschool/"
                 className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200"
               >
-                <FaFacebookF />
+                <FaFacebookF className="text-[#333]" />
               </Link>
               <Link
                 to="https://x.com/Fordaxbschool"
                 className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200"
               >
-                <FaTwitter />
+                <FaTwitter className="text-[#333]" />
               </Link>
               <Link
                 to=""
                 className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200"
               >
-                <FaInstagramSquare />
+                <FaInstagramSquare className="text-[#333]" />
               </Link>
               <Link
                 to="https://www.linkedin.com/company/fordaxbschool/"
                 className="w-[45px] flex justify-center items-center h-[45px] rounded-full bg-[#EEF2F6] hover:bg-[#FF1515] hover:text-[#fff] transition duration-300 delay-200"
               >
-                <FaLinkedin />
+                <FaLinkedin className="text-[#333]" />
               </Link>
             </div>
           </div>

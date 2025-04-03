@@ -47,10 +47,10 @@ const CourseCard: React.FC<CourseCardProps> = ({
       <div className="p-4 h-[240px] overflow-y-hidden flex justify-between items-start flex-col">
         <div className="flex justify-between w-full mb-4 items-center">
           <div className="lg:w-[90%] w-full flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-            <h2 className="text-[16px]  w-[20%] font-DMSans font-bold text-[#000000]">
+            <h2 className="text-[16px] w-full lg:w-[20%] font-DMSans font-bold text-[#000000]">
               MODULE {moduleNumber}
             </h2>
-            <h2 className="text-[16px] w-[80%] font-DMSans font-bold text-[#000000]">
+            <h2 className="text-[16px] w-full lg:w-[80%] font-DMSans font-bold text-[#000000]">
               {title}
             </h2>
           </div>

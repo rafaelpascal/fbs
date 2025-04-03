@@ -203,7 +203,7 @@ const Dashboard = () => {
   };
 
   const handleStartCourse = (courseId: number) => {
-    localStorage.setItem("moduleId", courseId.toString()); // Save to local storage
+    localStorage.setItem("moduleId", courseId.toString());
     dispatch(setModuleId(courseId));
     navigate(`/lecture/${courseId}`);
   };
@@ -231,35 +231,35 @@ const Dashboard = () => {
             applicationid: app.applicationid || 0,
             specifications: [
               {
-                title: "Format",
+                title: "Mode: ",
                 duration: app.course_mode || "N/A",
               },
               {
-                title: "Course Starting",
+                title: "Course Starting: ",
                 duration:
                   app.course_flexible === 0
                     ? app.start_date || "N/A"
                     : "Flexible",
               },
               {
-                title: "Cohort",
+                title: "Cohort: ",
                 duration: app.cohort_title || "N/A",
               },
               {
-                title: "Application Date",
+                title: "Application Date: ",
                 duration: app.created_at
                   ? new Date(app.created_at).toLocaleDateString()
                   : "N/A",
               },
               {
-                title: "Course Ending",
+                title: "Course Ending: ",
                 duration:
                   app.course_flexible === 0
                     ? app.end_date || "N/A"
                     : "Flexible",
               },
               {
-                title: "Duration",
+                title: "Duration: ",
                 duration:
                   (app.course_run?.replace(/"/g, "") ?? "") === "Weekly"
                     ? `${getWeeksBetweenDates(
@@ -353,15 +353,14 @@ const Dashboard = () => {
                         (spec, specIndex) => (
                           <div
                             key={specIndex}
-                            className="mx-2 flex flex-row flex-wrap justify-start items-center"
+                            className="mx-2 flex gap-2 flex-row flex-wrap justify-start items-center"
                           >
-                            <p className="text-[18px] font-semibold font-DMSans">
+                            <span className="text-[18px] font-semibold font-DMSans">
                               {spec.title}
-                            </p>
-                            {" : "}
-                            <p className="text-[18px] capitalize font-normal font-DMSans">
+                            </span>
+                            <span className="text-[18px] capitalize font-normal font-DMSans">
                               {spec.duration}
-                            </p>
+                            </span>
                           </div>
                         )
                       )}

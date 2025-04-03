@@ -10,6 +10,7 @@ import InDataTable from "~/components/table/InDataTable";
 import { PaymentData } from "~/types/payment";
 import { CourseServices } from "~/api/course";
 import ActionMenu from "../table/ActionMenu";
+import FilterDropdown from "../table/filterOptions";
 interface PaymentTableRow {
   application_id: number;
   id: string;
@@ -29,10 +30,16 @@ interface PaymentTableRow {
 interface OnlinePaymentsTableProps {
   data?: PaymentData[]; // Ensure it's optional to avoid undefined issues
 }
+const payment_status = [
+  { value: "", label: "All" },
+  { value: "Paid", label: "Paid" },
+  { value: "UnPaid", label: "UnPaid" },
+];
 
 const OnlinePaymentsTable: React.FC<OnlinePaymentsTableProps> = ({
   data = [],
 }) => {
+  const [filter, setFilter] = useState("");
   // const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -76,6 +83,10 @@ const OnlinePaymentsTable: React.FC<OnlinePaymentsTableProps> = ({
     paymentMode: item.paymentMode,
     phone_number: item.phone_number,
   }));
+
+  const filteredData = filter
+    ? formattedData.filter((item) => item.paymentStatus === filter)
+    : formattedData;
 
   const handleView = (id: number) => {
     setSelectedPaymentId(id);
@@ -191,19 +202,28 @@ const OnlinePaymentsTable: React.FC<OnlinePaymentsTableProps> = ({
         <div className="w-[99%]">
           <InDataTable<PaymentTableRow>
             columns={columns}
-            data={formattedData}
+            data={filteredData}
             paginatable={false}
-            searchable={false}
-          />
+            searchable
+            title="Student Payment"
+            isFilterable
+            // pagination={false}
+          >
+            <FilterDropdown
+              filter={filter}
+              setFilter={setFilter}
+              options={payment_status}
+            />
+          </InDataTable>
         </div>
       </div>
       {showRejectModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
             <h3 className="text-lg font-semibold mb-4">Confirm Action</h3>
-            <p className="mb-6">
+            <h2 className="mb-6 font-DMSans text-[16px] font-semibold">
               Are you sure you want to reject this payment?
-            </p>
+            </h2>
             <div className="flex justify-end gap-4">
               <button
                 onClick={() => {
@@ -234,7 +254,7 @@ const OnlinePaymentsTable: React.FC<OnlinePaymentsTableProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
             <h3 className="text-lg font-semibold mb-4">Confirm Action</h3>
-            <p className="mb-6">
+            <p className="mb-6 font-DMSans text-[16px] font-semibold">
               Are you sure you want to confirm this payment?
             </p>
             <div className="flex justify-end gap-4">

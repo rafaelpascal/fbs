@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { CourseServices } from "~/api/course";
 import { HiOutlineHandThumbDown, HiOutlineHandThumbUp } from "react-icons/hi2";
 import { HiDotsHorizontal } from "react-icons/hi";
+import { motion } from "framer-motion";
 import { Markcomplete } from "~/components/Modal/Markcomplete";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { useDispatch } from "react-redux";
@@ -18,6 +19,9 @@ import { cn } from "~/utils/helpers";
 import { useTheme } from "~/context/theme-provider";
 import { useSelector } from "react-redux";
 import { RootState } from "~/redux-store/store";
+import { PiNotebookFill } from "react-icons/pi";
+import { GiNotebook } from "react-icons/gi";
+import { BsChatRightText } from "react-icons/bs";
 
 const Lecture = () => {
   const { theme } = useTheme();
@@ -28,6 +32,8 @@ const Lecture = () => {
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [Moduleloading, setModuleLoading] = useState(false);
+  const [noteHovered, setNoteHovered] = useState(false);
+  const [supportHovered, setSupportHovered] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   // const [completedLessons] = useState<Set<number>>(new Set());
   const [lessonStarted, setLessonStarted] = useState(false);
@@ -117,7 +123,7 @@ const Lecture = () => {
             },
             {
               title: "Recommended reading",
-              content: module.module_objectives || "",
+              content: module.module_reading || "",
             },
           ],
         });
@@ -194,7 +200,7 @@ const Lecture = () => {
     <DashboardArea>
       {!lessonStarted ? (
         <>
-          <div className="w-full p-4 lg:p-20 shadow-lg overflow-y-auto mt-6 border border-[#B3B3B3]">
+          <div className="w-full p-4 lg:p-20 shadow-lg h-auto lg:h-[579px] overflow-y-auto mt-6 border border-[#B3B3B3]">
             {Moduleloading ? (
               <div
                 className={cn(
@@ -205,7 +211,7 @@ const Lecture = () => {
                 <LoadingSpinner />
               </div>
             ) : (
-              <>
+              <div className=" ">
                 <h2
                   className={cn(
                     "font-DMSans mb-10 font-bold text-2xl lg:text-4xl",
@@ -225,7 +231,7 @@ const Lecture = () => {
                     </p>
                   </div>
                 ))}
-              </>
+              </div>
             )}
           </div>
           <div className="flex justify-between items-center py-2 border-b-[2px] border-[#ddd] mb-2">
@@ -233,16 +239,16 @@ const Lecture = () => {
               Module {moduleDetails.module_number}: {moduleDetails.module_title}
             </h2>
             <div className="flex justify-end items-center gap-4">
-              <button>
+              {/* <button>
                 <HiOutlineHandThumbUp className="hover:text-[#FF1515] text-[22px]" />
               </button>
               <button>
                 <HiOutlineHandThumbDown className="hover:text-[#FF1515] text-[22px]" />
-              </button>
+              </button> */}
               <div className="dropdown dropdown-end">
-                <div tabIndex={0} role="button" className="btn m-1">
+                {/* <div tabIndex={0} role="button" className="btn m-1">
                   <HiDotsHorizontal className="text-[#1B1919] text-[22px]" />
-                </div>
+                </div> */}
                 <ul
                   tabIndex={0}
                   className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
@@ -265,19 +271,9 @@ const Lecture = () => {
           </div>
 
           <div className="flex justify-between flex-row flex-wrap items-center">
-            <button
-              onClick={handlePreviousLesson}
-              disabled={currentLessonIndex === 0}
-              className={`rounded-md flex justify-center gap-4 lg:gap-8 items-center p-2 ${
-                currentLessonIndex === 0 ? "bg-gray-400" : "bg-[#656565]"
-              }`}
-            >
-              <GrLinkPrevious className="text-[14px] lg:text-[20px] font-DMSans font-semibold text-[#fff]" />
-              <p className="text-[14px] lg:text-[20px] font-DMSans font-semibold text-[#fff]">
-                PREVIOUS
-              </p>
-            </button>
-            <div>0 of {totalLessons}</div>
+            <p className="text-[14px] lg:text-[20px] font-DMSans font-semibold text-left">
+              0 of {totalLessons}
+            </p>
             <button
               onClick={handleStartLesson}
               className="bg-[#FF1515] rounded-md flex justify-center gap-4 lg:gap-8 items-center p-2"
@@ -293,7 +289,7 @@ const Lecture = () => {
         <div>
           {lessonMedia.length > 0 && currentLesson && (
             <>
-              <div className="mb-8">
+              <div className="mb-4">
                 {currentLesson.media.map((media, idx) => {
                   if (idx !== currentMediaIndex) return null;
 
@@ -353,13 +349,60 @@ const Lecture = () => {
                 <h2 className="text-[18px] font-DMSans font-semibold text-left">
                   {`${currentLesson.number}. ${currentLesson.title}`}
                 </h2>
-                <div className="flex justify-end items-center gap-4">
-                  <button>
-                    <HiOutlineHandThumbUp className="hover:text-[#FF1515] text-[22px]" />
-                  </button>
-                  <button>
-                    <HiOutlineHandThumbDown className="hover:text-[#FF1515] text-[22px]" />
-                  </button>
+                <div className="flex  justify-end items-center gap-4">
+                  <div className="relative">
+                    <button
+                      onMouseEnter={() => setNoteHovered(true)}
+                      onMouseLeave={() => setNoteHovered(false)}
+                      className="p-3 flex justify-center items-center rounded-full "
+                    >
+                      <GiNotebook
+                        className={cn(
+                          "hover:text-[#FF1515] text-[36px]",
+                          theme === "dark" ? "text-[#fff]" : "text-[#333]"
+                        )}
+                      />
+                    </button>
+
+                    {/* Tooltip */}
+                    {noteHovered && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        className="absolute -bottom-16 transform -translate-x-1/2 bg-gray-800 text-white text-sm px-3 py-1 rounded-md shadow-md"
+                      >
+                        <p className="text-[14px] font-DMSans font-normal text-left">
+                          Take a note
+                        </p>
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* Support Button */}
+                  <div className="relative">
+                    <button
+                      onMouseEnter={() => setSupportHovered(true)}
+                      onMouseLeave={() => setSupportHovered(false)}
+                      className="p-3 flex justify-center items-center rounded-full bg-[#FF1515]"
+                    >
+                      <BsChatRightText className="text-[25px] text-[#fff]" />
+                    </button>
+
+                    {/* Tooltip */}
+                    {supportHovered && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        className="absolute -bottom-10 transform -translate-x-1/2 bg-gray-800 text-white text-sm px-3 py-1 rounded-md shadow-md"
+                      >
+                        <p className="text-[14px] font-DMSans font-normal text-left">
+                          Support
+                        </p>
+                      </motion.div>
+                    )}
+                  </div>
                   <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn m-1">
                       <HiDotsHorizontal className="text-[#1B1919] text-[22px]" />

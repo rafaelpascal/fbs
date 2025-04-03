@@ -9,6 +9,10 @@ import ActionMenu from "~/components/table/ActionMenu";
 import { useEffect, useState } from "react";
 import { ContactModal } from "~/components/Modal/ContactModal";
 import { useFetchApplication } from "~/api/course/hooks";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
+import { cn } from "~/utils/helpers";
+import { useTheme } from "~/context/theme-provider";
+import FilterDropdown from "~/components/table/filterOptions";
 
 interface MerchantTableRow {
   applicationid: string;
@@ -24,49 +28,30 @@ interface MerchantTableRow {
   application_status: number;
 }
 
+const application_status = [
+  { value: "", label: "All" },
+  { value: 2, label: "Accepted" },
+  { value: 0, label: "Rejected" },
+  { value: 1, label: "Pending" },
+];
 const ApplicationTable = () => {
+  const { theme } = useTheme();
   const [isContact, setIscontact] = useState({
     status: false,
     id: 0,
   });
-  const { data } = useFetchApplication();
+  const { data, isLoading: applicationLoading } = useFetchApplication();
   const navigate = useNavigate();
-  const [applicationData, setapplicationData] = useState([]);
-  // const [filters, setFilters] = useState({
-  //   dateFrom: "",
-  //   dateTo: "",
-  //   status: "",
-  // });
+  const [applicationData, setapplicationData] = useState<MerchantTableRow[]>(
+    []
+  );
+  const [filter, setFilter] = useState("");
 
-  // const handleStatusChange = useCallback(
-  //   (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-  //     setFilters((prev) => ({
-  //       ...prev,
-  //       status: event.target.value,
-  //     }));
-  //   },
-  //   []
-  // );
-
-  // handleToggleAction
-  // const handleFilterChange = useCallback(
-  //   (filter: { dateFrom?: string; dateTo?: string; status?: string }) => {
-  //     setFilters((prev) => ({
-  //       ...prev,
-  //       ...filter,
-  //     }));
-  //   },
-  //   []
-  // );
-
-  // // handle Date Change
-  // const handleDateChange = useCallback(
-  //   (dateFrom: string, dateTo: string) => {
-  //     handleFilterChange({ dateFrom, dateTo });
-  //   },
-  //   [handleFilterChange]
-  // );
-
+  const filteredData = filter
+    ? applicationData.filter(
+        (item) => item.application_status === Number(filter)
+      )
+    : applicationData;
   useEffect(() => {
     if (data) {
       setapplicationData(data?.data);
@@ -196,16 +181,35 @@ const ApplicationTable = () => {
   };
 
   return (
-    <div className="w-full pb-4 flex justify-center items-center bg-[#fff]">
-      <div className="w-[99%]">
-        <InDataTable<MerchantTableRow>
-          columns={columns}
-          data={applicationData}
-          paginatable={false}
-          searchable={false}
-          // pagination={false}
-        />
-      </div>
+    <div
+      className={cn(
+        "w-full pb-4 flex justify-center items-center",
+        theme === "dark" ? "bg-[#333] border border-[#ddd]" : "bg-[#fff]"
+      )}
+    >
+      {applicationLoading ? (
+        <div className=" w-full h-[300px] flex justify-center items-center">
+          <LoadingSpinner />
+        </div>
+      ) : (
+        <div className="w-[99%]">
+          <InDataTable<MerchantTableRow>
+            columns={columns}
+            data={filteredData}
+            paginatable={false}
+            searchable
+            title="Student Application"
+            isFilterable
+            // pagination={false}
+          >
+            <FilterDropdown
+              filter={filter}
+              setFilter={setFilter}
+              options={application_status}
+            />
+          </InDataTable>
+        </div>
+      )}
       <ContactModal
         isOpen={isContact.status}
         id={isContact.id}

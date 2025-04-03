@@ -11,6 +11,7 @@ import { fetchlistUsers } from "~/api/course/hooks";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import { NewAdminModal } from "~/components/Modal/NewAdminModal";
 import { showAlert } from "~/utils/sweetAlert";
+import FilterDropdown from "~/components/table/filterOptions";
 // import { ContactModal } from "~/components/Modal/ContactModal";
 
 interface MerchantTableRow {
@@ -27,6 +28,12 @@ interface MerchantTableRow {
   user_role: number;
 }
 
+const filterOptions = [
+  { value: "", label: "All" },
+  { value: 1, label: "Admin" },
+  { value: 0, label: "User" },
+];
+
 const AccountTable = ({ created }: { created: boolean }) => {
   const { theme } = useTheme();
   const [, setIscontact] = useState(false);
@@ -35,7 +42,12 @@ const AccountTable = ({ created }: { created: boolean }) => {
   const [adminId, setAdminId] = useState(0);
   //   const { success, error } = useToast();
   const { data, refetch } = fetchlistUsers();
-  const [couseData, setCourseData] = useState(courseData);
+  const [couseData, setCourseData] = useState<MerchantTableRow[]>(courseData);
+  const [filter, setFilter] = useState("");
+
+  const filteredData = filter
+    ? couseData.filter((item) => item.user_role === Number(filter))
+    : couseData;
 
   useEffect(() => {
     if (data) {
@@ -158,8 +170,8 @@ const AccountTable = ({ created }: { created: boolean }) => {
   return (
     <div
       className={cn(
-        "w-full pb-4 flex justify-center items-center",
-        theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
+        "w-full pb-4 flex justify-center mt-10 py-4 shadow-lg rounded-md items-center",
+        theme === "dark" ? "bg-[#333] border border-[#ddd]" : "bg-[#fff]"
       )}
     >
       {!data ? (
@@ -169,12 +181,20 @@ const AccountTable = ({ created }: { created: boolean }) => {
       ) : (
         <div className="w-[99%]">
           <InDataTable<MerchantTableRow>
+            title="Admins"
             columns={columns}
-            data={couseData}
+            data={filteredData}
             paginatable
-            searchable={false}
+            isFilterable
+            searchable
             // pagination
-          />
+          >
+            <FilterDropdown
+              filter={filter}
+              setFilter={setFilter}
+              options={filterOptions}
+            />
+          </InDataTable>
         </div>
       )}
       <NewAdminModal

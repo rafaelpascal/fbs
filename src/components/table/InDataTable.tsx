@@ -118,7 +118,7 @@ const InDataTable = <T extends object>({
     <div className="z-10">
       <div className="relative flex justify-between gap-2 pr-2 mb-3">
         {title && (
-          <h2 className="text-[16px] w-full mx-4 text-[#4F4F4F] font-CircularStd font-bold">
+          <h2 className="text-[16px] w-full mx-4 font-DMSans font-bold">
             {title}
           </h2>
         )}
@@ -140,7 +140,7 @@ const InDataTable = <T extends object>({
                 {isSearchingActive && (
                   <button
                     type="submit"
-                    className="bg-[#03435F] h-full w-[35px] flex justify-center items-center rounded-e-md"
+                    className="bg-[#FF3B30] h-full w-[35px] flex justify-center items-center rounded-e-md"
                   >
                     <TbSearch className="text-[#fff] text-[20px]" />
                   </button>
@@ -180,7 +180,7 @@ const InDataTable = <T extends object>({
 
                 <button
                   onClick={applyFilters}
-                  className="w-[98px] h-[33px] rounded-[4px] bg-[#03435F]"
+                  className="w-[98px] h-[33px] rounded-[4px] bg-[#FF3B30]"
                 >
                   <p className="text-[#fff] text-[12px] font-semibold font-DMSans">
                     Apply Filters

@@ -98,7 +98,8 @@ const Accordion: React.FC<AccordionProps> = ({
         <AccordionItem
           key={index}
           lessons={lessonsCount[item.moduleId] || 0}
-          title={`${item.title} (${lessonsCount[item.moduleId] || 0} Lessons)`}
+          // title={`${item.title} (${lessonsCount[item.moduleId] || 0} Lessons)`}
+          title={`${item.title}`}
           name={accordionName}
           defaultOpen={item.defaultOpen}
         >

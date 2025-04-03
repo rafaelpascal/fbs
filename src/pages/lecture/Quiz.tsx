@@ -38,7 +38,7 @@ const Quiz = () => {
   // const navigate = useNavigate();
   const { quizId } = useParams<{ quizId: string }>();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [quizLoading, setQuizLoading] = useState(false);
+  const [quizLoading, setQuizLoading] = useState(true);
   const [questionId, setquestionId] = useState("");
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const { theme } = useTheme();
@@ -80,9 +80,7 @@ const Quiz = () => {
   useEffect(() => {
     startCountdown();
     if (minutes === 0 && seconds === 0) {
-      setActiveIndex((prev) =>
-        prev < module1quiz.length - 1 ? prev + 1 : prev
-      );
+      setActiveIndex(0);
       resetCountdown();
     }
   }, [minutes, questionlength, seconds, resetCountdown, module1quiz.length]);
@@ -105,7 +103,7 @@ const Quiz = () => {
   }, [quizId]);
 
   const fetQuizQuestions = async () => {
-    setQuizLoading(true);
+    // setQuizLoading(true);
     try {
       const payload = {
         quiz_id: newQuizId,
@@ -122,6 +120,7 @@ const Quiz = () => {
 
   useEffect(() => {
     if (newQuizId) {
+      resetCountdown();
       fetQuizQuestions();
     }
   }, [newQuizId]);
@@ -146,6 +145,13 @@ const Quiz = () => {
       console.log(error);
     }
   }, [lessonId, courseId, Storeduser, quizId]);
+
+  const handleNextQuestion = () => {
+    resetCountdown();
+    if (activeIndex < module1quiz.length - 1) {
+      setActiveIndex(activeIndex + 1);
+    }
+  };
 
   if (quizLoading) {
     return (
@@ -195,7 +201,7 @@ const Quiz = () => {
                     Select one:
                   </h2>
                   {quiz.answers.map((answer, index) => (
-                    <div key={index} className="mt-3 form-control">
+                    <div key={index} className="mt-3 h-[70px] form-control">
                       <label className="label flex justify-start items-center gap-3 cursor-pointer">
                         <input
                           type="radio"
@@ -234,18 +240,25 @@ const Quiz = () => {
             ))}
           </Carousel>
           <div className="flex justify-between items-center">
-            <button className="w-[160px] bg-[#656565] rounded-md flex justify-center gap-8 items-center p-2">
+            <button
+              className="w-[160px] bg-[#656565] rounded-md flex justify-center gap-8 items-center p-2"
+              onClick={() => setActiveIndex((prev) => Math.max(0, prev - 1))}
+            >
               <GrLinkPrevious className="text-[20px] font-DMSans font-semibold text-[#fff]" />
               <p className="text-[20px] font-DMSans font-semibold text-[#fff]">
-                PREVIOUS{" "}
+                Skip Quiz
               </p>
             </button>
             <button
-              onClick={handleSubmitAnswer}
+              onClick={
+                activeIndex === module1quiz.length - 1
+                  ? handleSubmitAnswer
+                  : handleNextQuestion
+              }
               className="w-[160px] bg-[#FF1515] rounded-md p-2"
             >
               <p className="text-[20px] font-DMSans font-semibold text-[#fff]">
-                SUBMIT
+                {activeIndex === module1quiz.length - 1 ? "SUBMIT" : "NEXT"}
               </p>
             </button>
           </div>

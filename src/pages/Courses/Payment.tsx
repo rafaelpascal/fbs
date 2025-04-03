@@ -100,16 +100,16 @@ const Payment = () => {
           setApplicationData(application);
           const updatedProgramSpecifications = [
             {
-              title: "Format",
+              title: "Format:",
               duration: application.course_mode || "N/A",
             },
             {
-              title: "Course Starting",
+              title: "Course Starting:",
               duration:
                 moment(application.start_date).format("DD MMM YYYY") || "N/A",
             },
             {
-              title: "Cohort",
+              title: "Cohort:",
               duration: "N/A",
             },
             {
@@ -119,12 +119,12 @@ const Payment = () => {
                 : "N/A",
             },
             {
-              title: "Course Ending",
+              title: "Course Ending:",
               duration:
                 moment(application.end_date).format("DD MMM YYYY") || "N/A",
             },
             {
-              title: "Duration",
+              title: "Duration:",
               duration: application.duration
                 ? `${application.duration} week(s)`
                 : "N/A",
@@ -209,15 +209,14 @@ const Payment = () => {
                   {programSpecifications.map((specifications, index) => (
                     <div
                       key={index}
-                      className="mx-2 flex flex-row flex-wrap justify-start items-center"
+                      className="mx-2 flex gap-2 flex-row flex-wrap justify-start items-center"
                     >
-                      <p className="text-[18px] font-semibold font-DMSans">
+                      <span className="text-[18px] font-semibold font-DMSans">
                         {specifications.title}
-                      </p>
-                      {" : "}
-                      <p className="text-[18px] capitalize font-normal font-DMSans">
+                      </span>
+                      <span className="text-[18px] capitalize font-normal font-DMSans">
                         {specifications.duration}
-                      </p>
+                      </span>
                     </div>
                   ))}
                 </div>

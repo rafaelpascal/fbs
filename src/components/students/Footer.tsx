@@ -33,7 +33,7 @@ const FooterItems = [
   },
   {
     title: "Expert faculty and thought leaders",
-    text: "Learn from the best in the business. Our distinguished faculty and guest speakers are leaders in their respective fields, bringing real-world insights and practical ideas to the classroom. See our faculty (https://fordaxbschool.com/our-faculty)",
+    text: "Learn from the best in the business. Our distinguished faculty and guest speakers are leaders in their respective fields, bringing real-world insights and practical ideas to the classroom.",
     icon: graduation,
   },
   {

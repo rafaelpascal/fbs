@@ -22,15 +22,15 @@ const Events = lazyLoad(() => import("~/pages/Home/Events.tsx"));
 const SingleEvent = lazyLoad(() => import("~/pages/Home/SingleEvent.tsx"));
 const AdminAppLayout = lazyLoad(() => import("~/layouts/AdminLayout.tsx"));
 const Dashboard = lazyLoad(() => import("~/pages/Admin/Dashboard.tsx"));
-const FacultiesTable = lazyLoad(
-  () => import("~/pages/Admin/Tables/FacultiesTable.tsx")
-);
+// const FacultiesTable = lazyLoad(
+//   () => import("~/pages/Admin/Tables/FacultiesTable.tsx")
+// );
 const ApplicationTable = lazyLoad(
   () => import("~/pages/Admin/Tables/ApplicationTable.tsx")
 );
-const PaymentsTable = lazyLoad(
-  () => import("~/pages/Admin/Tables/PaymentsTable.tsx")
-);
+// const PaymentsTable = lazyLoad(
+//   () => import("~/pages/Admin/Tables/PaymentsTable.tsx")
+// );
 const CourseApplications = lazyLoad(
   () => import("~/pages/Admin/Students/CourseApplications.tsx")
 );
@@ -84,6 +84,7 @@ import Exam from "~/pages/lecture/Exam.tsx";
 import NewAssignment from "~/pages/lecture/NewAssignment.tsx";
 import Polls from "~/pages/lecture/Poll.tsx";
 import AdminEvents from "~/pages/Admin/Events/AdminEvents.tsx";
+import AdmissionPage from "~/pages/Admin/Admission/Admission.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
@@ -151,24 +152,24 @@ const router = createBrowserRouter(
             {
               path: ROUTES.ADMINDASHBOARD,
               element: <Dashboard />,
-              children: [
-                {
-                  index: true,
-                  element: <Navigate to={ROUTES.APPLICATIONTABLE} />,
-                },
-                {
-                  path: ROUTES.PAYMENTTABLE,
-                  element: <PaymentsTable />,
-                },
-                {
-                  path: ROUTES.APPLICATIONTABLE,
-                  element: <ApplicationTable />,
-                },
-                {
-                  path: ROUTES.FACULTYTABLE,
-                  element: <FacultiesTable />,
-                },
-              ],
+              // children: [
+              //   // {
+              //   //   index: true,
+              //   //   element: <Navigate to={ROUTES.APPLICATIONTABLE} />,
+              //   // },
+              //   {
+              //     path: ROUTES.PAYMENTTABLE,
+              //     element: <PaymentsTable />,
+              //   },
+              //   {
+              //     path: ROUTES.APPLICATIONTABLE,
+              //     element: <ApplicationTable />,
+              //   },
+              //   {
+              //     path: ROUTES.FACULTYTABLE,
+              //     element: <FacultiesTable />,
+              //   },
+              // ],
             },
             {
               path: ROUTES.STUDENTSMANAGEMENT,
@@ -199,6 +200,28 @@ const router = createBrowserRouter(
             {
               path: ROUTES.COURSEAPPLICATION,
               element: <CourseApplications />,
+            },
+            {
+              path: ROUTES.ADMISSIONPAGE,
+              element: <AdmissionPage />,
+              children: [
+                {
+                  index: true,
+                  element: <Navigate to={ROUTES.APPLICATIONTABLE} />,
+                },
+                // {
+                //   path: ROUTES.PAYMENTTABLE,
+                //   element: <PaymentsTable />,
+                // },
+                {
+                  path: ROUTES.APPLICATIONTABLE,
+                  element: <ApplicationTable />,
+                },
+                // {
+                //   path: ROUTES.FACULTYTABLE,
+                //   element: <FacultiesTable />,
+                // },
+              ],
             },
             {
               path: ROUTES.EDITCOURSES,

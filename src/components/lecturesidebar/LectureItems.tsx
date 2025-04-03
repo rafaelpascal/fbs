@@ -14,7 +14,7 @@ export interface SideNavProps {
   text: string;
   dropdown?: boolean;
   children?: SideNavProps[];
-  href: string;
+  href?: string;
   textStyles?: string;
   className?: ClassName | string;
   permission?: string;
@@ -113,7 +113,7 @@ export const LectureItems = (props: SideNavProps) => {
                     className="pl-10 bg-inherit m-0 w-full text-[12px] border-[#fff] font-bold font-DMSans text-left"
                   >
                     <NavLink
-                      to={child.href}
+                      to={child.href ?? ""}
                       onClick={() => setIsClicked(false)}
                       className="hover:bg-[#FF3B30]/10 hover:border-[0.5px] hover:border-[#FF3B30] flex justify-start w-full items-center text-left py-1 px-4 rounded-md"
                     >
@@ -132,7 +132,7 @@ export const LectureItems = (props: SideNavProps) => {
         </div>
       ) : (
         <NavLink
-          to={href}
+          to={href ?? ""}
           className="bg-[#FF3B30]/10 text-left w-full h-[60px] px-4 rounded-md"
         >
           <div className="w-full flex justify-start items-center gap-4">

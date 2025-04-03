@@ -145,7 +145,9 @@ const CapstonesTable = () => {
           columns={columns}
           data={paymentData}
           paginatable={false}
-          searchable={false}
+          isFilterable
+          searchable
+
           // pagination={false}
         />
       </div>

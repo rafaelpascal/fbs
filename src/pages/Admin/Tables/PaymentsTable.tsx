@@ -9,6 +9,8 @@ import { statColorCode } from "~/utils/helpers";
 // import TableFilter from "~/components/table/TableFilter";
 import InDataTable from "~/components/table/InDataTable";
 import { paymentData } from "~/components/constants/data";
+import FilterDropdown from "~/components/table/filterOptions";
+import { useState } from "react";
 
 interface MerchantTableRow {
   id: string;
@@ -22,42 +24,15 @@ interface MerchantTableRow {
   status: string;
 }
 
+const payment_status = [
+  { value: "", label: "All" },
+  { value: 2, label: "Accepted" },
+  { value: 0, label: "Rejected" },
+  { value: 1, label: "Pending" },
+];
+
 const PaymentsTable = () => {
-  // const navigate = useNavigate();
-  // const [filters, setFilters] = useState({
-  //   dateFrom: "",
-  //   dateTo: "",
-  //   status: "",
-  // });
-
-  // const handleStatusChange = useCallback(
-  //   (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
-  //     setFilters((prev) => ({
-  //       ...prev,
-  //       status: event.target.value,
-  //     }));
-  //   },
-  //   []
-  // );
-
-  // handleToggleAction
-  // const handleFilterChange = useCallback(
-  //   (filter: { dateFrom?: string; dateTo?: string; status?: string }) => {
-  //     setFilters((prev) => ({
-  //       ...prev,
-  //       ...filter,
-  //     }));
-  //   },
-  //   []
-  // );
-
-  // // handle Date Change
-  // const handleDateChange = useCallback(
-  //   (dateFrom: string, dateTo: string) => {
-  //     handleFilterChange({ dateFrom, dateTo });
-  //   },
-  //   [handleFilterChange]
-  // );
+  const [filter, setFilter] = useState("");
 
   //   Merchant Table
   const columns: TableColumn<MerchantTableRow>[] = [
@@ -130,9 +105,17 @@ const PaymentsTable = () => {
           columns={columns}
           data={paymentData}
           paginatable={false}
-          searchable={false}
+          searchable
+          title="Student Payment"
+          isFilterable
           // pagination={false}
-        />
+        >
+          <FilterDropdown
+            filter={filter}
+            setFilter={setFilter}
+            options={payment_status}
+          />
+        </InDataTable>
       </div>
     </div>
   );

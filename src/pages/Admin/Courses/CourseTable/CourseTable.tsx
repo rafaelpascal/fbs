@@ -192,8 +192,8 @@ const CourseTable = () => {
   return (
     <div
       className={cn(
-        "w-full pb-4 flex justify-center items-center",
-        theme === "dark" ? "bg-[#333]" : "bg-[#fff]"
+        "w-full pb-4 flex mt-10 py-4 shadow-lg rounded-md justify-center items-center",
+        theme === "dark" ? "bg-[#333] border border-[#ddd]" : "bg-[#fff]"
       )}
     >
       {!data ? (
@@ -206,7 +206,9 @@ const CourseTable = () => {
             columns={columns}
             data={couseData}
             paginatable
-            searchable={false}
+            // isFilterable
+            searchable
+            title="All Courses"
             // pagination
           />
         </div>
