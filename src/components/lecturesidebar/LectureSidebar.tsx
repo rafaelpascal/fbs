@@ -23,6 +23,7 @@ import { useSelector } from "react-redux";
 import { resetModuleId } from "../../redux-store/slice/module.slice";
 import { Button } from "../buttons/BaseButton";
 import { HiClipboardDocumentList } from "react-icons/hi2";
+import { AuthService } from "~/api/auth";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -68,6 +69,7 @@ export const LectureSidebar = () => {
   const [lessonIds, setLessonIds] = useState<string[]>([]);
   const lessonId = useSelector((state: RootState) => state.lesson.lessonId);
   const storedModuleId = localStorage.getItem("moduleId");
+  const Storeduser = AuthService.getSession();
 
   const getCourseWeekInfo = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
@@ -104,9 +106,11 @@ export const LectureSidebar = () => {
     setLoading(true);
     try {
       const payload = {
-        module_id: storedModuleId,
+        user_id: Number(Storeduser?.user),
+        module_id: Number(storedModuleId),
       };
-      const res = await CourseServices.getModulebyId(payload);
+      // const res = await CourseServices.getModulebyId(payload);
+      const res = await CourseServices.startCourse(payload);
       // setLectureTitles(res.data.course_lessons);
       if (res.data?.modules?.length > 0) {
         setModuleTitle(res.data.modules[0].module_title ?? "Unknown Module");

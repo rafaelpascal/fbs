@@ -6,9 +6,13 @@ import { BiTrash } from "react-icons/bi";
 
 interface MediaUploadProps {
   onMediaUpload: (file: File | null) => void;
+  acceptedTypes?: string;
 }
 
-const MediaUpload: React.FC<MediaUploadProps> = ({ onMediaUpload }) => {
+const MediaUpload: React.FC<MediaUploadProps> = ({
+  onMediaUpload,
+  acceptedTypes,
+}) => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string>("");
@@ -53,7 +57,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onMediaUpload }) => {
       <input
         id="fileInput"
         type="file"
-        accept="video/mp4,audio/mpeg,audio/wav"
+        accept={acceptedTypes || "video/mp4,audio/mpeg,audio/wav"}
         onChange={handleFileChange}
         className="hidden w-full"
       />

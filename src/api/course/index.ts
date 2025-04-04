@@ -341,6 +341,17 @@ export class CourseServices extends BaseAPIService {
       throw handleError;
     }
   };
+
+  static startCourse = async (payload: any) => {
+    try {
+      const res = await Api.post("/lesson/start-course", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static getUserbyId = async (payload: any) => {
     try {
       const res = await Api.post("/user/edit-users", payload);

@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
 import { useEffect, useState } from "react";
 import { CourseServices } from "~/api/course";
-import { HiOutlineHandThumbDown, HiOutlineHandThumbUp } from "react-icons/hi2";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { Markcomplete } from "~/components/Modal/Markcomplete";
@@ -19,9 +18,10 @@ import { cn } from "~/utils/helpers";
 import { useTheme } from "~/context/theme-provider";
 import { useSelector } from "react-redux";
 import { RootState } from "~/redux-store/store";
-import { PiNotebookFill } from "react-icons/pi";
 import { GiNotebook } from "react-icons/gi";
 import { BsChatRightText } from "react-icons/bs";
+import { SupportModal } from "~/components/Modal/SupportModal";
+import { getSlideAnimation } from "~/lib/utils";
 
 const Lecture = () => {
   const { theme } = useTheme();
@@ -35,8 +35,10 @@ const Lecture = () => {
   const [noteHovered, setNoteHovered] = useState(false);
   const [supportHovered, setSupportHovered] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [supportOpen, setSupportOpen] = useState(false);
   // const [completedLessons] = useState<Set<number>>(new Set());
   const [lessonStarted, setLessonStarted] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [currentLessonId, setCurrentLessonId] = useState<number | null>(null);
   const totalLessons = useSelector(
     (state: RootState) => state.lesson.totalLessons
@@ -196,6 +198,15 @@ const Lecture = () => {
     setLessonStarted(true);
   };
 
+  const handleMinimize = () => {
+    setSupportOpen(false);
+    setIsMinimized(true);
+  };
+  const handleClose = () => {
+    setSupportOpen(false);
+    setIsMinimized(false);
+  };
+
   return (
     <DashboardArea>
       {!lessonStarted ? (
@@ -239,16 +250,7 @@ const Lecture = () => {
               Module {moduleDetails.module_number}: {moduleDetails.module_title}
             </h2>
             <div className="flex justify-end items-center gap-4">
-              {/* <button>
-                <HiOutlineHandThumbUp className="hover:text-[#FF1515] text-[22px]" />
-              </button>
-              <button>
-                <HiOutlineHandThumbDown className="hover:text-[#FF1515] text-[22px]" />
-              </button> */}
               <div className="dropdown dropdown-end">
-                {/* <div tabIndex={0} role="button" className="btn m-1">
-                  <HiDotsHorizontal className="text-[#1B1919] text-[22px]" />
-                </div> */}
                 <ul
                   tabIndex={0}
                   className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
@@ -286,7 +288,7 @@ const Lecture = () => {
           </div>
         </>
       ) : (
-        <div>
+        <div className="relative">
           {lessonMedia.length > 0 && currentLesson && (
             <>
               <div className="mb-4">
@@ -380,29 +382,32 @@ const Lecture = () => {
                   </div>
 
                   {/* Support Button */}
-                  <div className="relative">
-                    <button
-                      onMouseEnter={() => setSupportHovered(true)}
-                      onMouseLeave={() => setSupportHovered(false)}
-                      className="p-3 flex justify-center items-center rounded-full bg-[#FF1515]"
-                    >
-                      <BsChatRightText className="text-[25px] text-[#fff]" />
-                    </button>
-
-                    {/* Tooltip */}
-                    {supportHovered && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 5 }}
-                        className="absolute -bottom-10 transform -translate-x-1/2 bg-gray-800 text-white text-sm px-3 py-1 rounded-md shadow-md"
+                  {!isMinimized && (
+                    <div className="relative">
+                      <button
+                        onClick={() => setSupportOpen(true)}
+                        onMouseEnter={() => setSupportHovered(true)}
+                        onMouseLeave={() => setSupportHovered(false)}
+                        className="p-3 flex justify-center items-center rounded-full bg-[#FF1515]"
                       >
-                        <p className="text-[14px] font-DMSans font-normal text-left">
-                          Support
-                        </p>
-                      </motion.div>
-                    )}
-                  </div>
+                        <BsChatRightText className="text-[25px] text-[#fff]" />
+                      </button>
+
+                      {/* Tooltip */}
+                      {supportHovered && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 5 }}
+                          className="absolute -bottom-10 transform -translate-x-1/2 bg-gray-800 text-white text-sm px-3 py-1 rounded-md shadow-md"
+                        >
+                          <p className="text-[14px] font-DMSans font-normal text-left">
+                            Support
+                          </p>
+                        </motion.div>
+                      )}
+                    </div>
+                  )}
                   <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn m-1">
                       <HiDotsHorizontal className="text-[#1B1919] text-[22px]" />
@@ -465,15 +470,22 @@ const Lecture = () => {
                   </button>
                 )}
               </div>
-
-              {/* <div className="flex justify-center mt-6">
-                {completedLessons.has(currentLesson.lessonId) && (
-                  <p className="text-green-500 font-semibold">
-                    Lesson Completed
-                  </p>
-                )}
-              </div> */}
             </>
+          )}
+
+          {isMinimized && (
+            <motion.div
+              {...getSlideAnimation({ slideDirection: "top" })}
+              transition={{ duration: 0.5 }}
+              className="fixed bottom-10 right-10"
+            >
+              <button
+                onClick={() => setSupportOpen(true)}
+                className="p-3 flex justify-center items-center rounded-full bg-[#FF1515]"
+              >
+                <BsChatRightText className="text-[25px] text-[#fff]" />
+              </button>
+            </motion.div>
           )}
         </div>
       )}
@@ -486,6 +498,11 @@ const Lecture = () => {
           markLessonComplete(currentLessonId);
           setMarkComplete(false);
         }}
+      />
+      <SupportModal
+        isOpen={supportOpen}
+        closeModal={handleClose}
+        minimized={handleMinimize}
       />
     </DashboardArea>
   );

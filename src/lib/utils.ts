@@ -31,3 +31,37 @@ export const getMonthsBetweenDates = (start: string, end: string): number => {
 
   return yearDiff * 12 + monthDiff + 1; // +1 to include the starting month
 };
+
+export const getSlideAnimation = ({
+  slideDirection,
+}: {
+  slideDirection: string;
+}) => {
+  switch (slideDirection) {
+    case "bottom":
+      return {
+        initial: { y: 100, opacity: 0 },
+        animate: { y: 0, opacity: 1 },
+        exit: { y: 100, opacity: 0 },
+      };
+    case "left":
+      return {
+        initial: { x: -100, opacity: 0 },
+        animate: { x: 0, opacity: 1 },
+        exit: { x: -100, opacity: 0 },
+      };
+    case "right":
+      return {
+        initial: { x: 100, opacity: 0 },
+        animate: { x: 0, opacity: 1 },
+        exit: { x: 100, opacity: 0 },
+      };
+    case "top":
+    default:
+      return {
+        initial: { y: -20, opacity: 0 },
+        animate: { y: 0, opacity: 1 },
+        exit: { y: -20, opacity: 0 },
+      };
+  }
+};
