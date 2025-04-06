@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { CiCalendar } from "react-icons/ci";
+import { FaArrowLeftLong } from "react-icons/fa6";
 import { TbDeviceTabletSearch } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -160,17 +161,32 @@ const CourseApplications = () => {
     });
     success("Application accepted!");
     setTimeout(() => {
-      navigate(`/admin/dashboard/application`);
+      navigate(`/admin/admission/application`);
     }, 2000);
+  };
+
+  const handleGoback = () => {
+    navigate(`/admin/admission/application`);
   };
 
   return (
     <DashboardArea>
       <ToastContainer />
       <div className="flex justify-between items-center">
-        <h2 className="font-DMSans font-semibold text-[18px]">
-          STUDENT APPLICATION REVIEW
-        </h2>
+        <div className="flex flex-col lg:flex-row justify-start items-start lg:items-center gap-2">
+          <button
+            onClick={handleGoback}
+            className="flex justify-between items-center gap-2 p-2 rounded-md bg-[#F01E00]"
+          >
+            <FaArrowLeftLong className="size-4 text-white" />
+            <p className="font-DMSans font-normal text-[16px] text-white">
+              Back
+            </p>
+          </button>
+          <h2 className="font-DMSans font-semibold text-[18px]">
+            STUDENT APPLICATION REVIEW
+          </h2>
+        </div>
         {applicationStatus === 2 && (
           <div>
             <h2 className="font-DMSans font-semibold text-[18px] text-green-500">
@@ -195,7 +211,7 @@ const CourseApplications = () => {
       </div>
       <div
         className={cn(
-          "p-8 border-[0.5px] border-[#ddd] h-[650px] mt-4 scrollbar-style overflow-y-auto shadow-lg rounded-md",
+          "p-4 lg:p-8 border-[0.5px] border-[#ddd] h-[650px] mt-4 scrollbar-style overflow-y-auto shadow-lg rounded-md",
           theme === "dark" ? "bg-[#333]" : "bg-[#e5e5e5]"
         )}
       >
@@ -204,7 +220,7 @@ const CourseApplications = () => {
             <LoadingSpinner />
           </div>
         ) : (
-          <div className="w-full grid grid-cols-2 gap-4">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4">
             {application.map((app, index) => (
               <div key={index} className="w-full">
                 <h2 className="font-DMSans text-[21px] font-semibold text-left">

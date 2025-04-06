@@ -40,6 +40,18 @@ const ExamQuestions = [
     type: "document",
     number: "2",
   },
+  {
+    question:
+      "Choose a real-world business situation and analyze it using business concepts and theories. You could focus on a specific problem, decision, or strategy.",
+    type: "text",
+    number: "3",
+  },
+  {
+    question:
+      "Choose a real-world business situation and analyze it using business concepts and theories. You could focus on a specific problem, decision, or strategy.",
+    type: "document",
+    number: "4",
+  },
 ];
 
 interface FormData {
@@ -50,7 +62,9 @@ const Exam = () => {
   const { theme } = useTheme();
   //   const courseId = localStorage.getItem("course_id");
   const [examStarted, setexamStarted] = useState(false);
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedTypes, setSelectedTypes] = useState<{
+    [key: number]: string[];
+  }>({});
   const [formData, setFormData] = useState<FormData>({
     answer: "",
   });
@@ -120,7 +134,7 @@ const Exam = () => {
           </div>
         </div>
         {examStarted ? (
-          <div className="lg:h-[572px] h-auto border-2 shadow-md flex flex-col justify-start py-10 px-20 items-center mb-4 w-full border-[#ddd]">
+          <div className="lg:h-[572px] overflow-y-auto h-auto border-2 shadow-md flex flex-col justify-start lg:py-10 p-4 lg:px-20 items-center mb-4 w-full border-[#ddd]">
             {ExamQuestions.map((item, index) => (
               <div
                 key={index}
@@ -128,16 +142,44 @@ const Exam = () => {
               >
                 {/* Flex container for radio button and question */}
                 <div className="flex items-center">
-                  <input
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name={`exam-question-${index}`}
+                      value={item.type}
+                      checked={selectedTypes[index]?.includes(item.type)}
+                      onChange={() =>
+                        setSelectedTypes((prev) => {
+                          const current = prev[index] || [];
+                          const isSelected = current.includes(item.type);
+
+                          return {
+                            ...prev,
+                            [index]: isSelected
+                              ? current.filter((t) => t !== item.type)
+                              : [...current, item.type],
+                          };
+                        })
+                      }
+                      className="peer hidden"
+                    />
+                    <span className="w-6 h-6 rounded-full border-2 border-gray-400 peer-checked:bg-[#F01E00] peer-checked:border-[#F01E00] transition-all"></span>
+                  </label>
+
+                  {/* <input
                     type="radio"
-                    id={`option-${index}`}
-                    name="exam-question"
+                    name={`exam-question-${index}`}
                     value={item.type}
-                    checked={selectedType === item.type}
-                    onChange={() => setSelectedType(item.type)}
-                    className="mr-2 w-8 h-8"
-                  />
-                  <div className="flex justify-start items-center gap-3">
+                    checked={selectedTypes[index] === item.type}
+                    onChange={() =>
+                      setSelectedTypes((prev) => ({
+                        ...prev,
+                        [index]: item.type,
+                      }))
+                    }
+                    className="mr-2 w-6 h-6"
+                  /> */}
+                  <div className="w-[90%] ml-2 flex justify-start items-center gap-3">
                     <span className="text-[20px] font-semibold text-[#4F547B] font-DMSans">
                       {item.number}
                     </span>
@@ -151,72 +193,75 @@ const Exam = () => {
                 </div>
 
                 {/* Conditionally render input fields based on selected type */}
-                {selectedType === "text" && item.type === "text" && (
-                  <div className="flex flex-col lg:flex-row justify-between items-center">
-                    <div className="mt-4 w-full">
-                      <BaseInput
-                        label="Answer"
-                        type="textarea"
-                        placeholder="Type in your answer..."
-                        containerClassname="w-full"
-                        labelClassName="text-[17px] font-DMSans font-semibold"
-                        inputContainerClassName={cn(
-                          "h-[183px] shadow-md",
-                          theme === "dark"
-                            ? "select-secondary"
-                            : "border-[0.5px] border-[#ddd]"
-                        )}
-                        value={formData.answer}
-                        onChange={handleTextChange}
-                      />
-                      <div className="flex mt-2 justify-end items-center ">
-                        <span
-                          className={`text-[14px] font-normal italic font-DMSans ${
-                            wordCount > maxWords
-                              ? "text-red-500"
-                              : "text-[#4F547B]"
-                          }`}
-                        >
-                          {wordCount}
-                        </span>{" "}
-                        /
-                        <h2 className="text-[14px] font-normal italic text-[#4F547B] font-DMSans">
-                          {maxWords}
-                        </h2>
+                {selectedTypes[index]?.includes("text") &&
+                  item.type === "text" && (
+                    <div className="flex flex-col lg:flex-row justify-between items-center">
+                      <div className="mt-4 w-full">
+                        <BaseInput
+                          label="Answer"
+                          type="textarea"
+                          placeholder="Type in your answer..."
+                          containerClassname="w-full"
+                          labelClassName="text-[17px] font-DMSans font-semibold"
+                          inputContainerClassName={cn(
+                            "h-[183px] shadow-md",
+                            theme === "dark"
+                              ? "select-secondary"
+                              : "border-[0.5px] border-[#ddd]"
+                          )}
+                          value={formData.answer}
+                          onChange={handleTextChange}
+                        />
+                        <div className="flex mt-2 justify-end items-center ">
+                          <span
+                            className={`text-[14px] font-normal italic font-DMSans ${
+                              wordCount > maxWords
+                                ? "text-red-500"
+                                : "text-[#4F547B]"
+                            }`}
+                          >
+                            {wordCount}
+                          </span>{" "}
+                          /
+                          <h2 className="text-[14px] font-normal italic text-[#4F547B] font-DMSans">
+                            {maxWords}
+                          </h2>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {selectedType === "document" && item.type === "document" && (
-                  <div className="mt-4 w-full">
-                    <div className="flex justify-between items-center gap-2 w-full">
-                      <label
-                        htmlFor="file-upload"
-                        className="flex flex-col items-center justify-center w-full h-[283px] py-4 shadow-md border-2 border-dashed border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
-                      >
-                        <FaCloudUploadAlt className="text-[10rem]" />
-                        {file ? (
-                          <div className="mt-3 flex items-center gap-2 p-2 bg-gray-100 border rounded-md">
-                            <p className="text-sm font-medium text-gray-700">
-                              {file.name}
-                            </p>
-                          </div>
-                        ) : (
-                          <>
-                            <p className="text-[20px] font-semibold text-[#4F547B] font-DMSans">
-                              Upload a document of your response
-                            </p>
-                            <p className="text-gray-600 mt-2">
-                              Drag & drop or browse PDF/Word document files here
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              PDF, DOC, DOCX (Max 5MB)
-                            </p>
-                          </>
-                        )}
-                      </label>
-                      {/* <div className="w-auto">
+                {selectedTypes[index]?.includes("document") &&
+                  item.type === "document" && (
+                    <div className="mt-4 w-full">
+                      <div className="flex justify-between items-center gap-2 w-full">
+                        <label
+                          htmlFor="file-upload"
+                          className="flex flex-col items-center justify-center w-full h-[283px] py-4 shadow-md border-2 border-dashed border-gray-300 rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+                        >
+                          <FaCloudUploadAlt className="text-[10rem]" />
+                          {file ? (
+                            <div className="mt-3 flex items-center gap-2 p-2 bg-gray-100 border rounded-md">
+                              <p className="text-sm font-medium text-gray-700">
+                                {file.name}
+                              </p>
+                            </div>
+                          ) : (
+                            <>
+                              <p className="text-[20px] font-semibold text-[#4F547B] font-DMSans">
+                                Upload a document of your response
+                              </p>
+                              <p className="text-gray-600 mt-2">
+                                Drag & drop or browse PDF/Word document files
+                                here
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                PDF, DOC, DOCX (Max 5MB)
+                              </p>
+                            </>
+                          )}
+                        </label>
+                        {/* <div className="w-auto">
                         <div className="p-2">
                           <IoDocumentTextOutline className="size-8" />
                         </div>
@@ -224,31 +269,31 @@ const Exam = () => {
                           <FaFilePdf className="size-8" />
                         </div>
                       </div> */}
+                      </div>
+
+                      {/* Hidden File Input */}
+                      <input
+                        type="file"
+                        id="file-upload"
+                        accept=".pdf,.doc,.docx"
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
+
+                      {/* Show preview button if a file is uploaded */}
+                      {file && (
+                        <button
+                          className="flex mt-2 hover:border hover:border-[#FF1515] justify-start items-center gap-3 px-2 rounded-md"
+                          onClick={() => window.open(fileURL, "_blank")}
+                        >
+                          <MdOutlineRemoveRedEye className="size-6" />
+                          <p className="text-[16px] text-right font-normal italic text-[#FF1515] font-DMSans">
+                            Preview
+                          </p>
+                        </button>
+                      )}
                     </div>
-
-                    {/* Hidden File Input */}
-                    <input
-                      type="file"
-                      id="file-upload"
-                      accept=".pdf,.doc,.docx"
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
-
-                    {/* Show preview button if a file is uploaded */}
-                    {file && (
-                      <button
-                        className="flex mt-2 hover:border hover:border-[#FF1515] justify-start items-center gap-3 px-2 rounded-md"
-                        onClick={() => window.open(fileURL, "_blank")}
-                      >
-                        <MdOutlineRemoveRedEye className="size-6" />
-                        <p className="text-[16px] text-right font-normal italic text-[#FF1515] font-DMSans">
-                          Preview
-                        </p>
-                      </button>
-                    )}
-                  </div>
-                )}
+                  )}
               </div>
             ))}
           </div>
@@ -300,7 +345,17 @@ const Exam = () => {
             </button>
             <button
               onClick={handleStartExam}
-              className="w-[160px] flex justify-between items-center gap-3 bg-[#FF1515] rounded-md p-3"
+              disabled={
+                Object.values(selectedTypes).every((arr) => arr.length === 0) ||
+                Object.keys(selectedTypes).length === 0
+              }
+              className={`w-[160px] flex justify-between items-center gap-3 rounded-md p-3 transition 
+    ${
+      Object.values(selectedTypes).every((arr) => arr.length === 0) ||
+      Object.keys(selectedTypes).length === 0
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-[#FF1515] cursor-pointer"
+    }`}
             >
               <p className="text-[20px] font-DMSans font-semibold text-[#fff]">
                 SUBMIT

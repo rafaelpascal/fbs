@@ -50,6 +50,12 @@ export const sidebarData: SideNavProps[] = [
     text: "Message",
   },
   {
+    href: "/admin/support",
+    icon: TiMessages,
+    dropdown: false,
+    text: "Support",
+  },
+  {
     href: "",
     icon: PiCertificateBold,
     dropdown: false,

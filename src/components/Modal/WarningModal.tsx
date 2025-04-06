@@ -33,7 +33,7 @@ export const WarningModal = ({
       };
       await CourseServices.rejectApplication(payload);
       closeModal();
-      navigate(`/admin/dashboard/application`);
+      navigate(`/admin/admission/application`);
       setAccepting(false);
     } catch (error) {
       setAccepting(false);

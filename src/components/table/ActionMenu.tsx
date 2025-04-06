@@ -45,7 +45,9 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ actions }) => {
                 key={btn.label}
                 onClick={btn.action}
                 className={`text-[12px] py-2 px-4 text-left font-DMSans font-semibold rounded-[4px] hover:text-[#fff] w-full text-[#515F76] ${
-                  btn.label === "Deactivate" || btn.label === "Remove"
+                  btn.label === "Deactivate" ||
+                  btn.label === "Remove" ||
+                  btn.label === "Delete"
                     ? "hover:bg-[#ED342B]"
                     : "hover:bg-[#03435F]"
                 }`}

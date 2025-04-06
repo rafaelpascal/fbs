@@ -89,15 +89,17 @@
 import React, { useState, ReactNode, Children, isValidElement } from "react";
 
 interface CarouselProps {
-  children: ReactNode; // Accepts a single or multiple children
-  activeIndex?: number; // Optional external index control
-  onChange?: (index: number) => void; // Optional callback to update the current slide
+  children: ReactNode;
+  activeIndex?: number;
+  onChange?: (index: number) => void;
+  isNavigation?: boolean;
 }
 
 const Carousel: React.FC<CarouselProps> = ({
   children,
   activeIndex,
   onChange,
+  isNavigation = true,
 }) => {
   // Ensure children is always an array
   const childArray = Children.toArray(children).filter(isValidElement);
@@ -144,31 +146,37 @@ const Carousel: React.FC<CarouselProps> = ({
       </div>
 
       <div className="flex justify-between lg:justify-center gap-10 items-center py-4">
-        <button
-          onClick={prevSlide}
-          className="bg-[#FF3B30] text-[#fff] btn-circle"
-        >
-          ❮
-        </button>
+        {isNavigation && (
+          <button
+            onClick={prevSlide}
+            className="bg-[#FF3B30] text-[#fff] btn-circle"
+          >
+            ❮
+          </button>
+        )}
         <div className="flex gap-2">
           {childArray.map((_, index) => (
             <button
               key={index}
               onClick={() => changeIndex(index)}
               className={`font-DMSans font-semibold ${
-                currentIndex === index ? "text-[#FF3B30] underline" : ""
+                currentIndex === index
+                  ? "text-[#FF3B30] w-[33px] shadow-md h-[33px] border border-[#FF3B30] rounded-full underline"
+                  : ""
               }`}
             >
               {index + 1}
             </button>
           ))}
         </div>
-        <button
-          onClick={nextSlide}
-          className="bg-[#E5F0FD] text-[#FF3B30] btn-circle"
-        >
-          ❯
-        </button>
+        {isNavigation && (
+          <button
+            onClick={nextSlide}
+            className="bg-[#E5F0FD] text-[#FF3B30] btn-circle"
+          >
+            ❯
+          </button>
+        )}
       </div>
     </div>
   );

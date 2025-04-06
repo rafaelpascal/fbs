@@ -106,11 +106,10 @@ export const LectureSidebar = () => {
     setLoading(true);
     try {
       const payload = {
-        user_id: Number(Storeduser?.user),
-        module_id: Number(storedModuleId),
+        module_id: storedModuleId,
       };
-      // const res = await CourseServices.getModulebyId(payload);
-      const res = await CourseServices.startCourse(payload);
+      const res = await CourseServices.getModulebyId(payload);
+      // const res = await CourseServices.startCourse(payload);
       // setLectureTitles(res.data.course_lessons);
       if (res.data?.modules?.length > 0) {
         setModuleTitle(res.data.modules[0].module_title ?? "Unknown Module");
@@ -131,14 +130,18 @@ export const LectureSidebar = () => {
 
   const fetchLessons = async () => {
     try {
-      const payload = { moduleid: storedModuleId };
-      const res = await CourseServices.lessonsByModuleId(payload);
-      setLectureTitles(res.data.course_lessons);
-      const extractedLessonIds = res.data.course_lessons.map(
+      const payload = {
+        user_id: Number(Storeduser?.user),
+        module_id: Number(storedModuleId),
+      };
+      // const res = await CourseServices.lessonsByModuleId(payload);
+      const res = await CourseServices.startCourse(payload);
+      setLectureTitles(res.data.lessons);
+      const extractedLessonIds = res.data.lessons.map(
         (lesson: any) => lesson.lessonid
       );
       setLessonIds(extractedLessonIds);
-      navigate(`/lecture/${res.data.course_lessons[0].lessonid}`, {
+      navigate(`/lecture/${res.data.lessons[0].lessonid}`, {
         replace: true,
       });
     } catch (error) {
@@ -287,7 +290,7 @@ export const LectureSidebar = () => {
       icon: HiClipboardDocumentList,
       dropdown: true,
       playing: false,
-      text: "Assessments",
+      text: "ASSESSMENTS",
       children: [
         {
           href: `/assignment/${firstModuleId}`,

@@ -62,7 +62,7 @@ const CapstonesTable = () => {
 
   // View a Row
   const handleView = (id: string) => {
-    navigate(`/admin/dashboard/application/${id}`);
+    navigate(`/admin/admission/application/${id}`);
   };
 
   //   Merchant Table

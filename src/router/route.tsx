@@ -85,6 +85,8 @@ import NewAssignment from "~/pages/lecture/NewAssignment.tsx";
 import Polls from "~/pages/lecture/Poll.tsx";
 import AdminEvents from "~/pages/Admin/Events/AdminEvents.tsx";
 import AdmissionPage from "~/pages/Admin/Admission/Admission.tsx";
+import Support from "~/pages/Admin/Support/Support.tsx";
+import PendingTicket from "~/pages/Admin/Support/PendingTicket.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
@@ -200,6 +202,20 @@ const router = createBrowserRouter(
             {
               path: ROUTES.COURSEAPPLICATION,
               element: <CourseApplications />,
+            },
+            {
+              path: ROUTES.SUPPORT,
+              element: <Support />,
+              children: [
+                {
+                  index: true,
+                  element: <Navigate to={ROUTES.PENDINGTICKET} />,
+                },
+                {
+                  path: ROUTES.PENDINGTICKET,
+                  element: <PendingTicket />,
+                },
+              ],
             },
             {
               path: ROUTES.ADMISSIONPAGE,
