@@ -178,7 +178,15 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
         course_id: mod.course_id,
         lessons: Initiallessons.filter(
           (lesson) => lesson.module_id === mod.moduleid
-        ),
+        ).map((lesson) => ({
+          ...lesson,
+          id: lesson.lessonId || Date.now(),
+          module_id: lesson.module_id,
+          title: lesson.title,
+          description: lesson.description,
+          pages: lesson.pages || "",
+          category: "lessons",
+        })),
         capstone: [],
         assignment: [],
         quiz: [],
@@ -395,48 +403,112 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
     draggedId: number,
     hoveredIndex: number,
     moduleId: number,
-    targetCategory: string
+    targetCategory: keyof Module
   ) => {
-    const allItems = getAllItems(moduleId);
-    const draggedItem = allItems.find((item) => item.id === draggedId);
+    setModules((prevModules) => {
+      // Find the specific module that needs updating
+      const updatedModules = prevModules.map((module) => {
+        if (module.id !== moduleId) return module;
 
-    if (!draggedItem) return;
-    const updatedItem = { ...draggedItem, category: targetCategory };
-    const filteredItems = allItems.filter((item) => item.id !== draggedId);
-    const updatedModules = modules.map((module) => {
-      if (module.id !== moduleId) return module;
+        let draggedItem: any = null;
+        const updatedModule = { ...module };
 
-      const newModuleData = { ...module };
-      [
-        "lessons",
-        "capstone",
-        "assignment",
-        "caseStudy",
-        "quiz",
-        "exam",
-        "poll",
-        "resources",
-      ].forEach((category) => {
-        const categoryItems =
-          category === targetCategory
-            ? [...filteredItems.filter((item) => item.category === category)]
-            : filteredItems.filter((item) => item.category === category);
+        let draggedFromCategory: string | null = null;
+        let draggedFromIndex = -1;
 
-        if (category === targetCategory) {
-          categoryItems.splice(hoveredIndex, 0, updatedItem);
+        // Find and remove dragged item
+        [
+          "lessons",
+          "capstone",
+          "assignment",
+          "caseStudy",
+          "quiz",
+          "exam",
+          "poll",
+          "resources",
+        ].forEach((category) => {
+          const items = (updatedModule as any)[category] || [];
+          const index = items.findIndex((item: any) => item.id === draggedId);
+          if (index !== -1) {
+            draggedItem = items[index];
+            draggedFromCategory = category;
+            draggedFromIndex = index;
+            (updatedModule as any)[category] = items.filter(
+              (_: any, i: number) => i !== index
+            );
+          }
+        });
+
+        if (!draggedItem) return module;
+
+        // Don't update state if item is dropped at its original position
+        if (
+          draggedFromCategory === targetCategory &&
+          draggedFromIndex === hoveredIndex
+        ) {
+          return module;
         }
-        if (category in newModuleData) {
-          (newModuleData as any)[category] = categoryItems.map((item) => ({
-            ...item,
-          }));
-        }
+
+        // Insert into new location
+        draggedItem.category = targetCategory;
+        const targetItems = [...(updatedModule as any)[targetCategory]];
+        targetItems.splice(hoveredIndex, 0, draggedItem);
+        (updatedModule as any)[targetCategory] = targetItems;
+
+        return updatedModule;
       });
 
-      return newModuleData;
+      // Only update the module that has been changed
+      return updatedModules;
     });
-
-    setModules(updatedModules);
   };
+
+  // const moveItem = (
+  //   draggedId: number,
+  //   hoveredIndex: number,
+  //   moduleId: number,
+  //   targetCategory: string
+  // ) => {
+  //   const allItems = getAllItems(moduleId);
+  //   const draggedItem = allItems.find((item) => item.id === draggedId);
+
+  //   if (!draggedItem) return;
+  //   const updatedItem = { ...draggedItem, category: targetCategory };
+  //   const filteredItems = allItems.filter((item) => item.id !== draggedId);
+  //   const updatedModules = modules.map((module) => {
+  //     if (module.id !== moduleId) return module;
+
+  //     const newModuleData = { ...module };
+  //     [
+  //       "lessons",
+  //       "capstone",
+  //       "assignment",
+  //       "caseStudy",
+  //       "quiz",
+  //       "exam",
+  //       "poll",
+  //       "resources",
+  //     ].forEach((category) => {
+  //       const categoryItems =
+  //         category === targetCategory
+  //           ? [...filteredItems.filter((item) => item.category === category)]
+  //           : filteredItems.filter((item) => item.category === category);
+
+  //       if (category === targetCategory) {
+  //         categoryItems.splice(hoveredIndex, 0, updatedItem);
+  //       }
+  //       if (category in newModuleData) {
+  //         (newModuleData as any)[category] = categoryItems.map((item) => ({
+  //           ...item,
+  //         }));
+  //       }
+  //     });
+
+  //     return newModuleData;
+  //   });
+
+  //   setModules(updatedModules);
+  // };
 
   const handleNewModule = (
     moduleNumber?: string | number,

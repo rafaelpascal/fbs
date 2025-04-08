@@ -8,6 +8,7 @@ import Support from "../support/Support";
 import Message from "../support/Message";
 import TicketList from "../support/TicketList";
 import SingleTicket from "../support/SingleTicket";
+import Resources from "~/pages/Admin/Support/Resources";
 
 interface IModalPropsType {
   isOpen: boolean;
@@ -15,173 +16,6 @@ interface IModalPropsType {
   closeModal: () => void;
   minimized: () => void;
 }
-
-// export const SupportModal = ({
-//   isOpen,
-//   closeModal,
-//   minimized,
-// }: IModalPropsType) => {
-//   const [isHumanSupport, setIsHumanSupport] = useState(false);
-//   const [reportData, setReportData] = useState({
-//     subject: "",
-//     message: "",
-//   });
-//   // Close modal
-//   const handleclose = useCallback(() => {
-//     closeModal();
-//   }, []);
-
-//   const handleCancle = () => {
-//     setIsHumanSupport(false);
-//     setReportData((prevData: any) => ({
-//       ...prevData,
-//       message: "",
-//     }));
-//   };
-
-//   return (
-//     <BaseModal
-//       isOpen={isOpen}
-//       closeModal={closeModal}
-//       parentClassName="flex justify-end items-end"
-//       className="lg:min-w-[614px] overflow-y-hidden rounded-l-lg h-[100vh] rounded-r-none"
-//       slideDirection="right"
-//     >
-//       <div className="flex lg:w-[814px] w-full flex-col items-center justify-center">
-//         <div className="w-full bg-[#FF5050] py-4">
-//           <div className="flex justify-between items-center w-full px-4">
-//             {isHumanSupport ? (
-//               <button
-//                 onClick={handleCancle}
-//                 className="p-2 rounded-md border border-white flex justify-center gap-2 items-center"
-//               >
-//                 <FaLeftLong className="size-6 text-white" />
-//                 <p className="text-sm text-white font-DMSans font-semibold ">
-//                   Back
-//                 </p>
-//               </button>
-//             ) : (
-//               <h2 className="text-2xl text-white text-center font-DMSans font-semibold ">
-//                 Fodax Support
-//               </h2>
-//             )}
-
-//             <div className="flex justify-end gap-4 items-center">
-//               <button onClick={minimized}>
-//                 <FaMinus className="size-8 text-white" />
-//               </button>
-//               <button onClick={handleclose}>
-//                 <MdCancel className="size-8 text-white" />
-//               </button>
-//             </div>
-//           </div>
-//           {isHumanSupport ? (
-//             <>
-//               {reportData.message !== "" ? (
-//                 <motion.div
-//                   {...getSlideAnimation({ slideDirection: "right" })}
-//                   transition={{ duration: 0.3 }}
-//                 >
-//                   <h2 className="text-2xl my-4 px-4 text-white text-left font-DMSans font-semibold ">
-//                     Message sent!
-//                   </h2>
-//                 </motion.div>
-//               ) : (
-//                 <motion.div
-//                   {...getSlideAnimation({ slideDirection: "right" })}
-//                   transition={{ duration: 0.3 }}
-//                 >
-//                   <h2 className="text-2xl my-4 px-4 text-white text-left font-DMSans font-semibold ">
-//                     Speak with support
-//                   </h2>
-//                   <p className="text-xl px-4 w-full lg:w-[614px] text-white text-left font-DMSans font-normal ">
-//                     Please select the department you wish to talk to.
-//                   </p>
-//                 </motion.div>
-//               )}
-//             </>
-//           ) : (
-//             <>
-//               <h2 className="text-2xl my-4 px-4 text-white text-left font-DMSans font-semibold ">
-//                 Hello Stephen,
-//               </h2>
-//               <p className="text-xl px-4 w-full lg:w-[614px] text-white text-left font-DMSans font-normal ">
-//                 Welcome to our live chat. Our live and AI support is available
-//                 24/7/365 to assist with inquiries and support queries.
-//               </p>
-//             </>
-//           )}
-//         </div>
-//         {isHumanSupport ? (
-//           <motion.div
-//             {...getSlideAnimation({ slideDirection: "right" })}
-//             transition={{ duration: 0.3 }}
-//             className="w-full h-[600px] overflow-y-auto mt-4 py-6 px-2 lg:px-10"
-//           >
-//             {reportData.message !== "" ? (
-//               <>
-//                 <Message
-//                   message={reportData.message}
-//                   subject={reportData.subject}
-//                 />
-
-//                 <button>
-//                   <p className="text-xl mt-4 text-[#FF5050] text-left font-DMSans font-semibold ">
-//                     Go to pending messages (2)
-//                   </p>
-//                 </button>
-//               </>
-//             ) : (
-//               <Support setReportData={setReportData} />
-//             )}
-//           </motion.div>
-//         ) : (
-//           <div className="w-full h-[600px] overflow-y-auto mt-4 py-6 px-2 lg:px-10">
-//             <SupportCard
-//               title="Speak with Support"
-//               description="You may send a message to us regarding your experience, inquiries, concerns, challenges or requests."
-//               buttonText="Create a ticket"
-//               buttonColor="#6440FB"
-//               borderColor="#336CFB"
-//               handleFunction={() => setIsHumanSupport(true)}
-//               pendingMessages={2}
-//               avatars={[
-//                 "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-//                 "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-//                 "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-//                 "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-//               ]}
-//             />
-
-//             <SupportCard
-//               title="Chat with AI Assistant"
-//               description="Get instant answers and support anytime! Our AI assistant is available 24/7 to assist with your queries."
-//               buttonText="Start conversation"
-//               borderColor="#FF5050"
-//               isAvailable={false}
-//               pendingMessages={0}
-//             />
-//             <div className="w-full border p-2 my-4 flex justify-between items-center border-[#C4C4C4] rounded-lg">
-//               <p className="text-xl my-4 px-4 text-left font-DMSans font-semibold ">
-//                 Visit our FAQ page for general inquiries{" "}
-//               </p>
-//               <button className="bg-[#F01E00] rounded-lg text-white text-lg italic py-2 px-4 text-left font-DMSans font-normal">
-//                 See FAQ page
-//               </button>
-//             </div>
-//             <SupportCard
-//               title="Resources"
-//               description="Curated case studies, business reports, business reviews, business templates, and whatever resources you need to stay ahead in your business or career."
-//               buttonText="Get started"
-//               borderColor="#12A815"
-//               isAvailable={false}
-//             />
-//           </div>
-//         )}
-//       </div>
-//     </BaseModal>
-//   );
-// };
 
 const Tickets = [
   {
@@ -220,7 +54,13 @@ export const SupportModal = ({
     message: "",
   });
   const [currentView, setCurrentView] = useState<
-    "home" | "support" | "aiChat" | "message" | "tickets" | "viewTicket"
+    | "home"
+    | "support"
+    | "aiChat"
+    | "message"
+    | "tickets"
+    | "viewTicket"
+    | "resources"
   >("home");
 
   useEffect(() => {
@@ -233,10 +73,19 @@ export const SupportModal = ({
     setCurrentView("viewTicket");
   };
 
+  const handleModalClose = () => {
+    setReportData({
+      subject: "",
+      message: "",
+    });
+    closeModal();
+    setCurrentView("home");
+  };
+
   return (
     <BaseModal
       isOpen={isOpen}
-      closeModal={closeModal}
+      closeModal={handleModalClose}
       parentClassName="flex justify-end items-end"
       className="lg:min-w-[614px] overflow-y-hidden rounded-l-lg h-[100vh] rounded-r-none"
       slideDirection="right"
@@ -245,12 +94,12 @@ export const SupportModal = ({
       <Header
         currentView={currentView}
         setCurrentView={setCurrentView}
-        closeModal={closeModal}
+        closeModal={handleModalClose}
         minimized={minimized}
       />
 
       {/* Body */}
-      <div className="w-full lg:w-[814px] overflow-y-auto lg:py-6 px-2 lg:px-10">
+      <div className="w-full lg:w-[814px] h-[570px] overflow-y-auto  p-4">
         {(() => {
           switch (currentView) {
             case "support":
@@ -291,6 +140,12 @@ export const SupportModal = ({
                   </button>
                 </>
               );
+            case "resources":
+              return (
+                <>
+                  <Resources />
+                </>
+              );
             case "viewTicket":
               return (
                 <>
@@ -307,7 +162,7 @@ export const SupportModal = ({
 
             default:
               return (
-                <div className=" w-full lg:min-w-[614px] h-[560px] overflow-y-auto mt-4 px-2">
+                <div className=" w-full lg:min-w-[614px] mt-4 px-2">
                   <SupportCard
                     title="Speak with Support"
                     description="You may send a message to us regarding your experience, inquiries, concerns, challenges or requests."
@@ -345,6 +200,7 @@ export const SupportModal = ({
                     title="Resources"
                     description="Curated case studies, business reports, business reviews, business templates, and whatever resources you need to stay ahead in your business or career."
                     buttonText="Get started"
+                    handleFunction={() => setCurrentView("resources")}
                     borderColor="#12A815"
                     isAvailable={false}
                   />
@@ -365,9 +221,17 @@ interface HeaderProps {
     | "aiChat"
     | "message"
     | "tickets"
-    | "viewTicket";
+    | "viewTicket"
+    | "resources";
   setCurrentView: (
-    view: "home" | "support" | "aiChat" | "message" | "tickets" | "viewTicket"
+    view:
+      | "home"
+      | "support"
+      | "aiChat"
+      | "message"
+      | "tickets"
+      | "viewTicket"
+      | "resources"
   ) => void;
   closeModal: () => void;
   minimized: () => void;
@@ -448,6 +312,25 @@ const Header = ({
           </div>
         </div>
       )}
+      {currentView == "aiChat" && (
+        <div>
+          <button
+            onClick={() => setCurrentView("support")}
+            className="p-2 rounded-md border border-white flex items-center gap-2"
+          >
+            <FaLeftLong className="size-6 text-white" />
+            <p className="text-sm text-white font-semibold">Back</p>
+          </button>
+          <div className="flex flex-col">
+            <h2 className="text-2xl text-white text-left font-DMSans font-semibold ">
+              AI Assistance
+            </h2>
+            <h2 className="text-lg text-white text-left font-DMSans font-semibold ">
+              Please ask specifc question to Fordax AI Assistant.
+            </h2>
+          </div>
+        </div>
+      )}
       {currentView == "home" && (
         <div className="flex flex-col">
           <h2 className="text-2xl text-white font-semibold">Fodax Support</h2>
@@ -458,6 +341,44 @@ const Header = ({
             Welcome to our live chat. Our live and AI support is available
             24/7/365 to assist with inquiries and support queries.
           </p>
+        </div>
+      )}
+      {currentView == "resources" && (
+        <div>
+          <button
+            onClick={() => setCurrentView("support")}
+            className="p-2 rounded-md border border-white flex items-center gap-2"
+          >
+            <FaLeftLong className="size-6 text-white" />
+            <p className="text-sm text-white font-semibold">Back</p>
+          </button>
+          <div className="flex flex-col">
+            <h2 className="text-2xl mt-2 text-white text-left font-DMSans font-semibold ">
+              Fordax Resources
+            </h2>
+            <h2 className="text-sm w-full lg:w-[600px] text-white text-left font-DMSans font-normal mt-2 ">
+              Download curated case studies, business reports, business reviews,
+              business templates and whatever resources you ned to stay ahead in
+              your buiness or career.
+            </h2>
+            <div className="w-full mt-4 flex justify-between items-center gap-4">
+              <select defaultValue="Pick a color" className="select w-[50%]">
+                <option disabled={true}>Filter by</option>
+                <option>Crimson</option>
+                <option>Amber</option>
+                <option>Velvet</option>
+              </select>
+              <select defaultValue="Pick a color" className="select w-[50%]">
+                <option disabled={true}>Sorted by</option>
+                <option>Crimson</option>
+                <option>Amber</option>
+                <option>Velvet</option>
+              </select>
+            </div>
+            <p className="text-xs w-full text-white text-left font-DMSans font-light italic mt-2 ">
+              Showing 1-40 of 302 results
+            </p>
+          </div>
         </div>
       )}
 

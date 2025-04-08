@@ -147,49 +147,49 @@ export const PendingTicketsReply = ({
                 <div className="flex flex-col gap-2">
                   {/* From Name */}
                   <div className="flex justify-start items-center min-w-[200px]">
-                    <label className="w-[20%] block text-sm font-medium text-gray-700 mb-1">
+                    <label className="w-[20%] block font-DMSans text-lg font-medium text-gray-700 mb-1">
                       From Name
                     </label>
                     <input
                       type="text"
                       placeholder="Enter sender name"
-                      className="w-full p-2 border-b outline-none border-gray-300 rounded-md focus:outline-none"
+                      className="w-full font-DMSans text-lg px-2 border-b outline-none border-gray-300 rounded-md focus:outline-none"
                     />
                   </div>
 
                   {/* From Email */}
                   <div className="flex min-w-[200px]">
-                    <label className="w-[20%] block text-sm font-medium text-gray-700 mb-1">
+                    <label className="w-[20%] font-DMSans text-lg block font-medium text-gray-700 mb-1">
                       From Email
                     </label>
                     <input
                       type="email"
                       placeholder="Enter sender email"
-                      className="w-full p-2 border-b outline-none border-gray-300 rounded-md focus:outline-none "
+                      className="w-full px-2 border-b font-DMSans text-lg outline-none border-gray-300 rounded-md focus:outline-none "
                     />
                   </div>
 
                   {/* Reply To */}
                   <div className="flex min-w-[200px]">
-                    <label className="w-[20%] block text-sm font-medium text-gray-700 mb-1">
+                    <label className="w-[20%]  block font-DMSans text-lg font-medium text-gray-700 mb-1">
                       Reply To
                     </label>
                     <input
                       type="email"
                       defaultValue="Marcus2345@gmail.com"
-                      className="w-full p-2 border-b outline-none border-gray-300 rounded-md focus:outline-none "
+                      className="w-full px-2 border-b font-DMSans text-lg outline-none border-gray-300 rounded-md focus:outline-none "
                     />
                   </div>
 
                   {/* Subject */}
                   <div className="flex min-w-[200px]">
-                    <label className="w-[20%] block text-sm font-medium text-gray-700 mb-1">
+                    <label className="w-[20%] block font-DMSans text-lg font-medium text-gray-700 mb-1">
                       Subject
                     </label>
                     <input
                       type="text"
                       placeholder="Filled from inquiry"
-                      className="w-full p-2 border-b outline-none border-gray-300 rounded-md focus:outline-none "
+                      className="w-full px-2 font-DMSans text-lg border-b outline-none border-gray-300 rounded-md focus:outline-none "
                     />
                   </div>
                 </div>
@@ -197,7 +197,7 @@ export const PendingTicketsReply = ({
                   <textarea
                     placeholder="Type your message here..."
                     rows={8}
-                    className="w-full p-2 outline-none rounded-md resize-none focus:outline-none"
+                    className="w-full p-2 font-DMSans text-lg outline-none rounded-md resize-none focus:outline-none"
                   ></textarea>
                 </div>
                 <div className="flex justify-between items-center">

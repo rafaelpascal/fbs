@@ -27,13 +27,13 @@ const Support = () => {
             <NavLink to="pending" className={getNavLinkClassName}>
               Pending tickets
             </NavLink>
-            <NavLink to="faculty" className={getNavLinkClassName}>
+            <NavLink to="conversation" className={getNavLinkClassName}>
               Conversations
             </NavLink>
-            <NavLink to="unpaid" className={getNavLinkClassName}>
+            <NavLink to="unpaidbalances" className={getNavLinkClassName}>
               Unpaid Balances
             </NavLink>
-            <NavLink to="inactive" className={getNavLinkClassName}>
+            <NavLink to="inactiveusers" className={getNavLinkClassName}>
               Inactive students
             </NavLink>
             <NavLink to="emails" className={getNavLinkClassName}>

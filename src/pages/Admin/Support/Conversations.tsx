@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PendingTicketsReply } from "~/components/Modal/PendingTicketsReply";
+import { ConversationModal } from "~/components/Modal/ConversationModal";
 import ActionMenu from "~/components/table/ActionMenu";
 
 const pendingTicketData = [
@@ -7,19 +7,19 @@ const pendingTicketData = [
     id: 1,
     name: "John Doe",
     subject: "Issue with payment",
-    department: "Billing",
+    department: "Professional Certificate in Digital Marketing",
     createdAt: "2023-10-01",
   },
   {
     id: 2,
     name: "Jane Smith",
     subject: "Technical issue",
-    department: "Support",
+    department: "Professional Certificate in Digital Marketing",
     createdAt: "2023-10-02",
   },
 ];
 
-const PendingTicket = () => {
+const ConversationsScreen = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("All");
   const [isViewTicket, setIsViewTicket] = useState({
@@ -58,7 +58,7 @@ const PendingTicket = () => {
     <div className="border border-[#ddd] p-2 rounded-md shadow-md">
       <div className="flex flex-col lg:flex-row justify-between items-center">
         <h2 className="text-xl text-[#FF3B30] w-full mx-4 font-DMSans font-bold">
-          Pending tickets ({pendingTicketData.length})
+          Conversations ({pendingTicketData.length})
         </h2>
 
         {/* 🔍 Search Field */}
@@ -119,7 +119,7 @@ const PendingTicket = () => {
           No tickets match your search.
         </p>
       )}
-      <PendingTicketsReply
+      <ConversationModal
         // isOpen={true}
         isOpen={isViewTicket.status}
         closeModal={handleClose}
@@ -129,4 +129,4 @@ const PendingTicket = () => {
   );
 };
 
-export default PendingTicket;
+export default ConversationsScreen;

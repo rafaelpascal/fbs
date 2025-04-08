@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Avatar } from "../dashboard/Avatar";
 import { MdCancel } from "react-icons/md";
 import { useTheme } from "~/context/theme-provider";
+import { cn } from "~/utils/helpers";
 
 const SingleTicket = () => {
   const { theme } = useTheme();
@@ -101,43 +102,54 @@ const SingleTicket = () => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-[570px] overflow-hidden">
+    <div className="flex flex-col h-[620px] overflow-hidden">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
         {messages.map((msg, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`max-w-[75%] flex justify-center gap-4 items-center ${
-              msg.sender === "user"
-                ? "text-white self-end ml-auto"
-                : "text-gray-800 self-start"
-            }`}
-          >
-            <Avatar
-              img=""
-              name={msg.sender === "user" ? "You" : "James Ibori"}
-              avatarClassName="md:h-8 h-8 w-8 md:w-8 rounded-full"
-              textClassName="font-medium text-sm max-md:hidden"
-              wrapperClassName="max-md:gap-0"
-            />
-            <div className="w-full flex flex-col justify-end items-end">
-              <div
-                className={` min-lg:w-[90%] px-4 py-2 rounded-md border border-[#000] ${
-                  msg.sender === "user"
-                    ? "bg-[#FF5050] w-full text-white self-end ml-auto"
-                    : "bg-white w-full text-gray-800 self-start"
-                }`}
-              >
-                <p className="text-xl font-DMSans font-semibold">{msg.text}</p>
+          <>
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`max-w-[75%] flex justify-center gap-4 items-center ${
+                msg.sender === "user" ? "self-end ml-auto" : "self-start"
+              }`}
+            >
+              <Avatar
+                img=""
+                name={msg.sender === "user" ? "James Ibori" : "Fordax AI"}
+                avatarClassName="md:h-8 h-8 w-8 md:w-8 rounded-full"
+                textClassName="font-medium text-sm max-md:hidden"
+                wrapperClassName="max-md:gap-0"
+              />
+              <div className="w-full flex flex-col justify-end items-end">
+                <p
+                  className={`text-lg font-semibold mb-1 ${
+                    msg.sender === "user"
+                      ? "text-left"
+                      : "text-left text-[#FF5050]"
+                  }`}
+                >
+                  {msg.sender === "user" ? "James Ibori" : "Fordax AI"}
+                </p>
+                <div
+                  className={` min-lg:w-[90%] px-4 py-2 rounded-md border border-[#000] ${
+                    msg.sender === "user"
+                      ? "bg-[#FF5050] w-full text-white self-end ml-auto"
+                      : "bg-white w-full text-gray-800 self-start"
+                  }`}
+                >
+                  <p className="text-xl font-DMSans font-semibold">
+                    {msg.text}
+                  </p>
+                </div>
+                {/* Dynamic Timestamp */}
+                <p className="text-sm mt-1 italic font-DMSans font-normal text-gray-500">
+                  {msg.timestamp}
+                </p>
               </div>
-              {/* Dynamic Timestamp */}
-              <p className="text-sm mt-1 italic font-DMSans font-normal text-gray-500">
-                {msg.timestamp}
-              </p>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         ))}
 
         <div ref={chatEndRef} />
@@ -150,7 +162,10 @@ const SingleTicket = () => {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyPress}
           placeholder="Type your message..."
-          className="w-full px-4 py-2 text-lg font-semibold border h-[100px] border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5050] resize-none"
+          className={cn(
+            "w-full px-4 py-2 text-lg font-normal border h-[100px] border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5050] resize-none",
+            theme === "dark" ? "bg-[#333] " : "bg-[#fff]"
+          )}
         />
         <div className="flex justify-between items-center">
           <div>

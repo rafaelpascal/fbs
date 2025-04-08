@@ -87,6 +87,11 @@ import AdminEvents from "~/pages/Admin/Events/AdminEvents.tsx";
 import AdmissionPage from "~/pages/Admin/Admission/Admission.tsx";
 import Support from "~/pages/Admin/Support/Support.tsx";
 import PendingTicket from "~/pages/Admin/Support/PendingTicket.tsx";
+import InactiveUsers from "~/pages/Admin/Support/InactiveUsers.tsx";
+import UnpaidBalances from "~/pages/Admin/Support/UnpaidBalances.tsx";
+import ConversationsScreen from "~/pages/Admin/Support/Conversations.tsx";
+import EmailList from "~/pages/Admin/Support/EmailList.tsx";
+import SingleResources from "~/pages/Admin/Support/SingleResources.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
@@ -133,6 +138,10 @@ const router = createBrowserRouter(
             {
               path: ROUTES.DASHBOARD,
               element: <Home />,
+            },
+            {
+              path: ROUTES.SINGLERESOURCE,
+              element: <SingleResources />,
             },
             {
               path: ROUTES.PAYMENT,
@@ -214,6 +223,22 @@ const router = createBrowserRouter(
                 {
                   path: ROUTES.PENDINGTICKET,
                   element: <PendingTicket />,
+                },
+                {
+                  path: ROUTES.UNPAIDBALANCES,
+                  element: <UnpaidBalances />,
+                },
+                {
+                  path: ROUTES.INACTIVEUSERS,
+                  element: <InactiveUsers />,
+                },
+                {
+                  path: ROUTES.CONVERSATIONS,
+                  element: <ConversationsScreen />,
+                },
+                {
+                  path: ROUTES.EMAIL_LIST,
+                  element: <EmailList />,
                 },
               ],
             },

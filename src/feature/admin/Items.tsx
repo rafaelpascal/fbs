@@ -14,7 +14,6 @@ const DraggableItem = ({
   handleNewLesson,
   handleRemove,
 }: any) => {
-  // if (!item?.lessonid) return null;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [, drag] = useDrag({
@@ -62,13 +61,8 @@ const DraggableItem = ({
       <div
         className={`p-3 w-full shadow-md flex justify-between items-start mb-2 
         bg-gray-200
-        `} //
+        `}
       >
-        {/* ${
-          theme === "dark"
-            ? "bg-transparent border border-gray-400"
-            : "bg-gray-200"
-        } */}
         <div className="flex flex-col lg:flex-row gap-2">
           {item.title ? (
             <h2 className="font-semibold text-[18px] text-gray-700">
