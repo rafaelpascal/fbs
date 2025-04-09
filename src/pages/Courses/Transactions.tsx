@@ -76,7 +76,6 @@ const Transactions = () => {
 
       if (res.data && res.data.data && res.data.data.length > 0) {
         const application = res.data.data[0];
-        console.log(application);
         setCourseTitle(application.course_title);
         // Map database response to programSpecifications format
         const updatedProgramSpecifications = [
@@ -109,8 +108,6 @@ const Transactions = () => {
               : "N/A",
           },
         ];
-
-        console.log(updatedProgramSpecifications);
         // Set the updated programSpecifications to state or use it elsewhere
         setProgramSpecifications(updatedProgramSpecifications);
         setLoading(false);

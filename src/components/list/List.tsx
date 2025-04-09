@@ -26,7 +26,8 @@ const List = ({
         className={cn(
           "text-[23px] font-DMSans font-semibold",
           title === "Who is this course for ?" ? "mt-8" : "",
-          title === "Career Options & Opportunities" ? "mt-8" : ""
+          title === "Career Options & Opportunities" ? "mt-8" : "",
+          title === "Assessment Methods" ? "mt-8" : ""
         )}
       >
         {title}

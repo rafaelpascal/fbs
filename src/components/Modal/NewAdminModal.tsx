@@ -238,8 +238,7 @@ export const NewAdminModal = ({
         formDataToSend.append("userid", String(userId));
       }
       if (id) {
-        const res = await CourseServices.updateAdmin(formDataToSend);
-        console.log("updated", res);
+        await CourseServices.updateAdmin(formDataToSend);
       } else {
         await CourseServices.createAdmin(formDataToSend);
       }

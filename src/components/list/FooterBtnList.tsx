@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 type FacilitatorsProps = {
   title: string;
   items: (string | { title: string; link: string })[];
@@ -15,10 +13,6 @@ const FooterBtnList = ({
 }: FacilitatorsProps) => {
   // Choose the list type based on the `ordered` prop
   const ListTag = ordered ? "ol" : "ul";
-
-  useEffect(() => {
-    console.log(items);
-  }, [items]);
 
   return (
     <div className="">

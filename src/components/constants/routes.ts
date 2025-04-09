@@ -1,5 +1,5 @@
 export const ROUTES = {
-  NEW_COURSE: "/:title/:id",
+  NEW_COURSE: "/:id",
   APPLICATION: "/application/:title/:id",
   FORM_SUBMITTED: "/submitted",
   STUDENTSMANAGEMENT: "/admin/students",

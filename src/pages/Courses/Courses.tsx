@@ -215,16 +215,33 @@ const Dashboard = () => {
         userid: Storeduser?.user,
       };
       const res = await CourseServices.fetchApplication(payload);
-      setfirstCourseId(res.data.data[0].coursesid);
+      // setfirstCourseId(res.data.data[0].coursesid);
       if (res.data && res.data.data && res.data.data.length > 0) {
         const application = res.data.data;
+
+        const firstEnrolledApp = application.find(
+          (app: Application) => app.payment_status === 1
+        );
+
+        if (firstEnrolledApp) {
+          setfirstCourseId(firstEnrolledApp.coursesid);
+        }
+
         const anyEnrolled: boolean = application.some(
-          (application: Application) => application.payment_status === 1
+          (app: Application) => app.payment_status === 1
         );
         if (anyEnrolled) {
           setisEnrolled(true);
         }
+        // const application = res.data.data;
+        // const anyEnrolled: boolean = application.some(
+        //   (application: Application) => application.payment_status === 1
+        // );
+        // if (anyEnrolled) {
+        //   setisEnrolled(true);
+        // }
         setapplications(application);
+
         const updatedProgramSpecifications: ProgramSpecification[] =
           application.map((app: Application) => ({
             courseTitle: app.course_title || "N/A",

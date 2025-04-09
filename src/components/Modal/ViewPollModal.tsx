@@ -26,7 +26,7 @@ const data = [
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-const CustomLegend = (props: any) => {
+export const CustomLegend = (props: any) => {
   const { payload } = props;
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-2 mt-4">

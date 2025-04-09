@@ -104,8 +104,7 @@ const FacilitatorsItem: FacilitatorsProps[] = [
 ];
 
 type CourseProps = {
-  id: string;
-  name: string;
+  id: string | undefined;
 };
 
 type FooterItem = {
@@ -120,7 +119,7 @@ type FooterbtnItem = {
   customClass: string;
 };
 
-const Contents = ({ id, name }: CourseProps) => {
+const Contents = ({ id }: CourseProps) => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -232,10 +231,12 @@ const Contents = ({ id, name }: CourseProps) => {
     try {
       setIsLoading(true);
       const payload = {
-        title: name,
-        courseid: JSON.parse(id),
+        // title: name,
+        courseid: id,
       };
       const course = await CourseServices.getCourse(payload);
+      console.log("course", course);
+
       setCourseData(course.data.course_details[0]);
       setIsLoading(false);
     } catch (error) {
@@ -292,7 +293,7 @@ const Contents = ({ id, name }: CourseProps) => {
 
   useEffect(() => {
     getCourse();
-  }, [id, name]);
+  }, [id]);
 
   const namesArray = courseData.facilitators.split(",");
   facilitatorsData.forEach((facilitator, index) => {
@@ -332,7 +333,7 @@ const Contents = ({ id, name }: CourseProps) => {
             text: "Duration",
             icon: <CiClock1 />,
             count:
-              (courseData.course_run.replace(/"/g, "") ?? "") === "Weekly"
+              courseData.course_run === "Weekly"
                 ? `${getWeeksBetweenDates(
                     courseData.course_startdate,
                     courseData.course_enddate
@@ -385,11 +386,11 @@ const Contents = ({ id, name }: CourseProps) => {
           </p>
           <p className="text-[20px] my-3">
             <span className="text-[#FF3B30]">Program:</span>{" "}
-            {courseData.course_type.replace(/"/g, "")}
+            {courseData.course_type}
           </p>
           <p className="text-[20px] mb-3">
             <span className="text-[#FF3B30]">Mode:</span>{" "}
-            {courseData.course_mode.replace(/"/g, "")}
+            {courseData.course_mode}
           </p>
           {courseData.video_url ? (
             <div
@@ -415,7 +416,7 @@ const Contents = ({ id, name }: CourseProps) => {
               <Description description={courseData.description} />
             </>
             <>
-              <CourseContents courseId={id} />
+              <CourseContents courseId={id ?? ""} />
             </>
             <>
               <Facilitators facilitatorsData={facilitatorsData} />
