@@ -3,19 +3,12 @@ import { cn } from "~/utils/helpers";
 
 type TicketProps = {
   ticketNumber: string;
-  title: string;
   date: string;
   status: string;
   action: () => void;
 };
 
-const TicketList = ({
-  ticketNumber,
-  action,
-  title,
-  date,
-  status,
-}: TicketProps) => {
+const TicketList = ({ ticketNumber, action, date, status }: TicketProps) => {
   const { theme } = useTheme();
   return (
     <button
@@ -24,7 +17,7 @@ const TicketList = ({
     >
       <div>
         <h2 className="font-DMSans font-normal text-left text-2xl">
-          <span className="font-bold">#{ticketNumber}</span> - {title}
+          <span className="font-bold">{ticketNumber}</span>
         </h2>
         <h2
           className={cn(

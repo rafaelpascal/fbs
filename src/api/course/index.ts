@@ -240,6 +240,16 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static createSupportTicket = async (payload: FormData) => {
+    try {
+      const res = await Api.post("/support/create-ticket", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static deleteCourseLesson = async (payload: any) => {
     try {
       const res = await Api.post("/lesson/delete-lesson", payload);
@@ -322,6 +332,16 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static getSingleTicket = async (payload: any) => {
+    try {
+      const res = await Api.post("/support/get-single-ticket", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static getEvent = async (payload: any) => {
     try {
       const res = await Api.post("/event/edit-event", payload);
@@ -394,6 +414,26 @@ export class CourseServices extends BaseAPIService {
     try {
       const res = await Api.get<any>("/course/list-courses");
       return res.data;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static listTickets = async (): Promise<any> => {
+    try {
+      const res = await Api.get<any>("/support/list-tickets");
+      return res.data;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static ticketReply = async (payload: any) => {
+    try {
+      const res = await Api.post("/support/response", payload);
+      return res;
     } catch (error) {
       const handleError = error;
       throw handleError;

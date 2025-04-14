@@ -5,6 +5,9 @@ import { useTheme } from "~/context/theme-provider";
 import { IoDocumentAttach } from "react-icons/io5";
 import { MdCancel } from "react-icons/md";
 import { cn } from "~/utils/helpers";
+import { CourseServices } from "~/api/course";
+import useToast from "~/hooks/useToast";
+import { AuthService } from "~/api/auth";
 
 const options = [
   { label: "Study Support", value: "Study Support" },
@@ -20,14 +23,18 @@ const Support = ({
 }: {
   setReportData: React.Dispatch<React.SetStateAction<any>>;
 }) => {
+  const { success, error } = useToast();
+  const Storeduser = AuthService.getSession();
   const [formData, setFormData] = useState<{
     department: string;
+    title: string;
     message: string;
     uploadedFile?: File | null;
     previewUrl?: string;
     subject?: string;
   }>({
     department: "",
+    title: "",
     message: "",
     uploadedFile: null,
     previewUrl: "",
@@ -64,14 +71,6 @@ const Support = ({
       previewUrl: "",
     }));
   };
-
-  const handleSubmit = () => {
-    setReportData((prevData: any) => ({
-      ...prevData,
-      subject: formData.subject,
-      message: formData.message,
-    }));
-  };
   const isFormValid =
     formData.message.trim() !== "" && formData.department.trim() !== "";
   function handleInputChange(field: string, value: any) {
@@ -80,6 +79,43 @@ const Support = ({
       [field]: value,
     }));
   }
+
+  const handleSubmit = async () => {
+    if (!isFormValid) return;
+
+    try {
+      // Prepare form data to send (especially for file uploads)
+      const data = new FormData();
+      data.append("userid", Storeduser?.user || "");
+      data.append("department", formData.department);
+      data.append("title", formData.title || "");
+      data.append("subject", formData.subject || "");
+      data.append("message", formData.message);
+      if (formData.uploadedFile) {
+        data.append("support_image", formData.uploadedFile);
+      }
+
+      const res = await CourseServices.createSupportTicket(data);
+
+      setReportData((prevData: any) => ({
+        ...prevData,
+        subject: res.data.data.ticketid,
+        message: res.data.data.message,
+      }));
+
+      success("Message submitted successfully!");
+      setFormData({
+        department: "",
+        message: "",
+        title: "",
+        uploadedFile: null,
+        previewUrl: "",
+        subject: "",
+      });
+    } catch (err) {
+      error("There was an error submitting your message.");
+    }
+  };
 
   return (
     <div>
@@ -107,6 +143,19 @@ const Support = ({
           Filled: Program title. Module. Lesson
         </p>
       </div>
+
+      <BaseInput
+        label="Title"
+        placeholder="Title"
+        containerClassname="w-full"
+        labelClassName="text-[18px] font-DMSans font-semibold"
+        inputContainerClassName={cn(
+          "h-[48px] ",
+          theme === "dark" ? "select-secondary" : "border-[0.5px] border-[#ddd]"
+        )}
+        value={formData.title}
+        onChange={(e: any) => handleInputChange("title", e.target.value)}
+      />
 
       <BaseInput
         label="Subject"
@@ -205,7 +254,7 @@ const Support = ({
               ? "hover:bg-[#FF5050] hover:border-[#fff] hover:text-[#fff]"
               : "opacity-50 cursor-not-allowed"
           }`}
-          disabled={!isFormValid} // Button is disabled when the form is invalid
+          disabled={!isFormValid}
         >
           Send message
         </button>

@@ -33,6 +33,16 @@ export const fetchlistCourses = () => {
     initialData: undefined,
   });
 };
+export const fetchlistTickets = () => {
+  return useQuery({
+    queryKey: ["tickets"],
+    queryFn: async () => {
+      const res = await CourseServices.listTickets();
+      return res;
+    },
+    initialData: undefined,
+  });
+};
 
 export const fetchlistUsers = () => {
   return useQuery({

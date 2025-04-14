@@ -17,7 +17,7 @@ const Message = ({ message, subject }: MessageProps) => {
       {/* User message */}
       <div className="w-full flex justify-end mb-4 items-end flex-col">
         <h2 className="text-left w-full lg:w-[600px] text-[#6440FB] font-DMSans font-semibold text-xl mb-2">
-          Ticket #2345645 - {subject}
+          Ticket {subject}
         </h2>
         <div className="p-4 border border-[#8593ED] w-full lg:w-[600px] rounded-md bg-[#F1F3F4]">
           <p className="font-DMSans text-xl font-normal text-left">{message}</p>

@@ -53,6 +53,7 @@ export const SupportModal = ({
     subject: "",
     message: "",
   });
+  const [ticketId, setTicketId] = useState("");
   const [currentView, setCurrentView] = useState<
     | "home"
     | "support"
@@ -80,6 +81,11 @@ export const SupportModal = ({
     });
     closeModal();
     setCurrentView("home");
+  };
+
+  const handleViewTickets = (subject: string) => {
+    setTicketId(subject);
+    setCurrentView("tickets");
   };
 
   return (
@@ -113,7 +119,7 @@ export const SupportModal = ({
                     subject={reportData.subject}
                   />
 
-                  <button onClick={() => setCurrentView("tickets")}>
+                  <button onClick={() => handleViewTickets(reportData.subject)}>
                     <p className="text-xl mt-4 text-[#FF5050] text-left font-DMSans font-semibold ">
                       Go to pending messages (2)
                     </p>
@@ -126,8 +132,7 @@ export const SupportModal = ({
                 <>
                   {Tickets.map((ticket) => (
                     <TicketList
-                      ticketNumber={ticket.ticketNumber}
-                      title={ticket.title}
+                      ticketNumber={ticketId}
                       date={ticket.date}
                       status={ticket.status}
                       action={handleViewTicket}
@@ -149,14 +154,14 @@ export const SupportModal = ({
             case "viewTicket":
               return (
                 <>
-                  <SingleTicket />
+                  <SingleTicket id={ticketId} />
                 </>
               );
 
             case "aiChat":
               return (
                 <>
-                  <SingleTicket />
+                  <SingleTicket id={ticketId} />
                 </>
               );
 

@@ -4,6 +4,7 @@ import { HiClipboardDocumentList } from "react-icons/hi2";
 import { CiBellOn } from "react-icons/ci";
 import { MdOutlineEventAvailable, MdOutlineSupportAgent } from "react-icons/md";
 import { AiOutlineTransaction } from "react-icons/ai";
+import { ROUTES } from "../constants/routes";
 
 export const sidebarData: SideNavProps[] = [
   {
@@ -13,7 +14,7 @@ export const sidebarData: SideNavProps[] = [
     text: "My Courses",
   },
   {
-    href: "/profile",
+    href: ROUTES.STUDENTPROFILE,
     icon: FaRegUserCircle,
     dropdown: false,
     text: "My Profile",
@@ -29,6 +30,12 @@ export const sidebarData: SideNavProps[] = [
     icon: AiOutlineTransaction,
     dropdown: false,
     text: "Transactions",
+  },
+  {
+    href: ROUTES.FORUM,
+    icon: AiOutlineTransaction,
+    dropdown: false,
+    text: "Forum",
   },
   {
     href: "/notification",

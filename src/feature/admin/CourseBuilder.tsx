@@ -56,12 +56,14 @@ interface CourseBuilderProps {
   created: any;
   Initialmodules: any[];
   Initiallessons: any[];
+  InitialQuiz: any[];
   CreatedNewItem: () => void;
 }
 const CourseBuilder: React.FC<CourseBuilderProps> = ({
   created,
   Initialmodules,
   Initiallessons,
+  InitialQuiz,
   CreatedNewItem,
 }) => {
   const { theme } = useTheme();
@@ -187,9 +189,20 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
           pages: lesson.pages || "",
           category: "lessons",
         })),
+        quiz: InitialQuiz.filter((quiz) => quiz.module_id === mod.moduleid).map(
+          (quiz) => ({
+            ...quiz,
+            id: quiz.quizid || Date.now(),
+            module_id: quiz.module_id,
+            title: quiz.title,
+            description: "",
+            pages: quiz.pages || "",
+            category: "quiz",
+          })
+        ),
         capstone: [],
         assignment: [],
-        quiz: [],
+        // quiz: [],
         exam: [],
         resources: [],
         caseStudy: [],

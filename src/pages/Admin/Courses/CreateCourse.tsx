@@ -23,6 +23,7 @@ const CreateCourse = () => {
   >([]);
   const [modules, setModules] = useState([]);
   const [lessons, setLessons] = useState([]);
+  const [quiz, setInitialQuiz] = useState([]);
   const [courseData, setCourseData] = useState<{
     courseid: any;
     courseTitle: any;
@@ -107,11 +108,11 @@ const CreateCourse = () => {
         paymentplan: courseDetails.program_plan || "",
         selectedMonths: courseDetails.installment || 0,
       };
-
       setCourseData(transformedData);
       setInitialCourseId(courseDetails.coursesid);
       setCourseRequirements(courseDetails.course_requirements);
       setLessons(courseDetails.lessons);
+      setInitialQuiz(courseDetails.quiz);
       setModules(courseDetails.modules);
     } catch (error) {
       console.error("Error fetching course data:", error);
@@ -289,6 +290,7 @@ const CreateCourse = () => {
                 CreatedNewItem={CreatedNewItem}
                 Initialmodules={modules || []}
                 Initiallessons={lessons || []}
+                InitialQuiz={quiz || []}
               />
             </div>
           )}

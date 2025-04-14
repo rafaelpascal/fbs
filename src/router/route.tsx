@@ -92,6 +92,10 @@ import UnpaidBalances from "~/pages/Admin/Support/UnpaidBalances.tsx";
 import ConversationsScreen from "~/pages/Admin/Support/Conversations.tsx";
 import EmailList from "~/pages/Admin/Support/EmailList.tsx";
 import SingleResources from "~/pages/Admin/Support/SingleResources.tsx";
+import Profile from "~/pages/Students/Profile.tsx";
+import Forum from "~/pages/Courses/Forum.tsx";
+import SingleConversation from "~/pages/Courses/SingleConversation.tsx";
+import Conversations from "~/pages/Courses/Conversations.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
@@ -152,8 +156,24 @@ const router = createBrowserRouter(
               element: <BankTransfer />,
             },
             {
+              path: ROUTES.FORUM,
+              element: <Forum />,
+            },
+            {
+              path: ROUTES.FORUMCONVERSATION,
+              element: <SingleConversation />,
+            },
+            {
+              path: ROUTES.CONVERSATION,
+              element: <Conversations />,
+            },
+            {
               path: ROUTES.STUDENTRANSACTION,
               element: <Transactions />,
+            },
+            {
+              path: ROUTES.STUDENTPROFILE,
+              element: <Profile />,
             },
           ],
         },

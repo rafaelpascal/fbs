@@ -18,7 +18,7 @@ import { cn } from "~/utils/helpers";
 import { useTheme } from "~/context/theme-provider";
 import { useSelector } from "react-redux";
 import { RootState } from "~/redux-store/store";
-import { GiNotebook } from "react-icons/gi";
+// import { GiNotebook } from "react-icons/gi";
 import { BsChatRightText } from "react-icons/bs";
 import { SupportModal } from "~/components/Modal/SupportModal";
 import { getSlideAnimation } from "~/lib/utils";
@@ -32,13 +32,13 @@ const Lecture = () => {
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [Moduleloading, setModuleLoading] = useState(false);
-  const [noteHovered, setNoteHovered] = useState(false);
-  const [supportHovered, setSupportHovered] = useState(false);
+  // const [noteHovered, setNoteHovered] = useState(false);
+  // const [supportHovered, setSupportHovered] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [supportOpen, setSupportOpen] = useState(false);
   // const [completedLessons] = useState<Set<number>>(new Set());
   const [lessonStarted, setLessonStarted] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  // const [isMinimized, setIsMinimized] = useState(false);
   const [currentLessonId, setCurrentLessonId] = useState<number | null>(null);
   const totalLessons = useSelector(
     (state: RootState) => state.lesson.totalLessons
@@ -200,11 +200,11 @@ const Lecture = () => {
 
   const handleMinimize = () => {
     setSupportOpen(false);
-    setIsMinimized(true);
+    // setIsMinimized(true);
   };
   const handleClose = () => {
     setSupportOpen(false);
-    setIsMinimized(false);
+    // setIsMinimized(false);
   };
 
   return (
@@ -352,7 +352,7 @@ const Lecture = () => {
                   {`${currentLesson.number}. ${currentLesson.title}`}
                 </h2>
                 <div className="flex  justify-end items-center gap-4">
-                  <div className="relative">
+                  {/* <div className="relative">
                     <button
                       onMouseEnter={() => setNoteHovered(true)}
                       onMouseLeave={() => setNoteHovered(false)}
@@ -366,7 +366,6 @@ const Lecture = () => {
                       />
                     </button>
 
-                    {/* Tooltip */}
                     {noteHovered && (
                       <motion.div
                         initial={{ opacity: 0, y: 5 }}
@@ -379,10 +378,9 @@ const Lecture = () => {
                         </p>
                       </motion.div>
                     )}
-                  </div>
+                  </div> */}
 
-                  {/* Support Button */}
-                  {!isMinimized && (
+                  {/* {!isMinimized && (
                     <div className="relative">
                       <button
                         onClick={() => setSupportOpen(true)}
@@ -393,7 +391,6 @@ const Lecture = () => {
                         <BsChatRightText className="text-[25px] text-[#fff]" />
                       </button>
 
-                      {/* Tooltip */}
                       {supportHovered && (
                         <motion.div
                           initial={{ opacity: 0, y: 5 }}
@@ -407,7 +404,7 @@ const Lecture = () => {
                         </motion.div>
                       )}
                     </div>
-                  )}
+                  )} */}
                   <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn m-1">
                       <HiDotsHorizontal className="text-[#1B1919] text-[22px]" />
@@ -417,10 +414,7 @@ const Lecture = () => {
                       className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
                     >
                       <li className="font-DMSans text-[14px] font-semibold">
-                        <a>Add note</a>
-                      </li>
-                      <li className="font-DMSans text-[14px] font-semibold">
-                        <a>Feedback</a>
+                        <a>Notes</a>
                       </li>
                       <li className="font-DMSans text-[14px] font-semibold">
                         <a>View Capstone</a>
@@ -473,20 +467,18 @@ const Lecture = () => {
             </>
           )}
 
-          {isMinimized && (
-            <motion.div
-              {...getSlideAnimation({ slideDirection: "top" })}
-              transition={{ duration: 0.5 }}
-              className="fixed bottom-10 right-10"
+          <motion.div
+            {...getSlideAnimation({ slideDirection: "top" })}
+            transition={{ duration: 0.5 }}
+            className="fixed bottom-10 right-10"
+          >
+            <button
+              onClick={() => setSupportOpen(true)}
+              className="p-3 flex justify-center items-center rounded-full bg-[#FF1515]"
             >
-              <button
-                onClick={() => setSupportOpen(true)}
-                className="p-3 flex justify-center items-center rounded-full bg-[#FF1515]"
-              >
-                <BsChatRightText className="text-[25px] text-[#fff]" />
-              </button>
-            </motion.div>
-          )}
+              <BsChatRightText className="text-[25px] text-[#fff]" />
+            </button>
+          </motion.div>
         </div>
       )}
       <Markcomplete
