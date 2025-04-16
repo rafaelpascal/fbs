@@ -7,7 +7,19 @@ import { FBSlogo } from "~/assets";
 import { useTheme } from "~/context/theme-provider";
 import ThemeToggle from "../buttons/ThemeController";
 import { Link, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import { ROUTES } from "../constants/routes";
+import { cn } from "~/utils/helpers";
+
+const navItems = [
+  { label: "Home", href: "https://fordaxbschool.com" },
+  { label: "About", href: "https://fordaxbschool.com/about" },
+  { label: "Programs", href: "https://fordaxbschool.com/execs" },
+  { label: "Events", href: "" },
+  { label: "Blog", href: "https://fordaxbschool.com/blog" },
+  { label: "Resources", href: "" },
+  { label: "Contact", href: "https://fordaxbschool.com/contact" },
+];
 
 const Header = () => {
   const navigate = useNavigate();
@@ -49,10 +61,33 @@ const Header = () => {
     navigate(ROUTES.HOME);
   };
 
+  const closeSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <div className="relative h-[193px] w-full">
-      {/* Mobile Menu Icon */}
-      <div className="flex lg:hidden justify-between items-center w-full p-4">
+    <div
+      className={cn(
+        "fixed z-50 w-full",
+        theme === "dark" ? "bg-[#333]" : "bg-white"
+      )}
+    >
+      {/* Backdrop */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-md lg:hidden"
+            onClick={closeSidebar}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Top Bar */}
+      <div className="flex lg:hidden  justify-between items-center w-full p-4">
         <img src={FBSlogo} alt="biopaylogo" width={100} />
         <div>
           <ThemeToggle />
@@ -62,72 +97,148 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Sidebar for Mobile */}
-      <div
-        className={`fixed top-0 left-0 h-full w-[250px] shadow-lg transform
-          ${theme === "dark" ? "bg-[#333]" : "bg-white"} ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out z-50`}
-      >
-        <div
-          className={`flex justify-between items-center p-4 border-b ${
-            theme === "dark" ? "bg-[#333]" : "bg-white"
-          }`}
-        >
-          <img src={FBSlogo} alt="biopaylogo" width={80} />
-        </div>
-        <nav
-          className={`flex flex-col mb-4 gap-4 p-4 ${
-            theme === "dark" ? "bg-[#333]" : "bg-white"
-          }`}
-        >
-          <Link
-            className="text-[18px] font-DMSans font-semibold text-left"
-            to="https://fordaxbschool.com"
+      {/* Mobile Sidebar */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            className={`fixed top-0 left-0 h-full w-[260px] z-[10001] shadow-lg rounded-r-3xl ${
+              theme === "dark" ? "bg-[#333]" : "bg-white"
+            }`}
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{
+              type: "spring",
+              stiffness: 200,
+              damping: 25,
+            }}
           >
-            Home
-          </Link>
-          <Link
-            className="text-[18px] font-DMSans font-semibold text-left"
-            to="https://fordaxbschool.com/about"
-          >
-            About
-          </Link>
-          <Link
-            className="text-[18px] font-DMSans font-semibold text-left"
-            to="https://fordaxbschool.com/execs"
-          >
-            Programs
-          </Link>
-          <button
-            className="text-[18px] font-DMSans font-semibold text-left"
-            onClick={handleNavigateEvents}
-          >
-            Events
-          </button>
-          <Link
-            className="text-[18px] font-DMSans font-semibold text-left"
-            to="https://fordaxbschool.com/blog"
-          >
-            Blog
-          </Link>
-          <button className="text-[18px] font-DMSans font-semibold text-left">
-            Resources
-          </button>
-          <Link
-            className="text-[18px] font-DMSans font-semibold text-left"
-            to="https://fordaxbschool.com/contact"
-          >
-            Contact
-          </Link>
-        </nav>
-        <Link
-          to="/login"
-          className="w-full text-[18px] font-DMSans font-semibold text-center mx-4 px-2 py-4 text-[#fff] bg-[#FF1515] rounded-[8px]"
-        >
-          STUDENT LOGIN
-        </Link>
-      </div>
+            {/* Sidebar Header */}
+            <div
+              className={`flex justify-between items-center p-4 border-b border-red-500 rounded-r-3xl ${
+                theme === "dark" ? "bg-[#333]" : "bg-white"
+              }`}
+            >
+              <img src={FBSlogo} alt="biopaylogo" width={80} />
+              <motion.button
+                onClick={closeSidebar}
+                className="ml-auto grid size-8 place-items-center rounded-full bg-[#FF5050] text-white"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <FaTimes size={18} />
+              </motion.button>
+            </div>
+
+            {/* Sidebar Links */}
+            {/* <nav
+              className={`flex flex-col gap-4 px-6 py-4 mb-4 ${
+                theme === "dark" ? "bg-[#333]" : "bg-white"
+              }`}
+            >
+              <Link
+                className="text-[18px] font-DMSans font-semibold"
+                to="https://fordaxbschool.com"
+              >
+                Home
+              </Link>
+              <Link
+                className="text-[18px] font-DMSans font-semibold"
+                to="https://fordaxbschool.com/about"
+              >
+                About
+              </Link>
+              <Link
+                className="text-[18px] font-DMSans font-semibold"
+                to="https://fordaxbschool.com/execs"
+              >
+                Programs
+              </Link>
+              <Link
+                to=""
+                className="text-[18px] text-left font-DMSans font-semibold"
+                onClick={handleNavigateEvents}
+              >
+                Events
+              </Link>
+              <Link
+                className="text-[18px] font-DMSans font-semibold"
+                to="https://fordaxbschool.com/blog"
+              >
+                Blog
+              </Link>
+              <Link
+                to=""
+                className="text-[18px]  text-left  font-DMSans font-semibold"
+              >
+                Resources
+              </Link>
+              <Link
+                className="text-[18px] font-DMSans font-semibold"
+                to="https://fordaxbschool.com/contact"
+              >
+                Contact
+              </Link>
+            </nav> */}
+            <motion.ul
+              className="flex flex-col items-center gap-3 pt-4 text-[16px] font-semibold"
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    staggerChildren: 0.1,
+                  },
+                },
+              }}
+            >
+              {navItems.map(({ href, label }) => (
+                <motion.li
+                  key={href}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Link
+                    to={href}
+                    className={cn(
+                      "text-xl font-DMSans font-medium",
+                      theme === "dark" ? "text-[#fff]" : "text-[#FF5050]"
+                    )}
+                    onClick={closeSidebar}
+                  >
+                    {label}
+                  </Link>
+                </motion.li>
+              ))}
+            </motion.ul>
+            <motion.div
+              className="flex w-full flex-col items-center gap-[8px]"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <Link
+                to="/login"
+                className="block mx-4 my-4 text-center px-4 py-3 w-[70%] rounded-[8px] bg-[#FF1515] text-white text-[18px] font-DMSans font-semibold"
+              >
+                STUDENT LOGIN
+              </Link>
+              <ThemeToggle />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Header Content for larger screens */}
       <div

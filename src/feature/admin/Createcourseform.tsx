@@ -131,8 +131,8 @@ const Createcourseform = ({
     featuredVideo: "",
     orientation: "",
     maxStudents: "",
-    enrollmentSchedule: "",
-    courseSchedule: "",
+    enrollmentSchedule: "allTime",
+    courseSchedule: "allTime",
     difficultyLevel: null,
     courserun: null,
     instructoreType: null,
@@ -272,13 +272,13 @@ const Createcourseform = ({
       "facilitator",
     ];
 
-    const hasValidDates =
-      formData.enrollmentSchedule === "allTime" ||
-      (formData.enrollmentStartDate && formData.enrollmentEndDate);
+    // const hasValidDates =
+    //   formData.enrollmentSchedule === "allTime" ||
+    //   (formData.enrollmentStartDate && formData.enrollmentEndDate);
 
-    const hasValidCourse =
-      formData.courseSchedule === "allTime" ||
-      (formData.courseStartDate && formData.courseEndDate);
+    // const hasValidCourse =
+    //   formData.courseSchedule === "allTime" ||
+    //   (formData.courseStartDate && formData.courseEndDate);
 
     const hasValidPayment =
       (formData.currency.NGN && formData.nairaAmount) ||
@@ -293,11 +293,15 @@ const Createcourseform = ({
           (Array.isArray(value) ? value.length > 0 : true)
         );
       }) &&
-      hasValidDates &&
-      hasValidCourse &&
+      // hasValidDates &&
+      // hasValidCourse &&
       hasValidPayment
     );
   };
+
+  useEffect(() => {
+    console.log("frrrrr", formData);
+  }, [formData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -362,7 +366,7 @@ const Createcourseform = ({
       // Dates and schedules
       formDataToSend.append(
         "enrollment_all_times",
-        formData.enrollmentSchedule === "allTime" ? "1" : "0"
+        formData.enrollmentSchedule == "allTime" ? "1" : "0"
       );
       formDataToSend.append(
         "enrollment_startdate",
@@ -371,7 +375,7 @@ const Createcourseform = ({
       formDataToSend.append("enrollment_enddate", formData.enrollmentEndDate);
       formDataToSend.append(
         "course_flexible",
-        formData.courseSchedule === "allTime" ? "1" : "0"
+        formData.courseSchedule == "allTime" ? "1" : "0"
       );
       formDataToSend.append("course_startdate", formData.courseStartDate);
       formDataToSend.append("course_enddate", formData.courseEndDate);
@@ -389,6 +393,11 @@ const Createcourseform = ({
       // Handle update vs create
       if (formData.courseid) {
         formDataToSend.append("courseid", formData.courseid.toString());
+      }
+
+      // 🔍 Log FormData
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(`${key}:`, value);
       }
 
       let response;

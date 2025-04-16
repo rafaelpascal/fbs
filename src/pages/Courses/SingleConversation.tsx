@@ -1,11 +1,25 @@
+import { useState } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import CommentCard from "~/components/cards/CommentCard";
 import { Avatar } from "~/components/dashboard/Avatar";
+import { BaseInput } from "~/components/data-inputs/text-input";
+import { useTheme } from "~/context/theme-provider";
 import { DashboardArea } from "~/layouts/DashboardArea";
+import { getSlideAnimation } from "~/lib/utils";
+import { cn } from "~/utils/helpers";
+import { motion } from "framer-motion";
 
 const SingleConversation = () => {
+  const { theme } = useTheme();
   const navigate = useNavigate();
+  const [isReply, setIsReply] = useState(false);
+  const [formData, setFormData] = useState({ question: "" });
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
     <DashboardArea>
       <div className="p-4 space-y-4">
@@ -63,8 +77,14 @@ const SingleConversation = () => {
           <button className="font-DMSans font-semibold text-left text-sm lg:text-lg">
             Like
           </button>
-          <button className="font-DMSans font-semibold text-left text-sm lg:text-lg">
-            Reply
+          <button
+            onClick={() => setIsReply(!isReply)}
+            className={cn(
+              "font-DMSans font-semibold text-left text-sm lg:text-lg",
+              isReply && "text-red-500"
+            )}
+          >
+            {isReply ? "Cancel" : "Reply"}
           </button>
           <button className="font-DMSans font-semibold text-left text-sm lg:text-lg">
             Edit
@@ -79,6 +99,31 @@ const SingleConversation = () => {
             Report
           </button>
         </div>
+
+        {isReply && (
+          <motion.div
+            {...getSlideAnimation({ slideDirection: "right" })}
+            transition={{ duration: 0.5 }}
+          >
+            <BaseInput
+              label="Add Reply"
+              type="textarea"
+              placeholder="Type Reply"
+              containerClassname="w-full"
+              labelClassName="text-[17px] font-DMSans font-semibold"
+              inputContainerClassName={cn(
+                "h-[153px] py-2 shadow-lg",
+                theme === "dark"
+                  ? "select-secondary"
+                  : "border-[0.5px] border-[#ddd]"
+              )}
+              value={formData.question}
+              onChange={(e: any) =>
+                handleInputChange("question", e.target.value)
+              }
+            />
+          </motion.div>
+        )}
 
         {/* Comments/Replies */}
         <div className="mt-4 w-full space-y-4">

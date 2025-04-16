@@ -127,12 +127,12 @@ export const BaseInput = forwardRef<
             (showPassword ? (
               <EyeDisable
                 onClick={handleTogglePassword}
-                className="cursor-pointer text-[30px] text-[#03435F]"
+                className="cursor-pointer text-[30px] text-[#FF5050]"
               />
             ) : (
               <Eye
                 onClick={handleTogglePassword}
-                className="cursor-pointer text-[30px] text-[#03435F]"
+                className="cursor-pointer text-[30px] text-[#FF5050]"
               />
             ))}
           {showValidTick && (

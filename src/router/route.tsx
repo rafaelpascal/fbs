@@ -96,6 +96,9 @@ import Profile from "~/pages/Students/Profile.tsx";
 import Forum from "~/pages/Courses/Forum.tsx";
 import SingleConversation from "~/pages/Courses/SingleConversation.tsx";
 import Conversations from "~/pages/Courses/Conversations.tsx";
+import Notification from "~/pages/Courses/Notification.tsx";
+import NotificationTable from "~/pages/Admin/NotificationsManagement/NotificationTable/NotificationTable.tsx";
+import Notifications from "~/pages/Admin/NotificationsManagement/Notifications.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
@@ -158,6 +161,10 @@ const router = createBrowserRouter(
             {
               path: ROUTES.FORUM,
               element: <Forum />,
+            },
+            {
+              path: ROUTES.NOTIFICATION,
+              element: <Notification />,
             },
             {
               path: ROUTES.FORUMCONVERSATION,
@@ -227,6 +234,10 @@ const router = createBrowserRouter(
                   element: <QuizzesTable />,
                 },
               ],
+            },
+            {
+              path: ROUTES.NOTIFICATIONS,
+              element: <Notifications />,
             },
             {
               path: ROUTES.COURSEAPPLICATION,

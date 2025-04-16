@@ -33,6 +33,39 @@ export const fetchlistCourses = () => {
     initialData: undefined,
   });
 };
+
+export const fetchlistNotification = () => {
+  return useQuery({
+    queryKey: ["notification"],
+    queryFn: async () => {
+      const res = await CourseServices.listNotifications();
+      return res;
+    },
+    initialData: undefined,
+  });
+};
+
+export const fetchdashboardstats = () => {
+  return useQuery({
+    queryKey: ["dashboard"],
+    queryFn: async () => {
+      const res = await CourseServices.dashboardstats();
+      return res;
+    },
+    initialData: undefined,
+  });
+};
+
+export const fetchSystemUser = () => {
+  return useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const res = await CourseServices.systemUsers();
+      return res;
+    },
+    initialData: undefined,
+  });
+};
 export const fetchlistTickets = () => {
   return useQuery({
     queryKey: ["tickets"],

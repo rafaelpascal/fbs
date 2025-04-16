@@ -1,23 +1,96 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  fetchdashboardstats,
+  fetchlistCourses,
+  fetchlistNotification,
+} from "~/api/course/hooks";
 import CourseListCard from "~/components/cards/CourseListCard";
 import InstructorsCard from "~/components/cards/InstructorsCard";
 import NotificationCard from "~/components/cards/NotificationCard";
 import { RevenueCardRow } from "~/components/cards/RevenueCardRow";
 import { DoughnutChartDemo } from "~/components/charts/Doughnut";
 import { LineChartDemo } from "~/components/charts/line-chart";
-import {
-  CourseList,
-  Instructurs,
-  Notifications,
-} from "~/components/constants/data";
+import { Instructurs, Notifications } from "~/components/constants/data";
 import { RevenueCards } from "~/components/dashboard/RevenueCards";
 import { DashboardArea } from "~/layouts/DashboardArea";
 
+type APINotification = {
+  id: number;
+  title: string;
+  messages: string;
+  userid: number;
+  status: number;
+  created_at: string;
+};
+
+type Course = {
+  course_title: string;
+  images: string;
+  creators: string;
+  total_lessons: string; // if this is a number, you can change it to `lesson: number;`
+  duration: string;
+};
+
+type StyledNotification = APINotification & {
+  icon: React.FC<React.SVGProps<SVGSVGElement>>; // since you're assigning components like GrDocumentUser
+  containerClass: string;
+};
+
 const Dashboard = () => {
+  const { data: notificationData } = fetchlistNotification();
+  const { data: dashboardStats } = fetchdashboardstats();
+  const { data: courseList } = fetchlistCourses();
+  const [courseData, setCourseData] = useState<Course[]>([]);
+  const [newdashboardData, setDashboardData] = useState({
+    Totalcourses: 0,
+    Totalsales: 0,
+    totalStudent: 0,
+    totalLecturer: 0,
+  });
+
+  const [mergedNotifications, setMergedNotifications] = useState<
+    StyledNotification[]
+  >([]);
+
+  useEffect(() => {
+    if (dashboardStats && dashboardStats.data) {
+      setDashboardData({
+        Totalcourses: dashboardStats.data.total_courses || 0,
+        Totalsales: 0,
+        totalStudent: dashboardStats.data.total_students || 0,
+        totalLecturer: dashboardStats.data.total_instructors || 0,
+      });
+    }
+  }, [dashboardStats]);
+
+  useEffect(() => {
+    if (courseList?.course_details) {
+      setCourseData(courseList?.course_details);
+    }
+  }, [courseList]);
+
+  useEffect(() => {
+    if (notificationData?.data) {
+      const styled = notificationData.data.map(
+        (item: APINotification, index: number): StyledNotification => {
+          const styleInfo = Notifications[index % Notifications.length];
+          return {
+            ...item,
+            icon: styleInfo.icon,
+            containerClass: styleInfo.containerClass,
+          };
+        }
+      );
+      setMergedNotifications(styled);
+    }
+  }, [notificationData]);
+
   const dashboardData = {
-    businessCount: 0,
-    customersCount: 0,
+    businessCount: newdashboardData.Totalcourses,
+    customersCount: newdashboardData.totalLecturer,
     merchantCount: 0,
-    beneficiaryCount: 0,
+    beneficiaryCount: newdashboardData.totalStudent,
   };
   const {
     businessCount = 0,
@@ -33,14 +106,6 @@ const Dashboard = () => {
     customersCount,
   });
 
-  // Function to determine NavLink className
-  // const getNavLinkClassName = useCallback(
-  //   ({ isActive }: { isActive: boolean }) =>
-  //     isActive
-  //       ? "bg-[#FF3B30] text-[20px] h-[24px] w-auto px-2 flex justify-center items-center rounded-[4px] font-DMSans font-normal py-4 text-[#FFFFFF]"
-  //       : "text-[20px] h-[24px] w-auto flex justify-center items-center font-DMSans font-normal bg-transparent text-[#8F94A8] px-2 py-4 rounded-[4px]",
-  //   []
-  // );
   return (
     <DashboardArea>
       <div>
@@ -56,13 +121,16 @@ const Dashboard = () => {
             <DoughnutChartDemo />
           </div>
         </div>
-        <div className="flex justify-between flex-col lg:flex-row items-start">
-          <div className="rounded-lg w-full lg:w-[470px] shadow-lg p-4">
+        <div className="flex flex-row w-full flex-wrap justify-between items-start">
+          <div className="rounded-lg w-full lg:w-[33%] shadow-lg p-4">
             <div className="flex border-b-[2px] py-4 justify-between items-center">
               <h2 className="font-DMSans font-bold text-[17px]">Instructors</h2>
-              <button className="underline text-[#FF3B30] text-[14px] font-DMSans font-semibold">
+              <Link
+                to="/admin/signup"
+                className="underline text-[#FF3B30] text-[14px] font-DMSans font-semibold"
+              >
                 View All
-              </button>
+              </Link>
             </div>
             <div className="h-[356px] scrollbar-style overflow-y-auto">
               {Instructurs.map((details, index) => (
@@ -76,52 +144,68 @@ const Dashboard = () => {
               ))}
             </div>
             <div className="w-full mt-4 flex justify-end items-center">
-              <button className="text-[#FF3B30] text-[16px] p-2 rounded-md hover:bg-[#FF3B30] hover:text-[#fff] text-right font-DMSans font-semibold transition delay-150 duration-300 ease-in-out">
+              <Link
+                to="/admin/signup"
+                className="text-[#FF3B30] text-[16px] p-2 rounded-md hover:bg-[#FF3B30] hover:text-[#fff] text-right font-DMSans font-semibold transition delay-150 duration-300 ease-in-out"
+              >
                 + Add New Instructor
-              </button>
+              </Link>
             </div>
           </div>
-          <div className="rounded-lg w-full lg:w-[470px] shadow-lg p-4">
+          <div className="rounded-lg w-full lg:w-[33%] shadow-lg p-4">
             <div className="flex border-b-[2px] py-4 justify-between items-center">
               <h2 className="font-DMSans font-bold text-[17px]">Courses</h2>
-              <button className="underline text-[#FF3B30] text-[14px] font-DMSans font-semibold">
+              <Link
+                to="/admin/courses"
+                className="underline text-[#FF3B30] text-[14px] font-DMSans font-semibold"
+              >
                 View All
-              </button>
+              </Link>
             </div>
             <div className="h-[356px] scrollbar-style overflow-y-auto">
-              {CourseList.map((course, index) => (
+              {courseData.map((course: Course, index: number) => (
                 <CourseListCard
                   key={index}
-                  title={course.title}
-                  img={course.img}
-                  instructorname={course.name}
-                  lesson={course.lesson}
+                  title={course.course_title}
+                  img={course.images}
+                  instructorname={course.creators}
+                  lesson={course.total_lessons}
                   duration={course.duration}
                 />
               ))}
             </div>
             <div className="w-full mt-4 flex justify-end items-center">
-              <button className="text-[#FF3B30] text-[16px] p-2 rounded-md hover:bg-[#FF3B30] hover:text-[#fff] text-right font-DMSans font-semibold transition delay-150 duration-300 ease-in-out">
+              <Link
+                to="/admin/courses/newcourse"
+                className="text-[#FF3B30] text-[16px] p-2 rounded-md hover:bg-[#FF3B30] hover:text-[#fff] text-right font-DMSans font-semibold transition delay-150 duration-300 ease-in-out"
+              >
                 + Add New Course
-              </button>
+              </Link>
             </div>
           </div>
-          <div className="rounded-lg w-full lg:w-[470px] shadow-lg p-4">
+          <div className="rounded-lg w-full lg:w-[33%] shadow-lg p-4">
             <div className="flex border-b-[2px] py-4 justify-between items-center">
               <h2 className="font-DMSans font-bold text-[17px]">
                 Notifications
               </h2>
             </div>
-            <div className="h-[414px] scrollbar-style overflow-y-auto">
-              {Notifications.map((nf, index) => (
-                <NotificationCard
-                  key={index}
-                  icon={nf.icon}
-                  title={nf.title}
-                  time={nf.time}
-                  containerClass={nf.containerClass}
-                />
-              ))}
+            <div className="h-[356px] scrollbar-style overflow-y-auto">
+              {mergedNotifications?.map(
+                (nf: StyledNotification, index: number) => (
+                  <NotificationCard
+                    key={index}
+                    icon={nf.icon}
+                    title={nf.title}
+                    time={nf.created_at}
+                    containerClass={nf.containerClass}
+                  />
+                )
+              )}
+            </div>
+            <div className="w-full mt-4 flex justify-end items-center">
+              <button className="text-[#FF3B30] text-[16px] p-2 rounded-md hover:bg-[#FF3B30] hover:text-[#fff] text-right font-DMSans font-semibold transition delay-150 duration-300 ease-in-out">
+                Create Notification
+              </button>
             </div>
           </div>
         </div>

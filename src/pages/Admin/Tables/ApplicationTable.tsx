@@ -23,7 +23,7 @@ interface MerchantTableRow {
   email: string;
   amount: string;
   course_title: string;
-  createdAt: string;
+  created_at: string;
   status: string;
   application_status: number;
 }
@@ -116,10 +116,10 @@ const ApplicationTable = () => {
     // },
     {
       name: "Application Date",
-      selector: (row: { createdAt: string }) => row.createdAt,
+      selector: (row: { created_at: string }) => row.created_at,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
-          {moment(row.createdAt).format("MM/DD/YYYY")}
+          {moment(row.created_at).format("MM/DD/YYYY")}
         </div>
       ),
     },

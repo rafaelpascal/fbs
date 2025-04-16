@@ -99,13 +99,33 @@ const Otherinfo = ({
   const [isAccepted, setIsAccepted] = useState(false);
   const [selectedGender, setSelectedGender] = useState("Male");
   const user = useSelector((state: RootState) => state.user);
-  const [selectedCountry, setSelectedCountry] = useState("NG");
+  const options = useMemo(() => {
+    return countryList()
+      .getData()
+      .map((country) => ({
+        value: country.value,
+        label: country.label,
+      }));
+  }, []);
+  const [selectedCountry, setSelectedCountry] = useState<{
+    label: string;
+    value: string;
+  } | null>(() => options.find((country) => country.value === "NG") || null);
   const [formData, setFormData] = useState<FormData>({
     state: "",
   });
+
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCountry(e.target.value);
-    setSelectedState(""); // Reset state when country changes
+    const selectedValue = e.target.value;
+    const selectedOption = options.find(
+      (country) => country.value === selectedValue
+    );
+
+    if (selectedOption) {
+      setSelectedCountry(selectedOption);
+    }
+
+    setSelectedState("");
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -138,15 +158,6 @@ const Otherinfo = ({
   const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedState(event.target.value);
   };
-
-  const options = useMemo(() => {
-    return countryList()
-      .getData()
-      .map((country) => ({
-        value: country.value,
-        label: country.label,
-      }));
-  }, []);
 
   const form = useForm<OtherInfoFormPayload>({
     resolver: zodResolver(otherinfoSchema),
@@ -218,10 +229,7 @@ const Otherinfo = ({
 
       // Add state and country
       if (selectedState) formData.append("state", selectedState);
-      const selectedCountry = document.querySelector<HTMLSelectElement>(
-        "select[name='country']"
-      )?.value;
-      if (selectedCountry) formData.append("country", selectedCountry);
+      if (selectedCountry) formData.append("country", selectedCountry?.label);
       if (selectedGender) formData.append("gender", selectedGender);
       if (id) formData.append("programmeid", id);
       if (levelCertificate) {
@@ -294,10 +302,13 @@ const Otherinfo = ({
 
   return (
     <div>
-      <div className="w-full mt-4 lg:mt-[6%] grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="w-full h-[66px] mx-auto">
+      <div className="w-full grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="w-full mt-12 h-[66px] mx-auto">
           <div className="flex justify-start gap-2 items-center">
-            <label htmlFor="phone" className="text-2xl font-semibold mb-2">
+            <label
+              htmlFor="phone"
+              className="text-[18px] font-bold font-DMSans mb-2"
+            >
               Call phone line
             </label>
             <FaAsterisk className="text-[#F01E00] mb-2 text-[12px]" />
@@ -311,9 +322,12 @@ const Otherinfo = ({
             className="w-full h-full px-4 py-2 no-outline mt-2 border border-gray-300 rounded-md"
           />
         </div>
-        <div className="w-full mb-12 h-[66px] mx-auto">
+        <div className="w-full my-12 h-[66px] mx-auto">
           <div className="flex justify-start gap-2 items-center">
-            <label htmlFor="phone" className="text-2xl font-semibold mb-2">
+            <label
+              htmlFor="phone"
+              className="text-[18px] font-bold font-DMSans mb-2"
+            >
               WhatsApp
             </label>
             <FaAsterisk className="text-[#F01E00] mb-2 text-[12px]" />
@@ -337,31 +351,45 @@ const Otherinfo = ({
             error={unWrapErrors(field.name)}
           />
         ))}
-        <div className="flex justify-between items-center gap-3">
+        <div className="flex flex-col lg:flex-row w-full justify-between items-center gap-3">
           <div className="w-full lg:w-[50%]">
             <p className="mb-2 text-[18px] font-bold font-DMSans">Country</p>
             <select
-              value={selectedCountry}
+              value={selectedCountry?.value || ""}
               onChange={handleCountryChange}
-              className="select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full max-w-xs"
+              className={cn(
+                "select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full",
+                theme === "dark"
+                  ? "bg-[#333] border border-[#ddd]"
+                  : "bg-[#fff]"
+              )}
             >
               <option disabled selected>
                 Select Country
               </option>
               {options.map((country) => (
-                <option key={country.value} value={country.value}>
+                <option
+                  className="w-full"
+                  key={country.value}
+                  value={country.value}
+                >
                   {country.label}
                 </option>
               ))}
             </select>
           </div>
-          {selectedCountry === "NG" ? (
+          {selectedCountry?.value === "NG" ? (
             <div className="w-full lg:w-[50%]">
               <p className="mb-2 text-[18px] font-bold font-DMSans">
                 State/Region
               </p>
               <select
-                className="select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full max-w-xs"
+                className={cn(
+                  "select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full",
+                  theme === "dark"
+                    ? "bg-[#333] border border-[#ddd]"
+                    : "bg-[#fff]"
+                )}
                 value={selectedState}
                 onChange={handleStateChange}
               >
@@ -468,7 +496,12 @@ const Otherinfo = ({
           <p className="mb-2 text-[18px] font-bold font-DMSans">
             How did you hear about Fordax?
           </p>
-          <select className="select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full">
+          <select
+            className={cn(
+              "select text-[18px] font-bold font-DMSans h-[67px] select-bordered w-full",
+              theme === "dark" ? "bg-[#333] border border-[#ddd]" : "bg-[#fff]"
+            )}
+          >
             <option disabled selected>
               Select
             </option>
@@ -483,7 +516,7 @@ const Otherinfo = ({
         </div>
       </div>
       {!isSubsequent && (
-        <div className="flex justify-between items-center gap-4 mt-4">
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-4 mt-4">
           {Passwordfields.map((field, index) => (
             <BaseInput
               key={index}
@@ -500,7 +533,10 @@ const Otherinfo = ({
         <label className="label cursor-pointer">
           <input
             type="checkbox"
-            className="checkbox"
+            className={cn(
+              "checkbox",
+              theme === "dark" ? "checkbox-error" : "checkbox"
+            )}
             checked={isAccepted}
             onChange={handleCheckboxChange}
           />

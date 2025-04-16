@@ -9,7 +9,7 @@ type CourseListCardProps = {
   duration: string;
 };
 const CourseListCard = ({
-  instructoravatar,
+  // instructoravatar,
   title,
   img,
   instructorname,
@@ -17,7 +17,7 @@ const CourseListCard = ({
   duration,
 }: CourseListCardProps) => {
   return (
-    <div className="flex my-2 gap-2 hover:shadow-lg p-2 rounded-lg justify-between items-start">
+    <div className="flex flex-wrap w-full my-2 hover:shadow-lg p-2 rounded-lg justify-between items-start">
       <div className="w-[30%]">
         <img
           src={img}
@@ -25,12 +25,12 @@ const CourseListCard = ({
           className="w-[91px] h-[86px] object-cover rounded-md"
         />
       </div>
-      <div>
+      <div className="w-[70%]">
         <h2 className="font-DMSans font-semibold text-[15px]">{title}</h2>
         <div className="flex justify-between items-center">
           <div className="flex justify-start items-center gap-2">
             <Avatar
-              img={instructoravatar}
+              img=""
               name={instructorname}
               avatarClassName="md:h-8 rounded-full h-8 w-8 md:w-8"
               textClassName="font-normal text-sm"

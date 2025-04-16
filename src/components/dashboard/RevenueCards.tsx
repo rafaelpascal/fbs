@@ -1,9 +1,6 @@
 import { coupon, playbtn } from "~/assets";
-// import { RevenueCardProps } from "~/components/dashboard/RevenueCard";
 
 import { RevenueCardProps } from "../cards/RevenueCard";
-
-// Define the constant for revenueHeroCards outside the component
 export const RevenueCards = (
   dashboardData: AccountDetails
 ): RevenueCardProps[] => {

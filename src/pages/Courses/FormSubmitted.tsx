@@ -12,7 +12,7 @@ const FormSubmitted = () => {
   return (
     <div className="h-[100vh]">
       <Header />
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full pt-40 flex justify-center items-center">
         <div className="w-full lg:w-[1485px] flex justify-end items-center p-4 lg:p-10">
           <div className="w-full lg:w-[746px] flex flex-col justify-between items-start p-4 lg:p-10 h-[376px] border-[1px] border-[#FF5050]">
             <h2 className="text-[33px] font-DMSans font-semibold text-left w-full lg:w-[487px]">

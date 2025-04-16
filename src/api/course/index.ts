@@ -400,9 +400,33 @@ export class CourseServices extends BaseAPIService {
       throw handleError;
     }
   };
+
   static submitFluterres = async (payload: any) => {
     try {
       const res = await Api.post("/successful-payment-details", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static sendNotifications = async (payload: any) => {
+    try {
+      const res = await Api.post("/notification/send-notification", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static getSingleNotification = async (payload: any) => {
+    try {
+      const res = await Api.post(
+        "/notification/get-single-notification",
+        payload
+      );
       return res;
     } catch (error) {
       const handleError = error;
@@ -430,9 +454,51 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static listNotifications = async (): Promise<any> => {
+    try {
+      const res = await Api.get<any>("/notification/list-notifications");
+      return res.data;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static dashboardstats = async (): Promise<any> => {
+    try {
+      const res = await Api.get<any>("/course/dashboard-statistics");
+      return res.data;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static systemUsers = async (): Promise<any> => {
+    try {
+      const res = await Api.get<any>("/user/system-users");
+      return res.data;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static ticketReply = async (payload: any) => {
     try {
       const res = await Api.post("/support/response", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static getMyNotification = async (payload: any) => {
+    try {
+      const res = await Api.post(
+        "/notification/fetch-user-notifications",
+        payload
+      );
       return res;
     } catch (error) {
       const handleError = error;

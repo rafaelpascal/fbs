@@ -38,7 +38,7 @@ export const sidebarData: SideNavProps[] = [
     text: "Forum",
   },
   {
-    href: "/notification",
+    href: ROUTES.NOTIFICATION,
     icon: CiBellOn,
     dropdown: false,
     text: "Notifications",

@@ -291,7 +291,7 @@ const CourseApplications = () => {
             className="w-full flex justify-center items-center gap-2 lg:w-[331px] py-4 rounded-md bg-[#6440FB]"
           >
             <p className="font-DMSans text-[18px] font-semibold text-center text-[#fff]">
-              Accept application
+              Accept
             </p>
             {accepting && <LoadingSpinner size="xs" />}
           </button>
@@ -300,7 +300,7 @@ const CourseApplications = () => {
             className="w-full lg:w-[331px] py-4 rounded-md bg-[#F01E00]"
           >
             <p className="font-DMSans text-[18px] font-semibold text-center text-[#fff]">
-              Reject application
+              Reject
             </p>
           </button>
         </div>

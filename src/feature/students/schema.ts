@@ -79,6 +79,13 @@ export const createAdminSchema = Validator.object({
 
 export type CreateAdminFormPayload = z.infer<typeof createAdminSchema>;
 
+export const cretaNotificationSchema = Validator.object({
+  title: Validator.string("Title"),
+  message: Validator.string("Message"),
+});
+
+export type CretaNotificationPayload = z.infer<typeof cretaNotificationSchema>;
+
 export const editPermissionSchema = Validator.object({
   roleId: Validator.string("Role ID"),
 });

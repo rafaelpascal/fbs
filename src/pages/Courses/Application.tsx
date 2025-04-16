@@ -17,7 +17,7 @@ const Application = () => {
     <div>
       <Header />
       <div className="w-full flex justify-center items-center">
-        <div className="w-full lg:w-[1485px] bg-[#EEF2F6] p-4 lg:p-10">
+        <div className="w-full mt-32 mb-20 lg:w-[1485px] bg-[#EEF2F6] p-2 lg:p-10">
           <Courseform name={name} id={id} />
         </div>
       </div>

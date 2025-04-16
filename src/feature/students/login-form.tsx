@@ -69,6 +69,15 @@ const LoginForm = () => {
         localStorage.removeItem("rememberedEmail");
       }
       if (res?.userData?.profile?.[0].user_role === 1) {
+        dispatch(
+          setUser({
+            userid: res?.userData?.profile[0]?.userid,
+            firstname: res?.userData?.profile[0]?.firstname,
+            lastname: res?.userData?.profile[0]?.lastname,
+            email: res?.userData?.profile[0]?.email,
+            role: res?.userData?.profile[0]?.user_role,
+          })
+        );
         navigate(ROUTES.ADMINDASHBOARD);
       } else {
         dispatch(
@@ -77,6 +86,7 @@ const LoginForm = () => {
             firstname: res?.userData?.profile[0]?.firstname,
             lastname: res?.userData?.profile[0]?.lastname,
             email: res?.userData?.profile[0]?.email,
+            role: res?.userData?.profile[0]?.user_role,
           })
         );
         navigate(ROUTES.DASHBOARD);
@@ -140,7 +150,7 @@ const LoginForm = () => {
       >
         <p>LOGIN TO ACCOUNT</p>
       </BaseButton>
-      <div className="flex w-full justify-start items-center my-4 gap-2">
+      <div className="flex flex-col lg:flex-row w-full justify-start items-center my-4 gap-2">
         <p className="text-[14px] text-[#4F547B] font-DMSans font-normal">
           Don’t have an account yet?
         </p>

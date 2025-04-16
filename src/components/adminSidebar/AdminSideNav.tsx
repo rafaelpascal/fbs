@@ -11,6 +11,8 @@ import { FBSlogo } from "~/assets";
 import { useTheme } from "~/context/theme-provider";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../constants/routes";
+import { clearUser } from "~/redux-store/slice/user.Slice";
+import { useDispatch } from "react-redux";
 
 type ActiveClass = { isActive: boolean };
 type ClassName = (style: ActiveClass) => string;
@@ -22,6 +24,7 @@ export interface SideNavProps {
 
 // Sidebar Component
 export const AdminSidebar = () => {
+  const dispatch = useDispatch();
   const { theme } = useTheme();
   const navigate = useNavigate();
   // const user = useSelector((state: RootState) => state.user);
@@ -39,6 +42,9 @@ export const AdminSidebar = () => {
   }, []);
 
   const handleLogout = () => {
+    dispatch(clearUser());
+    localStorage.removeItem("dgrep");
+    localStorage.removeItem("course_id");
     navigate(ROUTES.HOME);
   };
 

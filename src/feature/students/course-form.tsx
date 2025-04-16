@@ -47,6 +47,7 @@ const Courseform = ({ name, id }: CourseFormProps) => {
           firstname: res?.data?.data[0]?.firstname,
           lastname: res?.data?.data[0]?.lastname,
           email: res?.data?.data[0]?.email,
+          // role: res?.data?.data[0]?.user_role,
         })
       );
       setEmail(true);
@@ -99,7 +100,7 @@ const Courseform = ({ name, id }: CourseFormProps) => {
       {!isEmailVerified && (
         <>
           {isLoading ? (
-            <div className="w-full flex justify-center items-center">
+            <div className="w-full flex h-[100vh] justify-center items-center">
               <LoadingSpinner />
             </div>
           ) : (

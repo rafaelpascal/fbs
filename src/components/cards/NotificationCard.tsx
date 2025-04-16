@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 import { cn } from "~/utils/helpers";
 
@@ -25,7 +26,9 @@ const NotificationCard = ({
       </div>
       <div>
         <h2 className="font-DMSans font-semibold text-[15px]">{title}</h2>
-        <p className="font-DMSans font-normal text-[13px]">{time}</p>
+        <p className="font-DMSans font-normal text-[13px]">
+          {moment(time).format("MM/DD/YYYY")}
+        </p>
       </div>
     </div>
   );

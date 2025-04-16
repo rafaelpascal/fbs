@@ -176,7 +176,7 @@ const PersonalInfo = ({
         <p className="text-[16px] lg:text-[18px] font-semibold font-DMSans">
           Already have account?
         </p>
-        <button className="text-[14px] border-[1px] border-[#ddd] px-2 py-1 rounded-md  hover:border-[#FF1515] font-semibold font-DMSans text-[#FF1515]">
+        <button className="text-[14px] border border-[#ddd] px-2 py-1 rounded-md  hover:border-[#FF1515] font-semibold font-DMSans text-[#FF1515]">
           Login Now
         </button>
       </div>
@@ -259,8 +259,10 @@ const PersonalInfo = ({
         </div>
         {!isCodeSent && (
           <BaseButton
-            containerCLassName={`mt-6 h-[46px] w-auto rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
-              !form.formState.isValid || form.formState.isSubmitting
+            containerCLassName={`mt-14 h-[46px] w-auto rounded-[8px] bg-[#FF3B30] text-[16px] font-bold font-DMSans text-[#fff] ${
+              !form.formState.isValid ||
+              form.formState.isSubmitting ||
+              value === undefined
                 ? "cursor-not-allowed opacity-50"
                 : ""
             }`}

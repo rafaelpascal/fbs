@@ -27,9 +27,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
       />
       {selectedFile && (
         <div className="mt-4">
-          <p className="text-sm text-gray-700">
-            Selected File: {selectedFile.name}
-          </p>
+          <p className="text-sm ">Selected File: {selectedFile.name}</p>
           <button
             onClick={handleRemoveFile}
             className="mt-2 px-4 py-1 text-white bg-red-500 rounded-md hover:bg-red-600"

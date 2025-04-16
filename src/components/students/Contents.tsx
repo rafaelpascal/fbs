@@ -373,7 +373,7 @@ const Contents = ({ id }: CourseProps) => {
     );
   }
   return (
-    <div className="flex justify-center  mb-[10%] font-DMSans items-center px-4">
+    <div className="flex justify-center pt-[10%]  mb-[10%] font-DMSans items-center px-4">
       <div className="relative w-full lg:w-[80%] flex flex-wrap lg:flex-row justify-center gap-20 items-start">
         <div className="w-full lg:w-[819px]">
           <h2 className="text-[40px] my-3">{courseData.course_title}</h2>

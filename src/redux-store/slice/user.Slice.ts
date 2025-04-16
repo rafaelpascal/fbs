@@ -5,6 +5,7 @@ interface UserState {
   firstname: string;
   lastname: string;
   email: string;
+  role?: number;
   loading: boolean;
 }
 
@@ -14,6 +15,7 @@ const initialState: UserState = {
   firstname: "",
   lastname: "",
   email: "",
+  role: 0,
   loading: false,
 };
 
