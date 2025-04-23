@@ -310,10 +310,14 @@ const Dashboard = () => {
   const fetModules = async () => {
     try {
       const payload = {
+        userid: Number(Storeduser?.user),
         courseid: selectedId,
       };
       const res = await CourseServices.getModuleByCourseId(payload);
-      const [chunk1, chunk2] = splitArray<Module>(res.data.course_modules, 4);
+      const [chunk1, chunk2] = splitArray<Module>(
+        res.data.course_modules.details,
+        4
+      );
       setcourses(chunk1);
       setsecondcourses(chunk2);
     } catch (error) {

@@ -31,7 +31,7 @@ const CourseListCard = ({
           <div className="flex justify-start items-center gap-2">
             <Avatar
               img=""
-              name={instructorname}
+              name={instructorname || ""}
               avatarClassName="md:h-8 rounded-full h-8 w-8 md:w-8"
               textClassName="font-normal text-sm"
               wrapperClassName="max-md:gap-0"

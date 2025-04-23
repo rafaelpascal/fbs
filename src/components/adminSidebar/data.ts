@@ -5,6 +5,7 @@ import { PiCertificateBold, PiStudentFill } from "react-icons/pi";
 import { FaCcMastercard, FaSchoolCircleCheck } from "react-icons/fa6";
 import { TiMessages } from "react-icons/ti";
 import { FaCogs } from "react-icons/fa";
+import { ROUTES } from "../constants/routes";
 
 export const sidebarData: SideNavProps[] = [
   {
@@ -66,6 +67,12 @@ export const sidebarData: SideNavProps[] = [
     icon: FaCcMastercard,
     dropdown: false,
     text: "Payments",
+  },
+  {
+    href: ROUTES.PAYMENTPLAN,
+    icon: FaCcMastercard,
+    dropdown: false,
+    text: "Payment Plans",
   },
   {
     href: "",

@@ -16,14 +16,12 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 // import { IoDocumentTextOutline } from "react-icons/io5";
 import { CourseServices } from "~/api/course";
 import { useParams } from "react-router-dom";
-import { showAlert } from "~/utils/sweetAlert";
-import { AuthService } from "~/api/auth";
 
 const ExamInstructions = [
   {
     title: "Important Notice",
     item: [
-      "You're about to begin an Assignment that may be timed. If a time limit applies, it will be displayed once you start.",
+      "You're about to begin an Capstone that may be timed. If a time limit applies, it will be displayed once you start.",
       "Ensure you're ready before clicking Start.",
       "We recommend using a computer for the best experience.",
       "If you force exit, your answers will be automatically submitted.",
@@ -31,14 +29,39 @@ const ExamInstructions = [
   },
 ];
 
+const ExamQuestions = [
+  {
+    question:
+      "Choose a real-world business situation and analyze it using business concepts and theories. You could focus on a specific problem, decision, or strategy.",
+    type: "text",
+    number: "1",
+  },
+  {
+    question:
+      "Choose a real-world business situation and analyze it using business concepts and theories. You could focus on a specific problem, decision, or strategy.",
+    type: "document",
+    number: "2",
+  },
+  {
+    question:
+      "Choose a real-world business situation and analyze it using business concepts and theories. You could focus on a specific problem, decision, or strategy.",
+    type: "text",
+    number: "3",
+  },
+  {
+    question:
+      "Choose a real-world business situation and analyze it using business concepts and theories. You could focus on a specific problem, decision, or strategy.",
+    type: "document",
+    number: "4",
+  },
+];
 interface FormData {
   answer: string;
 }
-const NewAssignment = () => {
+const Capstone = () => {
   // const navigate = useNavigate();
   const { theme } = useTheme();
   const { assignmentId } = useParams<{ assignmentId: string }>();
-  const [examQuestions, setExamQuestions] = useState<any[]>([]);
   //   const courseId = localStorage.getItem("course_id");
   const [examStarted, setexamStarted] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<{
@@ -74,7 +97,7 @@ const NewAssignment = () => {
     }
   };
 
-  const Storeduser = AuthService.getSession();
+  //   const Storeduser = AuthService.getSession();
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -91,169 +114,25 @@ const NewAssignment = () => {
 
   const fetchAssignment = async () => {
     const payload = {
-      module_id: JSON.parse(assignmentId ?? ""),
+      lesson_id: JSON.parse(assignmentId ?? ""),
     };
-
     const res = await CourseServices.listAssignment(payload);
-    const assignmentData = res?.data?.data;
-    if (assignmentData && assignmentData.length > 0) {
-      interface AssignmentData {
-        questions: string;
-        text?: boolean;
-        word_count?: number;
-        assignment_id: string;
-      }
-
-      interface FormattedQuestion {
-        number: number;
-        question: string;
-        type: "text" | "document";
-        maxWords: number;
-        assignmentId: string;
-      }
-
-      const formattedQuestions: FormattedQuestion[] = assignmentData.map(
-        (item: AssignmentData, index: number) => ({
-          number: index + 1,
-          question: item.questions,
-          type: item.text ? "text" : "document", // You can make this smarter if both exist
-          maxWords: item.word_count || 350,
-          assignmentId: item.assignment_id,
-        })
-      );
-
-      setExamQuestions(formattedQuestions);
-    }
+    console.log(res);
   };
 
   useEffect(() => {
     fetchAssignment();
   }, [assignmentId]);
 
-  const handleSubmit = async () => {
-    for (let i = 0; i < examQuestions.length; i++) {
-      const question = examQuestions[i];
-      const selectedType = selectedTypes[i] || [];
-
-      // For text responses
-      if (selectedType.includes("text") && question.type === "text") {
-        const answer = formData.answer?.trim();
-
-        if (!answer) {
-          await showAlert(
-            "error",
-            `Missing Answer for Q${question.number}`,
-            "Please provide an answer.",
-            "Ok",
-            "#FF1515"
-          );
-          return;
-        }
-
-        if (wordCount > question.maxWords) {
-          await showAlert(
-            "error",
-            `Word Limit Exceeded (Q${question.number})`,
-            `Max ${question.maxWords} words allowed.`,
-            "Got it",
-            "#FF1515"
-          );
-          return;
-        }
-
-        const textData = new FormData();
-        textData.append("course_id", "30");
-        textData.append("module_id", assignmentId ?? "");
-        textData.append("lesson_id", "");
-        textData.append("student_id", Storeduser?.user ?? "");
-        textData.append("assignment_title", formData.answer);
-        textData.append(
-          "file_upload",
-          new Blob([answer], { type: "text/plain" }),
-          `answer_Q${question.number}.txt`
-        );
-        textData.append("date_submitted", "15-02-2025");
-
-        await submitAssignment(textData);
-      }
-
-      // For document responses
-      if (selectedType.includes("document") && question.type === "document") {
-        if (!file) {
-          await showAlert(
-            "error",
-            `No File for Q${question.number}`,
-            "Please upload your document.",
-            "Ok",
-            "#FF1515"
-          );
-          return;
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-          await showAlert(
-            "error",
-            "File Too Large",
-            "Max size is 5MB.",
-            "Ok",
-            "#FF1515"
-          );
-          return;
-        }
-
-        const allowedTypes = [
-          "application/pdf",
-          "application/msword",
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        ];
-
-        if (!allowedTypes.includes(file.type)) {
-          await showAlert(
-            "error",
-            "Invalid File Type",
-            "Only PDF, DOC, or DOCX files are allowed.",
-            "Ok",
-            "#FF1515"
-          );
-          return;
-        }
-
-        const docForm = new FormData();
-        docForm.append("course_id", "80");
-        docForm.append("module_id", "1");
-        docForm.append("lesson_id", "2");
-        docForm.append("student_id", "23");
-        docForm.append("assignment_title", `Answer to Q${question.number}`);
-        docForm.append("file_upload", file);
-        docForm.append("date_submitted", "15-02-2025");
-
-        await submitAssignment(docForm);
-      }
-    }
-  };
-
-  const submitAssignment = async (payload: any) => {
-    try {
-      const res = await CourseServices.submitAssignment(payload);
-      console.log(res);
-    } catch (error) {
-      console.error(error);
-      await showAlert(
-        "error",
-        "Submission Failed",
-        "Please try again later.",
-        "Ok",
-        "#FF1515"
-      );
-    }
-  };
-
+  // const handlesubmit = () => {
+  //   navigate(ROUTES.CONGRATULATIONS);
+  // };
   return (
     <DashboardArea>
       <div>
         <div className="flex mb-4 justify-between items-center">
           <h2 className="text-[18px] font-DMSans font-semibold text-left">
-            ASSIGNMENT
+            CAPSTONE
           </h2>
           <div className="bg-[#fff] flex justify-start items-center">
             <div className="flex justify-center items-center p-2 border-[1px] border-[#000000]">
@@ -269,13 +148,13 @@ const NewAssignment = () => {
           </div>
         </div>
         {examStarted ? (
-          <div className="lg:h-[572px] overflow-y-auto h-auto border-2 shadow-md flex flex-col justify-start lg:py-10 lg:px-10 p-4 items-center mb-4 w-full border-[#ddd]">
-            {examQuestions.map((item, index) => (
+          <div className="lg:h-[572px] overflow-y-auto h-auto border-2 shadow-md flex flex-col justify-start lg:py-10 p-4 lg:px-20 items-center mb-4 w-full border-[#ddd]">
+            {ExamQuestions.map((item, index) => (
               <div
                 key={index}
-                className="mb-8 w-full marker:text-[#4F547B] marker:font-bold"
+                className="mb-8 marker:text-[#4F547B] marker:font-bold"
               >
-                {/* Checkbox and label */}
+                {/* Flex container for radio button and question */}
                 <div className="flex items-center">
                   <label className="inline-flex items-center cursor-pointer">
                     <input
@@ -301,49 +180,67 @@ const NewAssignment = () => {
                     <span className="w-6 h-6 rounded-full border-2 border-gray-400 peer-checked:bg-[#F01E00] peer-checked:border-[#F01E00] transition-all"></span>
                   </label>
 
+                  {/* <input
+                  type="radio"
+                  name={`exam-question-${index}`}
+                  value={item.type}
+                  checked={selectedTypes[index] === item.type}
+                  onChange={() =>
+                    setSelectedTypes((prev) => ({
+                      ...prev,
+                      [index]: item.type,
+                    }))
+                  }
+                  className="mr-2 w-6 h-6"
+                /> */}
                   <div className="w-[90%] ml-2 flex justify-start items-center gap-3">
                     <span className="text-[20px] font-semibold text-[#4F547B] font-DMSans">
                       {item.number}
                     </span>
-                    <label className="text-[20px] font-semibold text-[#4F547B] font-DMSans">
+                    <label
+                      htmlFor={`option-${index}`}
+                      className="text-[20px] font-semibold text-[#4F547B] font-DMSans"
+                    >
                       {item.question}
                     </label>
                   </div>
                 </div>
 
-                {/* Conditionally render based on type */}
+                {/* Conditionally render input fields based on selected type */}
                 {selectedTypes[index]?.includes("text") &&
                   item.type === "text" && (
-                    <div className="mt-4 w-full">
-                      <BaseInput
-                        label="Answer"
-                        type="textarea"
-                        placeholder="Type in your answer..."
-                        containerClassname="w-full"
-                        labelClassName="text-[17px] font-DMSans font-semibold"
-                        inputContainerClassName={cn(
-                          "h-[183px] shadow-md",
-                          theme === "dark"
-                            ? "select-secondary"
-                            : "border-[0.5px] border-[#ddd]"
-                        )}
-                        value={formData.answer}
-                        onChange={handleTextChange}
-                      />
-                      <div className="flex mt-2 justify-end items-center ">
-                        <span
-                          className={`text-[14px] font-normal italic font-DMSans ${
-                            wordCount > item.maxWords
-                              ? "text-red-500"
-                              : "text-[#4F547B]"
-                          }`}
-                        >
-                          {wordCount}
-                        </span>{" "}
-                        /
-                        <h2 className="text-[14px] font-normal italic text-[#4F547B] font-DMSans">
-                          {item.maxWords}
-                        </h2>
+                    <div className="flex flex-col lg:flex-row justify-between items-center">
+                      <div className="mt-4 w-full">
+                        <BaseInput
+                          label="Answer"
+                          type="textarea"
+                          placeholder="Type in your answer..."
+                          containerClassname="w-full"
+                          labelClassName="text-[17px] font-DMSans font-semibold"
+                          inputContainerClassName={cn(
+                            "h-[183px] shadow-md",
+                            theme === "dark"
+                              ? "select-secondary"
+                              : "border-[0.5px] border-[#ddd]"
+                          )}
+                          value={formData.answer}
+                          onChange={handleTextChange}
+                        />
+                        <div className="flex mt-2 justify-end items-center ">
+                          <span
+                            className={`text-[14px] font-normal italic font-DMSans ${
+                              wordCount > maxWords
+                                ? "text-red-500"
+                                : "text-[#4F547B]"
+                            }`}
+                          >
+                            {wordCount}
+                          </span>{" "}
+                          /
+                          <h2 className="text-[14px] font-normal italic text-[#4F547B] font-DMSans">
+                            {maxWords}
+                          </h2>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -378,6 +275,14 @@ const NewAssignment = () => {
                             </>
                           )}
                         </label>
+                        {/* <div className="w-auto">
+                      <div className="p-2">
+                        <IoDocumentTextOutline className="size-8" />
+                      </div>
+                      <div className="p-2 rounded-xl shadow-md border-2 border-[#FF1515]">
+                        <FaFilePdf className="size-8" />
+                      </div>
+                    </div> */}
                       </div>
 
                       {/* Hidden File Input */}
@@ -453,7 +358,7 @@ const NewAssignment = () => {
               </p>
             </button>
             <button
-              onClick={handleSubmit}
+              onClick={handleStartExam}
               disabled={
                 Object.values(selectedTypes).every((arr) => arr.length === 0) ||
                 Object.keys(selectedTypes).length === 0
@@ -526,4 +431,4 @@ const NewAssignment = () => {
   );
 };
 
-export default NewAssignment;
+export default Capstone;

@@ -22,6 +22,16 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static submitAssignment = async (payload: FormData) => {
+    try {
+      const res = await Api.post("/assignment/submit-assignment", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static createAdmin = async (payload: FormData) => {
     try {
       const res = await Api.post("/user/create-users", payload);
@@ -163,6 +173,46 @@ export class CourseServices extends BaseAPIService {
   static createCourseCapstone = async (payload: any) => {
     try {
       const res = await Api.post("/capstone/create-capstone", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static quizMakingResources = async (payload: any) => {
+    try {
+      const res = await Api.post("/marking/fetch-quiz", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static assignmentMakingResources = async (payload: any) => {
+    try {
+      const res = await Api.post("/marking/fetch-assignment", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static fetchPaymentPlans = async (payload: any) => {
+    try {
+      const res = await Api.post("/payment/user-payment-plan", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static listCourseCapstone = async (payload: any) => {
+    try {
+      const res = await Api.post("/capstone/list-capstone", payload);
       return res;
     } catch (error) {
       const handleError = error;
@@ -375,6 +425,15 @@ export class CourseServices extends BaseAPIService {
   static getUserbyId = async (payload: any) => {
     try {
       const res = await Api.post("/user/edit-users", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+  static markingResources = async (payload: any) => {
+    try {
+      const res = await Api.post("/marking/fetch-recourses", payload);
       return res;
     } catch (error) {
       const handleError = error;

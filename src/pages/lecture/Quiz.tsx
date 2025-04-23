@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { DashboardArea } from "~/layouts/DashboardArea";
 import { GrLinkPrevious } from "react-icons/gr";
 import Carousel from "~/components/Carousel/Carousel";
@@ -16,6 +16,7 @@ import { FaBell } from "react-icons/fa";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { Markcomplete } from "~/components/Modal/Markcomplete";
 import { GiCancel } from "react-icons/gi";
+import { Congratulations } from "~/components/Modal/Congratulations";
 // import { set } from "zod";
 
 // type Answer = {
@@ -65,9 +66,11 @@ const Quiz = () => {
   const [questionlength, setQuestionlength] = useState(0);
   const [quizTime, setQuizTime] = useState(0);
   const lessonId = useSelector((state: RootState) => state.lesson.lessonId);
-  const courseId = localStorage.getItem("course_id");
+  // const courseId = localStorage.getItem("course_id");
+  const [courseid, setCourseId] = useState(0);
   const [minutesValue, setMinutesValue] = useState(0);
   const [secondsValue, setSecondsValue] = useState(0);
+  const [isLastQuiz, setIsLastQuiz] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
   >({});
@@ -103,17 +106,14 @@ const Quiz = () => {
     }
   }, [minutes, questionlength, seconds, resetCountdown, module1quiz.length]);
 
-  // const handlesubmit = () => {
-  //   navigate(ROUTES.CONGRATULATIONS);
-  // };
-
   const fetchQuiz = async () => {
     const payload = {
       lesson_id: JSON.parse(quizId ?? ""),
     };
     const response = await CourseServices.listQuiz(payload);
+    setCourseId(response.data.data[0].course_id);
     setQuizId(response.data.data[0].quizid);
-    setQuizTime(response.data.data[0].time); // Add this line
+    setQuizTime(response.data.data[0].time);
   };
 
   useEffect(() => {
@@ -143,26 +143,31 @@ const Quiz = () => {
     }
   }, [newQuizId]);
 
-  const handleSubmitAnswer = useCallback(async () => {
+  const handleSubmitAnswer = async () => {
     try {
       const payload = {
-        course_id: JSON.parse(courseId ?? ""),
+        course_id: Number(courseid ?? ""),
         lesson_id: lessonId,
-        user_id: JSON.parse(Storeduser?.user ?? ""),
-        quiz_id: JSON.parse(quizId ?? ""),
-        question_id: JSON.parse(questionId),
-        selected_answer_id: JSON.parse(selectedAnswer ?? ""),
+        user_id: Number(Storeduser?.user ?? ""),
+        quiz_id: Number(quizId ?? ""),
+        question_id: Number(questionId),
+        selected_answer_id: Number(selectedAnswer ?? ""),
       };
 
       await CourseServices.submitAnswer(payload);
-      setActiveIndex((prev) =>
-        prev < module1quiz.length - 1 ? prev + 1 : prev
-      );
-      resetCountdown();
+      const isLastQuestion = activeIndex === module1quiz.length - 1;
+      if (!isLastQuestion) {
+        setActiveIndex((prev) =>
+          prev < module1quiz.length - 1 ? prev + 1 : prev
+        );
+        resetCountdown();
+      } else {
+        setIsLastQuiz(true);
+      }
     } catch (error) {
       console.log(error);
     }
-  }, [lessonId, courseId, Storeduser, quizId]);
+  };
 
   const handleNextQuestion = () => {
     resetCountdown();
@@ -173,13 +178,19 @@ const Quiz = () => {
 
   const handleStartQuiz = () => {
     setquizStarted(true);
-    startCountdown();
+    resetCountdown();
   };
 
   const handleclose = () => {
     setIsskipQuiz(false);
+    setIsLastQuiz(false);
     resetCountdown();
     // setquizStarted(false);
+  };
+
+  const handleSkipQuiz = () => {
+    setIsskipQuiz(true);
+    resetCountdown();
   };
 
   return (
@@ -317,7 +328,7 @@ const Quiz = () => {
                 <button
                   className="w-[160px] bg-[#656565] rounded-md flex justify-center gap-8 items-center p-2"
                   // onClick={() => setActiveIndex((prev) => Math.max(0, prev - 1))}
-                  onClick={() => setIsskipQuiz(true)}
+                  onClick={handleSkipQuiz}
                 >
                   <GiCancel className="text-[20px] font-DMSans font-semibold text-[#fff]" />
                   <p className="text-[20px] font-DMSans font-semibold text-[#fff]">
@@ -332,12 +343,33 @@ const Quiz = () => {
                     ? handleSubmitAnswer
                     : handleNextQuestion
                 }
-                className="w-[160px] bg-[#FF1515] rounded-md p-2"
+                disabled={
+                  activeIndex === module1quiz.length - 1 && !selectedAnswer
+                } // disable only on last question and no answer
+                className={`w-[160px] rounded-md p-2 ${
+                  activeIndex === module1quiz.length - 1 && !selectedAnswer
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#FF1515]"
+                }`}
               >
                 <p className="text-[20px] font-DMSans font-semibold text-[#fff]">
                   {activeIndex === module1quiz.length - 1 ? "SUBMIT" : "NEXT"}
                 </p>
               </button>
+
+              {/* 
+              <button
+                onClick={
+                  activeIndex === module1quiz.length - 1
+                    ? handleSubmitAnswer
+                    : handleNextQuestion
+                }
+                className="w-[160px] bg-[#FF1515] rounded-md p-2"
+              >
+                <p className="text-[20px] font-DMSans font-semibold text-[#fff]">
+                  {activeIndex === module1quiz.length - 1 ? "SUBMIT" : "NEXT"}
+                </p>
+              </button> */}
             </div>
           ) : (
             <div className="flex justify-between items-center">
@@ -404,6 +436,7 @@ const Quiz = () => {
           setIsskipQuiz(false);
         }}
       />
+      <Congratulations isOpen={isLastQuiz} closeModal={handleclose} />
     </DashboardArea>
   );
 };

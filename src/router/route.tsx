@@ -97,8 +97,9 @@ import Forum from "~/pages/Courses/Forum.tsx";
 import SingleConversation from "~/pages/Courses/SingleConversation.tsx";
 import Conversations from "~/pages/Courses/Conversations.tsx";
 import Notification from "~/pages/Courses/Notification.tsx";
-import NotificationTable from "~/pages/Admin/NotificationsManagement/NotificationTable/NotificationTable.tsx";
 import Notifications from "~/pages/Admin/NotificationsManagement/Notifications.tsx";
+import Capstone from "~/pages/lecture/Capstone.tsx";
+import PaymentPlan from "~/pages/Admin/Students/PaymentPlan.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
@@ -244,6 +245,10 @@ const router = createBrowserRouter(
               element: <CourseApplications />,
             },
             {
+              path: ROUTES.PAYMENTPLAN,
+              element: <PaymentPlan />,
+            },
+            {
               path: ROUTES.SUPPORT,
               element: <Support />,
               children: [
@@ -347,6 +352,10 @@ const router = createBrowserRouter(
             {
               path: ROUTES.NEWASSIGNMENT,
               element: <NewAssignment />,
+            },
+            {
+              path: ROUTES.CAPSTONE,
+              element: <Capstone />,
             },
             {
               path: ROUTES.POLLS,

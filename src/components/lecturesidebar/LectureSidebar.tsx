@@ -310,6 +310,12 @@ export const LectureSidebar = () => {
           dropdown: false,
           text: "Assignment",
         },
+        {
+          href: `/capstone/${firstModuleId}`,
+          icon: GoDotFill,
+          dropdown: false,
+          text: "Capstone",
+        },
       ],
     };
 

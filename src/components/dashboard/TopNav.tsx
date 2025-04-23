@@ -19,7 +19,9 @@ export const TopNav = () => {
   const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    console.log("user", user);
+    if (user.role === 0) {
+      AuthService.destroySession();
+    }
   }, [user]);
 
   const getMyNotification = async () => {
@@ -49,7 +51,17 @@ export const TopNav = () => {
       }`}
     >
       <div className="flex justify-center items-center gap-2">
-        <button>
+        {user.role === 2 ? (
+          <Link to="/student-profile">
+            <Avatar
+              img=""
+              name="Emehelu Raphae;"
+              avatarClassName="md:h-11 h-8 w-8 md:w-11"
+              textClassName="font-medium text-sm"
+              wrapperClassName="max-md:gap-0"
+            ></Avatar>
+          </Link>
+        ) : (
           <Avatar
             img=""
             name="Emehelu Raphae;"
@@ -57,7 +69,8 @@ export const TopNav = () => {
             textClassName="font-medium text-sm"
             wrapperClassName="max-md:gap-0"
           ></Avatar>
-        </button>
+        )}
+
         {user.role === 2 ? (
           <Link to="/notifications" className="relative">
             <Bell

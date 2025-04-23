@@ -1,5 +1,5 @@
 import { BaseModal } from "./BaseModal";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MdCancel } from "react-icons/md";
 // import { useTheme } from "~/context/theme-provider";
 import { LoadingSpinner } from "../ui/loading-spinner";
@@ -8,9 +8,11 @@ import { RootState } from "~/redux-store/store";
 import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "~/utils/helpers";
+import { CourseServices } from "~/api/course";
 
 interface IModalPropsType {
   id: number;
+  student: number;
   isOpen: boolean;
   closeModal: () => void;
 }
@@ -23,28 +25,13 @@ const initialFormData = {
   score: "",
 };
 
-const Questions = [
-  {
-    questionNumber: 1,
-    question: "Julius is a man?",
-    andswer: ["Yes", "No", "Maybe"],
-    iscorrect: "correct",
-  },
-  {
-    questionNumber: 2,
-    question: "Julius is a man?",
-    andswer: ["Yes", "No", "Maybe"],
-    iscorrect: "correct",
-  },
-  {
-    questionNumber: 3,
-    question: "Julius is a man?",
-    andswer: ["Yes", "No", "Maybe"],
-    iscorrect: "correct",
-  },
-];
-
-export const ViewQuizModal = ({ isOpen, closeModal }: IModalPropsType) => {
+export const ViewQuizModal = ({
+  isOpen,
+  id,
+  student,
+  closeModal,
+}: IModalPropsType) => {
+  const [quizData, setQuizData] = useState<any>(null);
   const [isConfirmScore, setisConfirmScore] = useState(false);
   //   const { theme } = useTheme();
   const courseId = useSelector((state: RootState) => state.course.course_id);
@@ -67,9 +54,31 @@ export const ViewQuizModal = ({ isOpen, closeModal }: IModalPropsType) => {
     }));
   };
 
+  const getQuizResources = async () => {
+    try {
+      const payload = {
+        course_id: Number(id),
+        student_id: Number(student),
+      };
+      const res = await CourseServices.quizMakingResources(payload);
+      console.log(res);
+
+      if (res?.data?.status === "00") {
+        setQuizData(res.data.data); // store quiz data
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (id && student) {
+      getQuizResources();
+    }
+  }, [id, student]);
+
   const handleSubmit = async () => {
     setisSubmitting(true);
-
     // Create a new FormData object
     const dataToSubmit = new FormData();
     dataToSubmit.append("course_id", courseId?.toString() || "");
@@ -94,50 +103,57 @@ export const ViewQuizModal = ({ isOpen, closeModal }: IModalPropsType) => {
         </button>
       </div>
       <div className="flex w-full lg:w-[1000px] scrollbar-style overflow-y-auto p-6 flex-col items-start justify-start">
-        <h2 className="text-[18px] font-normal font-DMSans">
-          <span className="font-bold">Program title:</span> should display here
-        </h2>
-        <h2 className="text-[18px] font-normal font-DMSans">
-          <span className="font-bold">Module 4:</span> should display here
-        </h2>
-        <h2 className="text-[18px] font-normal font-DMSans">
-          <span className="font-bold">Quiz:</span> should display here
-        </h2>
-        {Questions.map((question, index) => (
+        {quizData && (
+          <>
+            <h2 className="text-[18px] font-normal font-DMSans">
+              <span className="font-bold">Program title:</span>{" "}
+              {quizData.program_title}
+            </h2>
+            <h2 className="text-[18px] font-normal font-DMSans">
+              <span className="font-bold">
+                Module {quizData.module_number}:
+              </span>{" "}
+              {quizData.module_title}
+            </h2>
+            <h2 className="text-[18px] font-normal font-DMSans">
+              <span className="font-bold">Quiz:</span> {quizData.quiz_title}
+            </h2>
+          </>
+        )}
+        {quizData?.quizData?.map((questionItem: any, index: number) => (
           <div
             key={index}
-            className="w-full border-y-2  p-2 flex flex-col justify-center items-start my-4 border-[#ddd]"
+            className="w-full border-y-2 p-2 flex flex-col justify-center items-start my-4 border-[#ddd]"
           >
             <h2 className="text-[20px] font-normal font-DMSans">
-              <span className="font-bold">
-                Question {question.questionNumber} :
-              </span>{" "}
-              {question.question}
+              <span className="font-bold">Question {index + 1}:</span>{" "}
+              {questionItem.questions}
             </h2>
+
             <div className="flex flex-col my-4 w-full">
-              {question.andswer.map((answer, index) => (
+              {questionItem.answers.map((answer: any, i: number) => (
                 <div
-                  key={index}
+                  key={i}
                   className="flex justify-start my-1 items-center gap-2 w-full"
                 >
                   <input
                     type="radio"
-                    name={`question-${question.questionNumber}`}
-                    id={`q${question.questionNumber}-${answer}`}
+                    readOnly
+                    checked={answer.answer_text === questionItem.correct_answer}
                     className="w-6 h-6 radio radio-error opacity-100 cursor-not-allowed"
-                    checked={answer === "Yes"}
                   />
                   <label
-                    htmlFor={answer}
+                    htmlFor={answer.answer_text}
                     className="text-[20px] font-DMSans font-normal"
                   >
-                    {answer}
+                    {answer.answer_text}
                   </label>
                 </div>
               ))}
             </div>
+
             <h2 className="text-[20px] font-normal font-DMSans">
-              <span className="font-bold">Result :</span> {question.iscorrect}
+              <span className="font-bold">Score:</span> {questionItem.score}
             </h2>
           </div>
         ))}

@@ -2,11 +2,10 @@ import SelectionDropdown from "~/components/Collapsible/SelectionDropdown";
 import { FaFilter } from "react-icons/fa6";
 import { TableColumn } from "react-data-table-component";
 import { useTheme } from "~/context/theme-provider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "~/utils/helpers";
 import { DashboardArea } from "~/layouts/DashboardArea";
 import InDataTable from "~/components/table/InDataTable";
-import { AssignmentData } from "~/components/constants/data";
 import { ContactModal } from "~/components/Modal/ContactModal";
 import { LuFileSearch } from "react-icons/lu";
 import ActionMenu from "~/components/table/ActionMenu";
@@ -15,26 +14,44 @@ import { ViewExamModal } from "~/components/Modal/ViewExamModal";
 import { ViewCapstoneModal } from "~/components/Modal/ViewCapstoneModal";
 import { ViewPollModal } from "~/components/Modal/ViewPollModal";
 import { ViewQuizModal } from "~/components/Modal/ViewQuizModal";
-
-const options = [
-  { label: "Master of Business Administration 1", value: 1 },
-  { label: "Master of Business Administration 2", value: 2 },
-  { label: "Master of Business Administration 3", value: 3 },
-];
+import { CourseServices } from "~/api/course";
+import { fetchlistCourses } from "~/api/course/hooks";
+import { LoadingSpinner } from "~/components/ui/loading-spinner";
 
 interface MerchantTableRow {
   id: number;
   avatar: string;
   sn: number;
-  name: string;
-  assignments: string;
-  feedback: string;
-  submitted: string;
+  userid: number;
+  firstname: string;
+  lastname: string;
+  totalAssignment: number;
+  attemptedAssignment: number;
+  totalQuiz: number;
+  attemptedQuiz: number;
+  totalCapstone: number;
+  attemptedCapstone: number;
+  totalExam: number;
+  attemptedExam: number;
+  totalPoll: number;
+  attemptedPoll: number;
   score: string;
   status: string;
 }
+
 const StudentsManagement = () => {
   const { theme } = useTheme();
+  const [tableData, setTableData] = useState<MerchantTableRow[]>([]);
+  const { data: courseList } = fetchlistCourses();
+  const [loading, setLoading] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState(0);
+  const [, setSelectedOption] = useState<CourseOption | null>(null);
+  interface CourseOption {
+    label: string;
+    value: number;
+  }
+
+  const [options, setOptions] = useState<CourseOption[]>([]);
   const [isContact, setIscontact] = useState({
     status: false,
     id: 0,
@@ -42,10 +59,12 @@ const StudentsManagement = () => {
   const [isQuizModal, setIsQuizModal] = useState({
     status: false,
     id: 0,
+    student: 0,
   });
   const [isAssignment, setIsAssignment] = useState({
     status: false,
     id: 0,
+    student: 0,
   });
   const [isExam, setIsExam] = useState({
     status: false,
@@ -60,9 +79,49 @@ const StudentsManagement = () => {
     id: 0,
   });
 
-  const handleSelect = (option: { label: string; value: string | number }) => {
-    console.log("Selected option:", option);
+  const getMarkingResources = async () => {
+    setLoading(true);
+    try {
+      const payload = {
+        course_id: Number(selectedCourseId),
+      };
+      const res = await CourseServices.markingResources(payload);
+      setTableData(res.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (selectedCourseId) {
+      getMarkingResources();
+    }
+  }, [selectedCourseId]);
+
+  useEffect(() => {
+    if (courseList?.course_details.length) {
+      interface CourseOption {
+        label: string;
+        value: number;
+      }
+      const formattedOptions: CourseOption[] = courseList?.course_details.map(
+        (course: { course_title: string; coursesid: number }) => ({
+          label: course.course_title,
+          value: course.coursesid,
+        })
+      );
+      setOptions(formattedOptions);
+      setSelectedCourseId(formattedOptions[0].value);
+      setSelectedOption(formattedOptions[0]);
+    }
+  }, [courseList]);
+
+  const handleSelect = (option: { label: string; value: string | number }) => {
+    setSelectedCourseId(Number(option.value));
+  };
+
   const columns: TableColumn<MerchantTableRow>[] = [
     {
       name: "S/N",
@@ -72,42 +131,42 @@ const StudentsManagement = () => {
     },
     {
       name: "Name",
-      selector: (row: { name: string }) => row.name,
+      selector: (row: { lastname: string; firstname: string }) => row.lastname,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
           <div className="p-2 gap-1 flex justify-between items-center">
             <h2 className="font-DMSans text-[#000] text-[16px] font-semibold">
-              {row.name}{" "}
+              {row.lastname} {row.firstname}{" "}
               <span className="text-[#6440FB]">(1 exam, 1 assignment)</span>
             </h2>
           </div>
         </div>
       ),
       width: "350px",
-
       sortable: true,
     },
     {
       name: "Assignments",
-      selector: (row: { submitted: string }) => row.submitted,
+      selector: (row: MerchantTableRow) => row.totalAssignment,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
           <div className="p-2 gap-1 flex justify-between items-center">
             <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
-              2
+              {row.attemptedAssignment}
             </h2>
             <p className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
               /
             </p>
             <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
-              3
+              {row.totalAssignment}
             </h2>
           </div>
           <button
             onClick={() =>
               setIsAssignment({
                 status: true,
-                id: row.id,
+                id: 30,
+                student: row.userid,
               })
             }
             className="flex justify-center items-center gap-3 hover:border hover:border-[#6440FB] rounded-md p-1"
@@ -119,23 +178,23 @@ const StudentsManagement = () => {
           </button>
         </div>
       ),
-      width: "150px",
+      width: "200px",
       sortable: true,
     },
     {
       name: "Exams",
-      selector: (row: { assignments: string }) => row.assignments,
+      selector: (row: MerchantTableRow) => row.totalExam,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
           <div className="p-2 gap-1 flex justify-between items-center">
             <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
-              2
+              {row.attemptedExam}
             </h2>
             <p className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
               /
             </p>
             <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
-              3
+              {row.attemptedExam}
             </h2>
           </div>
           <button
@@ -154,23 +213,24 @@ const StudentsManagement = () => {
           </button>
         </div>
       ),
-      width: "150px",
+      width: "200px",
       sortable: true,
     },
     {
       name: "Capstones",
-      selector: (row: { feedback: string }) => row.feedback,
+      selector: (row: MerchantTableRow) => row.totalCapstone,
+
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
           <div className="p-2 gap-1 flex justify-between items-center">
             <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
-              2
+              {row.attemptedCapstone}
             </h2>
             <p className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
               /
             </p>
             <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
-              3
+              {row.totalCapstone}
             </h2>
           </div>
           <button
@@ -189,30 +249,31 @@ const StudentsManagement = () => {
           </button>
         </div>
       ),
-      width: "150px",
+      width: "200px",
       sortable: true,
     },
     {
       name: "Quizzes",
-      selector: (row: { feedback: string }) => row.feedback,
+      selector: (row: MerchantTableRow) => row.totalQuiz,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
           <div className="p-2 gap-1 flex justify-between items-center">
             <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
-              2
+              {row.attemptedQuiz}
             </h2>
             <p className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
               /
             </p>
             <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
-              3
+              {row.totalQuiz}
             </h2>
           </div>
           <button
             onClick={() =>
               setIsQuizModal({
                 status: true,
-                id: row.id,
+                id: 30,
+                student: row.userid,
               })
             }
             className="flex justify-center items-center gap-3 hover:border hover:border-[#6440FB] rounded-md p-1"
@@ -224,24 +285,24 @@ const StudentsManagement = () => {
           </button>
         </div>
       ),
-      width: "150px",
+      width: "200px",
 
       sortable: true,
     },
     {
       name: "Polls",
-      selector: (row: { feedback: string }) => row.feedback,
+      selector: (row: MerchantTableRow) => row.totalPoll,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
           <div className="p-2 gap-1 flex justify-between items-center">
             <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
-              2
+              {row.attemptedPoll}
             </h2>
             <p className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
               /
             </p>
             <h2 className="font-DMSans text-[#F01E00] text-[16px] font-semibold">
-              3
+              {row.totalPoll}
             </h2>
           </div>
           <button
@@ -260,7 +321,7 @@ const StudentsManagement = () => {
           </button>
         </div>
       ),
-      width: "150px",
+      width: "200px",
       sortable: true,
     },
     {
@@ -276,7 +337,7 @@ const StudentsManagement = () => {
         </div>
       ),
       sortable: true,
-      width: "150px",
+      width: "200px",
     },
     {
       name: "Actions",
@@ -315,6 +376,7 @@ const StudentsManagement = () => {
     setIsAssignment({
       status: false,
       id: 0,
+      student: 0,
     });
     setIsExam({
       status: false,
@@ -331,6 +393,7 @@ const StudentsManagement = () => {
     setIsQuizModal({
       status: false,
       id: 0,
+      student: 0,
     });
   };
 
@@ -347,6 +410,7 @@ const StudentsManagement = () => {
           <div className="w-full lg:w-[350px] mb-6">
             <SelectionDropdown
               options={options}
+              // value={selectedOption}
               placeholder="Select Program"
               onSelect={handleSelect}
             />
@@ -363,15 +427,21 @@ const StudentsManagement = () => {
         </div>
       </div>
       <div className="w-full pb-4 flex justify-center items-center bg-[#fff]">
-        <div className="w-[99%]">
-          <InDataTable<MerchantTableRow>
-            columns={columns}
-            data={AssignmentData}
-            paginatable={false}
-            searchable={false}
-            // pagination={false}
-          />
-        </div>
+        {loading ? (
+          <div className="w-full h-full flex justify-center items-center">
+            <LoadingSpinner />
+          </div>
+        ) : (
+          <div className="w-[99%]">
+            <InDataTable<MerchantTableRow>
+              columns={columns}
+              data={tableData}
+              paginatable={false}
+              searchable={false}
+              // pagination={false}
+            />
+          </div>
+        )}
         <ContactModal
           isOpen={isContact.status}
           id={isContact.id}
@@ -380,6 +450,7 @@ const StudentsManagement = () => {
         <ViewAssignmentModal
           isOpen={isAssignment.status}
           id={isAssignment.id}
+          student={isAssignment.student}
           closeModal={handleClose}
         />
         <ViewExamModal
@@ -400,6 +471,7 @@ const StudentsManagement = () => {
         <ViewQuizModal
           isOpen={isQuizModal.status}
           id={isQuizModal.id}
+          student={isQuizModal.student}
           closeModal={handleClose}
         />
       </div>

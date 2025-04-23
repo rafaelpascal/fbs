@@ -1,5 +1,5 @@
 import { BaseModal } from "./BaseModal";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MdCancel } from "react-icons/md";
 // import { useTheme } from "~/context/theme-provider";
 import { LoadingSpinner } from "../ui/loading-spinner";
@@ -8,9 +8,11 @@ import { RootState } from "~/redux-store/store";
 import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "~/utils/helpers";
+import { CourseServices } from "~/api/course";
 
 interface IModalPropsType {
   id: number;
+  student: number;
   isOpen: boolean;
   closeModal: () => void;
 }
@@ -25,8 +27,11 @@ const initialFormData = {
 
 export const ViewAssignmentModal = ({
   isOpen,
+  id,
+  student,
   closeModal,
 }: IModalPropsType) => {
+  const [, setassignmentData] = useState<any>(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [isConfirmScore, setisConfirmScore] = useState(false);
   //   const { theme } = useTheme();
@@ -61,6 +66,29 @@ export const ViewAssignmentModal = ({
     setisSubmitting(false);
     setFormData(initialFormData);
   };
+
+  const getQuizResources = async () => {
+    try {
+      const payload = {
+        course_id: Number(id),
+        student_id: Number(student),
+      };
+      const res = await CourseServices.assignmentMakingResources(payload);
+      console.log(res);
+
+      if (res?.data?.status === "00") {
+        setassignmentData(res.data.data); // store quiz data
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (id && student) {
+      getQuizResources();
+    }
+  }, [id, student]);
 
   return (
     <BaseModal

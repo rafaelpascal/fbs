@@ -109,4 +109,6 @@ export class AuthService extends BaseAPIService {
   };
 
   static getSession = this.handleUserSession;
+
+  static destroySession = () => this._logout;
 }
