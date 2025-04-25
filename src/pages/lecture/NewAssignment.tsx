@@ -31,9 +31,6 @@ const ExamInstructions = [
   },
 ];
 
-interface FormData {
-  answer: string;
-}
 const NewAssignment = () => {
   // const navigate = useNavigate();
   const { theme } = useTheme();
@@ -44,25 +41,25 @@ const NewAssignment = () => {
   const [selectedTypes, setSelectedTypes] = useState<{
     [key: number]: string[];
   }>({});
-  const [formData, setFormData] = useState<FormData>({
-    answer: "",
+  const [formData, setFormData] = useState<{
+    answers: { [key: number]: string };
+  }>({
+    answers: {}, // Stores answers for each question by index
   });
-
   const [file, setFile] = useState<File | null>(null);
   const [fileURL, setFileURL] = useState("");
-  const [wordCount, setWordCount] = useState(0);
-  const maxWords = 200;
+  const [wordCount] = useState(0);
 
-  const handleTextChange = (e: any) => {
-    const inputText = e.target.value;
-    const wordsArray = inputText.trim().split(/\s+/); // Split by spaces to count words
-    const count = inputText.trim() === "" ? 0 : wordsArray.length;
+  // const handleTextChange = (e: any) => {
+  //   const inputText = e.target.value;
+  //   const wordsArray = inputText.trim().split(/\s+/); // Split by spaces to count words
+  //   const count = inputText.trim() === "" ? 0 : wordsArray.length;
 
-    if (count <= maxWords) {
-      setWordCount(count);
-      handleInputChange("answer", inputText);
-    }
-  };
+  //   if (count <= maxWords) {
+  //     setWordCount(count);
+  //     handleInputChange("answer", inputText);
+  //   }
+  // };
 
   const handleFileChange = (e: any) => {
     const selectedFile = e.target.files[0];
@@ -75,12 +72,12 @@ const NewAssignment = () => {
   };
 
   const Storeduser = AuthService.getSession();
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  // const handleInputChange = (field: string, value: string) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [field]: value,
+  //   }));
+  // };
 
   const { minutes, seconds, startCountdown } = useCountdown(3, 20);
 
@@ -95,7 +92,7 @@ const NewAssignment = () => {
     };
 
     const res = await CourseServices.listAssignment(payload);
-    const assignmentData = res?.data?.data;
+    const assignmentData = res?.data?.data?.assignment;
     if (assignmentData && assignmentData.length > 0) {
       interface AssignmentData {
         questions: string;
@@ -126,6 +123,19 @@ const NewAssignment = () => {
     }
   };
 
+  interface TextChangeEvent
+    extends React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> {}
+
+  const handleTextChange = (e: TextChangeEvent, index: number): void => {
+    setFormData((prevState) => {
+      const updatedAnswers: { [key: number]: string } = {
+        ...prevState.answers,
+      };
+      updatedAnswers[index] = e.target.value; // Update the answer for the specific question
+      return { ...prevState, answers: updatedAnswers };
+    });
+  };
+
   useEffect(() => {
     fetchAssignment();
   }, [assignmentId]);
@@ -135,9 +145,11 @@ const NewAssignment = () => {
       const question = examQuestions[i];
       const selectedType = selectedTypes[i] || [];
 
+      if (question.submitted) continue;
+
       // For text responses
       if (selectedType.includes("text") && question.type === "text") {
-        const answer = formData.answer?.trim();
+        const answer = formData.answers[question.number]?.trim();
 
         if (!answer) {
           await showAlert(
@@ -162,11 +174,15 @@ const NewAssignment = () => {
         }
 
         const textData = new FormData();
+        textData.append("assignment_id", "11");
         textData.append("course_id", "30");
         textData.append("module_id", assignmentId ?? "");
         textData.append("lesson_id", "");
         textData.append("student_id", Storeduser?.user ?? "");
-        textData.append("assignment_title", formData.answer);
+        textData.append(
+          "assignment_title",
+          formData.answers[question.number] || ""
+        );
         textData.append(
           "file_upload",
           new Blob([answer], { type: "text/plain" }),
@@ -174,7 +190,13 @@ const NewAssignment = () => {
         );
         textData.append("date_submitted", "15-02-2025");
 
+        for (let [key, value] of textData.entries()) {
+          console.log(`Text Submission Payload [${key}]:`, value);
+        }
+
         await submitAssignment(textData);
+        question.submitted = true;
+        continue; // <== this lets the loop proceed to the next question
       }
 
       // For document responses
@@ -219,7 +241,7 @@ const NewAssignment = () => {
         }
 
         const docForm = new FormData();
-        docForm.append("course_id", "80");
+        docForm.append("course_id", "30");
         docForm.append("module_id", "1");
         docForm.append("lesson_id", "2");
         docForm.append("student_id", "23");
@@ -227,7 +249,13 @@ const NewAssignment = () => {
         docForm.append("file_upload", file);
         docForm.append("date_submitted", "15-02-2025");
 
+        for (let [key, value] of docForm.entries()) {
+          console.log(`Document Submission Payload [${key}]:`, value);
+        }
+
         await submitAssignment(docForm);
+        question.submitted = true;
+        continue; // again, use continue here
       }
     }
   };
@@ -236,6 +264,13 @@ const NewAssignment = () => {
     try {
       const res = await CourseServices.submitAssignment(payload);
       console.log(res);
+      await showAlert(
+        "success",
+        "Submitted Successfully",
+        "Assignment submitted successfully.",
+        "Ok",
+        "#03435F"
+      );
     } catch (error) {
       console.error(error);
       await showAlert(
@@ -327,8 +362,10 @@ const NewAssignment = () => {
                             ? "select-secondary"
                             : "border-[0.5px] border-[#ddd]"
                         )}
-                        value={formData.answer}
-                        onChange={handleTextChange}
+                        value={formData.answers[index] || ""} // Bind to the specific question's answer
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                          handleTextChange(e, index)
+                        } // Pass index to handle change for this question
                       />
                       <div className="flex mt-2 justify-end items-center ">
                         <span

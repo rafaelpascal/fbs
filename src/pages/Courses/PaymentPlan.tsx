@@ -9,9 +9,10 @@ import InDataTable from "~/components/table/InDataTable";
 import { ContactModal } from "~/components/Modal/ContactModal";
 import ActionMenu from "~/components/table/ActionMenu";
 import { CourseServices } from "~/api/course";
-import { fetchlistCourses, fetchSystemUser } from "~/api/course/hooks";
+import { fetchlistCourses } from "~/api/course/hooks";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import moment from "moment";
+import { AuthService } from "~/api/auth";
 
 interface MerchantTableRow {
   id: number;
@@ -29,14 +30,11 @@ const PaymentPlan = () => {
   const { theme } = useTheme();
   const [tableData, setTableData] = useState<MerchantTableRow[]>([]);
   const { data: courseList } = fetchlistCourses();
-  const { data: systemUsers } = fetchSystemUser();
   const [loading, setLoading] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(0);
-  const [userOptions, setUserOptions] = useState<
-    { label: string; value: number }[]
-  >([]);
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [, setSelectedOption] = useState<CourseOption | null>(null);
+  const Storeduser = AuthService.getSession();
+
   interface CourseOption {
     label: string;
     value: number;
@@ -66,26 +64,6 @@ const PaymentPlan = () => {
     }
   }, [courseList]);
 
-  useEffect(() => {
-    if (systemUsers?.data.length) {
-      const formattedUsers = systemUsers.data.map(
-        (user: { userid: number; firstname: string; lastname: string }) => ({
-          label: `${user.firstname} ${user.lastname} `,
-          value: user.userid,
-        })
-      );
-      setUserOptions(formattedUsers);
-      setSelectedUserId(formattedUsers[0].value); // Optional: set default
-    }
-  }, [systemUsers]);
-
-  const handleUserSelect = (option: {
-    label: string;
-    value: number | string;
-  }) => {
-    setSelectedUserId(Number(option.value));
-  };
-
   const handleSelect = (option: { label: string; value: string | number }) => {
     setSelectedCourseId(Number(option.value));
   };
@@ -95,7 +73,7 @@ const PaymentPlan = () => {
 
     try {
       const payload = {
-        userid: Number(selectedUserId),
+        userid: Number(Storeduser?.user),
         // courseid: 22,
         courseid: Number(selectedCourseId),
       };
@@ -108,10 +86,10 @@ const PaymentPlan = () => {
   };
 
   useEffect(() => {
-    if (selectedCourseId && selectedUserId) {
+    if (selectedCourseId) {
       getPaymentPlans();
     }
-  }, [selectedCourseId, selectedUserId]);
+  }, [selectedCourseId]);
 
   const columns: TableColumn<MerchantTableRow>[] = [
     {
@@ -241,11 +219,6 @@ const PaymentPlan = () => {
               placeholder="Select Program"
               onSelect={handleSelect}
             />
-            <SelectionDropdown
-              options={userOptions}
-              placeholder="Select User"
-              onSelect={handleUserSelect}
-            />
           </div>
           <button
             className={cn(
@@ -260,7 +233,7 @@ const PaymentPlan = () => {
       </div>
       <div className="w-full pb-4 flex justify-center items-center bg-[#fff]">
         {loading ? (
-          <div className="w-full h-full flex justify-center items-center">
+          <div className="w-full h-[60vh] flex justify-center items-center">
             <LoadingSpinner />
           </div>
         ) : (

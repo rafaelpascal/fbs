@@ -57,6 +57,7 @@ interface Application {
 type Module = {
   type: string;
   lesson: string;
+  payment_status: number;
   moduleid: number;
   programme_category_id: number;
   course_id: number;
@@ -307,6 +308,26 @@ const Dashboard = () => {
     setSelectedId(firstCourseId ?? "");
   }, [firstCourseId]);
 
+  // const fetModules = async () => {
+  //   try {
+  //     const payload = {
+  //       userid: Number(Storeduser?.user),
+  //       courseid: selectedId,
+  //     };
+  //     const res = await CourseServices.getModuleByCourseId(payload);
+  //     console.log("RESPONSE", res);
+
+  //     const [chunk1, chunk2] = splitArray<Module>(
+  //       res.data.course_modules.details,
+  //       4
+  //     );
+  //     setcourses(chunk1);
+  //     setsecondcourses(chunk2);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   const fetModules = async () => {
     try {
       const payload = {
@@ -314,10 +335,25 @@ const Dashboard = () => {
         courseid: selectedId,
       };
       const res = await CourseServices.getModuleByCourseId(payload);
-      const [chunk1, chunk2] = splitArray<Module>(
-        res.data.course_modules.details,
-        4
+      // Step 1: Create a map of moduleid -> payment_status
+      const paymentMap = new Map(
+        res.data.course_modules.module_permision.map(
+          (item: { moduleid: number; payment_status: number }) => [
+            item.moduleid,
+            item.payment_status,
+          ]
+        )
       );
+
+      // Step 2: Merge payment_status into the details array
+      const mergedModules = res.data.course_modules.details.map(
+        (module: any) => ({
+          ...module,
+          payment_status: paymentMap.get(module.moduleid) ?? 0, // default to 0 if not found
+        })
+      );
+      // Step 3: Split the result and store
+      const [chunk1, chunk2] = splitArray<Module>(mergedModules, 4);
       setcourses(chunk1);
       setsecondcourses(chunk2);
     } catch (error) {
@@ -513,6 +549,7 @@ const Dashboard = () => {
                             title={course.module_title}
                             description={course.module_description}
                             lessonsInfo={course.module_objectives}
+                            payment_status={course.payment_status}
                             buttonText="Start Module"
                             progress="0/15"
                             icon={IoMdUnlock}
@@ -532,6 +569,7 @@ const Dashboard = () => {
                               moduleId={course.moduleid}
                               title={course.module_title}
                               description={course.module_description}
+                              payment_status={course.payment_status}
                               lessonsInfo={course.module_objectives}
                               buttonText="Start Module"
                               progress="0/15"

@@ -99,7 +99,7 @@ import Conversations from "~/pages/Courses/Conversations.tsx";
 import Notification from "~/pages/Courses/Notification.tsx";
 import Notifications from "~/pages/Admin/NotificationsManagement/Notifications.tsx";
 import Capstone from "~/pages/lecture/Capstone.tsx";
-import PaymentPlan from "~/pages/Admin/Students/PaymentPlan.tsx";
+import PaymentPlan from "~/pages/Courses/PaymentPlan.tsx";
 
 // Define the router with the future flag inside createBrowserRouter
 const router = createBrowserRouter(
@@ -154,6 +154,10 @@ const router = createBrowserRouter(
             {
               path: ROUTES.PAYMENT,
               element: <Payment />,
+            },
+            {
+              path: ROUTES.PAYMENTPLAN,
+              element: <PaymentPlan />,
             },
             {
               path: ROUTES.BANKTRANSFER,
@@ -243,10 +247,6 @@ const router = createBrowserRouter(
             {
               path: ROUTES.COURSEAPPLICATION,
               element: <CourseApplications />,
-            },
-            {
-              path: ROUTES.PAYMENTPLAN,
-              element: <PaymentPlan />,
             },
             {
               path: ROUTES.SUPPORT,

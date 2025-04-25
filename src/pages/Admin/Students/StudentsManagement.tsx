@@ -165,7 +165,7 @@ const StudentsManagement = () => {
             onClick={() =>
               setIsAssignment({
                 status: true,
-                id: 30,
+                id: Number(selectedCourseId),
                 student: row.userid,
               })
             }
@@ -272,7 +272,7 @@ const StudentsManagement = () => {
             onClick={() =>
               setIsQuizModal({
                 status: true,
-                id: 30,
+                id: Number(selectedCourseId),
                 student: row.userid,
               })
             }
@@ -428,7 +428,7 @@ const StudentsManagement = () => {
       </div>
       <div className="w-full pb-4 flex justify-center items-center bg-[#fff]">
         {loading ? (
-          <div className="w-full h-full flex justify-center items-center">
+          <div className="w-full h-[60vh] flex justify-center items-center">
             <LoadingSpinner />
           </div>
         ) : (

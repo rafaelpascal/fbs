@@ -1,4 +1,4 @@
-import { FaCogs, FaRegUserCircle } from "react-icons/fa";
+import { FaCcMastercard, FaCogs, FaRegUserCircle } from "react-icons/fa";
 import { SideNavProps } from "./NavItem";
 import { HiClipboardDocumentList } from "react-icons/hi2";
 import { CiBellOn } from "react-icons/ci";
@@ -42,6 +42,12 @@ export const sidebarData: SideNavProps[] = [
     icon: CiBellOn,
     dropdown: false,
     text: "Notifications",
+  },
+  {
+    href: ROUTES.PAYMENTPLAN,
+    icon: FaCcMastercard,
+    dropdown: false,
+    text: "Payment Plans",
   },
   {
     href: "/settings",
