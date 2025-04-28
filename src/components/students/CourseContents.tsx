@@ -19,7 +19,7 @@ const CourseContents = ({ courseId }: CourseContentProps) => {
       const payload = { courseid: courseId };
       const moduleResponse = await CourseServices.getModuleByCourseId(payload);
       const modules = moduleResponse.data.course_modules;
-      setIsModule(modules);
+      setIsModule(modules.details);
       if (modules.length > 0) {
         const lessonCounts: { moduleid: number; lessonCount: number }[] =
           await Promise.all(

@@ -235,8 +235,6 @@ const Contents = ({ id }: CourseProps) => {
         courseid: id,
       };
       const course = await CourseServices.getCourse(payload);
-      console.log("course", course);
-
       setCourseData(course.data.course_details[0]);
       setIsLoading(false);
     } catch (error) {
