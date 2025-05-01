@@ -247,8 +247,7 @@ const Contents = ({ id }: CourseProps) => {
       setIsModuleCount(true);
       const payload = { courseid: courseData.coursesid };
       const moduleResponse = await CourseServices.getModuleByCourseId(payload);
-
-      const modules = moduleResponse.data.course_modules;
+      const modules = moduleResponse.data.course_modules.details;
       setIsModule(modules);
 
       if (modules.length > 0) {
