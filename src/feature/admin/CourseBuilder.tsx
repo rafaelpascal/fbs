@@ -14,6 +14,8 @@ import { CourseServices } from "~/api/course";
 import { useDispatch } from "react-redux";
 import { setBooleanState } from "~/redux-store/slice/booleanSlice";
 import { RemoveItemModal } from "~/components/Modal/RemoveItemModal";
+import { useSelector } from "react-redux";
+import { RootState } from "~/redux-store/store";
 
 interface Lessons {
   id: number;
@@ -67,6 +69,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   CreatedNewItem,
 }) => {
   const { theme } = useTheme();
+  const courseId = useSelector((state: RootState) => state.course.course_id);
   const dispatch = useDispatch();
   const [modules, setModules] = useState<Module[]>([]);
   const [isNewModule, setIsnewModule] = useState(false);
@@ -714,7 +717,20 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
     }
     removeModule(id);
   };
-  const handlePublish = () => {
+  const handlePublish = async () => {
+    const payload = {
+      course_status: 2,
+      courseid: Number(courseId),
+    };
+    await CourseServices.updateCourseStatus(payload);
+    created();
+  };
+  const handleSavedraft = async () => {
+    const payload = {
+      course_status: 1,
+      courseid: Number(courseId),
+    };
+    await CourseServices.updateCourseStatus(payload);
     created();
   };
 
@@ -990,6 +1006,15 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
           >
             <p className="font-DMSans font-semibold text-[16px] text-white">
               PUBLISH COURSE LIVE
+            </p>
+            {/* {isSubmitting && <LoadingSpinner size="xs" />} */}
+          </button>
+          <button
+            onClick={handleSavedraft}
+            className="h-[52px] bg-gray-600 w-[231px] mb-2 px-4 rounded-md flex justify-center items-center gap-2"
+          >
+            <p className="font-DMSans font-semibold text-[16px] text-white">
+              SAVE AS DRAFT
             </p>
             {/* {isSubmitting && <LoadingSpinner size="xs" />} */}
           </button>

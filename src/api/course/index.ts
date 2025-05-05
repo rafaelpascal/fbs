@@ -320,6 +320,16 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static updateCourseStatus = async (payload: any) => {
+    try {
+      const res = await Api.post("/course/update-course-status", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static updateCourseModule = async (payload: FormData) => {
     try {
       const res = await Api.post("/course/update-module", payload);

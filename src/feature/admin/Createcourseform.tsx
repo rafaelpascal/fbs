@@ -299,10 +299,6 @@ const Createcourseform = ({
     );
   };
 
-  useEffect(() => {
-    console.log("frrrrr", formData);
-  }, [formData]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);

@@ -132,19 +132,87 @@ export const NewLessonModal = ({
     }
   }, [lessonId, moduleId]);
 
+  // const handleSubmit = async () => {
+  //   setisSubmitting(true);
+
+  //   // Create a new FormData object
+  //   const dataToSubmit = new FormData();
+  //   dataToSubmit.append(
+  //     "course_id",
+  //     courseId?.toString() || String(formData.course_id) || ""
+  //   );
+  //   dataToSubmit.append("stream_video_audio", formData.embed);
+  //   dataToSubmit.append("lesson_number", String(lessonNumber));
+  //   dataToSubmit.append("module_id", moduleId.toString() || "");
+  //   dataToSubmit.append("lesson_title", formData.title);
+  //   dataToSubmit.append(
+  //     "stream_status",
+  //     formData.embed.includes("https://www.youtube.com") ? "1" : "0"
+  //   );
+  //   formData.featuredImages.forEach((file) => {
+  //     dataToSubmit.append("lesson_image", file);
+  //   });
+  //   if (selectedPdf) {
+  //     dataToSubmit.append("pdf_upload", selectedPdf);
+  //   }
+  //   if (selectedWord) {
+  //     dataToSubmit.append("word_file", selectedWord);
+  //   }
+  //   if (selectedMediaFile) {
+  //     dataToSubmit.append("video_audio_upload", selectedMediaFile);
+  //   }
+
+  //   if (lessonId) {
+  //     dataToSubmit.append("lessonid", lessonId.toString());
+  //   }
+
+  //   if (lessonId) {
+  //     await CourseServices.updateCourseLesson(dataToSubmit);
+  //     setModuleData((prevData: any) => ({
+  //       ...prevData,
+  //       number: lessonNumber,
+  //       moduleId: moduleId,
+  //       title: formData.title,
+  //     }));
+  //   } else {
+  //     const res = await CourseServices.createCourseLesson(dataToSubmit);
+  //     setModuleData((prevData: any) => ({
+  //       ...prevData,
+  //       number: res.data.data.lesson_number,
+  //       moduleId: res.data.data.lesson_id,
+  //       title: formData.title,
+  //     }));
+  //   }
+
+  //   setisSubmitting(false);
+  //   handlecreate(moduleId);
+  //   setFormData(initialFormData);
+  // };
   const handleSubmit = async () => {
     setisSubmitting(true);
 
-    // Create a new FormData object
     const dataToSubmit = new FormData();
-    dataToSubmit.append(
-      "course_id",
-      courseId?.toString() || String(formData.course_id) || ""
-    );
-    dataToSubmit.append("stream_video_audio", formData.embed);
+
+    const courseIdValue =
+      courseId?.toString() || String(formData.course_id) || "";
+    const embedValue = formData.embed;
+    let streamStatus = "0";
+
+    if (embedValue.includes("youtube.com") || embedValue.includes("youtu.be")) {
+      streamStatus = "1";
+    } else if (embedValue.includes("drive.google.com")) {
+      streamStatus = "2";
+    }
+
+    // Append form fields
+    dataToSubmit.append("course_id", courseIdValue);
+    dataToSubmit.append("stream_video_audio", embedValue);
     dataToSubmit.append("lesson_number", String(lessonNumber));
     dataToSubmit.append("module_id", moduleId.toString() || "");
     dataToSubmit.append("lesson_title", formData.title);
+    dataToSubmit.append("stream_status", streamStatus);
+
+    // Files
     formData.featuredImages.forEach((file) => {
       dataToSubmit.append("lesson_image", file);
     });
@@ -157,27 +225,35 @@ export const NewLessonModal = ({
     if (selectedMediaFile) {
       dataToSubmit.append("video_audio_upload", selectedMediaFile);
     }
-
     if (lessonId) {
       dataToSubmit.append("lessonid", lessonId.toString());
     }
 
-    if (lessonId) {
-      await CourseServices.updateCourseLesson(dataToSubmit);
-      setModuleData((prevData: any) => ({
-        ...prevData,
-        number: lessonNumber,
-        moduleId: moduleId,
-        title: formData.title,
-      }));
-    } else {
-      const res = await CourseServices.createCourseLesson(dataToSubmit);
-      setModuleData((prevData: any) => ({
-        ...prevData,
-        number: res.data.data.lesson_number,
-        moduleId: res.data.data.lesson_id,
-        title: formData.title,
-      }));
+    console.log("Submitting FormData payload:");
+    for (let [key, value] of dataToSubmit.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    try {
+      if (lessonId) {
+        await CourseServices.updateCourseLesson(dataToSubmit);
+        setModuleData((prevData: any) => ({
+          ...prevData,
+          number: lessonNumber,
+          moduleId: moduleId,
+          title: formData.title,
+        }));
+      } else {
+        const res = await CourseServices.createCourseLesson(dataToSubmit);
+        setModuleData((prevData: any) => ({
+          ...prevData,
+          number: res.data.data.lesson_number,
+          moduleId: res.data.data.lesson_id,
+          title: formData.title,
+        }));
+      }
+    } catch (error) {
+      console.error("Error submitting lesson:", error);
     }
 
     setisSubmitting(false);

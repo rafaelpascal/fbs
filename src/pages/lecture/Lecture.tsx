@@ -342,6 +342,26 @@ const Lecture = () => {
                         />
                       </div>
                     );
+                  } else if (media.includes("drive.google.com")) {
+                    const match = media.match(/\/d\/(.*)\/view/);
+                    const fileId = match ? match[1] : null;
+
+                    if (fileId) {
+                      return (
+                        <div
+                          key={idx}
+                          className="relative w-full flex justify-center items-center bg-white"
+                        >
+                          <iframe
+                            src={`https://drive.google.com/file/d/${fileId}/preview`}
+                            width="100%"
+                            height="480"
+                            allow="autoplay"
+                            className="rounded-md shadow"
+                          />
+                        </div>
+                      );
+                    }
                   }
                   return null;
                 })}
