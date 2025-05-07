@@ -355,7 +355,7 @@ const Lecture = () => {
                           <iframe
                             src={`https://drive.google.com/file/d/${fileId}/preview`}
                             width="100%"
-                            height="480"
+                            height="600px"
                             allow="autoplay"
                             className="rounded-md shadow"
                           />
