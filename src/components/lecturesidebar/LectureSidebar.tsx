@@ -70,6 +70,12 @@ export const LectureSidebar = () => {
   const lessonId = useSelector((state: RootState) => state.lesson.lessonId);
   const storedModuleId = localStorage.getItem("moduleId");
   const Storeduser = AuthService.getSession();
+  const [visibleItems, setVisibleItems] = useState({
+    quiz: true,
+    exam: true,
+    assignment: true,
+    capstone: true,
+  });
 
   const getCourseWeekInfo = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
@@ -102,6 +108,32 @@ export const LectureSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState);
   }, []);
 
+  // const fetModules = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const payload = {
+  //       module_id: storedModuleId,
+  //     };
+  //     const res = await CourseServices.getModulebyId(payload);
+  //     console.log("fffffff", res);
+
+  //     if (res.data?.modules?.length > 0) {
+  //       setModuleTitle(res.data.modules[0].module_title ?? "Unknown Module");
+  //       setModuleNumber(res.data.modules[0].module_number ?? "0");
+  //       setCourseId(res.data.modules[0].course_id);
+  //     } else {
+  //       setModuleTitle("Module Not Found");
+  //       setModuleNumber("0");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching module:", error);
+  //     setModuleTitle("Error Loading Module");
+  //     setModuleNumber("0");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetModules = async () => {
     setLoading(true);
     try {
@@ -109,20 +141,40 @@ export const LectureSidebar = () => {
         module_id: storedModuleId,
       };
       const res = await CourseServices.getModulebyId(payload);
-      // const res = await CourseServices.startCourse(payload);
-      // setLectureTitles(res.data.course_lessons);
+      console.log("fffffff", res);
+
       if (res.data?.modules?.length > 0) {
-        setModuleTitle(res.data.modules[0].module_title ?? "Unknown Module");
-        setModuleNumber(res.data.modules[0].module_number ?? "0");
-        setCourseId(res.data.modules[0].course_id);
+        const module = res.data.modules[0];
+
+        setModuleTitle(module.module_title ?? "Unknown Module");
+        setModuleNumber(module.module_number ?? "0");
+        setCourseId(module.course_id);
+
+        // ✅ Update visibleItems based on hasQuiz value
+        setVisibleItems((prev) => ({
+          ...prev,
+          quiz: module.hasQuiz === 1,
+        }));
       } else {
         setModuleTitle("Module Not Found");
         setModuleNumber("0");
+
+        // Hide quiz if no module found
+        setVisibleItems((prev) => ({
+          ...prev,
+          quiz: false,
+        }));
       }
     } catch (error) {
       console.error("Error fetching module:", error);
       setModuleTitle("Error Loading Module");
       setModuleNumber("0");
+
+      // Hide quiz on error
+      setVisibleItems((prev) => ({
+        ...prev,
+        quiz: false,
+      }));
     } finally {
       setLoading(false);
     }
@@ -292,31 +344,31 @@ export const LectureSidebar = () => {
       playing: false,
       text: "ASSESSMENTS",
       children: [
-        {
+        visibleItems.quiz && {
           href: `/assignment/${firstModuleId}`,
           icon: GoDotFill,
           dropdown: false,
           text: "Quiz",
         },
-        {
+        visibleItems.exam && {
           href: `/exam/${firstModuleId}`,
           icon: GoDotFill,
           dropdown: false,
           text: "Exam",
         },
-        {
+        visibleItems.assignment && {
           href: `/newassignment/${firstModuleId}`,
           icon: GoDotFill,
           dropdown: false,
           text: "Assignment",
         },
-        {
+        visibleItems.capstone && {
           href: `/capstone/${firstModuleId}`,
           icon: GoDotFill,
           dropdown: false,
           text: "Capstone",
         },
-      ],
+      ].filter(Boolean) as SideNavProps["children"], // filters out `false`
     };
 
     updateSidebarData([...lectureItems, assessments]);
