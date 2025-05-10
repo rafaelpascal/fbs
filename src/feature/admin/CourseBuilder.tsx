@@ -73,6 +73,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   const dispatch = useDispatch();
   const [modules, setModules] = useState<Module[]>([]);
   const [isNewModule, setIsnewModule] = useState(false);
+  const [currentModuleLength, setCurrentModuleLength] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState({
     id: 0,
     status: false,
@@ -174,6 +175,7 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
 
   useEffect(() => {
     if (Initialmodules?.length > 0) {
+      setCurrentModuleLength(Initialmodules.length + 1);
       // setSelectedModuleId(Initialmodules.length);
       const mappedModules: Module[] = Initialmodules.map((mod) => ({
         module_Id: mod.moduleid,
@@ -735,7 +737,14 @@ const CourseBuilder: React.FC<CourseBuilderProps> = ({
   };
 
   const buttons = [
-    { label: "Module", onClick: () => handleNewModule(undefined, undefined) },
+    {
+      label: "Module",
+      onClick: () =>
+        handleNewModule(
+          currentModuleLength ? currentModuleLength : undefined,
+          undefined
+        ),
+    },
     // { label: "Lesson", onClick: handleNewLesson },
     // { label: "Quiz", onClick: handleNewQuiz },
     // { label: "Polls", onClick: handleNewPoll },

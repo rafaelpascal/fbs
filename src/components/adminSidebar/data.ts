@@ -35,7 +35,7 @@ export const sidebarData: SideNavProps[] = [
     href: "/admin/admission",
     icon: FaSchoolCircleCheck,
     dropdown: false,
-    text: "Admission",
+    text: "Applications",
   },
   {
     href: "/admin/signup",
