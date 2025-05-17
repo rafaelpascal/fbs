@@ -43,7 +43,7 @@ const Forgotpassword = () => {
           "Ok",
           "#03435F"
         );
-        navigate(ROUTES.CHANGEPASSWORD);
+        navigate(ROUTES.HOME);
       }
       form.reset();
     } catch (error) {

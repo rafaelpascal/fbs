@@ -85,14 +85,21 @@ export const LectureSidebar = () => {
     const totalWeeks = Math.ceil(
       (end.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000)
     );
-    const currentWeek =
-      Math.ceil((now.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000)) +
-      1;
 
-    return `Week ${Math.min(
-      Math.max(currentWeek, 1),
-      totalWeeks
-    )} / ${totalWeeks} weeks`;
+    let currentWeek = Math.ceil(
+      (now.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000)
+    );
+
+    if (now < start) {
+      currentWeek = 0;
+    } else if (now > end) {
+      currentWeek = totalWeeks;
+    }
+
+    // Ensure week is within range
+    currentWeek = Math.max(1, Math.min(currentWeek, totalWeeks));
+
+    return `Week ${currentWeek} / ${totalWeeks} weeks`;
   };
 
   const weekInfo = courseData?.course_details
@@ -141,8 +148,6 @@ export const LectureSidebar = () => {
         module_id: storedModuleId,
       };
       const res = await CourseServices.getModulebyId(payload);
-      console.log("fffffff", res);
-
       if (res.data?.modules?.length > 0) {
         const module = res.data.modules[0];
 

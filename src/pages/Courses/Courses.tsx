@@ -244,58 +244,69 @@ const Dashboard = () => {
         setapplications(application);
 
         const updatedProgramSpecifications: ProgramSpecification[] =
-          application.map((app: Application) => ({
-            courseTitle: app.course_title || "N/A",
-            applicationid: app.applicationid || 0,
-            specifications: [
-              {
-                title: "Mode: ",
-                duration: app.course_mode || "N/A",
-              },
-              {
-                title: "Course Starting: ",
-                duration:
-                  app.course_flexible === 0
-                    ? app.start_date || "N/A"
-                    : "Flexible",
-              },
-              {
-                title: "Cohort: ",
-                duration: app.cohort_title || "N/A",
-              },
-              {
-                title: "Application Date: ",
-                duration: app.created_at
-                  ? new Date(app.created_at).toLocaleDateString()
-                  : "N/A",
-              },
-              {
-                title: "Course Ending: ",
-                duration:
-                  app.course_flexible === 0
-                    ? app.end_date || "N/A"
-                    : "Flexible",
-              },
-              {
-                title: "Duration: ",
-                duration:
-                  (app.course_run?.replace(/"/g, "") ?? "") === "Weekly"
-                    ? `${getWeeksBetweenDates(
-                        app.course_startdate ?? "",
-                        app.course_enddate ?? ""
-                      )} Weeks`
-                    : app.course_run === "Monthly"
-                    ? `${getMonthsBetweenDates(
-                        app.course_startdate ?? "",
-                        app.course_enddate ?? ""
-                      )} Months`
+          application.map((app: Application) => {
+            return {
+              courseTitle: app.course_title || "N/A",
+              applicationid: app.applicationid || 0,
+              specifications: [
+                {
+                  title: "Mode: ",
+                  duration: app.course_mode || "N/A",
+                },
+                {
+                  title: "Course Starting: ",
+                  duration:
+                    app.course_flexible === 0 && app.start_date
+                      ? new Date(app.start_date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : "Flexible",
+                },
+                {
+                  title: "Cohort: ",
+                  duration: app.cohort_title || "N/A",
+                },
+                {
+                  title: "Application Date: ",
+                  duration: app.created_at
+                    ? new Date(app.created_at).toLocaleDateString()
                     : "N/A",
-                // app.duration && app.duration > 0
-                //   ? `${app.duration} week(s)`
-                //   : "N/A",
-              },
-            ],
-          }));
+                },
+                {
+                  title: "Course Ending: ",
+                  duration:
+                    app.course_flexible === 0 && app.course_enddate
+                      ? new Date(app.course_enddate).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )
+                      : "Flexible",
+                },
+                {
+                  title: "Duration: ",
+                  duration:
+                    (app.course_run?.replace(/"/g, "") ?? "") === "Weekly"
+                      ? `${getWeeksBetweenDates(
+                          app.course_startdate ?? "",
+                          app.course_enddate ?? ""
+                        )} Weeks`
+                      : app.course_run === "Monthly"
+                      ? `${getMonthsBetweenDates(
+                          app.course_startdate ?? "",
+                          app.course_enddate ?? ""
+                        )} Months`
+                      : "N/A",
+                },
+              ],
+            };
+          });
+
         setProgramSpecifications(updatedProgramSpecifications);
         setLoading(false);
       }

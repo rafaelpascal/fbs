@@ -21,6 +21,7 @@ export const TopNav = () => {
   useEffect(() => {
     if (user.role === 0) {
       AuthService.destroySession();
+      window.location.href = "/login";
     }
   }, [user]);
 
@@ -40,6 +41,8 @@ export const TopNav = () => {
   };
 
   useEffect(() => {
+    console.log("Storeduser", user);
+
     getMyNotification();
   }, []);
 
@@ -71,7 +74,7 @@ export const TopNav = () => {
           ></Avatar>
         )}
 
-        {user.role === 2 ? (
+        {user.role === 2 && (
           <Link to="/notifications" className="relative">
             <Bell
               className={`w-[36px] h-[36px] ${
@@ -86,7 +89,8 @@ export const TopNav = () => {
               </div>
             )}
           </Link>
-        ) : (
+        )}
+        {user.role === 1 && (
           <Link to="/admin/notifications" className="relative">
             <Bell
               className={`w-[36px] h-[36px] ${
