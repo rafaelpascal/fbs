@@ -121,9 +121,22 @@ const CreateCourse = () => {
     }
   };
 
+  const getCourseRequirement = async (id: string) => {
+    try {
+      const payload = {
+        course_id: id,
+      };
+      const res = await CourseServices.getRequirement(payload);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (courseId) {
       fetchCourseData(courseId);
+      getCourseRequirement(courseId);
     }
   }, [courseId, refreshKey, booleanState]);
 

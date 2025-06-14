@@ -16,7 +16,7 @@ import { useTheme } from "~/context/theme-provider";
 import { fetchlistCourses } from "~/api/course/hooks";
 import useToast from "~/hooks/useToast";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
-// import { ContactModal } from "~/components/Modal/ContactModal";
+import { DeleteCourseModal } from "~/components/Modal/DeleteCourseModal";
 
 interface MerchantTableRow {
   coursesid: number;
@@ -29,7 +29,7 @@ interface MerchantTableRow {
   application: string;
   creators: string;
   created_at: string;
-  status: string;
+  course_status: number;
   course_url: string;
 }
 
@@ -40,9 +40,13 @@ const CourseTable = () => {
     courseId: 0,
     status: false,
   });
+  const [usedeleteCourse, setUsedeleteCourse] = useState({
+    courseId: 0,
+    status: false,
+  });
   const navigate = useNavigate();
   const { success, error } = useToast();
-  const { data } = fetchlistCourses();
+  const { data, refetch } = fetchlistCourses();
   const [couseData, setCourseData] = useState(courseData);
 
   useEffect(() => {
@@ -104,17 +108,22 @@ const CourseTable = () => {
         </div>
       ),
     },
-    // {
-    //   name: "Status",
-    //   selector: (row: { status: string }) => row.status,
-    //   cell: (row) => (
-    //     <Status
-    //       status={statColorCode(row?.status?.toString())}
-    //       text={row?.status?.toString() || ""}
-    //     />
-    //   ),
-    //   width: "120px",
-    // },
+    {
+      name: "Status",
+      selector: (row: { course_status: number }) => row.course_status,
+      cell: (row) => (
+        <div className="flex justify-center items-center rounded-[4px]">
+          {row.course_status === 2 ? (
+            <p className="font-semibold text-green-500 font-DMSans">
+              Published
+            </p>
+          ) : (
+            <p className="font-semibold text-gray-600 font-DMSans">Draft</p>
+          )}
+        </div>
+      ),
+      width: "120px",
+    },
     {
       name: "Creator",
       selector: (row: { creators: string }) => row.creators,
@@ -138,18 +147,26 @@ const CourseTable = () => {
         </div>
       ),
     },
-    // {
-    //   name: "No. Applications",
-    //   selector: (row: { application: string }) => row.application,
-    //   sortable: true,
-    // },
+    {
+      name: "No. Applications",
+      selector: (row: { application: string }) => row.application,
+      cell: (row) => (
+        <div className="flex justify-center items-center rounded-[4px]">
+          <p>{row.application}</p>
+        </div>
+      ),
+    },
     {
       name: "Actions",
       cell: (row) => (
         <ActionMenu
           actions={[
             { label: "Edit", action: () => handleView(row.coursesid) },
-            { label: "Delete", action: () => handlecontact(row.coursesid) },
+            {
+              label: "Delete",
+              action: () =>
+                setUsedeleteCourse({ courseId: row.coursesid, status: true }),
+            },
             {
               label: "Add Cohort",
               action: () => setIsNewcohort({ courseId: row.id, status: true }),
@@ -181,9 +198,28 @@ const CourseTable = () => {
     );
   };
 
+  const handleCourseDeleted = async () => {
+    refetch();
+    setUsedeleteCourse({
+      courseId: 0,
+      status: false,
+    });
+    await showAlert(
+      "success",
+      "Deleted!",
+      "Course Deleted Successfully!",
+      "Ok",
+      "#03435F"
+    );
+  };
+
   const handleClose = () => {
     setIscontact(false);
     setIsNewcohort({
+      courseId: 0,
+      status: false,
+    });
+    setUsedeleteCourse({
       courseId: 0,
       status: false,
     });
@@ -214,7 +250,13 @@ const CourseTable = () => {
         </div>
       )}
 
-      {/* <ContactModal isOpen={isContact} closeModal={handleClose} /> */}
+      <DeleteCourseModal
+        id={usedeleteCourse.courseId}
+        message="Are you sure you want to delete this course?"
+        isOpen={usedeleteCourse.status}
+        closeModal={handleClose}
+        onsuccess={handleCourseDeleted}
+      />
       <NewCohortModal
         courseId={isNewcohort.courseId}
         isOpen={isNewcohort.status}

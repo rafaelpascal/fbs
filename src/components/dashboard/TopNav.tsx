@@ -18,12 +18,12 @@ export const TopNav = () => {
   const [newNotification, setNewNotification] = useState(0);
   const user = useSelector((state: RootState) => state.user);
 
-  useEffect(() => {
-    if (user.role === 0) {
-      AuthService.destroySession();
-      window.location.href = "/login";
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user.role === 0) {
+  //     AuthService.destroySession();
+  //     window.location.href = "/login";
+  //   }
+  // }, [user]);
 
   const getMyNotification = async () => {
     try {
@@ -41,8 +41,6 @@ export const TopNav = () => {
   };
 
   useEffect(() => {
-    console.log("Storeduser", user);
-
     getMyNotification();
   }, []);
 

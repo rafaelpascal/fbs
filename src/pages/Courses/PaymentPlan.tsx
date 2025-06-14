@@ -9,7 +9,6 @@ import InDataTable from "~/components/table/InDataTable";
 import { ContactModal } from "~/components/Modal/ContactModal";
 import ActionMenu from "~/components/table/ActionMenu";
 import { CourseServices } from "~/api/course";
-import { fetchlistCourses } from "~/api/course/hooks";
 import { LoadingSpinner } from "~/components/ui/loading-spinner";
 import moment from "moment";
 import { AuthService } from "~/api/auth";
@@ -29,7 +28,6 @@ interface MerchantTableRow {
 const PaymentPlan = () => {
   const { theme } = useTheme();
   const [tableData, setTableData] = useState<MerchantTableRow[]>([]);
-  const { data: courseList } = fetchlistCourses();
   const [loading, setLoading] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(0);
   const [, setSelectedOption] = useState<CourseOption | null>(null);
@@ -46,23 +44,29 @@ const PaymentPlan = () => {
     id: 0,
   });
 
-  useEffect(() => {
-    if (courseList?.course_details.length) {
-      interface CourseOption {
-        label: string;
-        value: number;
-      }
-      const formattedOptions: CourseOption[] = courseList?.course_details.map(
-        (course: { course_title: string; coursesid: number }) => ({
-          label: course.course_title,
-          value: course.coursesid,
-        })
-      );
-      setOptions(formattedOptions);
-      setSelectedCourseId(formattedOptions[0].value);
-      setSelectedOption(formattedOptions[0]);
+  const getMyCourse = async () => {
+    const payload = {
+      userid: Number(Storeduser?.user),
+    };
+    const res = await CourseServices.fetchMyProgrammes(payload);
+    interface CourseOption {
+      label: string;
+      value: number;
     }
-  }, [courseList]);
+    const formattedOptions: CourseOption[] = res?.data?.data.map(
+      (course: { course_title: string; coursesid: number }) => ({
+        label: course.course_title,
+        value: course.coursesid,
+      })
+    );
+    setOptions(formattedOptions);
+    setSelectedCourseId(formattedOptions[0].value);
+    setSelectedOption(formattedOptions[0]);
+  };
+
+  useEffect(() => {
+    getMyCourse();
+  }, [Storeduser?.user]);
 
   const handleSelect = (option: { label: string; value: string | number }) => {
     setSelectedCourseId(Number(option.value));
@@ -74,7 +78,6 @@ const PaymentPlan = () => {
     try {
       const payload = {
         userid: Number(Storeduser?.user),
-        // courseid: 22,
         courseid: Number(selectedCourseId),
       };
       const res = await CourseServices.fetchPaymentPlans(payload);

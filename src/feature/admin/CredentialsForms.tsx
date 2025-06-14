@@ -42,11 +42,11 @@ const parseHtmlToText = (htmlString: string): CustomDescendant[] => {
 };
 
 const CredentialsForms: React.FC<CredentialsFormsProps> = ({
-  initialCourseId,
   initialData,
   created,
 }) => {
   const courseId = useSelector((state: RootState) => state.course.course_id);
+  const [requirementId, setRequirementId] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [admissionRequirements, setAdmissionRequirements] = useState<
     CustomDescendant[]
@@ -69,9 +69,12 @@ const CredentialsForms: React.FC<CredentialsFormsProps> = ({
 
   useEffect(() => {
     if (initialData && initialData.length > 0) {
+      console.log("Initial form requirement", initialData);
+      setRequirementId(initialData[0].requirementid);
       setAdmissionRequirements(
         parseHtmlToText(initialData[0].course_requirements)
       );
+
       setLearningObjectives(parseHtmlToText(initialData[0].learning_objective));
       setAssessmentMethods(parseHtmlToText(initialData[0].assessment_method));
       setCareerOptions(parseHtmlToText(initialData[0].career_option));
@@ -88,17 +91,30 @@ const CredentialsForms: React.FC<CredentialsFormsProps> = ({
         .join("\n");
     };
 
-    const payload = {
-      course_id: courseId || initialCourseId,
-      course_requirments: extractText(admissionRequirements),
-      learning_objective: extractText(learningObjectives),
-      assessment_method: extractText(assessmentMethods),
-      career_option: extractText(careerOptions),
-      course_structure: extractText(courseStructure),
-      course_for: extractText(courseFor),
-    };
     try {
-      await CourseServices.createCourseRequirements(payload);
+      if (requirementId) {
+        const payload = {
+          requirement_id: requirementId,
+          course_requirments: extractText(admissionRequirements),
+          learning_objective: extractText(learningObjectives),
+          assessment_method: extractText(assessmentMethods),
+          career_option: extractText(careerOptions),
+          course_structure: extractText(courseStructure),
+          course_for: extractText(courseFor),
+        };
+        await CourseServices.updateCourseRequirements(payload);
+      } else {
+        const payload = {
+          course_id: courseId,
+          course_requirments: extractText(admissionRequirements),
+          learning_objective: extractText(learningObjectives),
+          assessment_method: extractText(assessmentMethods),
+          career_option: extractText(careerOptions),
+          course_structure: extractText(courseStructure),
+          course_for: extractText(courseFor),
+        };
+        await CourseServices.createCourseRequirements(payload);
+      }
       setIsSubmitting(false);
       await showAlert(
         "success",

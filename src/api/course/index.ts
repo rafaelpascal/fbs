@@ -62,6 +62,16 @@ export class CourseServices extends BaseAPIService {
     }
   };
 
+  static getRequirement = async (payload: any) => {
+    try {
+      const res = await Api.post("/course/edit-requirements", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static getApplicationPayments = async () => {
     try {
       const res = await Api.get("/list-application-payments");
@@ -91,6 +101,17 @@ export class CourseServices extends BaseAPIService {
       throw handleError;
     }
   };
+
+  static updateCourseRequirements = async (payload: any) => {
+    try {
+      const res = await Api.post("/course/update-requirements", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
   static updateManualPayment = async (payload: any) => {
     try {
       const res = await Api.post("/update-manual-payment", payload);
@@ -203,6 +224,16 @@ export class CourseServices extends BaseAPIService {
   static fetchPaymentPlans = async (payload: any) => {
     try {
       const res = await Api.post("/payment/user-payment-plan", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static fetchMyProgrammes = async (payload: any) => {
+    try {
+      const res = await Api.post("/student/list-programmes", payload);
       return res;
     } catch (error) {
       const handleError = error;
@@ -628,6 +659,16 @@ export class CourseServices extends BaseAPIService {
   static rejectApplication = async (payload: any) => {
     try {
       const res = await Api.post("/reject-application", payload);
+      return res;
+    } catch (error) {
+      const handleError = error;
+      throw handleError;
+    }
+  };
+
+  static deleteCourse = async (payload: any) => {
+    try {
+      const res = await Api.post("/course/delete-course", payload);
       return res;
     } catch (error) {
       const handleError = error;
