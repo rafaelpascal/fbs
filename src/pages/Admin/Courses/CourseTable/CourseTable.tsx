@@ -31,6 +31,7 @@ interface MerchantTableRow {
   created_at: string;
   course_status: number;
   course_url: string;
+  no_of_applications: number;
 }
 
 const CourseTable = () => {
@@ -149,10 +150,10 @@ const CourseTable = () => {
     },
     {
       name: "No. Applications",
-      selector: (row: { application: string }) => row.application,
+      selector: (row: { no_of_applications: number }) => row.no_of_applications,
       cell: (row) => (
         <div className="flex justify-center items-center rounded-[4px]">
-          <p>{row.application}</p>
+          <p>{row.no_of_applications}</p>
         </div>
       ),
     },
