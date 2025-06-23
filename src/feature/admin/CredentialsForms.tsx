@@ -44,6 +44,7 @@ const parseHtmlToText = (htmlString: string): CustomDescendant[] => {
 const CredentialsForms: React.FC<CredentialsFormsProps> = ({
   initialData,
   created,
+  // updateRefreshKey
 }) => {
   const courseId = useSelector((state: RootState) => state.course.course_id);
   const [requirementId, setRequirementId] = useState(0);
@@ -69,7 +70,6 @@ const CredentialsForms: React.FC<CredentialsFormsProps> = ({
 
   useEffect(() => {
     if (initialData && initialData.length > 0) {
-      console.log("Initial form requirement", initialData);
       setRequirementId(initialData[0].requirementid);
       setAdmissionRequirements(
         parseHtmlToText(initialData[0].course_requirements)
@@ -103,6 +103,7 @@ const CredentialsForms: React.FC<CredentialsFormsProps> = ({
           course_for: extractText(courseFor),
         };
         await CourseServices.updateCourseRequirements(payload);
+        // updateRefreshKey()
       } else {
         const payload = {
           course_id: courseId,

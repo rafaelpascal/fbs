@@ -126,8 +126,7 @@ const CreateCourse = () => {
       const payload = {
         course_id: id,
       };
-      const res = await CourseServices.getRequirement(payload);
-      console.log(res);
+      await CourseServices.getRequirement(payload);
     } catch (error) {
       console.log(error);
     }
@@ -197,6 +196,7 @@ const CreateCourse = () => {
   };
 
   const handleIsModule = (data: any) => {
+    setRefreshKey((prev) => prev + 1);
     updateFormData("credentials", data);
     goToStep("module");
   };
